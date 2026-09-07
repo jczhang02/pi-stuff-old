@@ -20,8 +20,6 @@ export type VerificationPlan = {
 
 const ZERO = "0".repeat(40);
 const CODE = /\.(?:[cm]?[jt]sx?|mjs|cjs|py|rb|sh|bash|html)$/u;
-const CONTRACT =
-	/(?:^|\/)(?:AGENTS|CONTEXT|DESIGN)\.md$|^docs\/(?:compatibility|code-quality)\.md$|(?:^|\/)SKILL\.md$/u;
 
 function git(root: string, args: string[]): string {
 	return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
@@ -43,41 +41,36 @@ function names(root: string, args: string[]): string[] {
 	return git(root, args).split("\0").filter(Boolean);
 }
 function committed(root: string, base: string, head: string): string[] {
-	return names(root, ["diff", "--name-only", "--diff-filter=ACDMRTUXB", "-z", base, head]);
+	return names(root, ["diff", "--no-renames", "--name-only", "--diff-filter=ACDMRTUXB", "-z", base, head]);
 }
 function localChanges(root: string): string[] {
 	const paths = new Set([
-		...names(root, ["diff", "--name-only", "--diff-filter=ACDMRTUXB", "-z"]),
-		...names(root, ["diff", "--cached", "--name-only", "--diff-filter=ACDMRTUXB", "-z"]),
+		...names(root, ["diff", "--no-renames", "--name-only", "--diff-filter=ACDMRTUXB", "-z"]),
+		...names(root, ["diff", "--no-renames", "--cached", "--name-only", "--diff-filter=ACDMRTUXB", "-z"]),
 		...names(root, ["ls-files", "--others", "--exclude-standard", "-z"]),
 	]);
 	return [...paths].sort();
 }
-function content(root: string, path: string, revision?: string): string {
+function content(root: string, path: string): string {
 	try {
-		return revision === ":"
-			? git(root, ["show", `:${path}`])
-			: revision
-				? git(root, ["show", `${revision}:${path}`])
-				: readFileSync(resolve(root, path), "utf8");
+		return readFileSync(resolve(root, path), "utf8");
 	} catch {
 		return "";
 	}
 }
-function metadataPath(path: string): boolean {
-	return /^(?:[^/]+|docs\/.*)\.md$/u.test(path) || /^\.beads\/(?:issues\.jsonl|metadata\.json)$/u.test(path);
+export function isEngineeringDocumentation(path: string): boolean {
+	if (path.startsWith("docs/")) return true;
+	if (!path.endsWith(".md")) return false;
+	if (/(?:^|\/)(?:skills|prompts|agents|fixtures)\//u.test(path) || path.endsWith("/SKILL.md") || path === "SKILL.md")
+		return false;
+	return (
+		!path.includes("/") ||
+		path.startsWith(".github/") ||
+		/(?:^|\/)(?:README|UPSTREAM|THIRD_PARTY_NOTICES|SECURITY|AGENTS|CONTEXT|DESIGN)\.md$/u.test(path)
+	);
 }
-function executableText(text: string): boolean {
-	return /```|~~~/u.test(text) || /<script\b|<iframe\b|\bon(?:click|load|error)\s*=|javascript:/iu.test(text);
-}
-function pureMetadata(root: string, path: string, base: string | null): boolean {
-	if (!metadataPath(path) || CONTRACT.test(path)) return false;
-	return ![
-		content(root, path, base ?? undefined),
-		content(root, path, "HEAD"),
-		content(root, path),
-		content(root, path, ":"),
-	].some(executableText);
+export function documentationOnly(plan: VerificationPlan): boolean {
+	return plan.mode === "none" && plan.changedFiles.length > 0 && plan.changedFiles.every(isEngineeringDocumentation);
 }
 function sharedChange(path: string): boolean {
 	return (
@@ -91,11 +84,6 @@ function sharedChange(path: string): boolean {
 		path === "package.json" ||
 		path.startsWith("bun.lock") ||
 		path.startsWith("tsconfig") ||
-		path === "AGENTS.md" ||
-		path === "CONTEXT.md" ||
-		path === "DESIGN.md" ||
-		path === "docs/compatibility.md" ||
-		path === "docs/code-quality.md" ||
 		path.endsWith("/SKILL.md")
 	);
 }
@@ -142,23 +130,14 @@ type TestSelection = { files: string[]; reason: string; acceptanceMatrix?: "full
 export function selectAffectedTests(root: string, changed: string[], base: string | null = null): TestSelection {
 	const all = allTests(root);
 	if (!changed.length) return { files: all, reason: "clean or empty change set; all applicable offline tests" };
+	changed = changed.filter((path) => !isEngineeringDocumentation(path));
+	if (!changed.length) return { files: [], reason: "engineering documentation only; no runtime tests" };
 	const capabilities = suiteCapabilities(root);
 	const known = (path: string): boolean =>
 		sourceCapability(path, capabilities) !== undefined ||
-		(path.startsWith("tests/") && testCapability(path, capabilities) !== undefined) ||
-		pureMetadata(root, path, base);
-	if (
-		changed.some(
-			(path) =>
-				sharedChange(path) ||
-				!existsSync(resolve(root, path)) ||
-				!known(path) ||
-				(metadataPath(path) && !pureMetadata(root, path, base)),
-		)
-	)
+		(path.startsWith("tests/") && testCapability(path, capabilities) !== undefined);
+	if (changed.some((path) => sharedChange(path) || !existsSync(resolve(root, path)) || !known(path)))
 		return { files: all, reason: "shared infrastructure or uncertain path; all applicable offline tests" };
-	if (changed.every((path) => pureMetadata(root, path, base)))
-		return { files: [], reason: "proven non-executable metadata-only change" };
 	const { caps, uncertain } = dependencyCapabilities(root, changed, all, capabilities);
 	if (uncertain) return { files: all, reason: "dynamic or unresolved dependency; all applicable offline tests" };
 	const productionChanged = changed.some((path) => path.startsWith("packages/pi-stuff/src/"));
@@ -314,7 +293,7 @@ function main(): void {
 		if (process.env["GITHUB_OUTPUT"])
 			appendFileSync(
 				process.env["GITHUB_OUTPUT"],
-				`tests_required=${verification.mode === "none" ? "false" : "true"}\n`,
+				`tests_required=${verification.mode === "none" ? "false" : "true"}\ndocumentation_only=${documentationOnly(verification)}\n`,
 			);
 		console.log(`${verification.mode}: ${verification.reason}`);
 	} catch (error) {

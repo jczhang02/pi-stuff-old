@@ -23,8 +23,10 @@ quality exemptions. Machine state, caches, worktrees, build artifacts, binary as
 
 ## Risk-based verification
 
-- Pure documentation changes need the documentation mirror/SHA check and relevant focused checks; they do not require a
-  full code check. Code changes use focused Tests plus `bun run check` during development; `bun run verify` combines
+- Engineering-documentation-only changes run `bun run check:docs` (links, ADR structure, screenshots, mirrors/SHA,
+  and text safety), not full code checks or runtime Tests. Code examples and document deletion do not change that
+  classification; mixed changes select runtime Tests from non-documentation paths. Runtime Skills, Prompts, and Agent
+  definitions are execution inputs, not engineering documentation. Code changes use focused Tests plus `bun run check` during development; `bun run verify` combines
   read-only Static Checks with conservatively selected offline Tests.
 - For PR or release readiness, required CI checks on the same revision are authoritative; reuse their results rather
   than repeating the full suite locally. Run the full check when impact is unknown or CI cannot cover the affected path.

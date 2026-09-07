@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { requirementsForTest } from "./test-environment.ts";
-import { buildVerificationPlan } from "./verification-plan.ts";
+import { buildVerificationPlan, documentationOnly } from "./verification-plan.ts";
 
 function parseVerificationArguments(args: string[]) {
 	const parsed = parseArgs({
@@ -59,7 +59,10 @@ function main(): void {
 	mkdirSync(dirname(output), { recursive: true });
 	writeFileSync(planFile, `${JSON.stringify(plan, null, 2)}\n`);
 	const started = performance.now();
-	const check = spawnSync(process.execPath, ["run", "check"], { stdio: "inherit", env: environment });
+	const check = spawnSync(process.execPath, ["run", documentationOnly(plan) ? "check:docs" : "check"], {
+		stdio: "inherit",
+		env: environment,
+	});
 	const checks = check.status === 0 ? "passed" : "failed";
 	if (checks === "failed" && !values.keepGoing) {
 		writeFileSync(

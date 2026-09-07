@@ -76,7 +76,7 @@ describe("verification plan", () => {
 		}
 	});
 
-	test("removed executable markdown is not metadata-only", async () => {
+	test("removed documentation with code examples requires no tests", async () => {
 		const { root, base } = await repo();
 		try {
 			await writeFile(join(root, "README.md"), "~~~bash\necho unsafe\n~~~\n");
@@ -84,7 +84,7 @@ describe("verification plan", () => {
 			Bun.spawnSync(["git", "commit", "-qm", "docs"], { cwd: root });
 			Bun.spawnSync(["git", "rm", "-q", "README.md"], { cwd: root });
 			const plan = buildVerificationPlan(root, { VERIFY_BASE: base });
-			expect(plan.mode).toBe("all");
+			expect(plan.mode).toBe("none");
 		} finally {
 			await rm(root, { recursive: true, force: true });
 		}
@@ -107,7 +107,7 @@ test("Capability selection follows side-effect imports and transitive test helpe
 		expect(buildVerificationPlan(root, { VERIFY_BASE: base }).mode).toBe("all");
 		await rm(join(root, "mystery.txt"));
 		await put(root, "README.md", "```custom\nrun it\n```");
-		expect(buildVerificationPlan(root, { VERIFY_BASE: base }).mode).toBe("all");
+		expect(buildVerificationPlan(root, { VERIFY_BASE: base }).mode).toBe("selected");
 	} finally {
 		await rm(root, { recursive: true, force: true });
 	}
@@ -267,6 +267,87 @@ test("scheduled omission requires same-head full-run evidence, while manual veri
 		expect(plan.previousFullRun).toBe(123);
 		expect(buildVerificationPlan(root, { ...proven, GITHUB_EVENT_NAME: "workflow_dispatch" }).mode).toBe("all");
 		expect(buildVerificationPlan(root, { ...proven, CI_PREVIOUS_FULL_SHA: "a".repeat(40) }).mode).toBe("all");
+	} finally {
+		await rm(root, { recursive: true, force: true });
+	}
+});
+
+test("engineering documents never expand runtime scope, including additions, examples and deletions", async () => {
+	const { root } = await repo();
+	try {
+		const documents = [
+			"AGENTS.md",
+			"CONTEXT.md",
+			"DESIGN.md",
+			"docs/compatibility.md",
+			"docs/code-quality.md",
+			"docs/adr/0042-policy.md",
+			"docs/i18n/zh-CN/AGENTS.md",
+			"docs/assets/readme/example.png",
+			"docs/reports/evidence.json",
+			"docs/reports/example.ansi",
+			"packages/pi-stuff/src/alpha/README.md",
+			"packages/pi-stuff/src/alpha/UPSTREAM.md",
+			"tests/README.md",
+			".github/PULL_REQUEST_TEMPLATE.md",
+		];
+		for (const path of documents) await put(root, path, "~~~bash\necho example\n~~~\n");
+		expect(buildVerificationPlan(root, { VERIFY_BASE: "HEAD" }).mode).toBe("none");
+		git(root, ["add", "."]);
+		git(root, ["commit", "-qm", "documentation"]);
+		for (const path of documents) await rm(join(root, path));
+		expect(buildVerificationPlan(root, { VERIFY_BASE: "HEAD" }).mode).toBe("none");
+		await put(root, "packages/pi-stuff/src/alpha/value.ts", "export const value = 2;");
+		expect(buildVerificationPlan(root, { VERIFY_BASE: "HEAD" }).files).toEqual([
+			"tests/unit/alpha/alpha.test.ts",
+			"tests/unit/beta/beta.test.ts",
+		]);
+	} finally {
+		await rm(root, { recursive: true, force: true });
+	}
+});
+
+test("runtime Markdown and unknown inputs keep runtime verification", async () => {
+	const { root } = await repo();
+	try {
+		for (const path of [
+			"packages/pi-stuff/src/alpha/skills/example/SKILL.md",
+			".pi/prompts/README.md",
+			".pi/agents/helper.md",
+			"tests/fixtures/prompt.md",
+			"tests/fixtures/README.md",
+			"tests/fixtures/AGENTS.md",
+			"SKILL.md",
+		]) {
+			await put(root, path, "runtime instructions\n");
+			expect(selectAffectedTests(root, [path]).files.length, path).toBeGreaterThan(0);
+			await rm(join(root, path));
+			expect(selectAffectedTests(root, [path]).files.length, path).toBeGreaterThan(0);
+		}
+	} finally {
+		await rm(root, { recursive: true, force: true });
+	}
+});
+
+test("runtime-to-document renames retain both source and destination before and after commit", async () => {
+	const { root } = await repo();
+	try {
+		const base = git(root, ["rev-parse", "HEAD"]).trim();
+		await mkdir(join(root, "docs"), { recursive: true });
+		git(root, ["mv", "packages/pi-stuff/src/alpha/value.ts", "docs/example.md"]);
+		const staged = buildVerificationPlan(root, { VERIFY_BASE: base });
+		expect(staged.mode).toBe("all");
+		expect(staged.changedFiles).toContain("packages/pi-stuff/src/alpha/value.ts");
+		git(root, ["commit", "-qm", "move source into documentation"]);
+		const committed = buildVerificationPlan(root, {
+			VERIFICATION_PLAN_CI: "1",
+			GITHUB_EVENT_NAME: "push",
+			CI_BASE_SHA: base,
+			CI_HEAD_SHA: "HEAD",
+		});
+		expect(committed.mode).toBe("all");
+		expect(committed.changedFiles).toContain("packages/pi-stuff/src/alpha/value.ts");
+		expect(committed.changedFiles).toContain("docs/example.md");
 	} finally {
 		await rm(root, { recursive: true, force: true });
 	}

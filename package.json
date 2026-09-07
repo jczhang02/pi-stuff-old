@@ -13,6 +13,7 @@
 		"check": "bun run format:check && bun run lint && bun run typecheck && bun run knip && bun run check:generated && bun run check:repository && bun run check:capability-contracts && bun scripts/verify-package.ts --static && bun run check:terminal-bench",
 		"check:capability-contracts": "bun scripts/check-capability-contract-catalog.ts",
 		"check:generated": "bun scripts/generate-suite.ts --check",
+		"check:docs": "bun scripts/check-repository-safety.ts --docs",
 		"check:repository": "bun scripts/check-repository-safety.ts",
 		"format:check": "biome check .",
 		"knip": "knip --no-progress --include files,dependencies,unlisted,binaries,unresolved,cycles",

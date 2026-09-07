@@ -31,6 +31,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       tests_required: ${{ steps.plan.outputs.tests_required }}
+      documentation_only: ${{ steps.plan.outputs.documentation_only }}
       shards: ${{ steps.shards.outputs.shards }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -80,6 +81,7 @@ jobs:
 
   checks:
     name: Checks
+    needs: plan
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -102,7 +104,14 @@ jobs:
           bun install --frozen-lockfile --ignore-scripts
           bun pm untrusted
       - name: Run static checks
-        run: bun run check
+        env:
+          DOCUMENTATION_ONLY: ${{ needs.plan.outputs.documentation_only }}
+        run: |
+          if [ "$DOCUMENTATION_ONLY" = "true" ]; then
+            bun run check:docs
+          else
+            bun run check
+          fi
 
   tests:
     name: ${{ matrix.shard.total && format('Tests (shard {0}/{1})', matrix.shard.index, matrix.shard.total) || 'Tests' }}

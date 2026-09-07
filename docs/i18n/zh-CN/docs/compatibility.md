@@ -1,4 +1,4 @@
-<!-- translation-source: docs/compatibility.md; translation-source-sha256: e281772e1250a0ec73fcf910ec248b8389fba5b3c9ed9530e30afd6913f25bca -->
+<!-- translation-source: docs/compatibility.md; translation-source-sha256: 663a38800ee91a61e98cc8fb04cf88ea6ea2864f23c3b0b6d67987f6f794d627 -->
 
 # 兼容性
 
@@ -27,7 +27,7 @@
 
 本地验证通过 `PI_BIN` / `RTK_BIN` 或 `PATH` 复用已安装的 Pi、RTK，不自动下载或重装。兼容性准入检查版本与真实行为，不要求固定二进制哈希；RTK 源码构建和 PATH shim 可以满足该契约。CI 下载哈希标识干净 runner 准备的产物，不限制已有本地可执行文件。
 
-CI 使用 `Plan`、`Checks`、独立的 `Tests (shard N/M)` 和 `Verify`。Plan 在 PR、`main` push、手动触发与夜间计划中运行：PR/push 选择受影响离线测试，手动触发选择完整清单与完整矩阵；夜间仅复用同一 main SHA 的成功全量证据，否则运行全量。Plan 把必要范围与矩阵写入 artifacts。Checks 独立验证冻结依赖、格式、anti-slop lint、类型、未使用代码、生成组合和公开 Release 安全。每个必要 Tests 分片获取认证 Pi、Code Mode、RTK，在网络隔离 namespace 中逐文件使用全新 Bun/Node 进程。分片只等待 Plan，失败后停止剩余工作。Verify 始终检查计划、必要 job 状态、完整且唯一的文件覆盖、矩阵身份和完整结构化报告；只有明确的 no-tests 计划才允许跳过 Tests。计划、逐分片及汇总报告分别保留。仅取消同一 PR 的过时运行，不同 main-push 范围继续保留。认证需要当前 revision 的适用检查及真实 Host 证据，workflow 配置本身不构成证据。
+CI 使用 `Plan`、`Checks`、独立的 `Tests (shard N/M)` 和 `Verify`。Plan 在 PR、`main` push、手动触发与夜间计划中运行：PR/push 选择受影响离线测试，手动触发选择完整清单与完整矩阵；夜间仅复用同一 main SHA 的成功全量证据，否则运行全量。Plan 把必要范围与矩阵写入 artifacts。Checks 和 Tests 均等待 Plan，再独立执行。纯工程文档范围仅运行 `check:docs` 并明确跳过 Tests，不准备 Pi、RTK、Code Mode 或 PTY 工具；其他范围仍执行冻结依赖、格式、anti-slop lint、类型、未使用代码、生成组合和公开 Release 安全的完整静态检查。每个必要 Tests 分片获取认证 Pi、Code Mode、RTK，在网络隔离 namespace 中逐文件使用全新 Bun/Node 进程。分片只等待 Plan，失败后停止剩余工作。Verify 始终检查计划、必要 job 状态、完整且唯一的文件覆盖、矩阵身份和完整结构化报告；只有明确的 no-tests 计划才允许跳过 Tests。计划、逐分片及汇总报告分别保留。仅取消同一 PR 的过时运行，不同 main-push 范围继续保留。认证需要当前 revision 的适用检查及真实 Host 证据，workflow 配置本身不构成证据。
 
 仓库工具链使用 Bun 1.4.0。Host 自带的 runtime 和 Release 打包属于 Host 细节，不是 Pi Stuff 的兼容性准入标准。
 

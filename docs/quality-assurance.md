@@ -10,6 +10,7 @@ The [tests directory guide](../tests/README.md) maps the five levels, shared fix
 
 ```bash
 bun run check
+bun run check:docs
 bun run fix
 bun run test --list
 bun run test --level acceptance --file repository/source-install.test.ts
@@ -25,9 +26,9 @@ repository safety, the Capability Contract Catalog, and static Package/resource/
 source or execute Benchmarks. `fix` explicitly applies formatting and safe lint fixes; generated composition and
 snapshots have separate explicit update operations.
 
-`test` currently discovers 340 files (339 offline and one explicit live file) under five levels: Component (`unit`),
+`test` discovers the current inventory under five levels: Component (`unit`),
 Component Integration (`component-integration`), System (`system`), System Integration (`system-integration`), and
-Acceptance (`acceptance`). The offline inventory is 139 / 160 / 2 / 10 / 28 files by those levels. Within each level,
+Acceptance (`acceptance`). Use `test --list` for the current file inventory. Within each level,
 files are grouped by Capability directory and scenario. It runs one OS process per file. The Goal runtime smoke is a
 native Bun test; the other 21 `.node.ts` compatibility files are compiled once and then run through Node. Repeated
 selectors within one dimension are a union; different dimensions are an intersection. `--name` uses the native test
@@ -165,15 +166,20 @@ helpers, and resolves `.js` imports to `.ts` sources. Unknown imports in this ve
 [Dynamic dependency declarations](../config/verification-dependencies.json) record reviewed external or local loading
 boundaries with the importing file's SHA-256; a changed or undeclared dynamic importer falls back to all tests. Unused
 benchmark scripts do not make every local change uncertain. Shared scripts, configuration, Suite composition, Host
-versions, deleted paths, and unknown impact retain the full-suite fallback. Narrow
-metadata-only changes can produce an explicit no-tests plan only when the current, index, `HEAD`, and comparison-base
-contents prove that the paths contain no executable fences or script material. Deleted paths use the same conservative
-full-suite fallback. `--list` prints the base, head, reason, selected files, and environment requirements without
-running Checks or Tests; `--help` and unknown options are strict. A normal run performs read-only `check`, then the
+versions, deleted non-documentation paths, and unknown impact retain the full-suite fallback.
+Engineering documentation is excluded by path role before selecting runtime impact, including AGENTS, CONTEXT,
+DESIGN, ADRs, READMEs, upstream notes, translations, documentation assets and retained reports, code examples, and
+document deletion. Mixed changes select by
+non-documentation paths only. Renames retain both paths, so moving executable input into documentation still selects
+its deleted source. Test fixtures remain execution inputs even when named README or AGENTS. Runtime Skills, Prompts, Agent definitions, and unknown Markdown fixtures remain
+execution inputs. A documentation-only range runs `check:docs`, reusing repository links, ADR structure, screenshot,
+translation/SHA, and text-safety audits without code, dependency, or runtime checks. `--list` prints the base, head, reason, selected files, and environment requirements without
+running Checks or Tests; `--help` and unknown options are strict. Other ranges perform read-only `check`, then the
 selected offline Tests, and writes a timestamped summary with plan, status, duration, and evidence paths.
 
 CI uses `Plan`, `Checks`, `Tests` shards, and `Verify`. Plan selects committed PR target ranges or main-push before/after
-ranges. Checks runs independently; Tests waits only for Plan. Each shard runs its assigned files serially on an
+ranges. Checks and Tests both wait for Plan, then run independently; documentation-only Checks uses `check:docs`
+and Tests is explicitly skipped, without Host/tool preparation. Each shard runs its assigned files serially on an
 independent runner, preserving per-file process isolation. The matrix stops remaining shards on failure. Verify checks
 required job results, complete and unique file coverage, the declared matrix, and every report's completion status;
 a union of filenames alone cannot establish success. Per-shard and aggregate reports remain separate artifacts.

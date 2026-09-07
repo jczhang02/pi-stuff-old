@@ -702,21 +702,24 @@ async function auditSuiteSchema(root: string, path: string): Promise<SafetyFindi
 	return findings;
 }
 
-export async function auditRepositoryFiles(rootDirectory: string): Promise<SafetyFinding[]> {
+export async function auditRepositoryFiles(rootDirectory: string, documentationOnly = false): Promise<SafetyFinding[]> {
 	const root = resolve(rootDirectory);
 	const paths = await listPublicFiles(root);
 	const findings: SafetyFinding[] = [];
-	findings.push(...(await auditEffectBoundaryInventory(root, paths)));
-	const suiteSchemaPath = "schemas/suite.schema.json";
-	if (paths.includes(suiteSchemaPath)) {
-		findings.push(...(await auditSuiteSchema(root, suiteSchemaPath)));
-	}
-	const suiteManifestPath = "packages/pi-stuff/suite.json";
-	if (paths.includes(suiteManifestPath)) {
-		findings.push(...(await auditSuiteManifest(root, suiteManifestPath)));
+	if (!documentationOnly) {
+		findings.push(...(await auditEffectBoundaryInventory(root, paths)));
+		const suiteSchemaPath = "schemas/suite.schema.json";
+		if (paths.includes(suiteSchemaPath)) {
+			findings.push(...(await auditSuiteSchema(root, suiteSchemaPath)));
+		}
+		const suiteManifestPath = "packages/pi-stuff/suite.json";
+		if (paths.includes(suiteManifestPath)) {
+			findings.push(...(await auditSuiteManifest(root, suiteManifestPath)));
+		}
 	}
 	findings.push(...(await auditDocumentation(root, paths)));
 	for (const path of paths) {
+		if (documentationOnly && !path.endsWith(".md") && !path.startsWith("docs/")) continue;
 		try {
 			await access(join(root, path));
 		} catch {
@@ -741,7 +744,7 @@ export async function auditRepositoryFiles(rootDirectory: string): Promise<Safet
 }
 
 if (import.meta.main) {
-	const findings = await auditRepositoryFiles(resolve(import.meta.dir, ".."));
+	const findings = await auditRepositoryFiles(resolve(import.meta.dir, ".."), process.argv.includes("--docs"));
 	if (findings.length > 0) {
 		for (const finding of findings) {
 			console.error(`${finding.path}: ${finding.rule}`);

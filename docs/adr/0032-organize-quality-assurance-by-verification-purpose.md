@@ -92,6 +92,10 @@ coverage from retained reports alone.
   a passing retry alone does not resolve them. Reuse applicable recorded diagnoses instead of restarting investigation.
 - Delete tests that cannot be repaired instead of introducing a temporary-quarantine workflow. Deletion does not imply
   that the tested behavior passed; preserve valid critical behavior according to the retention criteria below.
+- Engineering documentation never triggers runtime Tests or full code checks, including policy files, code examples,
+  and deletions. Mixed changes exclude documentation before selecting executable impact. Runtime Skills, Prompts,
+  Agent definitions, and unknown fixtures are not engineering documentation. Reuse existing document audits through
+  `check:docs`; never omit required CI results with workflow-level path exclusions.
 - Ordinary PRs may select affected dynamic tests conservatively. Capability-local changes cover the owning Module and
   related interactions; shared infrastructure, Suite composition, Host versions, and test-infrastructure changes expand
   to the complete applicable suite. Unknown impact falls back to the full suite rather than directory-only guesses.
@@ -181,7 +185,8 @@ The follow-up design interview accepted these refinements for implementation:
   removed; then test classification, repair, consolidation, and deletion; finally affected-test selection, CI orchestration,
   and remaining directory moves. Update documentation in each batch; temporary old paths do not justify duplicate runs.
 - Model CI as `Plan`, `Checks`, `Tests`, and a final `Verify` result. `Plan` determines the required test scope; `Checks`
-  runs independently while `Tests` waits only for the plan, not for static-check completion. Checks and Tests are the two
+  and `Tests` both wait for the plan, then run independently. Documentation-only `Checks` runs `check:docs`, with
+  `Tests` explicitly skipped; other ranges retain full Static Checks. Checks and Tests are the two
   substantive verification categories; planning and aggregation do not rerun them. Five test levels are classification
   boundaries, not a requirement to create five CI jobs.
 - Run the same conservative risk-selection policy for PRs and pushes to `main`. PRs compare against the target branch;

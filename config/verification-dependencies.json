@@ -5,7 +5,7 @@
 		"reason": "Loads the external TypeBox compiler from the selected Package root."
 	},
 	"scripts/ui-pty-thinking-evidence.ts": {
-		"sha256": "56c6a32ff6c3cc08afa2e8fea9c52e848f0307ae4f8a2c355ce3b7f4f8ab50bb",
+		"sha256": "7498e768e00a667fc2c2efb73bc271fc75a63174a4f775b3bf9ae0d846ac0523",
 		"dependencies": [],
 		"reason": "Loads the certified Host HTML exporter."
 	},

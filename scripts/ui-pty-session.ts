@@ -14,15 +14,14 @@ export const NERD_MODEL_MARKER = "\u{F167A}";
 export const POLL_INTERVAL_MS = 50;
 export const WAIT_TIMEOUT_MS = 20_000;
 
-export async function readCompletedJsonl(path: string): Promise<JsonInputValue[]> {
-	const snapshot = await readFile(path, "utf8");
+export async function readCompletedJsonlBytes(path: string): Promise<Buffer> {
+	const snapshot = await readFile(path);
 	// Writers commit each record with a newline; a concurrent snapshot may end mid-write.
-	return snapshot
-		.slice(0, snapshot.lastIndexOf("\n") + 1)
-		.trim()
-		.split("\n")
-		.filter(Boolean)
-		.map(parseJsonValue);
+	return snapshot.subarray(0, snapshot.lastIndexOf(10) + 1);
+}
+
+export async function readCompletedJsonl(path: string): Promise<JsonInputValue[]> {
+	return (await readCompletedJsonlBytes(path)).toString("utf8").trim().split("\n").filter(Boolean).map(parseJsonValue);
 }
 
 export interface CasePaths {

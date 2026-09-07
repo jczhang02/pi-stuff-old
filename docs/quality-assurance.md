@@ -73,7 +73,9 @@ different contracts.
 Theme lifecycle failures preserve the fixture JSONL snapshot and terminal text/ANSI in the requested artifact
 directory (`PI_STUFF_UI_PTY_ARTIFACT_DIR` in CI) before cleanup. Fixture roots are redacted, but the log's trailing
 record and newline remain unchanged. UI fixture and Host Session readers publish only newline-completed records; malformed completed
-records fail immediately, and an unfinished required record remains subject to the existing wait deadline.
+records fail immediately, and an unfinished required record remains subject to the existing wait deadline. Thinking
+HTML export uses a private, byte-preserving snapshot ending at the last complete newline and removes it on success or
+failure; opening the exporter never repairs or otherwise changes the live Session file.
 
 ## Benchmarks
 

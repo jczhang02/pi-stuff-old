@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 366c242dfa92468c9a788745f91a8209ef335b734c9ad8b292f040705a319fbf -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 451e5080a43c057f6c9c4bdbcd9b8dfd56acf04d454ce2510323a3971079121c -->
 
 # 质量保障
 
@@ -35,7 +35,7 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 
 `tests/acceptance/repository/source-install.test.ts` 在隔离 Settings 和 XDG 目录中运行认证 Pi 的 `install`，再从 checkout 外启动 Pi，观察已安装 Package 加载的命令，并清理临时环境。Distribution archive 不是交付要求。原 package-verification aggregate 重复的 Host/PTY 场景已移除；源码安装、Suite inspection、Host seam 和依赖互操作各自在相应层级与 Capability 下拥有主归属。
 
-主题生命周期失败时，在清理前把夹具 JSONL 快照和终端文本/ANSI 保存到指定 artifact 目录（CI 使用 `PI_STUFF_UI_PTY_ARTIFACT_DIR`）。夹具根路径会脱敏，但日志末尾记录和换行保持原样。UI 夹具和 Host Session 读取器仅发布以换行结束的完整记录；完整坏记录立即失败，所需记录一直未写完时仍受原有等待期限约束。
+主题生命周期失败时，在清理前把夹具 JSONL 快照和终端文本/ANSI 保存到指定 artifact 目录（CI 使用 `PI_STUFF_UI_PTY_ARTIFACT_DIR`）。夹具根路径会脱敏，但日志末尾记录和换行保持原样。UI 夹具和 Host Session 读取器仅发布以换行结束的完整记录；完整坏记录立即失败，所需记录一直未写完时仍受原有等待期限约束。Thinking HTML 导出使用截至最后一个完整换行的私有快照，保留原始字节，并在成功或失败后删除快照；打开导出器不会修复或改写正在使用的 Session 文件。
 
 ## Benchmarks
 

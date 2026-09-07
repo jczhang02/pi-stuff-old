@@ -1,5 +1,5 @@
 import { expect, spyOn, test } from "bun:test";
-import { appendFile, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { appendFile, mkdtemp, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -7,7 +7,8 @@ import {
 	waitForFixtureRecords,
 	writeFixtureLogEvidence,
 } from "../../../scripts/ui-pty-interactions.ts";
-import { waitForPersistedSessionValue } from "../../../scripts/ui-pty-thinking-evidence.ts";
+import { verifyThinkingHtmlExport, waitForPersistedSessionValue } from "../../../scripts/ui-pty-thinking-evidence.ts";
+import { FIXTURE_THINKING } from "../../fixtures/ui-pty-provider.ts";
 
 test("PTY readers wait for the complete appended JSONL record", async () => {
 	const root = await mkdtemp(join(tmpdir(), "pi-stuff-records-"));
@@ -95,6 +96,32 @@ test("Host Session evidence also ignores only an unfinished appended tail", asyn
 		await expect(
 			waitForPersistedSessionValue(root, "retained thinking", "original Thinking"),
 		).resolves.toBeUndefined();
+	} finally {
+		await rm(root, { recursive: true, force: true });
+	}
+});
+
+test("HTML export preserves the live Session bytes and exports only complete records", async () => {
+	const root = await mkdtemp(join(tmpdir(), "pi-stuff-export-"));
+	const path = join(root, "session.jsonl");
+	const timestamp = new Date(0).toISOString();
+	const complete = `${[
+		{ type: "session", version: 3, id: "export-fixture", timestamp, cwd: "/tmp" },
+		{ type: "custom", id: "thinking", parentId: null, timestamp, customType: "fixture", data: FIXTURE_THINKING },
+	]
+		.map((record) => JSON.stringify(record))
+		.join("\n")}\n`;
+	try {
+		const tail = Buffer.from('{"type":"message","content":"中').subarray(0, -1);
+		const original = Buffer.concat([Buffer.from(complete), tail]);
+		await writeFile(path, original);
+		await verifyThinkingHtmlExport(root);
+		expect(await readFile(path)).toEqual(original);
+		expect((await readdir(root)).sort()).toEqual(["session.jsonl", "thinking-session.html"]);
+		await writeFile(path, `${complete}{"type":broken}\n`);
+		await expect(verifyThinkingHtmlExport(root)).rejects.toBeInstanceOf(SyntaxError);
+		expect(await readFile(path, "utf8")).toBe(`${complete}{"type":broken}\n`);
+		expect((await readdir(root)).sort()).toEqual(["session.jsonl", "thinking-session.html"]);
 	} finally {
 		await rm(root, { recursive: true, force: true });
 	}

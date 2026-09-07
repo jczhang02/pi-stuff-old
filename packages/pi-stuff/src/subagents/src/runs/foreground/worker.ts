@@ -1,6 +1,7 @@
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as Effect from "effect/Effect";
 import type { AsyncStatus } from "../../shared/types.ts";
+import { INTERRUPT_SIGNAL, requestAsyncInterrupt } from "../background/control-channel.ts";
 import type { BackgroundRunnerStatus } from "../background/initial-status.ts";
 import type { BackgroundRunnerConfig } from "../shared/parallel-utils.ts";
 import type { ForegroundWorkerMessage, ForegroundWorkerRequest } from "./worker-entry.ts";
@@ -65,7 +66,6 @@ export function runForegroundWorker(
 	onStatus: (status: AsyncStatus) => void,
 	committedStatus?: BackgroundRunnerStatus,
 ): Effect.Effect<void, Error> {
-	// ponytail: one Worker per run bounds ownership and cleanup; reuse only if measured startup cost justifies Session state.
 	return Effect.scoped(
 		Effect.acquireRelease(
 			Effect.tryPromise({ try: startForegroundWorker, catch: workerError }),
@@ -81,17 +81,34 @@ export function runForegroundWorker(
 		).pipe(
 			Effect.flatMap(({ worker }) =>
 				Effect.callback<void, Error>((resume) => {
+					// Process signals reach Pi's main thread, not its Worker. Keep the inbox authoritative.
+					const interrupt = () => {
+						try {
+							requestAsyncInterrupt(config.asyncDir, { source: "foreground-owner-signal" });
+						} catch (error) {
+							finish(Effect.fail(workerError(error)));
+						}
+					};
+					const closed = () => finish(Effect.fail(new Error("Foreground Worker closed before completion.")));
+					const release = Effect.sync(() => {
+						process.off(INTERRUPT_SIGNAL, interrupt);
+						worker.onmessage = null;
+						worker.onerror = null;
+						worker.onmessageerror = null;
+						worker.removeEventListener("close", closed);
+					});
+					const finish = (result: Effect.Effect<void, Error>) => resume(result.pipe(Effect.ensuring(release)));
+					process.on(INTERRUPT_SIGNAL, interrupt);
 					worker.onmessage = ({ data }: MessageEvent<ForegroundWorkerMessage>) => {
 						if (data.type === "status") onStatus(data.status);
-						else resume(data.type === "complete" ? Effect.void : Effect.fail(new Error(data.message)));
+						else finish(data.type === "complete" ? Effect.void : Effect.fail(new Error(data.message)));
 					};
 					worker.onerror = (event) => {
 						event.preventDefault();
-						resume(Effect.fail(new Error(event.message || "Foreground Worker crashed.")));
+						finish(Effect.fail(new Error(event.message || "Foreground Worker crashed.")));
 					};
 					worker.onmessageerror = () =>
-						resume(Effect.fail(new Error("Foreground Worker returned an unreadable message.")));
-					const closed = () => resume(Effect.fail(new Error("Foreground Worker closed before completion.")));
+						finish(Effect.fail(new Error("Foreground Worker returned an unreadable message.")));
 					worker.addEventListener("close", closed);
 					try {
 						const workerConfig = { piExecutable: process.execPath, ...config };
@@ -102,14 +119,9 @@ export function runForegroundWorker(
 							committedStatus,
 						} satisfies ForegroundWorkerRequest);
 					} catch (error) {
-						resume(Effect.fail(workerError(error)));
+						finish(Effect.fail(workerError(error)));
 					}
-					return Effect.sync(() => {
-						worker.onmessage = null;
-						worker.onerror = null;
-						worker.onmessageerror = null;
-						worker.removeEventListener("close", closed);
-					});
+					return release;
 				}),
 			),
 		),

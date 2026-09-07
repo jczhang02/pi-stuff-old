@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/subagents/README.md; translation-source-sha256: d16435338f427813ae3efe40c26b2d0478e9874ab55c2e0dacddf2e9b932ff20 -->
+<!-- translation-source: packages/pi-stuff/src/subagents/README.md; translation-source-sha256: 0dbc0f38b0125b674577293140b53c51468f401931b69d4154289f7310c06266 -->
 
 # Agents
 
@@ -77,6 +77,8 @@ Session。
 这份通过 structured clone 传递的状态不会持久化到后台 runner 配置。detached 启动、恢复握手、目录 claim 和取消操作仍由原有所有者负责。
 
 Worker 在 Pi UI 线程之外求值并执行共享 child 引擎。前台控制、状态投影和 Session 提交仍由 Pi 负责。
+适配器在 Pi 主线程接收进程中断信号，并写入既有的持久控制 inbox；Worker 通过共享 runner 消费暂停请求。
+前台执行结束时释放信号监听器。
 适配器快照保存 parent Host 的可执行文件和入口参数，打包时保留 Source URL，并用 Host 解析器解析 Effect 依赖。
 完成前等待 Worker 的 close 事件；中断时随后复用现有恢复流程记录 owner 退出、回收 writer，再把状态转为终态。
 每次运行释放自己的 Worker 和 bundle URL。逐次打包避免引入新的 Session 缓存，但增加启动工作和临时内存；

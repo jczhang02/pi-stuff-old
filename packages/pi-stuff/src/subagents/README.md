@@ -82,7 +82,9 @@ structured-clone handoff is never persisted in background runner configuration. 
 claims and cancellation keep their existing ownership.
 
 The Worker evaluates and executes the shared child engine off Pi's UI thread. Pi retains foreground controls, status
-projection and Session commits. The adapter snapshots the parent Host executable and entry arguments, preserves Source
+projection and Session commits. The adapter receives process interrupt signals on Pi's main thread and writes them to
+the existing durable control inbox; the Worker consumes pause requests through the shared runner. The signal listener
+is released with the foreground execution. The adapter snapshots the parent Host executable and entry arguments, preserves Source
 URLs during bundling, and uses the Host resolver for Effect dependencies. Completion waits for the Worker close event;
 interruption then records owner exit and reaps writers through the existing recovery path before terminalizing status.
 Each run releases its Worker and bundle URL. Per-run bundling avoids a new Session cache, but adds startup work and

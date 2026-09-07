@@ -4,9 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
+import { INTERRUPT_SIGNAL } from "../../../packages/pi-stuff/src/subagents/src/runs/background/control-channel.ts";
 import { createInitialStatus } from "../../../packages/pi-stuff/src/subagents/src/runs/background/initial-status.ts";
 import { initializeWriterProcessRegistry } from "../../../packages/pi-stuff/src/subagents/src/runs/background/writer-process-registry.ts";
 import { runForegroundConfig } from "../../../packages/pi-stuff/src/subagents/src/runs/foreground/execution.ts";
+import { runForegroundWorker } from "../../../packages/pi-stuff/src/subagents/src/runs/foreground/worker.ts";
 import type { BackgroundRunnerConfig } from "../../../packages/pi-stuff/src/subagents/src/runs/shared/parallel-utils.ts";
 
 let callerEngineCalls = 0;
@@ -22,6 +24,7 @@ mock.module("../../../packages/pi-stuff/src/subagents/src/runs/background/subage
 test("foreground execution isolates the shared engine and preserves committed startup state", async () => {
 	const root = await mkdtemp(join(tmpdir(), "pi-stuff-foreground-worker-"));
 	const NativeWorker = globalThis.Worker;
+	const signalListeners = process.listenerCount(INTERRUPT_SIGNAL);
 	let workerClosed = false;
 	globalThis.Worker = class extends NativeWorker {
 		constructor(...args: ConstructorParameters<typeof NativeWorker>) {
@@ -58,11 +61,57 @@ test("foreground execution isolates the shared engine and preserves committed st
 		expect(observed.every((startedAt) => startedAt === initial.startedAt)).toBeTrue();
 		expect(callerEngineCalls).toBe(0);
 		expect(workerClosed).toBeTrue();
+		expect(process.listenerCount(INTERRUPT_SIGNAL)).toBe(signalListeners);
 	} finally {
 		globalThis.Worker = NativeWorker;
 		await rm(root, { recursive: true, force: true });
 	}
 }, 15_000);
+
+for (const outcome of ["failure", "interruption"] as const) {
+	test(`foreground Worker releases process listeners after ${outcome}`, async () => {
+		const root = await mkdtemp(join(tmpdir(), "pi-stuff-foreground-release-"));
+		const NativeWorker = globalThis.Worker;
+		const signalListeners = process.listenerCount(INTERRUPT_SIGNAL);
+		const posted = Promise.withResolvers<void>();
+		let workerClosed = false;
+		globalThis.Worker = class extends NativeWorker {
+			constructor(...args: ConstructorParameters<typeof NativeWorker>) {
+				super(...args);
+				this.addEventListener("close", () => {
+					workerClosed = true;
+				});
+			}
+			override postMessage(): void {
+				posted.resolve();
+				if (outcome === "failure") throw new Error("Injected Worker request failure");
+			}
+		};
+		try {
+			const config: BackgroundRunnerConfig = {
+				version: 2,
+				id: "foreground-release",
+				cwd: root,
+				asyncDir: root,
+				resultPath: join(root, "completion.json"),
+				work: { mode: "parallel", group: { tasks: [], concurrency: 1, worktree: false } },
+			};
+			const fiber = Effect.runFork(runForegroundWorker(config, () => {}));
+			await posted.promise;
+			if (outcome === "failure") {
+				await expect(Effect.runPromise(Fiber.join(fiber))).rejects.toThrow("Injected Worker request failure");
+			} else {
+				expect(process.listenerCount(INTERRUPT_SIGNAL)).toBe(signalListeners + 1);
+				await Effect.runPromise(Fiber.interrupt(fiber));
+			}
+			expect(workerClosed).toBeTrue();
+			expect(process.listenerCount(INTERRUPT_SIGNAL)).toBe(signalListeners);
+		} finally {
+			globalThis.Worker = NativeWorker;
+			await rm(root, { recursive: true, force: true });
+		}
+	}, 15_000);
+}
 
 test("foreground interruption reaps writers after execution release and records owner exit", async () => {
 	const root = await mkdtemp(join(tmpdir(), "pi-stuff-foreground-interrupt-"));

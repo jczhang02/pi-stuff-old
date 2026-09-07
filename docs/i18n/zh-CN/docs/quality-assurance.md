@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 451e5080a43c057f6c9c4bdbcd9b8dfd56acf04d454ce2510323a3971079121c -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 4996ae83e55926f3b50d189a303aeb1a86e2e08b3fdcb49f73a6472152b44fce -->
 
 # 质量保障
 
@@ -42,6 +42,8 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 现有实验使用 `benchmark:capability:<name>` 命名，保留 Ponytail、Markdown、生命周期、Magic Context 和 Tool Activity。它们是 Capability 范围问题，不建立 complete-Suite public-task 结果。执行前使用 `--help` 或 `--list`；Ponytail 必须显式选择 `--profile live`。历史报告仍是 dated evidence，新报告默认写入本地 artifacts。已移除的 Effect/mainline、Code Mode 图片和 Skill Discovery 实验可从 Git 历史恢复；保留其带日期报告和锁定输入作为历史证据。
 
 资源效率观察器（`scripts/benchmark-responsiveness.ts`）使用当前受支持的 Pi Host。可选的 `--gates` 输入必须匹配实际观察 Host 二进制的 SHA-256；保留的 Pi 0.85.0 阈值不能认证 Pi 0.85.1。重新校准需要新的匹配输入和测量，历史阈值与报告保持不变。观察器的离线 Acceptance 测试检查观察契约，不认证当前 Host 的性能。
+
+当 `--block-ms` 非零时，负向控制在 20 ms 后安排下一次输入或选项操作；普通测量仍保留 250 ms 间隔。屏幕采样循环的 10 ms 等待不变。负向控制继续注入 350 ms 暂停，并保留 >100 ms 的检出下限，同时拒绝达到 100 ms 的屏幕观察空档或操作重调度空档。这些检查使用保留的真实 Host 时间戳，避免一次碰巧检出掩盖粗粒度采样；普通性能阈值不重新校准。
 
 后台观察保留首次交接后的父 Agent 空闲窗口，再验证子结果恰好交付一次，以及主 Agent 的结果整合续轮。每次用户工作运行结束后仍遵守 Codex 用量刷新契约。
 

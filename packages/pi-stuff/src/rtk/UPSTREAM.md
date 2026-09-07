@@ -37,8 +37,10 @@ are maintained as Repository-owned Source under Pi Stuff's formatter, lint, and 
 
 ## External RTK runtime certification
 
-The optional executable is not bundled. Linux x64 command rewriting accepts only the official RTK `v0.45.0` release,
-source commit `b34be37caf3796b69a50952a28e60e32b5daad43`, with this immutable artifact identity:
+The optional executable is not bundled or automatically installed. The supported Linux x64 profile uses RTK
+`v0.45.0`, including local source builds and PATH shims that pass version and real-behavior verification. Fixed
+executable hashes are not compatibility admission gates. The official release from source commit
+`b34be37caf3796b69a50952a28e60e32b5daad43` remains CI download provenance:
 
 | Build | SHA-256 |
 | --- | --- |
@@ -53,8 +55,8 @@ source commit `b34be37caf3796b69a50952a28e60e32b5daad43`, with this immutable ar
 - Keeps `read` and source projection disabled; failed results and non-text blocks always remain exact.
 - Replaces upstream config modal, notifications, Statusline metrics, startup config creation, shell hook assumptions,
   and lifecycle with one interactive `/rtk` control surface in the shared non-floating Command Dialog.
-- Certifies only the official Linux x64 RTK 0.45.0 executable against the documented SHA-256; path, binary, timeout,
-  or availability drift fails open.
+- Verifies installed RTK 0.45.0 by version and real behavior. Runtime identity checks compare the selected local
+  executable with its own verified state, not a published hash; path, binary, timeout, or availability drift fails open.
 - Delegates the complete rewrite registry to RTK. Official v0.45.0 still rejects compound `find` predicates and
   actions; Pi Stuff documents that constraint instead of adding a command parser or fork.
 - Exposes one small `ContextProjectionAdapter` for composition with the Suite Context Capability.

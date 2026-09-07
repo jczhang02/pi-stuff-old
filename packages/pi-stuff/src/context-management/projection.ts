@@ -55,17 +55,6 @@ interface ProjectionFlight {
 	readonly deferred: Deferred.Deferred<string | undefined>;
 }
 
-interface ProviderProjectionEntry {
-	readonly token: symbol;
-	readonly messages: readonly AgentMessage[];
-	readonly full: string;
-	readonly result: MagicContextEventResult;
-	readonly provider: string | undefined;
-	readonly id: string | undefined;
-	readonly contextWindow: number | undefined;
-	readonly reusable: boolean;
-}
-
 export class ContextProjectionRuntime {
 	private generation = 0;
 	private readonly flights = new Map<string, ProjectionFlight>();
@@ -74,7 +63,7 @@ export class ContextProjectionRuntime {
 	/** Last valid project-memory snapshot, captured only by the normal Magic context event. */
 	private readonly memories = new Map<string, string>();
 	private readonly projections = new Map<string, string>();
-	private providerProjection: ProviderProjectionEntry | undefined;
+	private providerProjectionToken: symbol | undefined;
 	private readonly suiteCustomContextGuidance = new Set<symbol>();
 
 	constructor(host: ContextProjectionRuntimeHost) {
@@ -151,54 +140,11 @@ export class ContextProjectionRuntime {
 	}
 
 	private invalidateProviderProjection(): void {
-		this.providerProjection = undefined;
+		this.providerProjectionToken = undefined;
 	}
 
 	currentProviderProjectionToken(): symbol | undefined {
-		return this.providerProjection?.token;
-	}
-
-	private providerProjectionModelMatches(model: ExtensionContext["model"]): boolean {
-		const entry = this.providerProjection;
-		return (
-			entry !== undefined &&
-			entry.provider === model?.provider &&
-			entry.id === model?.id &&
-			entry.contextWindow === model?.contextWindow
-		);
-	}
-
-	captureProviderProjection(
-		event: ContextEvent,
-		attempt: MagicProjectionAttempt | undefined,
-		result: MagicContextEventResult | undefined,
-		model: ExtensionContext["model"],
-	): void {
-		if (!event.messages.length || !attempt?.full || !result) {
-			this.invalidateProviderProjection();
-			return;
-		}
-		this.providerProjection = {
-			token: Symbol("provider-projection"),
-			messages: event.messages.slice(),
-			full: attempt.full,
-			result,
-			provider: model?.provider,
-			id: model?.id,
-			contextWindow: model?.contextWindow,
-			reusable: false,
-		};
-	}
-
-	markProviderProjectionValidated(token: symbol | undefined, model: ExtensionContext["model"]): void {
-		const entry = this.providerProjection;
-		if (token === undefined || entry?.token !== token) return;
-		const modelMatches = this.providerProjectionModelMatches(model);
-		if (!entry || !modelMatches) {
-			this.invalidateProviderProjection();
-			return;
-		}
-		this.providerProjection = { ...entry, reusable: true };
+		return this.providerProjectionToken;
 	}
 
 	projectMagicEvent(event: ContextEvent, ctx: ExtensionContext): Effect.Effect<MagicProjectionAttempt | undefined> {
@@ -207,20 +153,10 @@ export class ContextProjectionRuntime {
 			this.invalidateProviderProjection();
 			return Effect.succeed(undefined);
 		}
-		const entry = this.providerProjection;
-		if (
-			entry?.reusable &&
-			this.providerProjectionModelMatches(ctx.model) &&
-			entry.messages.length === event.messages.length &&
-			entry.messages.every((message, index) => message === event.messages[index])
-		) {
-			return Effect.succeed({ full: entry.full, result: entry.result });
-		}
 		this.invalidateProviderProjection();
 		return this.runProjection(event, ctx, handler, generation, this.invalidate(false), "automatic-turn").pipe(
 			Effect.map((attempt) => {
 				if (!attempt.full) {
-					this.captureProviderProjection(event, attempt, undefined, ctx.model);
 					return attempt;
 				}
 				const result =
@@ -230,7 +166,7 @@ export class ContextProjectionRuntime {
 								messages: addCompactMagicContextMessage(attempt.result.messages ?? event.messages),
 							}
 						: attempt.result;
-				this.captureProviderProjection(event, attempt, result, ctx.model);
+				this.providerProjectionToken = result ? Symbol("provider-projection") : undefined;
 				return { ...attempt, result };
 			}),
 		);
@@ -281,11 +217,12 @@ export class ContextProjectionRuntime {
 				}),
 			),
 			Effect.map((full) => full ?? this.projections.get(projectionKey(ctx))),
-			Effect.map((full) =>
-				full
-					? { source: "magic-context", ...formatProjection(full, audience, options) }
-					: nativeProjection(audience, ctx, options),
-			),
+			Effect.map((full) => {
+				if (full) return { source: "magic-context", ...formatProjection(full, audience, options) };
+				if (this.host.current().active)
+					throw new Error("Magic Context projection is unavailable; raw history was not substituted.");
+				return nativeProjection(audience, ctx, options);
+			}),
 		);
 	}
 
@@ -309,7 +246,6 @@ export class ContextProjectionRuntime {
 		projectionGeneration: number,
 		trigger: ContextProjectionTrigger,
 	): Effect.Effect<MagicProjectionAttempt> {
-		const nativeResult: MagicContextEventResult = { messages: [...event.messages] };
 		return Effect.tryPromise({
 			try: async () => handler(event, this.host.quietContext(ctx)),
 			catch: (error) => (error instanceof Error ? error : new Error(String(error))),
@@ -318,7 +254,7 @@ export class ContextProjectionRuntime {
 				Effect.try({
 					try: () => {
 						if (!this.isCurrentProjection(generation, projectionGeneration)) {
-							return { full: undefined, result: nativeResult };
+							return { full: undefined, result: undefined };
 						}
 						const full = extractMagicProjection(result?.messages ?? event.messages);
 						if (!full) throw new Error("Magic Context produced no valid history projection.");
@@ -331,11 +267,11 @@ export class ContextProjectionRuntime {
 			),
 			Effect.catch((error) => {
 				if (!this.isCurrentProjection(generation, projectionGeneration)) {
-					return Effect.succeed({ full: undefined, result: nativeResult });
+					return Effect.succeed({ full: undefined, result: undefined });
 				}
 				if (trigger === "automatic-turn") this.remove(ctx);
 				this.host.fail(error, trigger);
-				return Effect.succeed({ full: undefined, result: nativeResult });
+				return Effect.succeed({ full: undefined, result: undefined });
 			}),
 		);
 	}

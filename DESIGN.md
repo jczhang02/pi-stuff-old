@@ -4,7 +4,7 @@ name: Pi Stuff
 description: Conversation-first terminal capabilities that remain inside the native Pi Host.
 omitted:
   - section: colors
-    reason: Pi Host semantic theme tokens are normative; Pi Stuff has no fixed CSS or ANSI palette.
+    reason: Pi Host semantic theme tokens are normative; The inline Skill command palette is the sole fixed ANSI exception.
   - section: typography
     reason: The Host and terminal own the font family, size, and cell metrics.
   - section: rounded
@@ -38,7 +38,9 @@ only when they help the user act or when an explicit raw/debug view is opened.
 ## Colors
 
 Color comes only from the active Pi theme. Use semantic roles such as text, muted, dim, border, accent, success,
-warning, and error; never hard-code an ANSI palette or choose values for one personal theme.
+warning, and error. The sole terminal palette exception is inline Skill command decoration, which retains the
+explicitly requested workflow demo rainbow colors. Other surfaces must not hard-code an ANSI palette
+or choose values for one personal theme.
 
 Accent identifies focus or the one active interaction. Routine information stays in ordinary or muted text. Success,
 warning, and error colors reinforce explicit icons and words; color is never the only evidence of state. Every visible
@@ -113,7 +115,7 @@ disabled state. A compact list may omit the state word; a detail Header keeps th
 ### Command Dialog
 
 One full-width top rule introduces the surface. The Header answers the surface's primary question before presenting
-metadata. Escape returns exactly one level and eventually restores the captured editor draft, Footer, working row,
+metadata. Escape returns exactly one level and eventually restores the captured editor draft, Footer, working indicator,
 Todo, and Agent roster.
 
 ### Lists
@@ -163,9 +165,14 @@ current Goal's sole compact persistent authority, while Goal lifecycle notices r
 and Command Dialogs provide inspection and control. An accepted terminal Goal Tool row shows only the machine outcome;
 the following Goal Final Response is the sole detailed result, and no terminal notification duplicates it. Ponytail
 follows the same boundary: `󱖿 <mode>` is its only
-persistent mode authority, the Working Row remains the only Agent-activity authority, and `/ponytail` provides control.
+persistent mode authority, the Host working indicator remains the only Agent-activity authority, and `/ponytail` provides control.
 Its Dialog temporarily suppresses the composed Footer, preserves the editor draft, and keeps environment overrides
 visible without presenting them as writable settings.
+
+The native Vibe Line Spinner and working message appear once in the editor's top border, using Pi's thinking-level
+colors, clipping, and animation. Conversation UI preserves that Host capability through its input wrapper; it adds no
+second working row, timer, or status state. Completion, cancellation, Command Dialog restoration, and reload retain
+Host lifecycle authority. Existing input highlighting, autocomplete, and draft behavior remain intact.
 
 The Statusline is a Nerd Font-only surface. Its fixed grammar is `󱙺` model, `` Thinking, `` Fast, `󰉋` directory,
 ``/``/`` branch tracking, ``/``/`󰏫`/`󰝒` Git state, `󰌨` Context, `󰆼` cache, `󰊚` weekly
@@ -175,6 +182,21 @@ groups. Every semantic icon and state marker in either row must use a Nerd Font 
 fallbacks, terminal detection, or an icon-mode setting. Separators and truncation marks such as `·` and `…` remain punctuation rather than semantic icons. Reuse a
 Capability identity icon, such as Ponytail's `󱖿`, in its owning Dialog instead of introducing a second visual identity.
 A Dialog redesign does not silently change transcript markers or Tool rendering.
+
+User Messages retain the native full-width `userMessageBg` card, horizontal padding, and vertical whitespace. A single
+`` occupies the Tool marker column; text and wrapped continuation lines align with Tool text at the certified
+`outputPad=1` profile. The marker denotes a Provider Prompt, including automatic user-role submissions. It does not
+assert human authorship. Other Host padding values remain configurable without an added alignment guarantee.
+
+Ordinary prompts and Skill invocations share that card. A recognized Skill appears inline as `/skill:<name>` with
+the static workflow demo rainbow palette before the prompt, without its own background, frame,
+title, or expansion hint. Skill-only
+invocations use the same layout. Inline `/skill:<name>` text throughout a User Message uses the same palette,
+without changing invocation semantics or adding instructions for textual mentions. Block Markdown starts below the Skill identity; wrapping preserves native Markdown
+hierarchy and terminal-cell alignment. Native `Ctrl+O` and the Host's current expansion state remain authoritative.
+The Skill prefix joins the first native paragraph before wrapping; native hard breaks remain intact.
+Expanded instructions use the same inline Skill decoration and follow the prompt under a low-emphasis `Skill instructions` label inside the same card, with no
+duplicate marker or prompt. Live and restored regular/fullscreen TUI share this presentation; HTML remains native.
 
 Thinking stays inside the Host-owned Transcript. When visible, every Host Thinking run occupies one row: `• thoughts: `
 followed by the last terminal row from its current native Markdown rendering. Streaming updates replace that row, and
@@ -208,7 +230,7 @@ remains the only message authority, and Thinking never becomes a visualization.
 ### Don't
 
 - **Don't** create another CLI, TUI shell, floating modal system, or permanent Package dashboard.
-- **Don't** hard-code colors, fonts, or a personal terminal theme.
+- **Don't** hard-code colors outside the documented Skill palette exception, fonts, or a personal terminal theme.
 - **Don't** make two columns look like two separate Dialogs; keep one continuous structural surface.
 - **Don't** frame individual sections or add nested indentation to simulate hierarchy.
 - **Don't** reuse `›` or the Transcript's `•` as lifecycle state. A Transcript notice may use `•` only as its record

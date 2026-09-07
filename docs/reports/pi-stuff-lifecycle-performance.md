@@ -31,7 +31,7 @@ confirmation batch with the same warmup and sample counts. Both batches remain i
 exceeds the same absolute or paired Host-overhead budget again. Direct script invocations are non-certifying.
 
 The executable contract lives in [`benchmark-lifecycle.ts`](../../scripts/benchmark-lifecycle.ts) and its
-[tests](../../test/lifecycle-benchmark.test.ts).
+[tests](../../tests/unit/repository/lifecycle-benchmark.test.ts).
 
 ## Recorded schema 6 result
 

@@ -1,82 +1,57 @@
-# Repository instructions
+# Pi Stuff repository instructions
 
 These instructions apply only while developing this repository. `AGENTS.md`, `CONTEXT.md`, and `docs/` are engineering
-material, not Pi Runtime Resources; never copy them into a user's global Pi Agent directory.
+material, never Pi Runtime Resources or files for a user's global Pi Agent directory.
 
 ## Read by task
 
-- Before changing code, read `CONTEXT.md`, the relevant accepted ADRs, and `docs/compatibility.md`.
-- Before quality, refactoring, fork-integration, or source-reduction work, also read `docs/code-quality.md`.
-- For visible surfaces, also read `DESIGN.md` and the owning Module README or ADR. For work items, read
-  `docs/agents/issue-tracker.md`.
-- Use the glossary's canonical terms. Record durable terminology or architecture decisions in `CONTEXT.md` or an ADR,
-  not only in Session history.
+- Code changes and engineering-rule changes: read the relevant sections of `CONTEXT.md`, `docs/compatibility.md`, and
+  the owning accepted ADR or Module README before editing. Read only enough for read-only location or status work.
+- Code changes, reviews, or verification work: read the relevant sections of `docs/code-quality.md`.
+- Visible surfaces: read `DESIGN.md` and the owning Module README or ADR.
+- Beads, delivery, or closure: read `docs/agents/issue-tracker.md`.
 
-## Working rules
+## Engineering boundaries
 
-- Fix the shared root cause and inspect the complete affected Capability, not only the reported example. Prefer the
-  smallest change at the owning seam and reuse Pi's public APIs, native behavior, and existing Suite components.
-- Treat every tracked implementation, test, script, prototype, generated source, and repository quality tool as
-  Repository-owned Source regardless of provenance. Source origin never permits a Biome, Oxlint/anti-slop, TypeScript,
-  dependency-analysis, file-size, or maintainability exemption. Exclude only non-code machine state and artifacts.
-- Follow the size gates and line-count evidence policy in `docs/code-quality.md`. File splitting must deepen an owning
-  Module and reduce concepts or state, not distribute the same complexity across mechanical fragments.
-- For material design choices, compare viable options and evidence before choosing the smallest adequate one. Explain
-  unfamiliar terms and the result in plain language.
-- Make obvious, reversible repository-local decisions without asking. Ask one concise question in the conversation,
-  not through a question widget, only when scope, authority, or a material product decision genuinely depends on it.
-- Keep long-running work observable. The Agent owns focused checks and representative real-Host acceptance; do not hand
-  routine verification back to the user.
-- Keep tests proportional to risk: write the smallest focused coverage that protects meaningful behavior or a
-  demonstrated regression. Redundant, speculative, or bloated tests do not belong.
-- Every code change must pass the Thermo-Nuclear completion review in `docs/code-quality.md` against the complete final
-  diff. A small isolated change needs one focused clean review. Broad, cross-Capability, architecture, whole-repository
-  quality/refactoring/source-reduction, or release-risk work needs an independent reviewer and repeated review of the
-  whole affected scope until two consecutive rounds report no findings. A finding blocks completion until it is fixed
-  or disproved with direct source evidence; any later code change invalidates the clean result.
+- Pi is the Host. Keep Pi Stuff as one local Package with one default Extension factory; Capability Modules are
+  internal and have no installation or publication lifecycle. Do not create another CLI, runtime, Session layer, SDK,
+  or TUI shell.
+- Keep lifecycle authority with its owner: Pi owns ordinary foreground Agent runs, Goal owns Goal continuation and
+  terminal policy, Agents owns delegated execution, and Context Management owns context projection, retrieval,
+  compaction, and pressure handling.
+- Keep Extension import pure: startup performs no network, subprocess, Host-setting, or user-configuration work.
+  First-use configuration waits for direct interactive/RPC input or an explicit command or Tool; initialization errors
+  propagate instead of loading a partial Suite.
+- Preserve one visible authority per state and follow `DESIGN.md`. Ship TypeScript source without a `dist/` lane.
+  Change `packages/pi-stuff/suite.json`, then run `bun run suite:generate`; never edit generated output alone.
 
-## Hard boundaries
+## Change and verification rules
 
-- Pi is the Host. Do not create another CLI, runtime, session layer, SDK, or TUI shell. Pi Stuff remains one local
-  Package with one default Extension factory; Capability Modules are internal and not independently installed or
-  published.
-- Lifecycle authority stays with its owner: Pi owns ordinary foreground Agent runs, Goal owns Goal continuation and
-  terminal policy, and Agents owns delegated execution. Context Management owns context projection, retrieval,
-  compaction, and pressure handling—not task convergence or another lifecycle's limits or terminal decisions.
-- Keep Extension import pure. Session startup must not access the network, spawn subprocesses, mutate Host settings, or
-  create, rewrite, or migrate user configuration. First-use configuration waits for direct interactive/RPC input or an
-  explicit command or Tool. Let initialization errors propagate rather than loading a partial Suite.
-- Follow `DESIGN.md` for UI and keep each state at one visible authority. Ship TypeScript source without a `dist/`
-  lane. Change `packages/pi-stuff/suite.json`, then run `bun run suite:generate`; never edit generated composition
-  output alone.
+- Fix the shared root cause at its owning seam, inspect the complete affected Capability, and reuse Pi public APIs and
+  existing Suite components. Make product and architecture choices that are obvious and reversible; ask only when
+  scope, authority, or a material product decision depends on the user.
+- Follow the risk-based checks and completion review in `docs/code-quality.md`. Reuse results for the same revision;
+  broaden or repeat verification only for changed code, a failure, or an unresolved risk.
+- Carry authorized work through verification and delivery. Apply follow-up messages to the ongoing task unless the
+  user cancels or replaces it; answer side questions and continue. Reuse authorization already given in the Session.
+- Explicit user instructions take precedence over repository workflow and skill guidelines. If a skill causes a pause
+  or departure from the request, link its exact file, quote the rule, and distinguish the requirement from interpretation.
+- Keep progress and the final outcome concise, with decisive evidence and remaining work.
+- Keep direct dependencies exact and `trustedDependencies` empty. Put worktrees under `.worktrees/`. Use signed
+  Conventional Commits for coherent completed changes.
+- Do not infer merge from ancestry. Before reporting merge or cleanup, inspect the patch, target branch, and every
+  associated worktree's tracked and untracked state; remove a merged worktree only after it is clean.
+- Accepted durable implementation follows Beads and `docs/agents/issue-tracker.md`; read-only discussion, exploration, and
+  current-turn checklists need no Bead.
 
-## Workflow and safety
+## Documentation and safety contract
 
-- Put every Pi Stuff Git worktree under repository-local `.worktrees/`.
-- Use the versions in `docs/compatibility.md`; keep direct dependencies exact and `trustedDependencies` empty.
-- During development, run focused tests and `bun run check:fast` from the root of the worktree containing the changes.
-  Before marking a PR ready or merging, run `bun run check` there against the final changes. Checks from another
-  worktree do not certify those changes. Public-seam certification cannot be claimed from mocks.
-- Do not infer a merge from ancestry alone. Inspect the relevant patch or commits, every associated worktree's tracked
-  and untracked state, and the target branch before reporting merge or cleanup status.
-- After a worktree's changes are merged, verify it has no tracked or untracked work, then remove the worktree promptly.
-- Commit and push small, coherent checkpoints promptly after the relevant focused check; do not accumulate unrelated
-  work in one commit. Use signed Conventional Commits.
-- Keep human-authored English Markdown authoritative and update the owning current document in the same change whenever
-  behavior, contracts, terminology, compatibility, or workflow changes. Mirror every retained English Markdown source
-  under `docs/i18n/zh-CN/<repository path>` with its source path and raw-source SHA-256, and update the mirror in the
-  same change. Exclude byte-sensitive Runtime `SKILL.md` resources and `THIRD_PARTY_NOTICES.md`; keep the historical
-  Chinese-only execution checklist Chinese-only.
+- Human-authored English Markdown is authoritative. When retaining or changing it, update its mirror under
+  `docs/i18n/zh-CN/<repository path>` with the source path and raw-source SHA-256 in the same change. Exclude
+  byte-sensitive Runtime `SKILL.md`, `THIRD_PARTY_NOTICES.md`, and the historical Chinese-only execution checklist.
 - Preserve the wiki roles in `docs/README.md`: entry and Package READMEs describe current behavior, Module READMEs own
-  local contracts, `CONTEXT.md` owns canonical language and boundaries, `DESIGN.md` owns shared visible-surface rules,
-  ADRs explain durable trade-offs, and retained research, reports, and release notes are dated evidence. Git history is
-  the archive for deleted prototypes, rendered duplicates, and redundant evidence.
-- When creating a Bead, record enough conversation provenance to retrieve its source Session: the originating Host or
-  Agent surface (`Pi`, `Codex`, or another named surface), the Session name when available, and a stable Session ID or
-  equivalent lookup key. Record metadata only and follow the public-data policy; never paste transcript content or
-  sensitive Session data into Beads.
-- Never commit credentials, auth, model stores, Sessions, caches, `.env`, machine state, or private absolute paths.
-  Installing the Suite remains an explicit maintainer action through `pi install`; Suite code must not install itself.
-
-Beads is the canonical issue tracker; GitHub Issues is its public push-only mirror and external intake. The five
-canonical labels and the single-context domain layout are defined under `docs/agents/`.
+  local contracts, `CONTEXT.md` owns language and boundaries, `DESIGN.md` owns shared visible-surface rules, ADRs own
+  durable trade-offs, and dated research/reports/release notes provide evidence. Update the owning document with changed
+  behavior or contracts; record durable decisions there instead of leaving them only in Session history.
+- `pi install` remains an explicit maintainer action; Suite code never installs itself. Never commit credentials, auth,
+  model stores, Sessions, caches, `.env`, machine state, private absolute paths, or private data.

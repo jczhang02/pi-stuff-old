@@ -8,7 +8,7 @@ repository already uses a GitHub-hosted VM with passwordless sudo. A subsequent 
 
 ## What acceptance requires
 
-[ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md) requires CPU, resident memory,
+[ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md) requires CPU, resident memory,
 allocation/GC, I/O, wakeups, and operation duration, with explicit measurement limits. It does not require tracing
 every individual allocation. Missing dimensions still need the directly evidenced bounds required by `ps-yon.3`
 and `ps-yon.5`; a heap snapshot is not a substitute for allocation volume, and context switches are not wakeups.

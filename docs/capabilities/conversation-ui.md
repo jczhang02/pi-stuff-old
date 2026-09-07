@@ -3,7 +3,7 @@
 [Simplified Chinese](../i18n/zh-CN/docs/capabilities/conversation-ui.md)
 
 Conversation UI keeps Pi Stuff's current state readable inside Pi. It owns the Welcome header, responsive Statusline,
-input presentation, Thinking labels, fenced visualizations, shared Command Dialog, and Suite diagnostics.
+input and User Message presentation, Thinking labels, fenced visualizations, shared Command Dialog, and Suite diagnostics.
 
 ## Quick start
 
@@ -62,6 +62,25 @@ Input highlighting and inline completion extend Pi's native editor without repla
 handling. Slash completion covers registered commands and inserts the canonical `/skill:<name>` form for Skills.
 
 Focused dialogs temporarily take the editor surface. Closing a dialog restores the exact draft and normal Pi chrome.
+
+## User Messages
+
+User Messages retain Pi's full-width card background and spacing. One `` aligns with the Tool marker, with prompt and
+continuation text aligned to Tool text at the certified `outputPad=1` setting. This marks a Provider Prompt, including
+automatic user-role messages, rather than asserting human authorship.
+
+Submitting `/skill:implement <prompt>` shows `/skill:implement` and the prompt together in that card. Skill-only
+invocations use the same presentation. The Skill command uses the static workflow demo rainbow palette; lists, quotations, and code
+blocks begin below it where necessary to retain native Markdown structure. Native `Ctrl+O` expands full Skill
+instructions after the prompt under `Skill instructions`, without repeating the prompt or creating another card.
+Inline `/skill:<name>` text throughout the prompt receives the same colors in its original position. This decoration
+does not invoke Skills or add instructions for textual mentions. Expanded instructions share the inline decoration; fenced code and hyperlink targets remain native.
+
+Live and restored regular/fullscreen TUI share the same rendering. Session content, Provider input, editor history,
+and HTML export retain their native semantics. The version-bound adapter is released on Session switch, shutdown,
+and `/reload`. Initialization incompatibility fails clearly; an exceptional presentation failure during work retains
+native messages, disables further User Message projection for that Session, and reports once through `/diagnostics`.
+Use `/reload` to attempt installation again. Unexpected fallback in normal certified scenarios fails acceptance.
 
 ## Thinking labels
 

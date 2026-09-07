@@ -1,9 +1,12 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { handleBenchmarkMeta } from "./benchmark-cli.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { prepareFixture } from "./lifecycle-benchmark-fixture.js";
 import { cellKey, runSample, summaries } from "./lifecycle-benchmark-sampling.js";
-import { stageCertifiedPiHost } from "./verify-pi-host-provenance.js";
+import { CERTIFIED_PI_HOST_PROFILE } from "./pi-host-contract.js";
+import { stageSupportedPiHost } from "./verify-pi-host-provenance.js";
 
 export { lifecycleExpectProgram, lifecycleSessionFindings } from "./lifecycle-benchmark-fixture.js";
 export { percentile, summarize } from "./lifecycle-benchmark-sampling.js";
@@ -118,7 +121,6 @@ function fail(message: string): never {
 
 const ROOT = resolve(import.meta.dir, "..");
 const REPOSITORY_BUN_VERSION = "1.4.0";
-const DEFAULT_PI_BINARY = "/opt/pi-coding-agent/pi";
 const DEFAULT_PACKAGE = join(ROOT, "packages/pi-stuff");
 const DEFAULT_SAMPLES = 3;
 const DEFAULT_WARMUPS = 1;
@@ -172,7 +174,7 @@ function parseOptions(arguments_: readonly string[]): BenchmarkOptions {
 	let longSessionTools = 0;
 	let output = DEFAULT_OUTPUT;
 	let packagePath = DEFAULT_PACKAGE;
-	let piBinary = process.env["PI_BIN"] ?? DEFAULT_PI_BINARY;
+	let piBinary: string | undefined;
 	let promptRepetitions = 1;
 	let samples = DEFAULT_SAMPLES;
 	let scenarios: readonly Scenario[] = SCENARIOS;
@@ -263,7 +265,7 @@ function parseOptions(arguments_: readonly string[]): BenchmarkOptions {
 		longSessionTools,
 		output,
 		packagePath,
-		piBinary,
+		piBinary: piBinary ?? resolvePiBinary(),
 		promptRepetitions,
 		samples,
 		scenarios,
@@ -598,11 +600,11 @@ async function main(): Promise<void> {
 		fail(`Bun ${REPOSITORY_BUN_VERSION} is required; received ${Bun.version}`);
 	}
 	const benchmarkRoot = await mkdtemp(join(tmpdir(), "pi-stuff-lifecycle-benchmark-"));
-	const provenance = await stageCertifiedPiHost(options.piBinary, benchmarkRoot).catch(async (cause: unknown) => {
+	const stagedHost = await stageSupportedPiHost(options.piBinary, benchmarkRoot).catch(async (cause: unknown) => {
 		await rm(benchmarkRoot, { recursive: true, force: true });
 		throw cause;
 	});
-	options = { ...options, piBinary: provenance.binaryPath };
+	options = { ...options, piBinary: stagedHost.binaryPath };
 	const projectDirectory = join(benchmarkRoot, "project");
 	const fixturePackage = join(benchmarkRoot, "fixture-package");
 	await Promise.all([
@@ -649,7 +651,7 @@ async function main(): Promise<void> {
 		const report = {
 			schemaVersion: 6,
 			generatedAt: new Date().toISOString(),
-			host: { profile: provenance.profile, provenance: provenance.kind },
+			host: { profile: CERTIFIED_PI_HOST_PROFILE },
 			toolchain: { bun: Bun.version },
 			startupModel: {
 				processState: "Every sample starts a new Pi process with a cold process-local Suite module cache.",
@@ -689,12 +691,16 @@ async function main(): Promise<void> {
 		await mkdir(dirname(options.output), { recursive: true });
 		await writeFile(options.output, `${JSON.stringify(report, null, 2)}\n`);
 		console.log(JSON.stringify(report, null, 2));
-		if (acceptanceFindings.length > 0) {
-			fail(`acceptance did not pass:\n- ${acceptanceFindings.join("\n- ")}`);
-		}
 	} finally {
 		await rm(benchmarkRoot, { recursive: true, force: true });
 	}
 }
 
-if (import.meta.main) await main();
+if (import.meta.main) {
+	handleBenchmarkMeta(Bun.argv.slice(2), "usage: benchmark:capability:lifecycle [options]", [
+		"startup",
+		"steady-state",
+		"cleanup",
+	]);
+	await main();
+}

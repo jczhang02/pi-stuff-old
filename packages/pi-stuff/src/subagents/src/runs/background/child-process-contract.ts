@@ -55,5 +55,6 @@ export interface ChildProcessEngineInput {
 	status: RunnerStatus;
 	activeControls: Map<number, ChildRuntimeControl>;
 	consumeScheduledStop: () => boolean;
+	preStartTerminalCause?: () => "pause" | "timeout" | "stop" | undefined;
 	onWriterProcess?: ((writer: WriterRuntimeState) => void) | undefined;
 }

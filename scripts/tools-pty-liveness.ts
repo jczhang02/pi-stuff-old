@@ -90,7 +90,7 @@ function editorContains(frame: string, text: string): boolean {
 	const lines = frame.split("\n");
 	for (let index = 0; index + 2 < lines.length; index += 1) {
 		if (
-			/^─+$/u.test(lines[index] ?? "") &&
+			/^(?:─+|── [⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] Working ─+)$/u.test(lines[index] ?? "") &&
 			(lines[index + 1] ?? "").includes(text) &&
 			/^─+$/u.test(lines[index + 2] ?? "")
 		) {
@@ -121,7 +121,8 @@ async function waitForLivenessEvent(
 		if (event) return event;
 		await Bun.sleep(10);
 	}
-	fail(`timed out waiting for the ${payloadKind} ${type} event`);
+	const observed = (await readFile(requestLog, "utf8")).trim() || "<empty>";
+	fail(`timed out waiting for the ${payloadKind} ${type} event; request log: ${observed}`);
 }
 
 async function waitForFrame(
@@ -154,7 +155,7 @@ function assertLiveness(sample: ToolsLivenessSample, frame: string): void {
 	}
 	if (sample.maximumSpinnerFrameMs > TOOL_SPINNER_LIVENESS_LIMIT_MS) {
 		fail(
-			`${sample.payloadKind} Working Row spinner held one frame for ${String(sample.maximumSpinnerFrameMs)}ms (limit ${String(TOOL_SPINNER_LIVENESS_LIMIT_MS)}ms)\nFrame:\n${frame}`,
+			`${sample.payloadKind} working indicator held one frame for ${String(sample.maximumSpinnerFrameMs)}ms (limit ${String(TOOL_SPINNER_LIVENESS_LIMIT_MS)}ms)\nFrame:\n${frame}`,
 		);
 	}
 }
@@ -354,6 +355,14 @@ export async function runToolsPtyLiveness(options: ToolsPtyLivenessOptions): Pro
 			}),
 		);
 		return samples;
+	} catch (error) {
+		let frame = "<closed>";
+		try {
+			frame = capture(true);
+		} catch {
+			// Preserve the original failure if the terminal process has already exited.
+		}
+		throw new Error(`${String(error)}\nFinal terminal frame:\n${frame}`, { cause: error });
 	} finally {
 		Bun.spawnSync(["tmux", "-S", fixture.socket, "kill-server"], { stderr: "ignore", stdout: "ignore" });
 		await rm(fixture.temporaryDirectory, { force: true, recursive: true });

@@ -9,7 +9,7 @@ owning command when a guided recovery path exists.
 
 ### The Package does not load
 
-1. Confirm that `pi --version` reports `0.85.0` on the certified Linux x64 path.
+1. Confirm that `pi --version` reports `0.85.1` on the certified Linux x64 path.
 2. From the repository root, run `pi install ./packages/pi-stuff` again.
 3. Restart Pi and open `/diagnostics`.
 
@@ -60,6 +60,10 @@ needs authentication, or `/mcp setup` to correct its declaration.
 Use `/mcp on-demand <server>`. Use `/mcp auto-connect <server>` when the server should connect automatically.
 
 ## RTK
+
+For local test preflight failures, check the reported executable path and version. Point `RTK_BIN` at an existing
+supported executable or put it on `PATH`; same-version source builds and shims do not need an official release hash.
+Likewise, `PI_BIN` selects an installed supported Pi. Local verification does not download or reinstall either tool.
 
 ### Commands are not rewritten
 

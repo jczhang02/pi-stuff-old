@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/tool-display/UPSTREAM.md; translation-source-sha256: 509b3ca80dbd195523554e12640172efcdfd419ffc8a5d07537a604e383601c5 -->
+<!-- translation-source: packages/pi-stuff/src/tool-display/UPSTREAM.md; translation-source-sha256: 10cd7be8ab9c2df5e42f544445f19c403aac4e6965f779f8573332e781fda5e2 -->
 
 # 上游来源
 
@@ -17,7 +17,7 @@
 ## Pi Stuff 差异
 
 - 保留上游结果优先、同名内置覆盖和语义摘要思想。
-- 直接使用七个 Pi 0.85.0 工具定义，因此其参数 Schema、提示词元数据、执行、结果形态、事件和权限拦截仍由宿主负责且保持不变。Pi 额外的 PowerShell 工具继续由宿主渲染，只为生命周期成员关系进行识别。
+- 直接使用七个 Pi 0.85.1 工具定义，因此其参数 Schema、提示词元数据、执行、结果形态、事件和权限拦截仍由宿主负责且保持不变。Pi 额外的 PowerShell 工具继续由宿主渲染，只为生命周期成员关系进行识别。
 - 删除注入的 `reasoning` 参数和所有非结果呈现模式。
 - 删除固定 ANSI 颜色、emoji、整行成功背景、`/diff`、以全局展开作为详情路径、`pi-fff`、命令驱动配置和上游写文件式启动/配置行为。
 - 使用 Pi 语义主题 token、有界宽度缓存、硬限制聚焦详情和共享非浮动 Pi Stuff 命令对话框。

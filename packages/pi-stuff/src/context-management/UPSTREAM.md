@@ -1,8 +1,8 @@
 # Bundled context engine provenance
 
 Pi Stuff integrates the official Magic Context Package through this adapter and does not vendor Magic Context Core.
-The repository applies one temporary, audited dependency patch to the pinned Package while the upstream tokenizer
-path does not satisfy standalone Pi's module-resolution and first-turn latency contracts.
+The repository applies one temporary, audited dependency patch to the pinned Package for tokenizer compatibility and stable
+message identity during Pi retry, plus genuine Magic recovery through the public compaction hook.
 
 The exact published Package executes inside Pi Stuff's Context Engine Worker. The adapter produces one
 activation-time in-memory bundle solely to make the official module graph resolvable from the certified standalone Pi
@@ -20,7 +20,7 @@ binary; it does not alter upstream source or persist a derived artifact.
 ## Temporary tokenizer compatibility patch
 
 - Patch: [`patches/@cortexkit%2Fpi-magic-context@0.41.1.patch`](../../../../patches/@cortexkit%252Fpi-magic-context@0.41.1.patch)
-- Patch SHA-256: `e01e53c4eab1f49c9d44ed5b9040eddd1d0eeb547121d8f62209d049c940cef0`
+- Patch SHA-256: `0c75ef8e484250b614d1650dfc772d3e66f3d83f9fc4478d863de9bd7d4044d2`
 - Scope:
   - add the published module's `import.meta.url` ancestry and Bun isolated-linker `node_modules` root to the existing
     `ai-tokenizer` fallback search;
@@ -63,28 +63,69 @@ fail-open behavior, and active Host-managed fail-closed Provider handling. See t
 
 ## Pi Stuff adapter policy
 
-- lazy direct-input activation starts after Host input acknowledgement while the first Agent boundary retains direct-user
-  mutation authority; automatic-turn activation runs only when a recognized CortexKit config exists and no legacy
-  location or flat user execution settings await the official factory's migration;
-- native Pi fail-open behavior during startup or degraded operation only;
-- active Host-managed `before_provider_request` handling is a local fail-closed adapter boundary with 95% final-payload
-  validation; direct calls bypassing that hook are excluded;
-- no upstream submission or dependency is introduced for the local adapter boundary;
-- one bounded status/projection seam for BTW and Agents;
-- exact official base Package plus the temporary audited tokenizer compatibility patch behind a replaceable Capability seam;
-- the exact official engine isolated from Pi's UI thread behind immutable Host snapshots and bounded effects;
-- a semantically transparent cancellation boundary: mirrored lifecycle events and signal-blind commands do not inherit
-  the ambient Agent-turn signal; Tool invocations and the pinned signal-aware augmentation command retain their owned
-  signals, and every upstream upgrade re-audits which official handlers consume a signal;
-- no competing Todo, statusline, announcement, Dreamer, or Sidekick UI;
-- only the five Context tools plus focused status, flush, recomposition,
-  wrap-up, and session-upgrade commands are exposed;
-- one explicit compaction authority: native fallback is allowed before Magic
-  takeover, never stacked after an active Magic attempt;
-- bounded reference-only projections for BTW and Agents;
-- a first-use configuration bootstrap that mirrors upstream's absolute-XDG and JSON/JSONC path rules, ignores custom
-  Pi agent directories that upstream does not read, and creates a user config only when no recognized user or project
-  config exists;
-- a lexical-only first-use search profile, keeping initial activation independent
-  of the optional local embedding runtime. Explicit user embedding configuration
-  is preserved.
+- Configured startup is read-only toward user configuration. Direct first-use authority follows upstream XDG and
+  JSON/JSONC discovery, with a lexical-only default; explicit embeddings remain untouched.
+- Enabled Magic exclusively owns foreground projection and compaction, including failure recovery. Native behavior
+  remains only for unconfigured or explicitly disabled Magic. Local estimates do not block valid requests.
+- Every foreground Context event calls Magic. Pi owns persistence, retry, and queue delivery, including queue
+  continuation after explicit cancellation. There is no new foreground scheduler or transport policy.
+- The pinned official artifact plus the audited patch runs in an internal Worker with immutable Host snapshots and
+  Session-bound effects. Ordinary lifecycle events do not inherit ambient Agent cancellation; the compaction hook,
+  Tools, and signal-aware commands receive their invocation-owned signals.
+- Existing bounded reference projections for BTW and Agents remain. Only the five Context Tools and focused status,
+  flush, recomposition, wrap-up, and upgrade commands are exposed; no competing Todo, statusline, announcement,
+  Dreamer, or Sidekick UI is added.
+
+## Retained-summary retry identity correction
+
+The Pi adapter now uses Magic's existing reference and unique-fingerprint resolver for message identities on every
+Context projection. Equal message counts cannot prove positional alignment: Pi retains earlier compaction summaries
+and removes a persisted failed Assistant response from active retry messages. Those differences can cancel and attach
+drop records to the wrong messages. The unused positional alignment implementation is removed.
+
+A regression uses actual Pi Session projection and the real Magic Worker, retains an older summary, persists a failed
+response, then retries unchanged input. The projected messages and tags must remain identical. This correction is part
+of ps-5r4 under ps-eck; it does not alone certify Magic-only overflow recovery. Remove this patch component when an
+exact upstream artifact passes the same retained-summary/retry regression and real Host differential acceptance.
+
+## Genuine overflow compaction and durable completion
+
+The same pinned dependency patch connects `session_before_compact` overflow/manual requests to the existing Historian,
+boundary resolver, compartment lease, and retry machinery. It returns the durable compartment summary and verified
+`firstKeptEntryId`; Pi persists the result and owns its subsequent retry. It adds no storage schema or full-history
+recomposition. An abort check immediately before Historian publication prevents cancellation from publishing late work.
+
+Recovery reads pending completion strictly: malformed state stops without clearing the evidence. A lost Worker reply
+reuses the committed compartment after restart rather than rerunning the Historian. The pending marker stays until Pi
+persists its compaction, then the existing compare-and-clear drain removes it. One ten-minute allowance bounds this
+overflow operation; the Suite shares that allowance across its single permitted Worker restart. Manual compaction does
+not inherit a fault deadline. Actual overflow uses Magic's existing emergency tail policy, retaining the current input.
+Recovery drains successive runnable chunks with ordinal progress checks before returning to Pi. Each boundary calculation
+owns its short-lived raw-message provider binding, so Historian cleanup cannot hide remaining history.
+
+`tests/acceptance/context-management/magic-recovery-host.test.ts` compares direct patched Magic with the Suite on the certified Pi executable,
+and injects real Worker termination before work or after publication. It also covers completed Tool reuse, transient
+Historian failure, uncertain acknowledgement, no progress, repeated overflow, and native cancellation/queue parity.
+These fixture Provider errors establish control flow, not live remote capacity. Remove this patch component only when
+an exact official artifact passes the same durable-completion and real-Host differential cases. Re-audit handler signal
+consumption, lease/publication atomicity, and summary boundaries on every upstream upgrade.
+
+### 2026-09-06 child pressure differential
+
+`bun test test/agents/child-context-pressure-host.test.ts test/context/magic-recovery-host.test.ts` passes 14 tests, 0
+failures, and 116 assertions in 73.21s on certified Pi 0.85.1 (log: `.artifacts/ps-8ew-acceptance/context-host.log`). It
+exercises the production `buildPiArgs` path with the actual Magic Worker/Historian, fresh and branched seeded child
+histories, two real overflow recoveries, eight intervening Tool calls, latest steering, and final-report checks for prior
+findings and completed-check IDs. The first
+run failed because Magic's `clearOldReasoning` erased signed reasoning during replay. The patch now preserves signed
+reasoning blocks in both existing clear paths. The next failure showed that a successful compaction summary was followed
+by a retry with stale cached projection; invalidating the Pi cache before the public `recoverPiCompaction` hook fixes that
+ordering. This reuses the existing cache seam and adds no child projector. The combined command passes 14 tests with 116
+assertions in 73.21s; the fixture proves production control flow and protocol preservation, not live remote capacity.
+A separate live background run confirmed clean teardown; live pressure compaction remains unclaimed.
+
+
+The Pi Historian also records its three pre-chunk no-op exits as `noop`, matching their existing log messages and the
+existing post-filter/budget no-op contract. Previously those returns retained the default `failed` telemetry status,
+causing the real acceptance gate to reject otherwise successful runs. This changes outcome accounting, with no new
+compression or retry behavior. The real Provider gate checks that genuine Historian failures remain absent.

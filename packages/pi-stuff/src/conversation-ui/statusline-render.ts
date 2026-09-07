@@ -247,9 +247,10 @@ function renderContextSegment(
 	if (statuses.has("compact-policy")) return undefined;
 	if (status) {
 		if (status.state !== "validated") {
+			const text = status.phase ? `${status.state}: ${status.phase}` : status.state;
 			return {
 				compact: `${theme.fg("dim", icons.context)} ${theme.fg("text", status.state)}`,
-				full: `${theme.fg("dim", icons.context)} ${theme.fg("text", status.state)}`,
+				full: `${theme.fg("dim", icons.context)} ${theme.fg("text", text)}`,
 			};
 		}
 		const contextWindow = status.contextWindow;

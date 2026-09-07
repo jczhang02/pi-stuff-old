@@ -14,6 +14,7 @@ index READMEs use smaller variants suited to their scope.
 | Package | Explain the installed Package | Name and purpose, Preview, Capabilities, Installation, Documentation |
 | Capability | Introduce one user-facing capability | Name and purpose, Preview, Quick Start, Highlights, Documentation |
 | Index | Help readers choose a destination | Name and purpose, visual index, categorized links |
+| Test directory (`tests/`) | Explain test layout and execution | Name and purpose, directory guide, commands, benchmark boundary |
 
 Omit a section when it has no useful content. Acknowledgments belongs only in the root README.
 
@@ -41,14 +42,14 @@ internal maintenance disclaimers, and repeated rationale already owned by anothe
 Use two centered rows in this order:
 
 1. CI, MIT License, GitHub stars, GitHub forks, last commit.
-2. Pi `0.85.0`, Bun `1.4.0`, TypeScript `5.9.3`, Linux x64.
+2. Pi `0.85.1`, Bun `1.4.0`, TypeScript `5.9.3`, Linux x64.
 
 Badges link to the workflow, license, repository activity, compatibility reference, or relevant upstream project.
 Do not add npm, release, or issue-count badges.
 
 ## Screenshots
 
-Every README contains at least one unique screenshot. Simplified Chinese mirrors reuse the same PNG and translate only
+READMEs under `tests/` are text-only engineering guides and do not require screenshots. Every other README contains at least one unique screenshot. Simplified Chinese mirrors reuse the same PNG and translate only
 the surrounding alt text and caption.
 
 Use this exact block for every README image:
@@ -68,7 +69,7 @@ Never mix standalone bold labels, tables, `<figure>`, or baked-in callouts with 
 
 ### Capture standard
 
-- Capture a real Pi `0.85.0` session in Ghostty `1.3.1`.
+- Capture a real Pi `0.85.1` session in Ghostty `1.3.1`.
 - Use Catppuccin Latte and JetBrainsMono Nerd Font Mono.
 - Use English UI and synthetic, disposable demo data.
 - Exclude credentials, user Sessions, private paths, and unrelated desktop content.

@@ -195,16 +195,20 @@ class MagicWorkerClient {
 		const input = snapshotMagicWorkerEvent(event);
 		let sessionId: string | undefined;
 		try {
-			const reply = await this.invoke(() => {
-				const readContextUsage = magicEventReadsContextUsage(event);
-				const context = this.synchronizeSession(ctx, event.type === "session_start", readContextUsage);
-				sessionId = context.session.id;
-				return {
-					...input,
-					context,
-					id: this.nextRequestId(),
-				} satisfies MagicWorkerEventRequest;
-			}, ctx);
+			const reply = await this.invoke(
+				() => {
+					const readContextUsage = magicEventReadsContextUsage(event);
+					const context = this.synchronizeSession(ctx, event.type === "session_start", readContextUsage);
+					sessionId = context.session.id;
+					return {
+						...input,
+						context,
+						id: this.nextRequestId(),
+					} satisfies MagicWorkerEventRequest;
+				},
+				ctx,
+				event.type === "session_before_compact" ? event.signal : undefined,
+			);
 			if (reply.type !== "event-result") {
 				throw new Error(`Magic Context worker returned '${reply.type}' for event '${event.type}'.`);
 			}
@@ -251,7 +255,7 @@ class MagicWorkerClient {
 		setImmediate(() => {
 			if (this.isClosed()) return;
 			try {
-				if (ctx.sessionManager.getSessionId() !== expectedSessionId) return;
+				if (this.activeContext(expectedSessionId) !== ctx) return;
 				this.synchronizeSession(ctx, false, false);
 			} catch {
 				// Pi may switch or close the Session before this post-persistence refresh runs.
@@ -353,7 +357,7 @@ class MagicWorkerClient {
 	private activeContext(sessionId: string): ExtensionContext | undefined {
 		if (!this.foundation.isCurrent(this.capability)) return;
 		const ctx = this.contexts.get(sessionId);
-		if (!ctx) return;
+		if (!ctx || ctx.sessionManager.getSessionId() !== sessionId) return;
 		const session = this.foundation.sessionFor(ctx.sessionManager);
 		return session?.generation === this.capability.generation && this.foundation.isCurrent(session) ? ctx : undefined;
 	}

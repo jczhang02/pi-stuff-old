@@ -4,7 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeFunction } from "../packages/pi-stuff/src/shared/runtime-type.js";
-import { FIXTURE_THINKING, THOUGHT_PHASES, THOUGHT_SPACING_PTY } from "../test/fixtures/ui-pty-provider.js";
+import { FIXTURE_THINKING, THOUGHT_PHASES, THOUGHT_SPACING_PTY } from "../tests/fixtures/ui-pty-provider.js";
 import * as pty from "./ui-pty-session.js";
 
 export const EXPANDED_THINKING_PREFIX = "• thoughts: ";

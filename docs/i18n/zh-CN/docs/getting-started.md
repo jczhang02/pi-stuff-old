@@ -1,4 +1,4 @@
-<!-- translation-source: docs/getting-started.md; translation-source-sha256: a9c38506fb63df2a36389ad70b3da8d3ad64813f3befce86b4d41ad48c3dbec6 -->
+<!-- translation-source: docs/getting-started.md; translation-source-sha256: b116c407ed770d6584ec4a8454400e816e9a5cac4fa68d4a0d90bd3e746e9144 -->
 
 # 入门
 
@@ -8,8 +8,8 @@
 
 ## 环境要求
 
-已认证 Host 为 Linux x64 上的 Pi `0.85.0`，构建自上游提交
-`107d79f11072bbc8a3a757ed7fd69596bee7d68c`。完整开发工具链与认证范围见[兼容性](compatibility.md)。
+已认证 Host 为 Linux x64 上的 Pi `0.85.1`，构建自上游提交
+`d981de1229ef899957bbe968bc8dcda02a21f477`。完整开发工具链与认证范围见[兼容性](compatibility.md)。
 
 你还需要 Git 和支持 truecolor 的终端。项目截图使用 Ghostty，但 Pi Stuff 可以在 Pi 支持的终端界面中运行。
 

@@ -1,4 +1,4 @@
-<!-- translation-source: docs/research/README.md; translation-source-sha256: 92f3644caf2b63fda977575197b90d88ba60b802558a58710ec909b91756300b -->
+<!-- translation-source: docs/research/README.md; translation-source-sha256: c779d8173b66b6593971ddd0a00d0e4d213c6845e0007256e2beb3efa3b87843 -->
 
 # 研究
 
@@ -17,6 +17,8 @@
 ## 架构与可行性
 
 - [ps-yon 性能测量权限核查](ps-yon-profiling-permissions-20260906.md)
+- [Pi Stuff 可靠性修复方案](pi-stuff-reliability-repair-plan-20260906.md)
+- [Pi Stuff 可靠性 fork 适配审计](pi-stuff-reliability-fork-audit-20260906.md)
 - [Code Mode 图像基准](code-mode-image-benchmark-20260827.md)
 - [Skill Discovery 启动有界真实模型确认](skill-discovery-startup-bounded-confirmation-20260830.md)
 - [Skill Discovery 隔离真实模型确认](skill-discovery-isolated-confirmation-20260830.md)
@@ -28,6 +30,7 @@
 - [Pi 最新 Markdown transform](pi-latest-markdown-transform-20260820.md)
 - [Pi XDG base-directory 行为](pi-xdg-base-directory-20260811.md)
 - [tmux/Kitty 图像可行性](pi-tmux-kitty-images-feasibility-20260815.md)
+- [Pi 0.85.0 兼容性评估](pi-085-compatibility-20260905.md)
 
 ## 产品与界面参考
 

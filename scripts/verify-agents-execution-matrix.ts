@@ -7,11 +7,12 @@ import { Check } from "typebox/value";
 import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/binary.js";
 import { isRuntimeNumber, isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
 import { waitForDetachedProcess } from "./detached-process.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/agents-execution-matrix-provider.ts");
+const providerExtension = join(root, "tests/fixtures/agents-execution-matrix-provider.ts");
 const PROCESS_TIMEOUT_MS = 90_000;
 const BACKGROUND_SETTLE_TIMEOUT_MS = 60_000;
 
@@ -45,7 +46,7 @@ const LOG_RECORD_SCHEMA = Type.Object(
 		ponytailMode: Type.Optional(Type.String()),
 		result: Type.Optional(Type.String()),
 		round: Type.Optional(Type.Number()),
-		sawProjection: Type.Optional(Type.Boolean()),
+		sawEvidence: Type.Optional(Type.Boolean()),
 		sawRootMarker: Type.Optional(Type.Boolean()),
 		sawSteering: Type.Optional(Type.Boolean()),
 		sawSuiteSurface: Type.Optional(Type.Boolean()),
@@ -184,24 +185,24 @@ function verifyLongScenario(scenario: Scenario, records: readonly LogRecord[], m
 	if (steers.length !== 1 || steers[0]?.round !== 4) {
 		fail(`long child expected one steering delivery after round 4, received ${JSON.stringify(steers)}`);
 	}
-	const projectedContinuation = longTurns.find(
-		(record) => isRuntimeNumber(record.round) && record.round >= 5 && record.sawProjection === true,
+	const retainedContinuation = longTurns.find(
+		(record) => isRuntimeNumber(record.round) && record.round >= 5 && record.sawEvidence === true,
 	);
 	const steeredContinuation = longTurns.find(
 		(record) =>
 			isRuntimeNumber(record.round) &&
 			record.round >= 5 &&
-			record.sawProjection === true &&
+			record.sawEvidence === true &&
 			record.sawSteering === true,
 	);
-	if (!projectedContinuation || !steeredContinuation) {
-		fail("long child did not continue after both bounded history projection and mid-run steering");
+	if (!retainedContinuation || !steeredContinuation) {
+		fail("long child did not continue after both retained check evidence and mid-run steering");
 	}
 	const finalTurn = longTurns.find((record) => record.round === 8);
-	if (finalTurn?.sawProjection !== true || finalTurn.sawSteering !== true) {
-		fail(`long child final turn lost projection or steering authority: ${JSON.stringify(finalTurn)}`);
+	if (finalTurn?.sawEvidence !== true || finalTurn.sawSteering !== true) {
+		fail(`long child final turn lost check evidence or steering authority: ${JSON.stringify(finalTurn)}`);
 	}
-	if (!mainResult.includes("rounds=8:projection=true:steering=true")) {
+	if (!mainResult.includes("rounds=8:evidence=true:steering=true")) {
 		fail(`long child did not return its stable completion evidence: ${mainResult}`);
 	}
 }
@@ -460,7 +461,7 @@ Return the deterministic matrix result without calling tools.
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
+	const PI_BIN = resolvePiBinary();
 	await verifyAgentsExecutionMatrix({ piBinary: PI_BIN, packagePath: join(root, "packages/pi-stuff") });
 	console.log("Certified Agents single/parallel, fresh/fork, foreground/background execution matrix");
 }

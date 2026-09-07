@@ -14,7 +14,7 @@ import { type Static, type TSchema, Type } from "typebox";
 import { Check } from "typebox/value";
 import type { JsonInputObject } from "../packages/pi-stuff/src/shared/json-value.js";
 import type { WebCapabilityHost } from "../packages/pi-stuff/src/web/adapter.js";
-import { createExtensionContext } from "../test/fixtures/extension-context.js";
+import { createExtensionContext } from "../tests/fixtures/extension-context.js";
 
 const root = resolve(import.meta.dir, "..");
 

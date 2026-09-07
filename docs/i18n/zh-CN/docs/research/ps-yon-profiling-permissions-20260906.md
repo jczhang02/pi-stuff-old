@@ -1,4 +1,4 @@
-<!-- translation-source: docs/research/ps-yon-profiling-permissions-20260906.md; translation-source-sha256: 8817ac5b364af83963ce76b246c4a30c6ac9fe6d035f426509a8df830b682274 -->
+<!-- translation-source: docs/research/ps-yon-profiling-permissions-20260906.md; translation-source-sha256: 90bb803d3fa886cfb0ba407b14eccb9a908ccc0e444750466ffd135ccdb47f1e -->
 
 # ps-yon 性能测量权限核查
 
@@ -10,7 +10,7 @@
 
 ## 验收要求
 
-[ADR 0030](../../../../../docs/adr/0030-remove-redundant-suite-work-without-feature-cuts.md) 要求报告 CPU、
+[ADR 0034](../../../../../docs/adr/0034-remove-redundant-suite-work-without-feature-cuts.md) 要求报告 CPU、
 常驻内存、分配与 GC、I/O、唤醒和操作耗时，并说明测量限制。它没有要求追踪每一次独立内存分配。
 缺失维度仍须满足 `ps-yon.3` 和 `ps-yon.5` 要求的、有直接证据支持的边界；堆快照不能替代分配量，
 上下文切换也不是唤醒。本次纠正不豁免任何验收要求。

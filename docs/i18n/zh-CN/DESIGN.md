@@ -1,4 +1,4 @@
-<!-- translation-source: DESIGN.md; translation-source-sha256: f1546ef81e85495ea8bf6eaab517afed370bba47de646781b9931e5e5353efe6 -->
+<!-- translation-source: DESIGN.md; translation-source-sha256: d7b789ab71a84d3928cc39bf8334580ecc96f8a493bec3b24e94e6ac58177fd2 -->
 
 ---
 version: alpha
@@ -6,7 +6,7 @@ name: Pi Stuff
 description: 一组以对话为中心、始终运行在 Pi 原生 Host 内的终端能力。
 omitted:
   - section: colors
-    reason: Pi Host 的语义主题 token 才是颜色标准；Pi Stuff 不固定 CSS 或 ANSI 色板。
+    reason: Pi Host 的语义主题 token 才是颜色标准；行内 Skill 命令配色是唯一固定 ANSI 色板例外。
   - section: typography
     reason: 字体、字号和字符单元格尺寸由 Host 与终端决定。
   - section: rounded
@@ -42,7 +42,7 @@ Claude Code 是可读层级、克制的信息密度和清楚生命周期的主�
 ## 颜色
 
 颜色只能来自当前启用的 Pi 主题。使用 `text`、`muted`、`dim`、`border`、`accent`、`success`、
-`warning`、`error` 等语义角色；不得硬编码 ANSI 色板，也不得按照某个人的终端主题选定颜色值。
+`warning`、`error` 等语义角色。唯一的终端色板例外是行内 Skill 命令装饰，按明确要求保留workflow 演示中的彩虹色。其他界面不得硬编码 ANSI 色板，也不得按照某个人的终端主题选定颜色值。
 
 `accent` 只标出焦点或当前唯一活跃的交互。普通信息使用常规文本色或弱化文本色。成功、警告和错误色
 用来辅助明确的图标和文字，不能成为判断状态的唯一依据。所有可见界面在 Host 的亮色和暗色主题下都
@@ -155,9 +155,13 @@ Todo、Agent roster、Statusline、Conversation Transcript 和 Command Dialog �
 状态只能有一个可见的权威来源，不能在常驻仪表盘里重复显示。共享 Statusline 中按条件出现的 Goal 段是
 当前 Goal 唯一的紧凑常驻权威；Goal 生命周期通知仍是按时间排列的 Transcript 事件，Command Dialog 则负责
 检查和控制。已接受的终止 Goal Tool row 只显示机器结果；随后出现的 Goal Final Response 是唯一详细结果，
-不会再由终止通知重复。Ponytail 遵循同一边界：`󱖿 <mode>` 是唯一的常驻模式权威，Working Row 仍是 Agent 活动的唯一
+不会再由终止通知重复。Ponytail 遵循同一边界：`󱖿 <mode>` 是唯一的常驻模式权威，Host 运行指示器仍是 Agent 活动的唯一
 权威，`/ponytail` 负责控制。它的 Dialog 会临时隐藏组合后的 Footer、保留编辑器草稿，并显示环境变量覆盖，
 但不会把这些覆盖项伪装成可写设置。
+
+原生 Vibe Line Spinner 与运行提示只在编辑器顶部边框出现一次，使用 Pi 的 thinking 等级配色、裁剪和动画。
+Conversation UI 通过输入包装器保留这项 Host 能力，不增加第二条运行行、计时器或状态存储。完成、取消、
+Command Dialog 恢复与 reload 保留 Host 生命周期所有权；现有输入高亮、补全与草稿行为保持不变。
 
 Statusline 只使用 Nerd Font。固定语法依次为：`󱙺` model、`` Thinking、`` Fast、`󰉋` directory、
 ``/``/`` branch tracking、``/``/`󰏫`/`󰝒` Git state、`󰌨` Context、`󰆼` cache、
@@ -167,6 +171,18 @@ Statusline 只使用 Nerd Font。固定语法依次为：`󱙺` model、`` Th
 设置。`·`、`…` 等分隔和截断符号只是标点，不是语义图标。Capability 的身份图标（如 Ponytail 的 `󱖿`）
 应在它自己的 Dialog 中复用，而不是另造第二个视觉身份。重做 Dialog 时，不能顺手改变 Transcript 标记或
 Tool 渲染。
+
+User Message 保留原生全宽 `userMessageBg` 卡片、横向内边距和上下留白。单个 `` 位于 Tool 标记列；
+在认证的 `outputPad=1` 配置下，正文和折行续行与 Tool 正文对齐。标记表示 Provider Prompt，包括自动提交的
+用户角色消息，不声明由人类输入。其他 Host 内边距仍可设置，但不新增对齐保证。
+
+普通 prompt 和 Skill invocation 共用这张卡片。Host 识别的 Skill 在 prompt 前以固定的 workflow 演示中的静态彩虹配色显示为
+`/skill:<name>`，没有独立背景、边框、标题或展开提示。纯 Skill 使用相同布局。User Message 中各处的行内 `/skill:<name>` 文本采用相同配色，
+不改变调用语义，也不为文字提及添加 instructions。块级 Markdown 在 Skill 标识
+下方开始；换行保留原生 Markdown 层级和终端单元格对齐。原生 `Ctrl+O` 与 Host 当前展开状态保持权威。
+Skill 前缀在 Pi 换行前加入第一个原生段落，保留硬换行。展开的 instructions 使用相同的行内 Skill
+装饰，位于同一卡片的 prompt 后面，使用低强调的 `Skill instructions` 标签，不重复标记或
+prompt。实时及恢复后的 regular/fullscreen TUI 共用此呈现；HTML 保持原生行为。
 
 Thinking 始终位于 Host 拥有的 Transcript 内。显示时，每个 Host Thinking run 只占一行：`• thoughts: `
 后面接当前原生 Markdown 渲染的最后一条终端行。流式更新会替换这一行，run 结束后则保留最终行。隐藏时，
@@ -203,3 +219,4 @@ frame、ANSI 或新的焦点界面。所有行按终端字符单元格测量。�
 - **不要**把 `›` 或 Transcript 的 `•` 当作生命周期状态，也不要让所有状态共用一个圆点。
 - **不要**在负责该状态的界面之外重复展示 Todo、Agent、BTW、Permission、Tool 或诊断状态。
 - **不要**照搬与 Pi 原生行为或 Pi Stuff 领域术语冲突的 Claude 界面细节。
+

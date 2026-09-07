@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0001-keep-pi-as-the-host.md; translation-source-sha256: cf9b31d59f431db27fa95913a31304ed1f4f5b028ee592c7d1194aee69843a28 -->
+<!-- translation-source: docs/adr/0001-keep-pi-as-the-host.md; translation-source-sha256: d5ea487d48bc1374d4ab3e4d239652ce06d972024f5fd83813ad5a11c0645921 -->
 
 ---
 status: accepted
@@ -21,6 +21,11 @@ Pi 继续作为宿主。Pi Stuff 继续作为一个本地 Pi 软件包，并只�
 每一份受跟踪的实现、测试、脚本、生成源码、原型和仓库质量工具，无论来源如何，都是仓库负责的源码。它们都遵守相同的架构、格式、Lint、类型安全、依赖、规模和可维护性门槛。来源信息仍然必须保留，用于归属、许可证和选择性上游审查；它绝不构成质量豁免。
 
 扩展导入必须保持纯净。软件包安装和设置层变更必须由宿主或维护者显式执行；初始化失败应直接传播，不能留下只加载了一部分的套件。
+
+Conversation UI 在没有公开 renderer 时，可以适配已认证 Host 的 Thinking 与 User Message 展示方法。
+这些范围狭窄、可撤销的适配器保留规范消息和 Host 生命周期权威，必须经过真实 Host 认证，并在 Session 关闭时
+释放方法所有权。这个展示例外不授权修改执行、持久化或任意 Host 内部机制。User Message 的取舍和异常保护
+见 [ADR 0030](0030-unify-user-message-presentation.md)。
 
 ## 后果
 

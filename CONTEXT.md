@@ -43,11 +43,17 @@ Service. Its unconfigured behavior remains an unconditional contract; a missing 
 acceptance and never counts as passed, skipped, or not applicable.
 _Avoid_: Optional test, skipped feature, best-effort contract
 
+**Capability Benchmark**:
+An evaluation of one Capability or a limited group of Capabilities for performance, resource use, or behavioral
+effectiveness, regardless of whether execution uses the complete Host or public tasks. It supplies comparative evidence,
+not Capability Contract Acceptance or PR-blocking authority.
+_Avoid_: Internal-only benchmark, correctness test, Suite Outcome Evaluation
+
 **Suite Outcome Evaluation**:
-A paired evaluation on an external public task set that holds the certified Host, selected model, task, environment,
-and resource budget fixed while comparing the Suite loaded with the Suite absent. It reports complete-system outcomes
-and Suite delta; it does not certify individual Capability contracts.
-_Avoid_: Pi Stuff score, harness certification, correctness test
+An evaluation of the complete Suite on an external public task set, measuring task outcomes and comparing declared
+configurations such as native Pi and Pi Stuff. It does not establish coverage or acceptance of every Capability and has
+no PR-blocking authority.
+_Avoid_: Pi Stuff score, harness certification, correctness test, Capability Benchmark
 
 **Capability Contract Acceptance**:
 The verification of every applicable Capability Contract Catalog entry in an isolated scenario using its declared
@@ -96,8 +102,8 @@ preserving sibling namespaces; the merged file, lock, and atomic write remain sh
 _Avoid_: Capability settings file, global config
 
 **Vibe Line Spinner**:
-The Host-owned animated glyph in Pi's Working Row while the Host processes Agent work. It is a liveness signal, not
-the Working Row itself, Thinking transcript content, or other Conversation UI content.
+The Host-owned animated glyph that indicates active Agent work. It is a liveness signal, distinct from the working
+message, Thinking transcript content, and other Conversation UI content.
 _Avoid_: Vibe Line, Working Row, Thinking display
 
 **Logical Thinking Run**:
@@ -180,8 +186,8 @@ _Avoid_: Tool recommendation, Tool activation
 The current Provider payload token estimate for one child Agent, measured against the selected child Host model's
 reported Context window. Authoritative Assistant usage replaces the estimate; later Tool results and other trailing
 messages add bounded Host-equivalent estimates. Parent-Host model metadata is only a launch-time fallback until the
-child Host reports its actual selection. It is not cumulative run usage and is unavailable while compaction or model
-fallback makes the current payload uncertain.
+child Host reports its actual selection. It is not cumulative run usage. Context Management/Magic owns child pressure
+handling; Agents does not terminate a child or replace its Provider request from a local estimate.
 _Avoid_: Agent tokens, total Agent usage, Context budget
 
 **Agent Target**:
@@ -191,7 +197,8 @@ _Avoid_: Agent key, child address
 
 **Agent Lifecycle Row**:
 A display-only Transcript projection of one Agent Tool lifecycle event. Background launch and completion remain
-separate chronological events, while live Agent state and full child evidence remain owned by Agents.
+separate chronological events. Agents owns lifecycle and protocol evidence; Context Management/Magic owns child pressure
+projection, while delivery returns bounded outcomes to the originating main Agent.
 _Avoid_: Agent Operation Block, Subagent Row, Agent roster row
 
 **Context Activity**:
@@ -200,10 +207,11 @@ projects its anchor and later updates after resume. It is not a Tool call, Diagn
 _Avoid_: Context Tool Activity, Context notification, Context status
 
 **Bounded Context Projection**:
-A derived model-request context that Context Management has established is within the selected model's local capacity
-bound. It is the only context eligible for a Provider request while Context is active; it does not guarantee Provider
-acceptance or content correctness.
-_Avoid_: Safe Context, compressed context
+A derived context projection shaped by Context Management for its requesting audience. Local capacity estimates guide
+display and proactive compaction; they do not establish Provider acceptance or authorize foreground cancellation.
+With Magic enabled, foreground requests use Magic's projection, while BTW and Agents retain their bounded reference
+contracts. Unrecoverable projection failure preserves input and stops without substituting raw history.
+_Avoid_: Safe Context, validated capacity guarantee
 
 **Prompt Contribution**:
 A marker-delimited, Capability-owned system-prompt fragment that Context Management orders and reconciles on every

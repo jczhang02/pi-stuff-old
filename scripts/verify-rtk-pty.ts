@@ -1,18 +1,18 @@
-import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
-import { CERTIFIED_RTK_LINUX_X64_SHA256, CERTIFIED_RTK_VERSION } from "../packages/pi-stuff/src/rtk/runtime.js";
+import { CERTIFIED_RTK_VERSION } from "../packages/pi-stuff/src/rtk/runtime.js";
 import { isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
+import { formatInstalledToolFailure, probeInstalledTool, resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 import { stripTerminalControls } from "./terminal-controls.js";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/rtk-pty-provider.ts");
-const runner = join(root, "test/fixtures/rtk-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/rtk-pty-provider.ts");
+const runner = join(root, "tests/fixtures/rtk-pty-runner.sh");
 const LONG_RESULT_ID = "rtk-pty-long-output";
 const RG_FILES_COMMAND = "rg --files -g '*.txt' .";
 const RG_SEARCH_COMMAND = "rg -n RTK untracked.txt";
@@ -146,31 +146,10 @@ function verifyHostVersion(piBinary: string): void {
 	if (version !== CERTIFIED_PI_VERSION) fail(`expected Pi ${CERTIFIED_PI_VERSION}, received ${version || "nothing"}`);
 }
 
-async function resolveCertifiedRtk(): Promise<string> {
-	let path = process.env["RTK_BIN"]?.trim();
-	if (!path) {
-		for (const discovery of [
-			["mise", "which", "rtk"],
-			["which", "rtk"],
-		] as const) {
-			const result = Bun.spawnSync([...discovery], { cwd: root, stdout: "pipe", stderr: "pipe" });
-			if (result.exitCode !== 0) continue;
-			path = result.stdout.toString().trim();
-			if (path) break;
-		}
-	}
-	if (!path) fail("RTK_BIN, mise, and PATH could not resolve RTK");
-	const version = run([path, "--version"], root);
-	if (version !== `rtk ${CERTIFIED_RTK_VERSION}`) {
-		fail(`expected RTK ${CERTIFIED_RTK_VERSION}, received ${version || "nothing"}`);
-	}
-	const digest = createHash("sha256")
-		.update(await readFile(path))
-		.digest("hex");
-	if (digest !== CERTIFIED_RTK_LINUX_X64_SHA256) {
-		fail("local RTK executable does not match the certified SHA-256");
-	}
-	return path;
+async function resolveInstalledRtk(): Promise<string> {
+	const probe = await probeInstalledTool("RTK", `rtk ${CERTIFIED_RTK_VERSION}`);
+	if (probe.status !== "ready" || !probe.path) fail(formatInstalledToolFailure(probe, `rtk ${CERTIFIED_RTK_VERSION}`));
+	return probe.path;
 }
 
 function runPty(
@@ -182,6 +161,7 @@ function runPty(
 		readonly path: string;
 		readonly piBinary: string;
 		readonly projectDirectory: string;
+		readonly rtkBinary: string;
 		readonly sessionDirectory: string;
 		readonly sessionFile?: string;
 	},
@@ -193,6 +173,7 @@ function runPty(
 			PATH: options.path,
 			PI_CODING_AGENT_DIR: options.configDirectory,
 			PI_STUFF_RTK_PTY_BIN: options.piBinary,
+			PI_STUFF_RTK_PTY_EXECUTABLE: options.rtkBinary,
 			PI_STUFF_RTK_PTY_LOG: options.logPath,
 			PI_STUFF_RTK_PTY_PACKAGE: resolve(options.packagePath),
 			PI_STUFF_RTK_PTY_PHASE: phase,
@@ -289,7 +270,7 @@ export async function verifyRtkPty(options: {
 	readonly piBinary: string;
 }): Promise<void> {
 	verifyHostVersion(options.piBinary);
-	const rtkBinary = await resolveCertifiedRtk();
+	const rtkBinary = await resolveInstalledRtk();
 	const inheritedPath = process.env["PATH"];
 	if (!inheritedPath) fail("PATH is required to run the RTK PTY verification");
 	const temporaryDirectory = await mkdtemp(join(tmpdir(), "pi-stuff-rtk-pty-"));
@@ -300,6 +281,9 @@ export async function verifyRtkPty(options: {
 	await Promise.all([mkdir(configDirectory), mkdir(sessionDirectory), mkdir(projectDirectory)]);
 	await disableSessionNamingForTest(configDirectory);
 	await Promise.all([
+		writeFile(join(temporaryDirectory, "rtk"), '#!/bin/sh\nexec "$PI_STUFF_RTK_PTY_EXECUTABLE" "$@"\n', {
+			mode: 0o755,
+		}),
 		writeFile(
 			join(configDirectory, "settings.json"),
 			`${JSON.stringify({ defaultProjectTrust: "always" }, null, "\t")}\n`,
@@ -314,9 +298,10 @@ export async function verifyRtkPty(options: {
 			configDirectory,
 			logPath,
 			packagePath: options.packagePath,
-			path: `${dirname(rtkBinary)}:${inheritedPath}`,
+			path: `${temporaryDirectory}:${inheritedPath}`,
 			piBinary: options.piBinary,
 			projectDirectory,
+			rtkBinary,
 			sessionDirectory,
 		};
 		const freshOutput = runPty("fresh", shared);
@@ -375,7 +360,7 @@ export async function verifyRtkPty(options: {
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
-	await verifyRtkPty({ packagePath: join(root, "packages/pi-stuff"), piBinary: PI_BIN });
+	const piBinary = resolvePiBinary();
+	await verifyRtkPty({ packagePath: join(root, "packages/pi-stuff"), piBinary });
 	console.log("Certified RTK rewrite and projection across fresh/resumed real Pi TUI sessions");
 }

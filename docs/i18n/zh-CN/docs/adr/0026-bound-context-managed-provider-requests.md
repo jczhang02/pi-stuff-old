@@ -1,10 +1,13 @@
-<!-- translation-source: docs/adr/0026-bound-context-managed-provider-requests.md; translation-source-sha256: 51dc96a6168fcf2bdd8386595761c8ba6cce953c509373ea64f154f1b288cee5 -->
+<!-- translation-source: docs/adr/0026-bound-context-managed-provider-requests.md; translation-source-sha256: 60444df69f436d4c02eabbb5b0e11d82f2edbdc2a340f0e187a69aa595468e44 -->
 
 ---
-status: accepted
+status: superseded by ADR-0031
 ---
 
 # 由上下文管理约束的 Provider 请求
+
+下文有关 Context 兜底、请求准入和恢复的条款已由
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md) 取代，其余决策保持不变。
 
 ## 背景
 

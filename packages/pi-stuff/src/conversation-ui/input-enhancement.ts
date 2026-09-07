@@ -82,6 +82,7 @@ export interface InputEnhancementController {
 }
 
 interface CursorAwareEditor extends EditorComponent {
+	readonly embedWorkingStatus?: boolean;
 	readonly actionHandlers?: Map<AppKeybinding, () => void>;
 	dispose?(): void;
 	focused?: boolean;
@@ -95,6 +96,7 @@ interface CursorAwareEditor extends EditorComponent {
 	onExtensionShortcut?: (data: string) => boolean;
 	onPasteImage?: () => void;
 	requestRender?(force?: boolean): void;
+	setWorkingStatusIndicator?: CustomEditor["setWorkingStatusIndicator"];
 }
 
 interface InlineSlashContext {
@@ -243,6 +245,14 @@ class InputEnhancementEditor implements EditorComponent {
 
 	get borderColor(): (text: string) => string {
 		return this.editor.borderColor ?? ((text) => text);
+	}
+
+	get embedWorkingStatus(): boolean {
+		return this.editor.embedWorkingStatus === true && isRuntimeFunction(this.editor.setWorkingStatusIndicator);
+	}
+
+	setWorkingStatusIndicator(indicator: Parameters<CustomEditor["setWorkingStatusIndicator"]>[0]): void {
+		this.editor.setWorkingStatusIndicator?.(indicator);
 	}
 
 	set borderColor(value: (text: string) => string) {
@@ -574,7 +584,7 @@ function createFactory(
 	return (tui: TUI, editorTheme: EditorTheme, keybindings: KeybindingsManager): EditorComponent => {
 		const editor = previous
 			? previous(tui, editorTheme, keybindings)
-			: new CustomEditor(tui, editorTheme, keybindings);
+			: new CustomEditor(tui, editorTheme, keybindings, { embedWorkingStatus: true });
 		if (!isCursorAwareEditor(editor)) return editor;
 		const enhanced = new InputEnhancementEditor(
 			editor,

@@ -82,13 +82,14 @@ export async function sendSuiteAgentMessage(
 	options?: SuiteAgentMessageOptions,
 	isCurrent: () => boolean = () => true,
 	onAccepted?: () => void,
+	canSubmit: () => boolean = () => true,
 ): Promise<boolean> {
 	if (!isCurrent()) return false;
 	const preparation = brokerFor(pi).preparation;
 	if (preparation) {
 		await preparation.prepare(hasDirectUserActivation(message) ? "direct-user" : "automatic", options);
 	}
-	if (!isCurrent()) return false;
+	if (!isCurrent() || !canSubmit()) return false;
 	const rollback = preparation?.stage?.(options);
 	try {
 		await pi.sendMessage(message, options);

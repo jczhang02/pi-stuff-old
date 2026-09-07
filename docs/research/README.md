@@ -16,6 +16,8 @@ start from the [documentation index](../README.md).
 ## Architecture and feasibility
 
 - [ps-yon profiling permissions](ps-yon-profiling-permissions-20260906.md)
+- [Pi Stuff reliability repair plan](pi-stuff-reliability-repair-plan-20260906.md)
+- [Pi Stuff reliability fork adaptation audit](pi-stuff-reliability-fork-audit-20260906.md)
 - [Code Mode image benchmark](code-mode-image-benchmark-20260827.md)
 - [Skill Discovery startup-bounded real-model confirmation](skill-discovery-startup-bounded-confirmation-20260830.md)
 - [Skill Discovery isolated real-model confirmation](skill-discovery-isolated-confirmation-20260830.md)
@@ -27,6 +29,7 @@ start from the [documentation index](../README.md).
 - [Pi latest Markdown transform](pi-latest-markdown-transform-20260820.md)
 - [Pi XDG base-directory behavior](pi-xdg-base-directory-20260811.md)
 - [tmux/Kitty image feasibility](pi-tmux-kitty-images-feasibility-20260815.md)
+- [Pi 0.85.0 compatibility assessment](pi-085-compatibility-20260905.md)
 
 ## Product and interface references
 

@@ -4,6 +4,9 @@ status: accepted
 
 # Keep productive work independent of internal retention quotas
 
+The Context fallback, request-admission, and recovery clauses below are superseded by
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md). Other decisions remain unchanged.
+
 ## Context
 
 Several Pi Stuff safety bounds currently act as lifecycle decisions even though they measure only retained evidence or

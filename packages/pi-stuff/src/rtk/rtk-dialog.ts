@@ -214,7 +214,6 @@ class RtkDialogComponent implements CommandDialogComponent {
 						)}`,
 					]
 				: []),
-			...(runtime.sha256 ? [`${GUTTER}${theme.fg("dim", `SHA-256  ${runtime.sha256.slice(0, 16)}…`)}`] : []),
 			...(runtime.state === "unchecked" && !this.verifying
 				? [`${GUTTER}${theme.fg("muted", "Not verified yet.")}`]
 				: []),

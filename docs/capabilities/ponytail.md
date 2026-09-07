@@ -77,7 +77,7 @@ Mode changes are stored in the current Session branch and restore from the newes
 the parent's effective mode as a launch snapshot; this does not change global settings.
 
 The Statusline shows `󱖿 <mode>` unless mode is `off` or status is hidden. The optional startup notice reads
-`Ponytail active · <mode> mode`. Agent activity remains on the Working Row.
+`Ponytail active · <mode> mode`. Agent activity remains on Pi's native working indicator in the editor border.
 
 ## See also
 

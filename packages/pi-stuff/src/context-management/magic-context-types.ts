@@ -4,6 +4,7 @@ import type {
 	AgentToolUpdateCallback,
 	BeforeAgentStartEvent,
 	BeforeAgentStartEventResult,
+	CompactionResult,
 	ContextEvent,
 	ContextUsage,
 	ExtensionAPI,
@@ -62,6 +63,11 @@ export interface MagicContextExtensionContext {
 	getSystemPrompt(): string;
 }
 
+export interface MagicCompactionResult {
+	readonly cancel?: boolean;
+	readonly compaction?: CompactionResult;
+}
+
 export interface MagicContextEventMap {
 	readonly agent_end: { readonly event: AgentEndEvent; readonly result: undefined };
 	readonly before_agent_start: {
@@ -78,7 +84,7 @@ export interface MagicContextEventMap {
 	};
 	readonly session_before_compact: {
 		readonly event: SessionBeforeCompactEvent;
-		readonly result: { readonly cancel?: boolean } | undefined;
+		readonly result: MagicCompactionResult | undefined;
 	};
 	readonly session_before_switch: {
 		readonly event: SessionBeforeSwitchEvent;

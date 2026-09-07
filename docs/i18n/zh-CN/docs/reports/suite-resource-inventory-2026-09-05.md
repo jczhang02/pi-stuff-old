@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/suite-resource-inventory-2026-09-05.md; translation-source-sha256: e9e0189c2e5bb0f22cded2156d0180028e64bec2f2b9bd54b1747be35e43bc5d -->
+<!-- translation-source: docs/reports/suite-resource-inventory-2026-09-05.md; translation-source-sha256: 2c502124a4b463614cd6d0b5fa1b84aed690dea2fb92dd97cef80962a0db7565 -->
 
 # Suite 资源源码清单
 
@@ -9,7 +9,7 @@ Capability，以及共享加载、状态和注册路径。它记录待调查对�
 [可比 Package 对照](suite-comparable-resources-2026-09-06.md)增加 32 次完整工作负载观测，使用可比的优化前
 源码树，保留候选输入失败及前台 RSS 增长。
 发现、校验、恢复和可见刷新可能需要重复执行；重复操作不自动等于浪费。
-Beads `ps-yon.3` 按 [ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md) 跟踪缺失的测量。
+Beads `ps-yon.3` 按 [ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md) 跟踪缺失的测量。
 
 [2026-09-06 Agents 后续报告](agents-loading-and-projector-cost-2026-09-06.md)记录首次加载改动、
 投影锁 I/O 移除的测量、三个最终原生通过样本，以及仍未归因的历史后段停顿。
@@ -298,7 +298,7 @@ Spinner 缺失为零，采集间隔低于 17 ms。关闭后所有 scope 均已�
 
 2026-09-06，`ps-yon.6` 从 `e48a6c4f` 删除前台启动的重复工作。前台生命周期在绑定运行目录之前，
 已经提交 writer 登记和初始状态；进程内 runner 随后却再次初始化相同登记、重新创建状态并写入一次。
-[回归测试](../../../../../test/agents/foreground-initialization.test.ts) 穿过这两个真实启动阶段，在 child 分派前
+[测试版本中的[历史回归测试](https://github.com/jczhang02/pi-stuff/blob/f5438e8ae009471309465c8cc5efcfbae371ca1a/test/agents/foreground-initialization.test.ts)] 穿过这两个真实启动阶段，在 child 分派前
 排入停止请求，并观察实际原子发布：旧源码对每类初始 artifact 各写两次，候选各写一次，同时仍发送计数为零的
 首次 running/pending 观察者通知。最终测试在旧生产源码上失败，在候选上通过。7 个聚焦测试文件通过 76 项测试、
 315 次断言，覆盖启动、取消、持久化失败、完成及恢复情形。

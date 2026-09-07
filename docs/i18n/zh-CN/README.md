@@ -1,4 +1,4 @@
-<!-- translation-source: README.md; translation-source-sha256: f40d776a05d4111dfc1577eeceb287c1172b7beec94345eeb24db6b395f2a56a -->
+<!-- translation-source: README.md; translation-source-sha256: 35a3ec9bb5cc0622b14d1c2f745d35a6769c9fdc9d420b20b834ddef2318a5fb -->
 
 <div align="center">
 
@@ -16,7 +16,7 @@ Pi Stuff 为原生 [Pi coding agent](https://github.com/earendil-works/pi) 加�
 [![GitHub forks](https://img.shields.io/github/forks/jczhang02/pi-stuff?style=flat-square)](https://github.com/jczhang02/pi-stuff/network/members)
 [![Last commit](https://img.shields.io/github/last-commit/jczhang02/pi-stuff?style=flat-square)](https://github.com/jczhang02/pi-stuff/commits/main)
 
-[![Pi 0.85.0](https://img.shields.io/badge/Pi-0.85.0-89b4fa?style=flat-square)](docs/compatibility.md)
+[![Pi 0.85.1](https://img.shields.io/badge/Pi-0.85.1-89b4fa?style=flat-square)](docs/compatibility.md)
 [![Bun 1.4.0](https://img.shields.io/badge/Bun-1.4.0-f9e2af?style=flat-square&logo=bun&logoColor=1e1e2e)](docs/compatibility.md)
 [![TypeScript 5.9.3](https://img.shields.io/badge/TypeScript-5.9.3-3178c6?style=flat-square&logo=typescript&logoColor=white)](docs/compatibility.md)
 [![Linux x64](https://img.shields.io/badge/Linux-x64-fab387?style=flat-square&logo=linux&logoColor=1e1e2e)](docs/compatibility.md)
@@ -50,7 +50,7 @@ Pi Stuff 让日常工作留在 Pi 里，同时让对话更易读，长任务更�
 
 ## 快速开始
 
-安装 [Pi 0.85.0](docs/compatibility.md)，克隆仓库并安装 Package：
+安装 [Pi 0.85.1](docs/compatibility.md)，克隆仓库并安装 Package：
 
 ```bash
 git clone https://github.com/jczhang02/pi-stuff.git

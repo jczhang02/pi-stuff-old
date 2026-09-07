@@ -1,12 +1,13 @@
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { createRpcTransport } from "./magic-context-real-rpc.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const provider = join(root, "test/fixtures/pi-host-seams-provider.ts");
+const provider = join(root, "tests/fixtures/pi-host-seams-provider.ts");
 const TIMEOUT_MS = 20_000;
 
 interface SeamRecord {
@@ -140,7 +141,7 @@ export async function verifyPiHostSeams(options: {
 if (import.meta.main) {
 	await verifyPiHostSeams({
 		packagePath: resolve(root, "packages/pi-stuff"),
-		piBinary: process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi",
+		piBinary: resolvePiBinary(),
 	});
 	console.log(`Certified Pi ${CERTIFIED_PI_VERSION} queue-clear origin and Tool-phase message ordering`);
 }

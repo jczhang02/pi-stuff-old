@@ -30,6 +30,8 @@ longer remain active.
 - Persists an accepted terminal state before requesting the normal Goal Final Response, within budget boundaries.
 - Persists objective, status, budget, and optional queue in the current Session.
 - Preserves Goal identity across Pi's native compaction lifecycle.
+- Exposes the active Goal identity and continuation permission to bounded background-result delivery, while deferring continuation during delivery.
+- Ignores settlement notifications after Session teardown, so stale Goal context cannot start a continuation in a closed Session.
 - Shows current status, usage, budget, and elapsed time in the shared Statusline.
 
 Restoration searches backward to the latest canonical Goal entry and uses legacy state only if no canonical entry
@@ -39,7 +41,7 @@ the discarded scans removed from this selector, not Goal accounting or Host bran
 
 ## Compaction continuation
 
-Pi 0.85.0 emits `session_compact` before clearing its manual-compaction busy state, without a later `agent_settled`
+Pi 0.85.1 emits `session_compact` before clearing its manual-compaction busy state, without a later `agent_settled`
 event. Goal preserves its continuation or pending queue action and reuses its cancellable Session-owned recovery task
 to dispatch only after Pi is idle. The task yields once, then checks every 10 ms only while that handoff remains
 pending; dispatch, cancellation, queued user work, another compaction, or Session shutdown ends it. Ordinary startup,

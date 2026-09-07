@@ -73,11 +73,15 @@ export function startMagicWorkerFromBundle(output: Blob): MagicWorkerNativeHandl
 	const workerUrl = URL.createObjectURL(output);
 	try {
 		const worker = new Worker(workerUrl, { name: "pi-stuff-magic-context", type: "module" });
+		const closed = new Promise<void>((resolve) => {
+			worker.addEventListener("close", () => resolve(), { once: true });
+		});
 		return {
 			port: worker,
 			async release() {
 				try {
-					await worker.terminate();
+					worker.terminate();
+					await closed;
 				} finally {
 					URL.revokeObjectURL(workerUrl);
 				}

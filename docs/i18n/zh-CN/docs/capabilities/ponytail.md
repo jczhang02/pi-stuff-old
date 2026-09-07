@@ -1,4 +1,4 @@
-<!-- translation-source: docs/capabilities/ponytail.md; translation-source-sha256: 3edc8e4ed0a936d32fa0186cf5874f25d3624deadb143d7399529d3d26503f32 -->
+<!-- translation-source: docs/capabilities/ponytail.md; translation-source-sha256: 7f40a1f5ae9850fe9d6e6a41144fae30bcddb12d8e40b5cfc0382efad5168edc -->
 
 # Ponytail
 
@@ -78,7 +78,7 @@ Mode 变更保存在当前 Session branch，并从最新有效 entry 恢复。Ch
 mode snapshot；这不会修改全局设置。
 
 除非 mode 为 `off` 或 status 已隐藏，Statusline 会显示 `󱖿 <mode>`。可选启动 notice 为
-`Ponytail active · <mode> mode`。Agent activity 仍显示在 Working Row。
+`Ponytail active · <mode> mode`。Agent activity 仍由编辑框边框中的 Pi 原生运行指示器呈现。
 
 ## 相关文档
 

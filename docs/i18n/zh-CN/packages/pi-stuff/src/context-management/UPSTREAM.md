@@ -1,9 +1,8 @@
-<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: fe46c4b108877d83b185f3798e95640d4b9ef775d17878ea9c5390dc618392ec -->
+<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: 03de2fbf2183a29244c842377b171f1778738576f253602907faabdf9712b1cc -->
 
 # 捆绑上下文引擎来源
 
-Pi Stuff 通过本适配器集成官方 Magic Context Package，不内嵌 Magic Context Core。上游 tokenizer 路径尚
-不满足独立 Pi 的模块解析和首轮延迟约定，因此仓库为固定 Package 应用一个临时且经过审查的依赖补丁。
+Pi Stuff 通过本适配器集成官方 Magic Context Package，不内嵌 Magic Context Core。仓库为固定 Package 应用一个临时且经过审查的依赖补丁，处理 tokenizer 兼容性、Pi 重试时的稳定消息身份，以及通过公开压缩钩子实现的真实 Magic 恢复。
 
 精确发布的 Package 在 Pi Stuff Context Engine Worker 中执行。适配器只在激活时生成一个内存 bundle，使
 官方模块图可从已认证的独立 Pi 二进制文件解析；它不修改上游源码，也不持久化派生产物。
@@ -20,7 +19,7 @@ Pi Stuff 通过本适配器集成官方 Magic Context Package，不内嵌 Magic 
 ## 临时 tokenizer 兼容补丁
 
 - 补丁：[`patches/@cortexkit%2Fpi-magic-context@0.41.1.patch`](../../../../../../../patches/@cortexkit%252Fpi-magic-context@0.41.1.patch)
-- 补丁 SHA-256：`e01e53c4eab1f49c9d44ed5b9040eddd1d0eeb547121d8f62209d049c940cef0`
+- 补丁 SHA-256：`9c8361ee3bea8f4667f5aa298a85dc55cbfc0c0ba241eddcaff3f1b4ee120a9a`
 - 范围：
   - 把已发布模块的 `import.meta.url` 祖先路径和 Bun isolated-linker 的 `node_modules` 根目录加入现有
     `ai-tokenizer` 回退搜索；
@@ -60,22 +59,45 @@ Package 声明的 Pi peer 是 `^0.80.2`，不包括 Suite 已认证的 Pi 0.84.4
 
 ## Pi Stuff 适配器政策
 
-- 直接输入先由 Host 确认，再启动惰性激活；第一个 Agent 边界仍保留直接用户的配置写入权限。只有存在可识别
-  CortexKit 配置，且没有旧位置或扁平用户执行设置等待官方 factory 迁移时，自动轮次才会激活；
-- 仅在启动或降级运行期间开放回退到 Pi 原生行为；
-- 活跃的 Host 管理 `before_provider_request` 处理是本地故障关闭的适配器边界，并要求最终载荷通过 95% 验证；
-  绕过该 hook 的直接调用不在支持范围内；
-- 不为本地适配器边界向上游提交内容，也不引入依赖；
-- 为 BTW 和 Agents 提供一个有界状态/投影接缝；
-- 在可替换 Capability 接缝后使用精确官方基础 Package 及临时、经过审查的 tokenizer 兼容补丁；
-- 通过不可变 Host 快照和有界副作用，把精确官方引擎与 Pi UI 线程隔离；
-- 保持取消边界语义透明：镜像的生命周期事件与不读取 signal 的命令不继承当前 Agent turn 的 signal；Tool
-  invocation 与固定版本中读取 signal 的 augmentation 命令保留各自拥有的 signal；每次上游升级都重新审计哪些
-  官方 handler 会读取 signal；
-- 不提供相互竞争的 Todo、状态栏、公告、Dreamer 或 Sidekick UI；
-- 只暴露五个 Context Tools，以及聚焦的状态、清理、重组、收尾和 Session 升级命令；
-- 只有一个显式 compaction 权威：Magic 接管前允许原生回退，活跃 Magic 尝试后绝不叠加；
-- 为 BTW 和 Agents 提供有界、仅引用的投影；
-- 首次使用配置引导遵循上游绝对 XDG 与 JSON/JSONC 路径规则，忽略上游不读取的自定义 Pi Agent 目录，
-  并且只有不存在可识别用户或项目配置时才创建用户配置；
-- 首次使用采用纯词法搜索配置，使初始激活不依赖可选本地 embedding runtime。显式用户 embedding 配置会保留。
+- 已配置启动不修改用户配置。直接首次使用授权遵循上游 XDG 和 JSON/JSONC 发现规则，默认纯词法检索，保留显式 embedding 配置。
+- 启用 Magic 后，前台投影和压缩（包括故障恢复）均由 Magic 独占。只有未配置或显式禁用 Magic 时保留原生行为。
+  本地估算不阻断有效请求。
+- 每次前台 Context 事件调用 Magic。Pi 负责持久化、重试和队列交付，包括显式取消后的队列继续。
+  不增加前台调度器或传输策略。
+- 固定官方产物加审计补丁在内部 Worker 中运行，使用不可变 Host 快照及绑定会话的副作用。
+  普通生命周期事件不继承当前 Agent 取消信号；压缩钩子、工具和支持信号的命令接收各自调用所属信号。
+- 保留 BTW 和 Agents 的有界引用投影。只暴露五个 Context 工具和状态、清理、重建、收尾、升级命令；
+  不增加竞争性的 Todo、状态栏、公告、Dreamer 或 Sidekick UI。
+
+## 保留旧摘要时的重试身份修复
+
+Pi 适配器现在每次投影都使用 Magic 已有的对象引用与唯一指纹匹配。消息数量相同不能证明位置对应：Pi 会保留旧压缩摘要，同时从重试消息中移除已经持久化的失败回复；两处数量差异可能相互抵消，使删除记录套用到错误消息。未再使用的位置对齐实现已删除。
+
+回归测试使用真实 Pi Session 投影和真实 Magic Worker，保留旧摘要、持久化失败回复，然后重试同一输入，要求投影消息和标签完全相同。这是 ps-eck 下 ps-5r4 的修复，不能单独证明 Magic 独占的超限恢复已经完成。精确上游版本通过同一回归和真实 Host 差分验收后，移除此补丁部分。
+
+## 真实超限压缩与持久化完成状态
+
+同一固定依赖补丁把 `session_before_compact` 的超限和手动请求连接到既有 Historian、边界解析器、compartment 租约和
+重试机制，返回持久化 compartment 摘要及经核验的 `firstKeptEntryId`；Pi 持久化结果并负责后续重试。
+不增加存储 schema 或完整历史重建。Historian 发布前立即检查取消，阻止取消后迟到发布。
+
+恢复严格读取待提交完成状态：状态损坏时停止，并保留证据。Worker 回执丢失后，重启复用已提交 compartment，
+不重新运行 Historian。待提交标记保留到 Pi 持久化压缩结果，再由现有比较并清除流程删除。
+超限操作受十分钟期限约束；Suite 将唯一允许的 Worker 重启也纳入同一期限。手动压缩不继承故障期限。
+实际超限使用 Magic 既有紧急保留尾部策略，保留当前输入。恢复连续处理可运行分块，每步核验 ordinal 进展，之后才交回 Pi。
+每次边界计算单独绑定短期原始消息读取器，避免 Historian 清理后看不到剩余历史。
+
+`tests/acceptance/context-management/magic-recovery-host.test.ts` 在认证 Pi 可执行文件上对比直接运行的带补丁 Magic 和 Suite，
+并在工作开始前或发布后注入真实 Worker 终止。还覆盖工具结果复用、Historian 瞬时失败、回执不确定、无进展、
+重复超限，以及原生取消/队列语义一致性。夹具 Provider 错误证明控制流程，不证明真实远端容量。
+只有精确官方产物通过相同的持久化完成及真实 Host 差分用例，才移除此补丁部分。每次上游升级重新审计信号读取、
+租约/发布原子性和摘要边界。
+
+
+Pi Historian 的三个分块前 no-op 返回现记为 `noop`，与原有日志及分块过滤/额度不足时的 no-op 契约一致。
+此前这些返回保留默认 `failed` 统计状态，使真实验收拒绝本已成功的运行。变更只修正结果记账，不增加压缩或重试行为。
+真实 Provider 门槛继续检查没有真正的 Historian 失败。
+
+### 2026-09-06 child pressure differential
+
+`bun test test/agents/child-context-pressure-host.test.ts test/context/magic-recovery-host.test.ts` 在认证 Pi 0.85.1 上通过 14 个测试、116 个 assertions，耗时 73.21 秒（日志：`.artifacts/ps-8ew-acceptance/context-host.log`）。测试使用生产 `buildPiArgs`、真实 Magic Worker/Historian、新建及分支 child history、两次真实超限恢复、八次 Tool 调用、最新 steering，以及检查既有 findings、completed-check ID 和最终报告。首次运行发现 Magic 的 `clearOldReasoning` 在回放时删除 signed reasoning；补丁现已在两个现有 clear 路径保留签名块。随后发现压缩摘要成功后 retry 仍使用旧缓存投影；在公开 `recoverPiCompaction` hook 前清除 Pi cache 修正了顺序。该修复复用既有 cache seam，没有新增 child projector。确定性 Provider fixture 证明生产控制流和 protocol 完整性，不证明远程实时容量；background teardown/stale-result 仍是独立验收证据。

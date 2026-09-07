@@ -7,8 +7,8 @@ import { armUiPtyOwnerWatchdog, disarmUiPtyOwnerWatchdog, type UiPtyOwnerWatchdo
 import type { UiPtyVerificationOptions } from "./verify-ui-pty.js";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/ui-pty-provider.ts");
-const runner = join(root, "test/fixtures/ui-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/ui-pty-provider.ts");
+const runner = join(root, "tests/fixtures/ui-pty-runner.sh");
 export const NERD_MODEL_MARKER = "\u{F167A}";
 export const POLL_INTERVAL_MS = 50;
 export const WAIT_TIMEOUT_MS = 20_000;
@@ -104,6 +104,7 @@ export class TmuxPiSession {
 			PI_STUFF_UI_PTY_PACKAGE: resolve(options.packagePath),
 			PI_STUFF_UI_PTY_PROVIDER_EXTENSION: providerExtension,
 			PI_STUFF_UI_PTY_ROWS: String(rows),
+			PI_STUFF_UI_PTY_MODE: options.tuiMode ?? "fullscreen",
 			PI_STUFF_UI_PTY_SESSIONS: paths.sessions,
 			PI_STUFF_UI_PTY_SESSION_ID:
 				options.sessionId ?? `ui-pty-${String(columns)}x${String(rows)}-${String(sessionCounter)}`,
@@ -275,11 +276,7 @@ export class TmuxPiSession {
 		return result.stdout.toString();
 	}
 
-	private async waitFor(
-		predicate: (screen: string) => boolean,
-		description: string,
-		history = false,
-	): Promise<string> {
+	async waitFor(predicate: (screen: string) => boolean, description: string, history = false): Promise<string> {
 		const deadline = Date.now() + WAIT_TIMEOUT_MS;
 		let screen = "";
 		while (Date.now() < deadline) {

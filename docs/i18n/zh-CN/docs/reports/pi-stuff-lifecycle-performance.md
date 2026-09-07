@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/pi-stuff-lifecycle-performance.md; translation-source-sha256: bb9f91ada8f7e4367c19b10b28ae700a141f7b138ee412a1739d186c72b951a6 -->
+<!-- translation-source: docs/reports/pi-stuff-lifecycle-performance.md; translation-source-sha256: d2b0ed066684a1a088610ae968a4b1d8cb762982e73d9b7c8fcd0c20b8b0093d -->
 
 # Pi Stuff 生命周期性能
 
@@ -32,7 +32,7 @@ bun run benchmark:lifecycle --output .artifacts/lifecycle-benchmark/final.json
 脚本不构成认证。
 
 可执行契约位于 [`benchmark-lifecycle.ts`](../../../../../scripts/benchmark-lifecycle.ts) 及其
-[测试](../../../../../test/lifecycle-benchmark.test.ts)。
+[测试](../../../../../tests/unit/repository/lifecycle-benchmark.test.ts)。
 
 ## 记录的 schema 6 结果
 

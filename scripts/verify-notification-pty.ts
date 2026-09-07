@@ -7,8 +7,8 @@ import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 import { armUiPtyOwnerWatchdog, disarmUiPtyOwnerWatchdog, type UiPtyOwnerWatchdog } from "./ui-pty-owner-watchdog.js";
 
 const root = resolve(import.meta.dir, "..");
-const provider = join(root, "test/fixtures/notification-pty-provider.ts");
-const runner = join(root, "test/fixtures/notification-pty-runner.sh");
+const provider = join(root, "tests/fixtures/notification-pty-provider.ts");
+const runner = join(root, "tests/fixtures/notification-pty-runner.sh");
 const OSC_777_NOTIFY = "\x1b]777;notify;";
 const STRING_TERMINATOR = "\x1b\\";
 const GRACE_MS = 700;

@@ -1,7 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { reportDiagnostic } from "../conversation-ui/index.ts";
 import type { ContextStatusChannel } from "../conversation-ui/statusline-channels.ts";
-import { boundedContextInputCapacity, estimateProviderPayloadTokens } from "../shared/provider-payload.ts";
+import { estimateProviderPayloadTokens } from "../shared/provider-payload.ts";
 import { applyContextPromptContributionsToProvider } from "./prompt-contributions.ts";
 import type { ContextCapabilityRuntime } from "./runtime.ts";
 
@@ -26,32 +26,38 @@ export function registerContextProviderBoundary(
 			});
 		}
 		const payload = projection.payload;
-		if (runtime.status().state !== "active") return payload === event.payload ? undefined : payload;
-		const capacity = boundedContextInputCapacity(ctx.model);
+		if (candidateToken !== runtime.currentProviderProjectionToken())
+			return payload === event.payload ? undefined : payload;
+		if (runtime.status().engine !== "magic-context") return payload === event.payload ? undefined : payload;
+		if (candidateToken === undefined) {
+			status.publish({ state: "unknown" });
+			if (!ctx.signal?.aborted) {
+				ctx.abort();
+				ctx.ui.notify(
+					`Magic Context projection is unavailable: ${runtime.status().error ?? "no current projection"}. The Session and current input are preserved.`,
+					"error",
+				);
+			}
+			return undefined;
+		}
 		const contextWindow = ctx.model?.contextWindow;
 		let estimatedTokens: number | undefined;
 		try {
 			const serialized = JSON.stringify(payload);
 			if (serialized !== undefined) estimatedTokens = estimateProviderPayloadTokens(serialized, ctx.model);
 		} catch {
-			// An unmeasurable Provider payload cannot establish a Bounded Context Projection.
+			// Missing estimates are display uncertainty, not evidence of Provider rejection.
 		}
 		if (
-			capacity === undefined ||
 			contextWindow === undefined ||
 			estimatedTokens === undefined ||
 			!Number.isFinite(estimatedTokens) ||
-			estimatedTokens > capacity
+			!Number.isFinite(contextWindow) ||
+			contextWindow <= 0
 		) {
 			status.publish({ state: "unknown" });
-			ctx.abort();
-			ctx.ui.notify(
-				"Provider request was stopped because Context could not establish a Bounded Context Projection.",
-				"error",
-			);
-			return undefined;
+			return payload === event.payload ? undefined : payload;
 		}
-		runtime.markProviderProjectionValidated(candidateToken, ctx.model);
 		status.publish({
 			state: "validated",
 			tokens: estimatedTokens,

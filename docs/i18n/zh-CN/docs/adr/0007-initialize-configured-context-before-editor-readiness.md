@@ -1,10 +1,13 @@
-<!-- translation-source: docs/adr/0007-initialize-configured-context-before-editor-readiness.md; translation-source-sha256: 950fdf573cfd1771438b97f0b23957b73f4b42678ed31a0f356e735a8548baf3 -->
+<!-- translation-source: docs/adr/0007-initialize-configured-context-before-editor-readiness.md; translation-source-sha256: 5688befabee06896a1c5f2e8559681482cd6dcb3acf15a7c73f27a7f26ffdf2d -->
 
 ---
 status: accepted
 ---
 
 # 在编辑器就绪前初始化已配置的上下文
+
+下文有关 Context 兜底、请求准入和恢复的条款已由
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md) 取代，其余决策保持不变。
 
 ## 背景
 

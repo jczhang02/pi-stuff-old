@@ -1,14 +1,14 @@
-<!-- translation-source: docs/research/code-mode-image-benchmark-20260827.md; translation-source-sha256: a34e74271143801aa4d6dae2c6663245500b2593064444d8114beb67aea81563 -->
+<!-- translation-source: docs/research/code-mode-image-benchmark-20260827.md; translation-source-sha256: e1c0a5348f82cde4aa40179c8104fcfdbb36b6126b769a70fb7a54462f99955f -->
 
 # Code Mode 图像基准测试预注册
 
 日期：2026-08-27
 
-V1/V2 部分保留其原始预注册内容和结果。当前运行器仅推进至下方单独预注册的 V3 Luna 研究；Git 历史保留确切的 V1/V2 运行器。
+V1/V2 部分保留其原始预注册内容和结果。已退役运行器当时仅推进至下方单独预注册的 V3 Luna 研究；Git 历史保留确切的 V1/V2 运行器。
 
-本文档在观察到任何基准测试结果之前，冻结真实模型基准测试。运行器是
-[`scripts/benchmark-code-mode-image.ts`](../../../../../scripts/benchmark-code-mode-image.ts)，Provider 边界观察器是
-[`test/fixtures/code-mode-image-benchmark-observer.ts`](../../../../../test/fixtures/code-mode-image-benchmark-observer.ts)。
+本文档在观察到任何基准测试结果之前，冻结真实模型基准测试。其已退役的运行器是
+[`scripts/benchmark-code-mode-image.ts`](https://github.com/jczhang02/pi-stuff/blob/4e517e771b54489eee3c57d0ec696bc312d945c9/scripts/benchmark-code-mode-image.ts)，Provider 边界观察器是
+[`test/fixtures/code-mode-image-benchmark-observer.ts`](https://github.com/jczhang02/pi-stuff/blob/4e517e771b54489eee3c57d0ec696bc312d945c9/test/fixtures/code-mode-image-benchmark-observer.ts)。
 
 ## 问题与不可变输入
 

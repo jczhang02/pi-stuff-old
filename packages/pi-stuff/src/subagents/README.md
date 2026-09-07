@@ -33,8 +33,12 @@ Continue independent work after launch. Open `/agents` to inspect, steer, stop, 
 - Supports one Agent, parallel grouped tasks, and status or lifecycle control calls; `agent` selects a launch
   definition, while `id` identifies an existing Agent Target.
 - Runs in the background by default; foreground mode waits for the result.
-- Delivers compact completion without starting an unsolicited main Agent turn; retained results preserve acceptance-report
-  precedence over later plain assistant text.
+- Delivers bounded success, failure, and partial outcomes to the originating main Agent; idle work resumes integration,
+  while busy work queues delivery. Canonical retained output outranks later progress text.
+- Explicit terminal status inspection returns the retained output reference, with transcript or Session fallbacks;
+  grouped completion text describes the aggregate outcome and member count.
+- Cancellation or explicit task ending suppresses late-result restart while retaining the outcome and canonical reference
+  for inspection; Session/run identity and duplicate delivery are preserved.
 - Keeps concurrency and nesting bounds while productive work has no cumulative-launch, default run-time, or implicit Tool timeout.
 - Aggregates attempts and resumes in one durable usage total; later automatic expansion pauses at the documented cost
   guard without stopping an in-flight child.

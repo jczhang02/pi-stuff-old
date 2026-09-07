@@ -468,9 +468,11 @@ export default function registerSubagentExtension(
 		startRunRuntime: (options) => runtime.startRunRuntime(options),
 		scheduleMaintenance: () => runtime.scheduleMaintenance(),
 		refresh: () => current.refresh(),
+		endRun: (runId) => notifier.endRun(runId),
 	};
-	executePublicAgent = (id, params, signal, onUpdate, ctx, parentRunOrigin) =>
-		runPublicAgent(publicAgentRuntime, { id, params, signal, onUpdate, ctx, parentRunOrigin });
+	executePublicAgent = (id, params, signal, onUpdate, ctx, parentRunOrigin) => {
+		return runPublicAgent(publicAgentRuntime, { id, params, signal, onUpdate, ctx, parentRunOrigin });
+	};
 	const tool = createPublicAgentTool(pi, () => agentRoster, executePublicAgent);
 	const registeredTool = registerSuiteOwnedTool(pi, tool, createAgentToolPresentation());
 	pi.on("before_agent_start", async (_event, ctx) => {

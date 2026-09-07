@@ -3,7 +3,7 @@
 This is a pre-optimization baseline, not a fix or compatibility certificate. On 2026-09-05, a small paired offline
 profile showed substantial Suite startup, CPU, and memory cost. A separate quiet Provider-wait probe remained
 interactive. Neither result establishes which costs are redundant, and neither covers the known long-Session
-Execution Ledger stall. Policy is recorded in [ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md).
+Execution Ledger stall. Policy is recorded in [ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md).
 
 ## Exact environment
 

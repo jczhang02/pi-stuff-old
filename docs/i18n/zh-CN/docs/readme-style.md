@@ -1,4 +1,4 @@
-<!-- translation-source: docs/readme-style.md; translation-source-sha256: 1055621783ed3a3c44968ff6d429ead9aa33b59ad01b60d0ae19c7245b2657a1 -->
+<!-- translation-source: docs/readme-style.md; translation-source-sha256: e871aabaee7e32a777c5526d9ad180ced21ef995b6d890570dfa1683ae4b748f -->
 
 # README 规范
 
@@ -42,14 +42,16 @@ README 是入口页。只保留安装步骤、最小可用示例、主要结果�
 使用两行居中徽标，顺序如下：
 
 1. CI、MIT License、GitHub stars、GitHub forks、last commit。
-2. Pi `0.85.0`、Bun `1.4.0`、TypeScript `5.9.3`、Linux x64。
+2. Pi `0.85.1`、Bun `1.4.0`、TypeScript `5.9.3`、Linux x64。
 
 徽标分别链接到 workflow、license、仓库活动、兼容性参考或相关上游项目。不要加入 npm、release 或 issue
 数量徽标。
 
+`tests/` 下的 README 是纯文字工程导览，介绍测试目录、命令及 benchmark 边界，不要求截图。
+
 ## 截图
 
-每份 README 至少包含一张独有截图。简体中文镜像复用同一个 PNG，只翻译周围的 alt text 和 caption。
+除 `tests/` 下的工程导览外，每份 README 至少包含一张独有截图。简体中文镜像复用同一个 PNG，只翻译周围的 alt text 和 caption。
 
 每张 README 图片都使用以下完全一致的代码块：
 
@@ -68,7 +70,7 @@ README 是入口页。只保留安装步骤、最小可用示例、主要结果�
 
 ### 拍摄标准
 
-- 拍摄 Ghostty `1.3.1` 中真实的 Pi `0.85.0` Session。
+- 拍摄 Ghostty `1.3.1` 中真实的 Pi `0.85.1` Session。
 - 使用 Catppuccin Latte 和 JetBrainsMono Nerd Font Mono。
 - 使用英文 UI 和人工构造的一次性 demo 数据。
 - 排除凭据、用户 Session、私有路径和无关桌面内容。

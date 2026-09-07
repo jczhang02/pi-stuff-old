@@ -1,4 +1,4 @@
-<!-- translation-source: docs/capabilities/rtk.md; translation-source-sha256: 61eb494caaa7489052d1bfcffe597c1e78d8cb70c6e4e14e50e947eaf29f4d9c -->
+<!-- translation-source: docs/capabilities/rtk.md; translation-source-sha256: 7bcea826e35c5a296a1d1a0101874e25d46b2e9cfbe42304565d36d5753d3f9c -->
 
 # RTK
 
@@ -8,13 +8,7 @@ RTK 在执行前缩短符合条件的 shell 命令，并把成功 Bash 与 Grep 
 
 ## 安装
 
-Pi Stuff 认证官方 RTK `0.45.0` Linux x64 binary：
-
-- archive SHA-256：`c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4`；
-- executable SHA-256：`99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535`；
-- source commit：`b34be37caf3796b69a50952a28e60e32b5daad43`。
-
-安装官方 binary，并把 `rtk` 放到 `PATH`。Pi Stuff 不下载 RTK。
+复用 `PATH` 中已安装的 RTK `0.45.0`。接受同版本源码构建与 PATH shim；受支持 profile 仍为 Linux x64。Pi Stuff 不下载或重装 RTK。兼容性由版本检查与真实命令行为建立；[上游参考](../../../../../packages/pi-stuff/src/rtk/UPSTREAM.md) 中的官方发布哈希只记录 CI 下载来源，不作为运行时准入要求。
 
 ## 快速开始
 
@@ -42,10 +36,12 @@ Runtime 不可用时会关闭 rewriting，但 Model projection 仍可在本地�
 1. 解析 `PATH` 中第一个 `rtk`；
 2. 解析 real path，并为普通文件生成 fingerprint；
 3. 运行 `rtk --version`；
-4. 检查已认证版本与 executable SHA-256。
+4. 检查受支持版本并记录本地可执行文件身份。
 
-之后每次 rewrite 都会重新检查 path、real path、fingerprint 与 SHA。Binary 发生变化时进入 `drifted` 状态，
-显式验证前保持禁用。
+执行使用选中的 PATH 名称，保留普通 shim 的调用行为。
+
+之后每次 rewrite 都会重新检查 path、real path、fingerprint、SHA 与报告版本。Binary 发生变化时进入 `drifted` 状态，
+显式验证前保持禁用。这些检查检测已验证本地文件的变化，不与官方发布哈希比较。重复的版本探测也会拒绝未改变的 shim 背后切换出的不受支持版本；验证不声称识别 shim 私有分派配置对应的二进制身份。
 
 Dialog 状态为 `✓ ready`、`○ unchecked`、`! drifted` 与 `× unavailable`。按 `v` 验证，按 `c`
 清除 Session savings。
@@ -55,8 +51,8 @@ Dialog 状态为 `✓ ready`、`○ unchecked`、`! drifted` 与 `× unavailable
 空命令和已经调用 RTK 的命令保持不变。Rewrite discovery、version 与 rewrite call 的 timeout 分别为
 600 ms、1 秒与 2.5 秒。
 
-RTK exit code 1 和 2 表示不改写。Code 0 和 3 可以返回替换命令。其他结果、timeout、不支持的平台、缺少
-executable 或认证失败都会保留原命令。
+RTK exit code 1 和 2 表示不改写。Code 0 和 3 可以返回替换命令。其他结果、timeout、缺少
+executable 或验证失败都会保留原命令。
 
 最终 Bash call 仍由 Pi 执行，权限、生命周期与结果也由 Pi 负责。
 

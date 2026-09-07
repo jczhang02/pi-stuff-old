@@ -27,7 +27,12 @@ import type { BackgroundRunnerConfig, BackgroundTaskResult, RunnerAgentTask } fr
 import { PI_STUFF_AGENT_PATH_ENV } from "../shared/pi-args.ts";
 import { terminalOutcome } from "../shared/terminal-outcome.ts";
 import { toolBudgetState } from "../shared/tool-budget.ts";
-import type { ChildProcessResult, ChildRuntimeControl, WriterProcess } from "./child-process-engine.ts";
+import type {
+	ChildProcessEngineInput,
+	ChildProcessResult,
+	ChildRuntimeControl,
+	WriterProcess,
+} from "./child-process-engine.ts";
 import type {
 	BackgroundRunnerStatus as RunnerStatus,
 	BackgroundRunnerStatusStep as RunnerStatusStep,
@@ -102,6 +107,7 @@ interface ResolvedTaskInput {
 	eventsPath: string;
 	activeControls: Map<number, ChildRuntimeControl>;
 	consumeScheduledStop: (index: number) => boolean;
+	preStartTerminalCause?: () => "pause" | "timeout" | "stop" | undefined;
 	onWriterProcess?: ((writer: WriterRuntimeState) => void) | undefined;
 }
 
@@ -113,6 +119,23 @@ interface AttemptSummary {
 	writerProcesses: WriterProcess[];
 	final: ChildProcessResult | undefined;
 	workUnit?: AgentWorkUnitSnapshot;
+}
+
+function stoppedChildResult(
+	task: RunnerAgentTask,
+	cause: NonNullable<BackgroundTaskResult["preStartTerminalCause"]>,
+	runId: string,
+	index: number,
+): ChildProcessResult {
+	return {
+		...stoppedResult(task, cause, runId, index),
+		signal: null,
+		stderr: "",
+		messages: [],
+		usage: emptyUsage(),
+		toolCount: 0,
+		durationMs: 0,
+	};
 }
 
 function workUsageGovernor(task: RunnerAgentTask): SessionAgentGovernor | undefined {
@@ -322,32 +345,37 @@ async function runAttempts(
 	try {
 		for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
 			const candidate = candidates[candidateIndex];
+			const terminalCause = input.preStartTerminalCause?.();
+			if (terminalCause) {
+				summary.final = stoppedChildResult(input.task, terminalCause, input.config.id, input.index);
+				break;
+			}
 			clearStaleContextUsage(input, statusStep);
 			let run: ChildProcessResult;
 			try {
 				const { ChildProcessEngine } = await loadProcessEngine();
-				run = await Effect.runPromise(
-					new ChildProcessEngine({
-						config: input.config,
-						task: input.task,
-						index: input.index,
-						model: candidate,
-						taskCwd: input.taskCwd,
-						sessionDir: childSessionDir,
-						outputFile,
-						transcript: transcript.writer,
-						artifactJsonlPath:
-							transcript.artifactPaths && input.config.artifactConfig?.includeJsonl !== false
-								? transcript.artifactPaths.jsonlPath
-								: undefined,
-						statusStep,
-						statusPath: input.statusPath,
-						status: input.status,
-						activeControls: input.activeControls,
-						consumeScheduledStop: () => input.consumeScheduledStop(input.index),
-						onWriterProcess: input.onWriterProcess,
-					}).run(),
-				);
+				const engineInput: ChildProcessEngineInput = {
+					config: input.config,
+					task: input.task,
+					index: input.index,
+					model: candidate,
+					taskCwd: input.taskCwd,
+					sessionDir: childSessionDir,
+					outputFile,
+					transcript: transcript.writer,
+					artifactJsonlPath:
+						transcript.artifactPaths && input.config.artifactConfig?.includeJsonl !== false
+							? transcript.artifactPaths.jsonlPath
+							: undefined,
+					statusStep,
+					statusPath: input.statusPath,
+					status: input.status,
+					activeControls: input.activeControls,
+					consumeScheduledStop: () => input.consumeScheduledStop(input.index),
+					onWriterProcess: input.onWriterProcess,
+				};
+				if (input.preStartTerminalCause) engineInput.preStartTerminalCause = input.preStartTerminalCause;
+				run = await Effect.runPromise(new ChildProcessEngine(engineInput).run());
 			} catch (error) {
 				const failed = failedLaunch(error instanceof Error ? error.message : String(error), candidate);
 				summary.attempts.push(failed.attempt);
@@ -552,6 +580,8 @@ function persistTaskCompletion(
 export async function runResolvedTask(input: ResolvedTaskInput): Promise<BackgroundTaskResult> {
 	const statusStep = input.status.steps[input.index];
 	if (!statusStep) throw new Error(`Missing status step for Agent index ${input.index}.`);
+	const terminalCause = input.preStartTerminalCause?.();
+	if (terminalCause) return stoppedResult(input.task, terminalCause, input.config.id, input.index);
 	if (input.consumeScheduledStop(input.index)) {
 		return stoppedResult(input.task, "stop", input.config.id, input.index);
 	}

@@ -196,7 +196,7 @@ export function projectForegroundStatus(
 		const paused = step.status === "paused";
 		const stopped = step.status === "stopped" || step.stopped === true;
 		const completed = step.status === "complete" || step.status === "completed";
-		const output = step.recentOutput?.join("\n") ?? "";
+		const output = step.finalOutput ?? step.recentOutput?.join("\n") ?? "";
 		const projected: SingleResult = {
 			agent: step.agent,
 			task: step.task ?? task.task,

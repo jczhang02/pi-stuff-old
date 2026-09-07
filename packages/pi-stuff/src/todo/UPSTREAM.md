@@ -15,7 +15,7 @@ The upstream text baseline was imported before product changes. Documentation im
 
 ## Pi Stuff delta
 
-- Adapts the source to the Pi 0.85.0 Host contract and the single Package dependency set.
+- Adapts the source to the Pi 0.85.1 Host contract and the single Package dependency set.
 - Replaces the action-multiplexer tool with `TaskCreate`, `TaskGet`, `TaskList`, and `TaskUpdate`.
 - Exposes stable string IDs, adds atomic forward and reverse dependency updates, and never resets the ID counter.
 - Versions new replay snapshots while retaining migration from legacy numeric `todo` snapshots.

@@ -16,15 +16,10 @@ import { isRuntimeObject } from "../shared/runtime-type.ts";
 import { MAGIC_TOOL_NAME_SET } from "./activity.ts";
 import { MAGIC_COMMAND_NAMES, type MagicCommandDefinition } from "./command-runtime.ts";
 import type { MagicContextPreparation, MagicContextPreparationOptions } from "./config.ts";
+import type { MagicCompactionResult } from "./magic-context-types.ts";
 import type { MagicContextEventResult, MagicContextHandler } from "./projection.ts";
 
-export const MAGIC_CONTEXT_NATIVE_COMPACTION_MULTIPLIER = 2;
 export const MAGIC_TOOL_HANDOFF_PARAMETERS = Type.Object({}, { additionalProperties: true });
-export const CANCELLED_EVENT_RESULT_SCHEMA = Type.Object(
-	{ cancel: Type.Literal(true) },
-	{ additionalProperties: true },
-);
-
 const MAGIC_CONTEXT_PROMPT_MARKER = "## Magic Context";
 const SUITE_CUSTOM_CONTEXT_GUIDANCE_TAG = "pi-stuff-context-guidance";
 const MAGIC_QUIET_UI_METHODS = new Set(["custom", "setFooter", "setHeader", "setStatus", "setWidget"]);
@@ -39,35 +34,16 @@ This Session has durable history that may be compacted into \`<session-history>\
 - Use \`ctx_memory\` for durable project facts, updating stale memories when needed. Use \`ctx_note\` only for genuinely future work, not the current task.
 - If an old Tool result is absent, make a fresh real Tool call; never fabricate it or copy Magic Context control markers into a reply.`;
 export const COMPACT_PROMPT_EVENT_SCHEMA = Type.Object({ systemPrompt: Type.String() }, { additionalProperties: true });
-const MANUAL_COMPACTION_EVENT_SCHEMA = Type.Object(
-	{
-		preparation: Type.Object(
-			{
-				firstKeptEntryId: Type.String({ minLength: 1 }),
-				tokensBefore: Type.Number({ minimum: 0 }),
-			},
-			{ additionalProperties: true },
-		),
-		reason: Type.Literal("manual"),
-	},
-	{ additionalProperties: true },
-);
-
 type AgentMessage = ContextEvent["messages"][number];
 
 interface MagicToolResultEventResult {
 	readonly content?: ToolResultEvent["content"];
 }
 
-interface MagicCompactionEventResult {
-	readonly cancel?: boolean;
-	readonly compaction?: NonNullable<ReturnType<typeof magicManualCompaction>>["compaction"];
-}
-
 export type MagicEventResult =
 	| BeforeAgentStartEventResult
 	| MagicContextEventResult
-	| MagicCompactionEventResult
+	| MagicCompactionResult
 	| MagicToolResultEventResult
 	| undefined;
 
@@ -192,16 +168,4 @@ export function magicPiAdapter(
 			return Guard.IsFunction(value) ? value.bind(pi) : value;
 		},
 	});
-}
-
-export function magicManualCompaction<Event>(event: Event) {
-	if (!Check(MANUAL_COMPACTION_EVENT_SCHEMA, event)) return;
-	return {
-		compaction: {
-			details: { engine: "magic-context", mode: "managed-history", source: "magic-context" } as const,
-			firstKeptEntryId: event.preparation.firstKeptEntryId,
-			summary: "Magic Context manages prior history.",
-			tokensBefore: event.preparation.tokensBefore,
-		},
-	};
 }

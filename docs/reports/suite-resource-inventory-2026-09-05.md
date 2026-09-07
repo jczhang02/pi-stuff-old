@@ -7,7 +7,7 @@ costs; the dated sections below distinguish measured operations from remaining s
 The [matched Package comparison](suite-comparable-resources-2026-09-06.md) adds 32 full-workload observations against
 the comparable pre-optimization tree, including a retained candidate input failure and foreground RSS increases.
 Repeated source operations are not automatically redundant: discovery, validation, recovery and visible refresh may
-require them. Beads `ps-yon.3` owns the missing measurements under [ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md).
+require them. Beads `ps-yon.3` owns the missing measurements under [ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md).
 
 The [2026-09-06 Agents follow-up](agents-loading-and-projector-cost-2026-09-06.md) records first-use loading changes,
 measured projector-lock I/O removal, three passing final native samples, and retained unresolved late holds.
@@ -322,7 +322,7 @@ snapshots and limits. First-Agent import stalls and the remaining whole-Suite ac
 On 2026-09-06, `ps-yon.6` removes duplicate foreground startup work from `e48a6c4f`.
 The foreground lifecycle already committed a writer registry and initial status before binding its run directory.
 Its in-process runner then initialized the same registry, recreated the status and wrote it again.
-The [regression](../../test/agents/foreground-initialization.test.ts) exercises both real startup stages and queues a
+The [historical regression at the tested revision](https://github.com/jczhang02/pi-stuff/blob/f5438e8ae009471309465c8cc5efcfbae371ca1a/test/agents/foreground-initialization.test.ts) exercises both real startup stages and queues a
 stop before child dispatch. It observes actual atomic publications: the old source writes each initial artifact twice;
 the candidate writes each once and still delivers the first running/pending observer notification with zero counters.
 The final regression fails on the old production source and passes on the candidate. Seven focused files pass

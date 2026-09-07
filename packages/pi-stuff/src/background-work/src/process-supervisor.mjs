@@ -216,6 +216,7 @@ async function commandAuthorizationText() {
 }
 
 let command;
+report({ type: "ready" });
 try {
 	command = await commandAuthorizationText();
 } catch (error) {

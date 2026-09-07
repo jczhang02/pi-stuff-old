@@ -4,12 +4,13 @@ import { join, resolve } from "node:path";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
 import { processExists } from "../packages/pi-stuff/src/background-work/src/process.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 import { stripTerminalControls } from "./terminal-controls.js";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/work-pty-provider.ts");
-const runner = join(root, "test/fixtures/work-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/work-pty-provider.ts");
+const runner = join(root, "tests/fixtures/work-pty-runner.sh");
 const REQUEST_RECORD_SCHEMA = Type.Object(
 	{
 		monitorCompletedNotification: Type.Boolean(),
@@ -106,6 +107,8 @@ after 100
 stty rows $env(PI_STUFF_WORK_PTY_ROWS) columns $env(PI_STUFF_WORK_PTY_COLUMNS) < $work_pty
 exec touch release.flag
 must_expect "MONITOR_RESUMED"
+send -- "/work-wait-idle\r"
+must_expect "WORK_PTY_IDLE"
 send -- "/reload\r"
 must_expect "Reloaded keybindings, extensions"
 must_expect "context files"
@@ -261,7 +264,7 @@ if (import.meta.main) {
 	await verifyWorkPty({
 		columns: 96,
 		packagePath: resolve(root, "packages/pi-stuff"),
-		piBinary: process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi",
+		piBinary: resolvePiBinary(),
 		rows: 30,
 	});
 }

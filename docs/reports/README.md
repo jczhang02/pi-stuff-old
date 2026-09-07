@@ -25,10 +25,10 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 - [Continuous responsiveness observer and cold Ledger reproduction](suite-responsiveness-observer-2026-09-05.md)
 - [Pi 0.85.0 Suite resource baseline](suite-resource-baseline-2026-09-05.md)
 - [Capability Contract Acceptance and Bounded Terminal-Bench Observation](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
+- [ps-8ew reliability repair acceptance](ps-8ew-reliability-acceptance-20260906.md)
 - [Magic Context under Effect optimization and recertification](magic-context-effect-optimization-2026-09-02.md)
 - [ps-qer Agent completion acceptance](ps-qer-agent-completion-acceptance-20260902.md)
 - [Effect v4 versus main decision](effect-v4-mainline-decision-2026-09-01.md)
-- [Terminal-Bench 2.1 latency comparison](terminal-bench-2.1-pi-stuff-latency-2026-08-30.md)
 - [Skill Discovery startup-bounded confirmation](skill-discovery-startup-bounded-confirmation-20260830.json) and its
   [preregistration](../research/skill-discovery-startup-bounded-confirmation-20260830.md)
 - [Skill Discovery isolated confirmation](skill-discovery-isolated-confirmation-20260830.json) and its
@@ -45,9 +45,14 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 
 ## Design and migration
 
+- [Astra instruction and delivery review](astra-instruction-delivery-review-2026-09-05.md)
 - [Single-Package migration](single-package-migration.md)
 - [Lifecycle performance](pi-stuff-lifecycle-performance.md)
 - [Context submission concurrency](context-submit-concurrency-research-2026-08-14.md)
 
 Raw JSON, ANSI, text, and image evidence stays beside the report that owns it. Historical versions, paths, and hashes
 remain unchanged so the recorded environment stays identifiable.
+
+- [ps-eck recovery and Host boundary (2026-09-05)](ps-eck-recovery-host-boundary-2026-09-05.md)
+
+- [Quality-assurance migration — 2026-09-06](quality-assurance-migration-20260906.md): staged command, test, and CI migration evidence.

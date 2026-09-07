@@ -1,10 +1,13 @@
-<!-- translation-source: docs/adr/0029-keep-work-independent-of-retention-quotas.md; translation-source-sha256: ca88dc44b4073b7e43307eb3d6a195fed11adfffa9a894a0ffd2184501ca9a27 -->
+<!-- translation-source: docs/adr/0029-keep-work-independent-of-retention-quotas.md; translation-source-sha256: d8f61442432293e7078ac7867eae92db9686dc79f844e58cf5ef2059c56030f5 -->
 
 ---
 status: accepted
 ---
 
 # 让生产性工作不受内部保留配额支配
+
+下文有关 Context 兜底、请求准入和恢复的条款已由
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md) 取代，其余决策保持不变。
 
 ## 背景
 

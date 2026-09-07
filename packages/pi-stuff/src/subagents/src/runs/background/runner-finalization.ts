@@ -40,7 +40,7 @@ export interface PreparedWorktrees {
 	setup: WorktreeSetup;
 	operations: Pick<
 		typeof import("../shared/worktree.ts"),
-		"cleanupWorktrees" | "diffWorktrees" | "formatWorktreeDiffSummary"
+		"cleanupWorktrees" | "diffWorktrees" | "formatWorktreeDiffSummary" | "resolveWorktreeTaskCwd"
 	>;
 }
 

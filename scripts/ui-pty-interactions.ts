@@ -14,7 +14,7 @@ import {
 	VIBE_LINE_LIVENESS_PTY_PROMPT,
 	VISUALIZATION_PTY_PROMPT,
 	VISUALIZATION_PTY_RESPONSE,
-} from "../test/fixtures/ui-pty-provider.js";
+} from "../tests/fixtures/ui-pty-provider.js";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 import * as pty from "./ui-pty-session.js";
 import { waitForPersistedSessionValue } from "./ui-pty-thinking-evidence.js";
@@ -37,7 +37,7 @@ const UI_LABELS = [
 	"Tool running timer",
 ] as const;
 const NERD_THINKING_MARKER = "\uF0EB med";
-const VIBE_LINE_SPINNER = /^[ \t]*([⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏])[ \t]+\S.*$/u;
+const VIBE_LINE_SPINNER = /^(?:── )?[ \t]*([⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏])[ \t]+\S.*$/u;
 const VIBE_LINE_STALL_LIMIT_MS = 500;
 const FIXTURE_RECORD_SCHEMA = Type.Object(
 	{
@@ -272,15 +272,21 @@ export async function verifyVibeLineSpinnerLiveness(session: pty.TmuxPiSession):
 	let currentFrame: string | undefined;
 	let frameChangedAt: number | undefined;
 	let maximumFrameDurationMs = 0;
+	let embeddedIndicatorObserved = false;
 	let screen = "";
 	while (Date.now() < deadline) {
 		screen = session.capture();
 		const observedAt = performance.now();
-		const matches = screen
-			.split("\n")
+		const spinnerLines = screen.split("\n").filter((line) => VIBE_LINE_SPINNER.test(line));
+		const matches = spinnerLines
 			.map((line) => VIBE_LINE_SPINNER.exec(line)?.[1])
 			.filter((value): value is string => value !== undefined);
 		const nextFrame = matches.length === 1 ? matches[0] : undefined;
+		if (spinnerLines.length > 1) pty.fail("working indicator rendered more than once");
+		if (spinnerLines.length === 1) {
+			if (!spinnerLines[0]?.startsWith("── ")) pty.fail("working indicator rendered outside the editor border");
+			embeddedIndicatorObserved = true;
+		}
 		if (nextFrame) {
 			frames.add(nextFrame);
 			if (nextFrame !== currentFrame) {
@@ -302,6 +308,7 @@ export async function verifyVibeLineSpinnerLiveness(session: pty.TmuxPiSession):
 	}
 	if (!screen.includes(VIBE_LINE_LIVENESS_PTY_DONE)) pty.fail("long CJK Thinking stress did not settle");
 	if (frames.size < 2) pty.fail(`Vibe Line Spinner did not advance: ${JSON.stringify([...frames])}`);
+	if (!embeddedIndicatorObserved) pty.fail("working indicator did not render inside the editor border");
 
 	const recovery = "VIBE_LINE_RECOVERY";
 	session.sendLiteral(`THOUGHT_PROBE_${recovery}`);

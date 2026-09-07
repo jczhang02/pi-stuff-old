@@ -8,7 +8,9 @@ import type {
 	getMarkdownTheme,
 	initTheme,
 } from "../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/theme.js";
+import { requireJsonInputValue } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeFunction } from "../packages/pi-stuff/src/shared/runtime-type.js";
+import { handleBenchmarkMeta, writeBenchmarkReport } from "./benchmark-cli.js";
 
 const DEFAULT_SAMPLES = 30;
 const DEFAULT_WARMUPS = 5;
@@ -69,6 +71,7 @@ interface ScenarioReport {
 }
 
 interface BenchmarkOptions {
+	readonly output: string;
 	readonly baselineRoot: string;
 	readonly candidateRoot: string;
 	readonly samples: number;
@@ -98,11 +101,17 @@ function parseOptions(arguments_: readonly string[]): BenchmarkOptions {
 	let candidateRoot = process.cwd();
 	let samples = DEFAULT_SAMPLES;
 	let warmups = DEFAULT_WARMUPS;
+	let output = ".artifacts/conversation-markdown-benchmark/latest.json";
 
 	for (let index = 0; index < arguments_.length; index += 1) {
 		const flag = arguments_[index];
 		const value = arguments_[index + 1];
 		switch (flag) {
+			case "--output":
+				if (!value) fail("--output requires a path");
+				output = value;
+				index += 1;
+				break;
 			case "--baseline-root":
 				if (!value) fail("--baseline-root requires a path");
 				baselineRoot = value;
@@ -127,6 +136,7 @@ function parseOptions(arguments_: readonly string[]): BenchmarkOptions {
 	}
 	if (!baselineRoot) fail("pass --baseline-root or PI_STUFF_BENCHMARK_BASELINE");
 	return {
+		output: resolve(output),
 		baselineRoot: resolve(baselineRoot),
 		candidateRoot: resolve(candidateRoot),
 		samples,
@@ -522,7 +532,17 @@ function benchmarkFreshImport(
 	};
 }
 
+handleBenchmarkMeta(
+	process.argv.slice(2),
+	"usage: benchmark:capability:conversation-markdown --baseline-root <path> [--candidate-root <path>] [--samples <count>] [--warmups <count>] [--output <path>]",
+	[
+		"profile=offline; installed Pi libraries; no network or credentials; output=.artifacts/conversation-markdown-benchmark/latest.json",
+		"fresh-conversation-markdown-import",
+		...scenarios().map((scenario) => scenario.id),
+	],
+);
 const options = parseOptions(process.argv.slice(2));
+console.error(`Capability Benchmark: Conversation Markdown; offline; report: ${options.output}`);
 const baselineHost = await loadHostMarkdownRuntime(options.baselineRoot);
 const candidateHost = await loadHostMarkdownRuntime(options.candidateRoot);
 const candidateThinkingLine = await loadThinkingLineModule(options.candidateRoot);
@@ -578,8 +598,9 @@ for (const report of reports.filter((candidateReport) => candidateReport.regress
 }
 const regressions = confirmations.filter((report) => report.regression);
 uninstallCandidateThinkingLine();
-process.stdout.write(
-	`${JSON.stringify(
+await writeBenchmarkReport(
+	options.output,
+	requireJsonInputValue(
 		{
 			bootstrapIterations: BOOTSTRAP_ITERATIONS,
 			confirmations,
@@ -588,10 +609,6 @@ process.stdout.write(
 			samples: options.samples,
 			warmups: options.warmups,
 		},
-		null,
-		2,
-	)}\n`,
+		"Conversation Markdown benchmark report",
+	),
 );
-if (regressions.length > 0) {
-	fail(`confirmed regressions: ${regressions.map((report) => report.id).join(", ")}`);
-}

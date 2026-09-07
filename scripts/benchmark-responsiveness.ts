@@ -5,22 +5,24 @@ import { copyFile, mkdir, mkdtemp, readdir, readFile, stat, writeFile } from "no
 import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { type Static, Type } from "typebox";
+import { Type } from "typebox";
 import { Check } from "typebox/value";
 import { parseJsonValue } from "../packages/pi-stuff/src/shared/json-value.js";
 import {
 	identityBoundProcessLiveness,
 	probeProcessLiveness,
 } from "../packages/pi-stuff/src/subagents/src/shared/process-identity.js";
-import { respondToContextRequest } from "../test/fixtures/responsiveness-provider.js";
+import { respondToContextRequest } from "../tests/fixtures/responsiveness-provider.js";
 import { HostResourceScope } from "./host-resource-scope.js";
-import { CERTIFIED_PI_HOST_PROFILE, CERTIFIED_PI_RELEASE_BINARY_SHA256 } from "./pi-host-contract.js";
+import { CERTIFIED_PI_HOST_PROFILE } from "./pi-host-contract.js";
 import { type PtyObservation, summarizePtyObservations } from "./pty-observation.js";
+import { parseResponsivenessGates } from "./responsiveness-gates.ts";
+import { readBackgroundOutcomes, readGoalCompletion } from "./responsiveness-session-evidence.ts";
 import { armUiPtyOwnerWatchdog, disarmUiPtyOwnerWatchdog, type UiPtyOwnerWatchdog } from "./ui-pty-owner-watchdog.js";
-import { stageCertifiedPiHost } from "./verify-pi-host-provenance.js";
+import { stageSupportedPiHost } from "./verify-pi-host-provenance.js";
 
 const root = resolve(import.meta.dir, "..");
-const provider = join(root, "test/fixtures/responsiveness-provider.ts");
+const provider = join(root, "tests/fixtures/responsiveness-provider.ts");
 const { values } = parseArgs({
 	options: {
 		pi: { type: "string", default: process.env["PI_BIN"] ?? "/opt/bin/pi" },
@@ -80,21 +82,6 @@ assert(
 );
 assert(!(profileCpu || values.diagnostic) || !values.gates, "Diagnostic collection cannot use gates");
 
-const LIMITS_SCHEMA = Type.Object({
-	hostBinarySha256: Type.Literal(CERTIFIED_PI_RELEASE_BINARY_SHA256),
-	maximumObservationGapMs: Type.Number({ minimum: 0 }),
-	maximumActiveSpinnerAbsenceMs: Type.Number({ minimum: 0 }),
-	spinnerMs: Type.Number({ minimum: 0 }),
-	startupInputMs: Type.Number({ minimum: 0 }),
-	steadyInputMs: Type.Number({ minimum: 0 }),
-	selectionMs: Type.Number({ minimum: 0 }),
-});
-let limits: Static<typeof LIMITS_SCHEMA> | undefined;
-if (values.gates) {
-	const loaded = parseJsonValue(await readFile(values.gates, "utf8"));
-	assert(Check(LIMITS_SCHEMA, loaded), "Invalid gates or wrong certified Host");
-	limits = loaded;
-}
 const PROVIDER_LOG_SCHEMA = Type.Array(
 	Type.Object({
 		type: Type.String(),
@@ -111,76 +98,15 @@ const resourceScope = values["resource-scope"]
 	? new HostResourceScope(`ps-yon-${basename(directory)}.scope`)
 	: undefined;
 
-async function readSessionEntries() {
-	const files = (await readdir(join(directory, "sessions"))).filter((name) => name.endsWith(".jsonl"));
-	assert.equal(files.length, 1, "Expected one parent Session");
-	const file = files[0];
-	assert(file);
-	return (await readFile(join(directory, "sessions", file), "utf8")).trim().split("\n").map(parseJsonValue);
-}
-
-async function readGoalCompletion(): Promise<boolean> {
-	const entries = await readSessionEntries();
-	const terminal = Type.Object({
-		type: Type.Literal("custom"),
-		customType: Type.Literal("goal-state"),
-		data: Type.Object({
-			goal: Type.Object({ text: Type.Literal("PSYON_MEASURE"), status: Type.Literal("complete") }),
-		}),
-	});
-	const final = Type.Object({
-		type: Type.Literal("message"),
-		message: Type.Object({
-			role: Type.Literal("assistant"),
-			content: Type.Array(Type.Object({ type: Type.String(), text: Type.Optional(Type.String()) })),
-		}),
-	});
-	const terminalIndex = entries.findIndex((entry) => Check(terminal, entry));
-	const successfulTool = Type.Object({
-		type: Type.Literal("message"),
-		message: Type.Object({
-			role: Type.Literal("toolResult"),
-			toolName: Type.Literal("goal_complete"),
-			isError: Type.Literal(false),
-		}),
-	});
-	const results = entries.flatMap((entry, index) => (Check(successfulTool, entry) ? [index] : []));
-	assert.equal(results.length, 1, "Expected one persisted successful Goal completion Tool result");
-	const finals = entries.flatMap((entry, index) =>
-		Check(final, entry) &&
-		entry.message.content.some((part) => part.type === "text" && part.text === "PSYON_CADENCE_DONE")
-			? [index]
-			: [],
-	);
-	assert.equal(finals.length, 1, "Expected one persisted Goal Final Response");
-	assert(
-		terminalIndex >= 0 && terminalIndex < (results[0] ?? -1) && (results[0] ?? Infinity) < (finals[0] ?? -1),
-		"Goal state, successful Tool result and final response were not persisted in order",
-	);
-	return true;
-}
-
-async function readBackgroundOutcomes(): Promise<number> {
-	const entries = await readSessionEntries();
-	const identity = Type.Object({ type: Type.Literal("custom"), customType: Type.Literal("pi-stuff-agent-outcome") });
-	const outcomes = entries.filter((entry) => Check(identity, entry));
-	const completed = Type.Object({
-		data: Type.Object({
-			version: Type.Literal(1),
-			key: Type.String({ minLength: 1 }),
-			count: Type.Literal(1),
-			status: Type.Literal("completed"),
-		}),
-	});
-	const keys = outcomes.map((entry) => {
-		assert(Check(completed, entry), "Background Agent outcome was not completed");
-		return entry.data.key;
-	});
-	assert.equal(outcomes.length, expectedChildren, "Missing or duplicate durable Agent outcomes");
-	assert.equal(new Set(keys).size, expectedChildren, "Repeated Agent outcome identity");
-	return outcomes.length;
-}
-const { binaryPath: piBinary } = await stageCertifiedPiHost(values.pi, directory);
+const { binaryPath: piBinary } = await stageSupportedPiHost(values.pi, directory);
+const limits = values.gates
+	? parseResponsivenessGates(
+			await readFile(values.gates, "utf8"),
+			createHash("sha256")
+				.update(await readFile(piBinary))
+				.digest("hex"),
+		)
+	: undefined;
 await Promise.all(["home", "agent", "project", "sessions", "tmp"].map((name) => mkdir(join(directory, name))));
 await writeFile(
 	join(directory, "agent/settings.json"),
@@ -326,8 +252,10 @@ const source = {
 			"scripts/benchmark-responsiveness.ts",
 			"scripts/host-resource-scope.ts",
 			"scripts/pty-observation.ts",
-			"test/fixtures/responsiveness-provider.ts",
-			"test/fixtures/faux-provider.ts",
+			"scripts/responsiveness-gates.ts",
+			"scripts/responsiveness-session-evidence.ts",
+			"tests/fixtures/responsiveness-provider.ts",
+			"tests/fixtures/faux-provider.ts",
 		].map(async (file) => {
 			const content = await readFile(join(root, file), "utf8");
 			return { file, sha256: createHash("sha256").update(content).digest("hex"), content };
@@ -621,14 +549,26 @@ try {
 				`Missing ${kind} while the parent was idle and its child was running`,
 			);
 	}
-	const backgroundOutcomes = agentMode === "background" ? await readBackgroundOutcomes() : 0;
+	const background =
+		agentMode === "background"
+			? await readBackgroundOutcomes(directory, expectedChildren)
+			: { outcomes: 0, deliveries: 0 };
+	const backgroundIntegrationRequests = providerLog.filter(
+		(entry) => entry.type === "background-integration-request" && entry.role === "parent",
+	).length;
+	assert.equal(backgroundIntegrationRequests, background.deliveries, "Missing or repeated result integration");
+	assert.equal(
+		providerLog.filter((entry) => entry.type === "background-integration-complete" && entry.role === "parent").length,
+		background.deliveries,
+		"Background result integration did not finish",
+	);
 	const firstAgentRow = observations.find((entry) => /• Agent\b.*cadence-agent/u.test(entry.frame));
 	const agentRowObserved = firstAgentRow !== undefined;
 	assert(!agentMode || agentRowObserved, "Agent Tool UI was not observed");
 	const firstGoalToolRow = observations.find((entry) => entry.frame.includes("Goal complete · done"));
 	assert(!goalWork || firstGoalToolRow, "Successful Goal Tool UI was not observed");
 	if (usage) {
-		assert.equal(usageRequests.length, 1, "Exactly one automatic usage refresh is expected");
+		assert.equal(usageRequests.length, 1 + background.deliveries, "Each settled user-work run refreshes usage once");
 		assert.equal(
 			contextWork
 				? contextRequests.filter((entry) => entry.naming).length
@@ -660,7 +600,8 @@ try {
 		codeMode,
 		agentMode,
 		agentRowObserved,
-		backgroundOutcomes,
+		backgroundOutcomes: background.outcomes,
+		backgroundIntegrationRequests,
 		parentCompletedWhileChildRunning,
 		firstAgentRowMs: firstAgentRow ? firstAgentRow.capturedMs - start : undefined,
 		completedChildTools: childRequests.filter((entry) => entry.completedTools === 1).length,
@@ -671,7 +612,7 @@ try {
 		contextRetrievals,
 		goalContinuationRequests,
 		firstGoalToolRowMs: firstGoalToolRow ? firstGoalToolRow.capturedMs - start : undefined,
-		goalCompleted: goalWork && (await readGoalCompletion()),
+		goalCompleted: goalWork && (await readGoalCompletion(directory)),
 		negativeBlockMs: blockMs,
 		negativeBlockPhase: blockPhase,
 		automaticUsageRefreshes: usageRequests.length,

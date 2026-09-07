@@ -20,6 +20,16 @@ interface WorktreeInfo {
 	syntheticPaths: string[];
 }
 
+/** Map a task cwd from the repository into its corresponding worktree. */
+export function resolveWorktreeTaskCwd(worktree: WorktreeInfo | undefined, repoRoot: string, taskCwd: string): string {
+	if (!worktree) throw new Error("worktree isolation is missing the task worktree");
+	const relative = path.relative(path.resolve(repoRoot), path.resolve(taskCwd));
+	if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+		throw new Error(`worktree isolation cannot run task cwd outside the launch directory: ${taskCwd}`);
+	}
+	return path.resolve(worktree.path, relative);
+}
+
 export interface WorktreeDiff {
 	index: number;
 	agent: string;

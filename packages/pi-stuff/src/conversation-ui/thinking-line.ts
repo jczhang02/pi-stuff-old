@@ -184,14 +184,14 @@ function projectThinkingLines(component: AssistantMessageComponent): void {
 		const thinkingLine = child instanceof MouseRegion || child instanceof Text;
 		if (child instanceof MouseRegion) projectThinkingRegion(child, internals.outputPad);
 		if (!thinkingLine || index === 0 || children[index - 1] instanceof Spacer) continue;
-		// Pi 0.85.0 separates Thinking from following prose, but omits the reverse text-to-Thinking boundary.
+		// Pi 0.85.1 separates Thinking from following prose, but omits the reverse text-to-Thinking boundary.
 		children.splice(index, 0, new Spacer(1));
 	}
 }
 
 /** Install the certified Host adapter and return its idempotent release function. */
 export function installThinkingLineDisplay(): () => void {
-	// ponytail: Pi 0.85.0 has no public Thinking renderer; replace this patch when the Host exposes one.
+	// ponytail: Pi 0.85.1 has no public Thinking renderer; replace this patch when the Host exposes one.
 	const prototype = AssistantMessageComponent.prototype;
 	let state = patchState();
 	if (!state) {

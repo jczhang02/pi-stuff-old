@@ -20,6 +20,12 @@ Pi remains the Host. Pi Stuff remains one local Pi Package with one default Exte
 ordered internal Capability Modules through Pi's public Extension interface; it does not introduce another CLI,
 runtime, Session layer, SDK, or TUI shell.
 
+Conversation UI may adapt the certified Host's Thinking and User Message presentation methods where no public
+renderer exists. These narrowly owned, reversible adapters preserve canonical messages and Host lifecycle authority;
+they require real-Host certification and release their method ownership on Session shutdown. This is a presentation
+exception, not permission to patch execution, persistence, or arbitrary Host internals. User Message trade-offs and
+failure containment are specified in [ADR 0030](0030-unify-user-message-presentation.md).
+
 A Capability Module is an internal implementation boundary, not an independently installed or published Package. The
 current ordered set is defined by `packages/pi-stuff/suite.json`, and dependencies between Modules stay explicit.
 Shared Modules may provide narrow interfaces to Capability Modules, but shared Modules do not import the Capabilities

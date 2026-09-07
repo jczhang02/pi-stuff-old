@@ -102,7 +102,7 @@ background Agent scenarios below cover successful execution, not every Agent lif
 Default-loaded Capabilities are not evidence that those paths executed.
 The shared machine was not CPU-isolated; full responsiveness closure also needs longer repeated workloads.
 Beads `ps-yon.3`, `ps-yon.4`, and `ps-yon.5` retain that work under
-[ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md).
+[ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md).
 
 ## Foreground Agent extension
 

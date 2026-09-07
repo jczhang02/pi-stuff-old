@@ -1,4 +1,4 @@
-<!-- translation-source: CONTEXT.md; translation-source-sha256: 2a1eb97088ca02ab732fd7cb748a840b5e81e0a8c12852cb37409c89dece78e8 -->
+<!-- translation-source: CONTEXT.md; translation-source-sha256: 2044c728bca869fdac4d91b0514f714881b5a80b949ad4bf02336a86f5cab845 -->
 
 # Pi Stuff
 
@@ -44,10 +44,13 @@ unconfigured behavior 仍是一项 unconditional contract；缺少所需 depende
 绝不能计为 passed、skipped 或 not applicable。
 _避免使用_：Optional test、skipped feature、best-effort contract
 
+**Capability Benchmark**：
+针对单项或有限几项 Capability 的性能、资源使用或行为效果所做的专项评测，无论执行时是否使用完整 Host 或公开任务。它提供比较证据，不代替 Capability Contract Acceptance，也没有阻断 PR 的权利。
+_避免使用_：Internal-only benchmark、correctness test、Suite Outcome Evaluation
+
 **Suite Outcome Evaluation**：
-在外部公开 task set 上进行的配对评估：固定认证 Host、所选 model、task、environment 与 resource budget，比较
-加载和不加载 Suite 的两种情况。它报告完整系统 outcome 与 Suite delta；不认证单项 Capability contract。
-_避免使用_：Pi Stuff score、harness certification、correctness test
+在外部公开任务集上评测完整 Suite 的任务效果，并对比声明的配置，例如原生 Pi 与 Pi Stuff。它不证明每项 Capability 都已覆盖或通过验收，也没有阻断 PR 的权利。
+_避免使用_：Pi Stuff score、harness certification、correctness test、Capability Benchmark
 
 **Capability Contract Acceptance**：
 使用每项所声明的 Acceptance Evidence Profile，在隔离 scenario 中验证每个适用的 Capability Contract Catalog
@@ -94,8 +97,8 @@ namespace；合并文件、lock 与 atomic write 仍是共享基础设施。
 _避免使用_：Capability settings file、global config
 
 **Vibe Line Spinner**：
-Host 处理 Agent 工作时，Pi 的 Working Row 中由 Host 拥有的动画字符。它是活性信号，不等同于 Working Row
-本身、Thinking 对话记录内容或其他 Conversation UI 内容。
+指示 Agent 工作正在进行的 Host 原生动画字符。它是活性信号，与运行提示、Thinking 对话记录内容及其他
+Conversation UI 内容不同。
 _避免使用_：Vibe Line、Working Row、Thinking 显示
 
 **Logical Thinking Run**：
@@ -172,7 +175,7 @@ _避免使用_：Tool recommendation、Tool activation
 一个 Child Agent 当前 Provider payload 的 token 估计值，以所选 Child Host model 报告的 Context window 为
 基准。权威 Assistant usage 会替代估计值；之后的 Tool result 与其他尾部 message 增加有界 Host-equivalent
 估计。Parent Host 的 model metadata 只在 launch 时临时备用，直到 Child Host 报告真实选择。它不是累计 run
-usage；当 compaction 或 model fallback 使当前 payload 不确定时也不可用。
+usage。Context Management/Magic 拥有 child pressure 处理；Agents 不会依据本地估算终止 child 或替换 Provider request。
 _避免使用_：Agent tokens、total Agent usage、Context budget
 
 **Agent Target**：
@@ -182,17 +185,18 @@ _避免使用_：Agent key、child address
 
 **Agent Lifecycle Row**：
 一次 Agent Tool lifecycle event 的仅显示 Transcript projection。Background launch 与 completion 保持为分开的
-chronological event；live Agent state 与完整 child evidence 仍由 Agents 负责。
+chronological event。Agents 拥有 lifecycle 和 protocol evidence；Context Management/Magic 拥有 child pressure 投影，delivery 将有界结果返回来源 main Agent。
 _避免使用_：Agent Operation Block、Subagent Row、Agent roster row
 **Context Activity**：
 一次由用户发起的 Context maintenance operation 所对应的、模型不可见且持久化的 Session record。一条可见
 Pi Stuff row 投影其 anchor，并在 resume 后继续更新。它不是 Tool call、Diagnostic Record 或 Statusline item。
 _避免使用_：Context Tool Activity、Context notification、Context status
 
-**有界上下文投影**：
-由上下文管理确认处于所选模型本地容量边界内的派生模型请求上下文。它是 Context 活跃时唯一允许发送给
-Provider 的上下文；它不保证 Provider 接受，也不保证内容正确。
-_避免使用_：安全上下文、压缩上下文
+**Bounded Context Projection（有界上下文投影）**：
+Context Management 按请求方用途生成的派生上下文。本地容量估算用于显示和主动压缩，不能证明 Provider 会接受请求，
+也不能授权取消前台执行。启用 Magic 时，前台使用 Magic 投影；BTW 和 Agents 保留各自的有界引用契约。
+投影无法恢复时保留输入并停止，不替换成原始历史。
+_避免_：安全上下文、已验证容量保证
 
 **Prompt Contribution**：
 由 marker 包围、属于 Capability 的 system-prompt fragment。Context Management 在每次 Provider activation

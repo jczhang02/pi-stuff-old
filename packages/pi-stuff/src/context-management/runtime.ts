@@ -5,6 +5,7 @@ import type {
 	ExtensionAPI,
 	ExtensionContext,
 	InputEvent,
+	SessionBeforeCompactEvent,
 	SessionShutdownEvent,
 	SessionStartEvent,
 	ToolDefinition,
@@ -13,35 +14,29 @@ import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import * as Semaphore from "effect/Semaphore";
 import { Check } from "typebox/value";
-import {
-	beginSuiteNativeCompactionPreflight,
-	reportDiagnostic,
-	type SuiteAgentMessageOptions,
-} from "../conversation-ui/index.ts";
+import { getContextStatusChannel, reportDiagnostic, type SuiteAgentMessageOptions } from "../conversation-ui/index.ts";
 import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
 import { isRuntimeObject } from "../shared/runtime-type.ts";
 import { registerSuiteOwnedTool, registerSuiteToolActivityMetadata } from "../tool-display/index.ts";
 import { MAGIC_TOOL_LABELS, MAGIC_TOOL_NAME_SET, MAGIC_TOOL_NAMES } from "./activity.ts";
 import { ContextCommandRuntime, type MagicCommandDefinition } from "./command-runtime.ts";
+import type { MagicCompactionResult } from "./magic-context-types.ts";
 import {
 	addCompactMagicContextPrompt,
-	CANCELLED_EVENT_RESULT_SCHEMA,
 	COMPACT_PROMPT_EVENT_SCHEMA,
 	type ContextRuntimeDependencies,
 	type LooseEventHandler,
-	MAGIC_CONTEXT_NATIVE_COMPACTION_MULTIPLIER,
 	MAGIC_TOOL_HANDOFF_PARAMETERS,
-	type MagicEventResult,
 	type MagicRegistrationPlan,
 	magicCommandContext,
-	magicManualCompaction,
 	magicPiAdapter,
-	type NativeCompactionSettings,
 	quietMagicContext,
 } from "./magic-runtime.ts";
+import { NativeContextPreflight } from "./native-preflight.ts";
 import type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions } from "./projection.ts";
 import { ContextProjectionRuntime, type MagicContextEventResult, type MagicContextHandler } from "./projection.ts";
 import { applyContextPromptContributions, stripContextPromptContributions } from "./prompt-contributions.ts";
+import { ContextRecovery } from "./recovery.ts";
 import {
 	type ContextActivationTrigger,
 	type ContextCapabilityState,
@@ -70,8 +65,6 @@ export interface ContextCapabilityRegistry {
 
 interface ContextRuntimeBoundary {
 	readonly activate: (ctx: ExtensionContext, trigger: ContextActivationTrigger) => Promise<ContextStatusSnapshot>;
-	readonly committed: () => void;
-	readonly committedFailure: (cause: unknown, ctx: ExtensionContext) => Promise<void>;
 }
 
 type SharedFlight<A> = { readonly deferred: Deferred.Deferred<A> };
@@ -97,12 +90,13 @@ export class ContextCapabilityRuntime {
 	private cleanup: SharedFlight<void> | undefined;
 	private readonly sessionStarts = Semaphore.makeUnsafe(1);
 	private generation = 0;
+	private sessionVersion = 0;
 	private readonly boundary: ContextRuntimeBoundary;
-	private providerBoundaryCommitted = false;
 	private readonly commandRuntime: ContextCommandRuntime;
 	private readonly magicCommands = new Map<string, MagicCommandDefinition>();
 	private magicContextHandler: MagicContextHandler | undefined;
 	private readonly magicTools = new Map<string, ToolDefinition>();
+	private magicCompactionHandlers: LooseEventHandler[] = [];
 	private magicSessionStartHandlers: LooseEventHandler[] = [];
 	private magicShutdownHandlers: LooseEventHandler[] = [];
 	private sessionStart: SessionStartEvent | undefined;
@@ -113,9 +107,12 @@ export class ContextCapabilityRuntime {
 	private readonly registry: ContextCapabilityRegistry;
 	private readonly owner: object;
 	private readonly ownedContexts = new Set<object>();
-	private nativeCompactionPreflight: Deferred.Deferred<void> | undefined;
+	private readonly nativePreflight: NativeContextPreflight;
 	private directInputActivationPending = false;
 	private magicPromptInstalledForSession = false;
+	private readonly recovery: ContextRecovery;
+	private readonly magicEventHandlers = new Map<string, LooseEventHandler[]>();
+	private readonly registeredMagicEvents = new Set<string>();
 
 	constructor(
 		pi: ExtensionAPI,
@@ -124,6 +121,7 @@ export class ContextCapabilityRuntime {
 		boundary: ContextRuntimeBoundary,
 	) {
 		this.pi = pi;
+		this.recovery = new ContextRecovery(getContextStatusChannel(pi));
 		this.boundary = boundary;
 		this.commandRuntime = new ContextCommandRuntime(pi, {
 			activate: (ctx) => this.boundary.activate(ctx, "input").then(() => undefined),
@@ -136,7 +134,7 @@ export class ContextCapabilityRuntime {
 		this.projectionRuntime = new ContextProjectionRuntime({
 			activate: (ctx) => this.activate(ctx, "projection").pipe(Effect.asVoid),
 			current: () => ({
-				active: this.state.state === "active",
+				active: this.state.engine === "magic-context",
 				generation: this.generation,
 				handler: this.magicContextHandler,
 			}),
@@ -151,6 +149,7 @@ export class ContextCapabilityRuntime {
 			},
 		});
 		this.dependencies = dependencies;
+		this.nativePreflight = new NativeContextPreflight(dependencies.readNativeCompactionSettings);
 		this.registry = registry;
 		this.owner = ownerKey(pi);
 	}
@@ -172,8 +171,8 @@ export class ContextCapabilityRuntime {
 		const error = cause instanceof Error ? cause.message : String(cause);
 		this.state =
 			trigger === undefined
-				? { state: "degraded", engine: "native", error }
-				: { state: "degraded", engine: "native", trigger, error };
+				? { state: "degraded", engine: "magic-context", error }
+				: { state: "degraded", engine: "magic-context", trigger, error };
 	}
 
 	noteInput(source: InputEvent["source"]): ContextCapabilityState {
@@ -212,7 +211,7 @@ export class ContextCapabilityRuntime {
 							content: [
 								{
 									type: "text" as const,
-									text: "Magic Context is unavailable; Pi native context remains active.",
+									text: "Magic Context is unavailable; retry after restoring Context.",
 								},
 							],
 							details: undefined,
@@ -236,6 +235,7 @@ export class ContextCapabilityRuntime {
 	}
 
 	captureSessionStart(event: SessionStartEvent, ctx: ExtensionContext): void {
+		this.sessionVersion++;
 		const previousSessionManager = this.sessionContext?.sessionManager;
 		if (previousSessionManager && previousSessionManager !== ctx.sessionManager) {
 			if (this.registry.contexts.get(previousSessionManager) === this) {
@@ -243,6 +243,7 @@ export class ContextCapabilityRuntime {
 			}
 			this.ownedContexts.delete(previousSessionManager);
 		}
+		this.recovery.clear();
 		this.sessionStart = { ...event };
 		this.sessionContext = ctx;
 		this.projectionRuntime.invalidate(true);
@@ -282,31 +283,6 @@ export class ContextCapabilityRuntime {
 		this.projectionRuntime.invalidate(true);
 	}
 
-	yieldExtremeOverflowToNative(ctx: ExtensionContext): boolean {
-		if (this.state.state !== "active" || !this.magicContextHandler) return false;
-		let usage: ReturnType<ExtensionContext["getContextUsage"]>;
-		try {
-			usage = ctx.getContextUsage();
-		} catch {
-			return false;
-		}
-		if (
-			!usage ||
-			usage.tokens === null ||
-			usage.contextWindow <= 0 ||
-			usage.tokens <= usage.contextWindow * MAGIC_CONTEXT_NATIVE_COMPACTION_MULTIPLIER
-		)
-			return false;
-		this.projectionRuntime.invalidate(true);
-		this.setDegraded("Magic Context yielded an extreme-overflow turn to Pi native compaction.", this.state.trigger);
-		return true;
-	}
-
-	preflightExtremeOverflow(ctx: ExtensionContext): Effect.Effect<void> {
-		if (!this.yieldExtremeOverflowToNative(ctx)) return Effect.void;
-		return this.preflightNativeCustomTurn(ctx, false);
-	}
-
 	dispose(event?: SessionShutdownEvent, ctx?: ExtensionContext): Effect.Effect<void> {
 		return Effect.suspend(() => {
 			if (this.disposed) return Effect.void;
@@ -316,6 +292,7 @@ export class ContextCapabilityRuntime {
 			this.sessionContext = undefined;
 			this.generation++;
 			this.magicSessionStartHandlers = [];
+			this.magicCompactionHandlers = [];
 			if (event && ctx) this.shutdown = { event, ctx };
 			this.projectionRuntime.invalidate(true);
 			for (const key of this.ownedContexts) {
@@ -326,12 +303,11 @@ export class ContextCapabilityRuntime {
 			this.registry.runtimes.delete(this);
 			const activation = this.activation;
 			const cleanup = this.cleanup;
-			const preflight = this.nativeCompactionPreflight;
 			const handlers = this.magicShutdownHandlers.splice(0);
 			const pending = [
 				activation ? Deferred.await(activation.deferred).pipe(Effect.asVoid) : Effect.void,
 				cleanup ? Deferred.await(cleanup.deferred) : Effect.void,
-				preflight ? Deferred.await(preflight) : Effect.void,
+				this.nativePreflight.wait(),
 				this.sessionStarts.withPermit(Effect.void),
 				event && ctx
 					? Effect.forEach(
@@ -361,6 +337,17 @@ export class ContextCapabilityRuntime {
 			}
 			if (this.state.state === "active" || this.state.state === "native") return Effect.succeed(this.status());
 			if (this.magicContextHandler) return Effect.succeed(this.status());
+			if (this.state.state === "degraded") {
+				if (trigger !== "input" && trigger !== "startup") return Effect.succeed(this.status());
+				return this.handleCommittedFailure(this.state.error, ctx).pipe(
+					Effect.tap(() =>
+						Effect.sync(() => {
+							this.state = { state: "loading", engine: "magic-context", trigger };
+						}),
+					),
+					Effect.andThen(this.activate(ctx, trigger)),
+				);
+			}
 			const current = this.activation;
 			if (current) {
 				if (trigger !== "automatic-turn" && current.trigger === "automatic-turn") current.retryTrigger = trigger;
@@ -376,7 +363,7 @@ export class ContextCapabilityRuntime {
 				);
 			}
 
-			this.state = { state: "loading", engine: "native", trigger };
+			this.state = { state: "loading", engine: "magic-context", trigger };
 			const generation = ++this.generation;
 			const sessionStart = this.sessionStart ? { ...this.sessionStart } : undefined;
 			const flight: ActivationFlight = {
@@ -419,8 +406,8 @@ export class ContextCapabilityRuntime {
 		if (!startsOrJoinsAgentWork) return Effect.void;
 		return this.activate(ctx, activation === "direct-user" ? "input" : "automatic-turn").pipe(
 			Effect.flatMap(() =>
-				options?.triggerTurn === true && idle && this.state.state !== "active"
-					? this.preflightNativeCustomTurn(ctx)
+				options?.triggerTurn === true && idle && this.state.engine === "native"
+					? this.nativePreflight.run(ctx)
 					: Effect.void,
 			),
 		);
@@ -440,78 +427,6 @@ export class ContextCapabilityRuntime {
 
 	cancelSuiteCustomContextGuidance(token: symbol): void {
 		this.projectionRuntime.cancelSuiteCustomContextGuidance(token);
-	}
-	private preflightNativeCustomTurn(ctx: ExtensionContext, requireIdle = true): Effect.Effect<void> {
-		return Effect.suspend(() => {
-			if (this.nativeCompactionPreflight) return Deferred.await(this.nativeCompactionPreflight);
-			if (requireIdle) {
-				try {
-					if (!ctx.isIdle()) return Effect.void;
-				} catch {
-					return Effect.void;
-				}
-			}
-			let settings: NativeCompactionSettings | undefined;
-			try {
-				settings = this.dependencies.readNativeCompactionSettings(ctx);
-			} catch (error) {
-				reportDiagnostic({
-					capability: "Context",
-					error,
-					key: "native-custom-turn-settings",
-					severity: "warning",
-					summary: "Native compaction settings could not be read before a Suite custom turn",
-					visibility: "silent",
-				});
-				return Effect.void;
-			}
-			if (!settings?.enabled || !Number.isFinite(settings.reserveTokens) || settings.reserveTokens < 0)
-				return Effect.void;
-			let usage: ReturnType<ExtensionContext["getContextUsage"]>;
-			try {
-				usage = ctx.getContextUsage();
-			} catch {
-				return Effect.void;
-			}
-			if (!usage || usage.tokens === null || usage.contextWindow <= 0) return Effect.void;
-			if (usage.tokens <= usage.contextWindow - settings.reserveTokens) return Effect.void;
-			const finishPreflight = beginSuiteNativeCompactionPreflight(ctx);
-			const flight = Deferred.makeUnsafe<void>();
-			this.nativeCompactionPreflight = flight;
-			return Effect.callback<void>((resume) => {
-				let settled = false;
-				const finish = (error?: Error): void => {
-					if (settled) return;
-					settled = true;
-					if (error) {
-						reportDiagnostic({
-							capability: "Context",
-							error,
-							key: "native-custom-turn-compaction",
-							severity: "warning",
-							summary: "Native compaction could not finish before a Suite custom turn",
-							visibility: "silent",
-						});
-					}
-					resume(Effect.void);
-				};
-				try {
-					ctx.compact({ onComplete: () => finish(), onError: finish });
-				} catch (error) {
-					finish(error instanceof Error ? error : new Error(String(error)));
-				}
-			}).pipe(
-				// Pi exposes no cancellation handle, so keep the flight published until its callback settles.
-				Effect.uninterruptible,
-				Effect.onExit((exit) => Deferred.done(flight, exit)),
-				Effect.ensuring(
-					Effect.sync(() => {
-						finishPreflight();
-						if (this.nativeCompactionPreflight === flight) this.nativeCompactionPreflight = undefined;
-					}),
-				),
-			);
-		});
 	}
 	projectCurrentContext(
 		audience: ContextProjectionAudience,
@@ -549,7 +464,10 @@ export class ContextCapabilityRuntime {
 			yield* nativeEffect(() =>
 				module.default(magicPi, (cause) => {
 					if (!committed || !this.isCurrentGeneration(generation)) return;
-					void this.boundary.committedFailure(cause, ctx);
+					this.magicContextHandler = undefined;
+					this.projectionRuntime.invalidate(true);
+					this.setDegraded(cause, this.state.trigger);
+					// The failed Worker closes itself. Recovery owns the single replacement transaction.
 				}),
 			);
 			if (!this.isCurrentGeneration(generation)) {
@@ -564,24 +482,21 @@ export class ContextCapabilityRuntime {
 				yield* this.rollbackRegistrationPlan(plan, ctx);
 				return nativeContextStatus(trigger);
 			}
+			if (plan.handlers.length === 0 && plan.tools.length === 0 && plan.commands.size === 0) {
+				this.setNative(trigger);
+				return this.status();
+			}
 			if (!plan.contextHandler) {
 				yield* this.rollbackRegistrationPlan(plan, ctx);
 				if (!this.isCurrentGeneration(generation)) return nativeContextStatus(trigger);
 				this.deactivateToolHandoffs();
-				this.setDegraded(
-					"Magic Context did not register its context adapter; Pi native context remains active.",
-					trigger,
-				);
+				this.setDegraded("Magic Context did not register its context adapter.", trigger);
 				return this.status();
 			}
 			yield* Effect.try({
-				try: () => this.commitRegistrationPlan(plan, generation),
+				try: () => this.commitRegistrationPlan(plan),
 				catch: (error) => error,
 			});
-			if (!this.providerBoundaryCommitted) {
-				this.boundary.committed();
-				this.providerBoundaryCommitted = true;
-			}
 			committed = true;
 			this.state = { state: "active", engine: "magic-context", trigger };
 			return this.status();
@@ -626,12 +541,13 @@ export class ContextCapabilityRuntime {
 			this.projectionRuntime.invalidate(true);
 			this.commandRuntime.clearActive();
 			this.magicCommands.clear();
+			this.magicEventHandlers.clear();
 			this.magicContextHandler = undefined;
 			this.magicSessionStartHandlers = [];
+			this.magicCompactionHandlers = [];
 			this.magicTools.clear();
-			this.deactivateToolHandoffs();
 			const handlers = this.magicShutdownHandlers.splice(0);
-			this.state = { state: "loading", engine: "native", trigger: "startup" };
+			this.state = { state: "loading", engine: "magic-context", trigger: "startup" };
 			const cleanup = { deferred: Deferred.makeUnsafe<void>() };
 			this.cleanup = cleanup;
 			return Effect.forEach(
@@ -677,7 +593,7 @@ export class ContextCapabilityRuntime {
 		});
 	}
 
-	private commitRegistrationPlan(plan: MagicRegistrationPlan, generation: number): void {
+	private commitRegistrationPlan(plan: MagicRegistrationPlan): void {
 		const activeBefore = this.pi.getActiveTools();
 		this.magicContextHandler = plan.contextHandler;
 		for (const [name, definition] of plan.commands) this.magicCommands.set(name, definition);
@@ -694,8 +610,18 @@ export class ContextCapabilityRuntime {
 				this.magicShutdownHandlers.push(handler);
 				continue;
 			}
+			if (event === "session_before_compact") {
+				this.magicCompactionHandlers.push(handler);
+				continue;
+			}
 			if (event === "context") continue;
-			this.registerMagicHandler(event, handler, generation);
+			const handlers = this.magicEventHandlers.get(event) ?? [];
+			handlers.push(handler);
+			this.magicEventHandlers.set(event, handlers);
+			if (!this.registeredMagicEvents.has(event)) {
+				this.registeredMagicEvents.add(event);
+				this.registerMagicHandler(event);
+			}
 		}
 		this.pi.setActiveTools(
 			activeBefore.filter((name) => !MAGIC_TOOL_NAME_SET.has(name) || this.magicTools.has(name)),
@@ -703,89 +629,168 @@ export class ContextCapabilityRuntime {
 	}
 
 	projectMagicContext(event: ContextEvent, ctx: ExtensionContext): Effect.Effect<MagicContextEventResult | undefined> {
-		return this.projectionRuntime.projectMagicEvent(event, ctx).pipe(Effect.map((attempt) => attempt?.result));
+		const sessionVersion = this.sessionVersion;
+		return Effect.gen({ self: this }, function* () {
+			if (this.state.state === "native" || this.state.state === "dormant") return;
+			let attempt = yield* this.projectionRuntime.projectMagicEvent(event, ctx);
+			if (this.disposed || sessionVersion !== this.sessionVersion) return;
+			if (!attempt?.full) {
+				attempt = yield* this.recovery.run(
+					this.restartMagic(ctx).pipe(
+						Effect.andThen(Effect.suspend(() => this.projectionRuntime.projectMagicEvent(event, ctx))),
+					),
+				);
+			}
+			if (this.disposed || sessionVersion !== this.sessionVersion) return;
+			if (!attempt?.full) return yield* Effect.fail(new Error(this.state.error ?? "Magic projection unavailable."));
+			this.recovery.clear();
+			return attempt.result;
+		}).pipe(
+			Effect.catch((error) =>
+				Effect.sync(() => {
+					if (this.disposed || sessionVersion !== this.sessionVersion) return;
+					this.setDegraded(error, "automatic-turn");
+					ctx.abort();
+					ctx.ui.notify(
+						`Context could not recover: ${this.state.error}. The Session and current input are preserved.`,
+						"error",
+					);
+					return undefined;
+				}),
+			),
+		);
+	}
+
+	private restartMagic(ctx: ExtensionContext): Effect.Effect<void, unknown> {
+		return this.recovery.restart(
+			this.handleCommittedFailure(new Error(this.state.error ?? "Magic Worker unavailable."), ctx).pipe(
+				Effect.tap(() =>
+					Effect.sync(() => {
+						this.state = { state: "loading", engine: "magic-context" };
+					}),
+				),
+				Effect.andThen(this.activate(ctx, "automatic-turn")),
+				Effect.flatMap((state) =>
+					state.state === "active"
+						? Effect.void
+						: Effect.fail(new Error(state.error ?? `Magic Worker restart remained ${state.state}.`)),
+				),
+			),
+		);
+	}
+
+	compact(event: SessionBeforeCompactEvent, ctx: ExtensionContext): Effect.Effect<MagicCompactionResult | undefined> {
+		if (this.state.state === "native" || this.state.state === "dormant") return Effect.succeed(undefined);
+		const sessionVersion = this.sessionVersion;
+		const invoke = Effect.tryPromise({
+			try: async (signal) => {
+				const generation = this.generation;
+				if (!this.magicContextHandler) throw new Error("Magic Worker is unavailable for compaction.");
+				for (const handler of this.magicCompactionHandlers) {
+					const result = await handler({ ...event, signal }, quietMagicContext(ctx));
+					if (!this.isCurrentGeneration(generation) || sessionVersion !== this.sessionVersion || signal.aborted)
+						throw new Error("Context compaction was cancelled.");
+					// SAFETY: these handlers were registered only for Pi's session_before_compact event.
+					const compacted = result as MagicCompactionResult | undefined;
+					if (compacted?.compaction || compacted?.cancel) return compacted;
+				}
+				return { cancel: true };
+			},
+			catch: (error) => error,
+		});
+		const recover = invoke.pipe(
+			Effect.catch((error) =>
+				!this.disposed &&
+				sessionVersion === this.sessionVersion &&
+				!this.magicContextHandler &&
+				!event.signal.aborted
+					? this.restartMagic(ctx).pipe(Effect.andThen(invoke))
+					: Effect.fail(error),
+			),
+		);
+		return (event.reason === "overflow" ? this.recovery.run(recover, "compacting") : invoke).pipe(
+			Effect.tap((result) =>
+				Effect.sync(() => {
+					if (result.compaction && sessionVersion === this.sessionVersion) this.recovery.clear();
+				}),
+			),
+			Effect.catch((error) =>
+				Effect.sync(() => {
+					if (this.disposed || sessionVersion !== this.sessionVersion || event.signal?.aborted)
+						return { cancel: true };
+					this.setDegraded(error, this.state.trigger);
+					if (!event.signal.aborted)
+						ctx.ui.notify(
+							`Context could not recover: ${this.state.error}. The Session and current input are preserved.`,
+							"error",
+						);
+					return { cancel: true };
+				}),
+			),
+			Effect.onExit(() =>
+				Effect.sync(() => {
+					if (event.signal?.aborted && sessionVersion === this.sessionVersion) this.recovery.clear();
+				}),
+			),
+		);
 	}
 
 	currentProviderProjectionToken(): symbol | undefined {
 		return this.projectionRuntime.currentProviderProjectionToken();
 	}
 
-	markProviderProjectionValidated(token: symbol | undefined, model: ExtensionContext["model"]): void {
-		this.projectionRuntime.markProviderProjectionValidated(token, model);
+	private registerMagicHandler(event: string): void {
+		// SAFETY: names and handlers come from Magic's Pi extension registration.
+		const register = this.pi.on.bind(this.pi) as (name: string, value: LooseEventHandler) => void;
+		register(event, async (rawEvent, ctx) => {
+			const generation = this.generation;
+			let result: Awaited<ReturnType<LooseEventHandler>>;
+			for (const handler of this.magicEventHandlers.get(event) ?? []) {
+				try {
+					const next =
+						event === "before_agent_start"
+							? await this.beforeAgentStart(handler, rawEvent, ctx)
+							: await handler(rawEvent, quietMagicContext(ctx));
+					if (!this.isCurrentGeneration(generation)) return;
+					result = next ?? result;
+				} catch (error) {
+					// Optional lifecycle work does not own foreground cancellation or Worker restart.
+					reportDiagnostic({
+						capability: "Context",
+						error,
+						key: `magic-event:${event}`,
+						severity: "warning",
+						summary: `Magic Context ${event} failed`,
+						visibility: "silent",
+					});
+				}
+			}
+			return result;
+		});
 	}
 
-	private registerMagicHandler(event: string, handler: LooseEventHandler, generation: number): void {
-		// SAFETY: Magic registers only Pi event names through this adapter; each handler is normalized below.
-		const register = this.pi.on.bind(this.pi) as (name: string, value: LooseEventHandler) => void;
-		if (event === "session_before_compact") {
-			register(event, async (rawEvent, ctx) => {
-				if (!this.isCurrentGeneration(generation) || this.state.state !== "active" || !this.magicContextHandler)
-					return;
-				let result: MagicEventResult;
-				try {
-					result = await handler(rawEvent, quietMagicContext(ctx));
-				} catch (error) {
-					if (!this.isCurrentGeneration(generation)) return;
-					this.setDegraded(error, this.state.trigger);
-					try {
-						ctx.ui.notify(
-							"Magic Context could not finish this compaction. Pi did not add a second native summary; the full Session remains intact.",
-							"error",
-						);
-					} catch {
-						// Compaction safety must not depend on the optional TUI notification.
-					}
-					return { cancel: true };
-				}
-				if (!this.isCurrentGeneration(generation)) return;
-				if (Check(CANCELLED_EVENT_RESULT_SCHEMA, result)) {
-					const manual = magicManualCompaction(rawEvent);
-					if (manual) return manual;
-				}
-				return result;
-			});
-			return;
-		}
-		if (event === "before_agent_start") {
-			register(event, async (rawEvent, ctx) => {
-				if (!this.isCurrentGeneration(generation)) return;
-				this.magicPromptInstalledForSession = true;
-				this.projectionRuntime.clearSuiteCustomContextGuidance();
-				try {
-					const withoutContributions = Check(COMPACT_PROMPT_EVENT_SCHEMA, rawEvent)
-						? { ...rawEvent, systemPrompt: stripContextPromptContributions(this.pi, rawEvent.systemPrompt) }
-						: rawEvent;
-					const magicEvent = addCompactMagicContextPrompt(withoutContributions);
-					const result = await handler(magicEvent, quietMagicContext(ctx));
-					if (!this.isCurrentGeneration(generation)) return;
-					if (!Check(COMPACT_PROMPT_EVENT_SCHEMA, magicEvent)) return result;
-					// SAFETY: this handler was registered by Magic for before_agent_start.
-					const beforeAgentResult = result as BeforeAgentStartEventResult | undefined;
-					const magicSystemPrompt = beforeAgentResult?.systemPrompt ?? magicEvent.systemPrompt;
-					// SAFETY: this branch handles Pi's before_agent_start event and changes only systemPrompt.
-					const contributed = await applyContextPromptContributions(
-						this.pi,
-						{ ...magicEvent, systemPrompt: magicSystemPrompt } as BeforeAgentStartEvent,
-						ctx,
-					);
-					if (!contributed?.systemPrompt) return result;
-					return { ...beforeAgentResult, systemPrompt: contributed.systemPrompt };
-				} catch (error) {
-					if (this.isCurrentGeneration(generation)) await this.boundary.committedFailure(error, ctx);
-					return;
-				}
-			});
-			return;
-		}
-		register(event, async (rawEvent, ctx) => {
-			if (!this.isCurrentGeneration(generation)) return;
-			try {
-				const result = await handler(rawEvent, quietMagicContext(ctx));
-				return this.isCurrentGeneration(generation) ? result : undefined;
-			} catch (error) {
-				if (this.isCurrentGeneration(generation)) await this.boundary.committedFailure(error, ctx);
-				return;
-			}
-		});
+	private async beforeAgentStart(
+		handler: LooseEventHandler,
+		rawEvent: Parameters<LooseEventHandler>[0],
+		ctx: ExtensionContext,
+	) {
+		this.magicPromptInstalledForSession = true;
+		this.projectionRuntime.clearSuiteCustomContextGuidance();
+		const withoutContributions = Check(COMPACT_PROMPT_EVENT_SCHEMA, rawEvent)
+			? { ...rawEvent, systemPrompt: stripContextPromptContributions(this.pi, rawEvent.systemPrompt) }
+			: rawEvent;
+		const magicEvent = addCompactMagicContextPrompt(withoutContributions);
+		const result = await handler(magicEvent, quietMagicContext(ctx));
+		if (!Check(COMPACT_PROMPT_EVENT_SCHEMA, magicEvent)) return result;
+		// SAFETY: this handler was registered by Magic for before_agent_start.
+		const beforeAgentResult = result as BeforeAgentStartEventResult | undefined;
+		const magicSystemPrompt = beforeAgentResult?.systemPrompt ?? magicEvent.systemPrompt;
+		const contributed = await applyContextPromptContributions(
+			this.pi,
+			// SAFETY: before_agent_start preserves Host fields; only the checked systemPrompt is replaced.
+			{ ...magicEvent, systemPrompt: magicSystemPrompt } as BeforeAgentStartEvent,
+			ctx,
+		);
+		return contributed?.systemPrompt ? { ...beforeAgentResult, systemPrompt: contributed.systemPrompt } : result;
 	}
 }

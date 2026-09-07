@@ -1,10 +1,13 @@
-<!-- translation-source: docs/adr/0019-isolate-context-engine-work-from-the-host-ui-thread.md; translation-source-sha256: d9cdaa8ad253fb34a014e5f98e1a4f57a8ed2c4bbe4868d690de0eae935b8d01 -->
+<!-- translation-source: docs/adr/0019-isolate-context-engine-work-from-the-host-ui-thread.md; translation-source-sha256: 56988636aeb25cbbb0cbfd7b48e645d6910b20b642a59ed1836c08d55df2a72f -->
 
 ---
 status: accepted
 ---
 
 # 将上下文引擎工作与宿主 UI 线程隔离
+
+下文有关 Context 兜底、请求准入和恢复的条款已由
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md) 取代，其余决策保持不变。
 
 ## 背景
 

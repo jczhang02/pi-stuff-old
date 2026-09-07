@@ -3,10 +3,11 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { PiRpcClient } from "./pi-rpc-client.js";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/work-monitor-matrix-provider.ts");
+const providerExtension = join(root, "tests/fixtures/work-monitor-matrix-provider.ts");
 const TIMEOUT_MS = 30_000;
 
 const SCENARIOS = ["cancel", "command_failure", "file_error", "http_success", "log_success", "timeout"] as const;
@@ -162,7 +163,7 @@ export async function verifyWorkMonitorMatrix(options: {
 if (import.meta.main) {
 	await verifyWorkMonitorMatrix({
 		packagePath: resolve(root, "packages/pi-stuff"),
-		piBinary: process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi",
+		piBinary: resolvePiBinary(),
 	});
 	console.log("Certified Background Monitor failure and success matrix in real Pi RPC");
 }

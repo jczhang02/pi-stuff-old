@@ -52,7 +52,10 @@ export async function auditReadmeScreenshots(
 	resolveTarget: ResolveTarget,
 ): Promise<ReadmeScreenshotFinding[]> {
 	const readmes = [...markdown.keys()].filter(
-		(path) => (path === "README.md" || path.endsWith("/README.md")) && !path.startsWith("docs/i18n/zh-CN/"),
+		(path) =>
+			(path === "README.md" || path.endsWith("/README.md")) &&
+			!path.startsWith("docs/i18n/zh-CN/") &&
+			!path.startsWith("tests/"),
 	);
 	const findings: ReadmeScreenshotFinding[] = [];
 	const owners = new Map<string, string>();

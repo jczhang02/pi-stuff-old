@@ -4,15 +4,15 @@
 		"incremental": true,
 		"tsBuildInfoFile": "node_modules/.cache/pi-stuff/typecheck/root.tsbuildinfo"
 	},
-	"include": ["scripts/**/*.ts", "test/**/*.ts", "tools/**/*.ts", "packages/pi-stuff/src/**/*.ts"],
+	"include": ["scripts/**/*.ts", "tests/**/*.ts", "tools/**/*.ts", "packages/pi-stuff/src/**/*.ts"],
 	"exclude": [
 		"node_modules",
 		".artifacts",
 		"packages/pi-stuff/src/subagents/**",
 		"packages/pi-stuff/src/rtk/**",
-		"test/agents-host.test.ts",
-		"test/agents-pty.test.ts",
-		"test/agents",
-		"test/rtk"
+		"tests/agents",
+		"tests/rtk",
+		"tests/*/subagents/**",
+		"tests/*/rtk/**"
 	]
 }

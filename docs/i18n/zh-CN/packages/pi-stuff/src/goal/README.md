@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: 0d21e389e4b5fe4613999ed4e52f793e2a1882855525ac1afa26373fda1d412a -->
+<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: c56e89a435cd66ee7d3affde046a4f16f4b8d9a1ff0e06ac542daa5f8d3f278e -->
 
 # Goal
 
@@ -31,6 +31,8 @@
 - 先持久化已接受的终止状态，再在预算边界内请求正常的 Goal Final Response。
 - 在当前 Session 中保存目标、状态、budget 和可选队列。
 - 跨 Pi 原生 compaction 生命周期保持 Goal identity。
+- 向有界的后台结果投递暴露当前 Goal identity 与 continuation 权限，并在投递期间延后 continuation。
+- Session teardown 后忽略 settlement notification，避免陈旧 Goal context 在已关闭 Session 中启动 continuation。
 - 在共享 Statusline 中显示当前状态、用量、budget 和经过时间。
 
 恢复从后向前查找最新规范 Goal 条目，仅在不存在规范条目时使用旧版状态。无效或已清除的规范状态不会
@@ -40,7 +42,7 @@
 
 ## 压缩后的继续执行
 
-Pi 0.85.0 在清除手动压缩的忙碌状态之前触发 `session_compact`，之后不会触发 `agent_settled`。
+Pi 0.85.1 在清除手动压缩的忙碌状态之前触发 `session_compact`，之后不会触发 `agent_settled`。
 Goal 保留继续执行意图或待处理的队列动作，复用由当前 Session 管理、可以取消的恢复任务，只在 Pi 真正空闲后发送。
 该任务先让出一次执行机会；如果交接尚未结束，再每 10 ms 检查一次。发送、取消、用户排队输入、新一次压缩或 Session
 退出都会结束这项等待。普通启动、空闲运行和 Tool 调用不会新增周期检查。Pi 原生自动重试和 Suite 压缩预检仍由原有模块负责。

@@ -44,6 +44,7 @@ export type ContextStatus = "recovering" | "validated" | "unknown";
 
 export interface ContextStatusSnapshot {
 	readonly state: ContextStatus;
+	readonly phase?: "compacting" | "restarting" | "projecting";
 	readonly tokens?: number;
 	readonly contextWindow?: number;
 }
@@ -132,6 +133,8 @@ function normalizeGoalStatus(snapshot: GoalStatusSnapshot): GoalStatusSnapshot |
 function normalizeContextStatus(snapshot: ContextStatusSnapshot): ContextStatusSnapshot | typeof REJECTED_STATUS {
 	if (!["recovering", "validated", "unknown"].includes(snapshot.state)) return REJECTED_STATUS;
 	const next: ContextStatusSnapshot = { state: snapshot.state };
+	if (snapshot.state === "recovering" && ["compacting", "restarting", "projecting"].includes(snapshot.phase ?? ""))
+		Object.assign(next, { phase: snapshot.phase });
 	if (isRuntimeNumber(snapshot.tokens) && Number.isFinite(snapshot.tokens) && snapshot.tokens >= 0) {
 		Object.assign(next, { tokens: snapshot.tokens });
 	}

@@ -16,6 +16,7 @@ import {
 	type StatuslinePreferencesSource,
 } from "./statusline.ts";
 import { HIDDEN_THINKING_LABEL, installThinkingLineDisplay } from "./thinking-line.ts";
+import { installUserMessageDisplay } from "./user-message-display.ts";
 import { WelcomeHeaderController, WelcomeRegistrySource } from "./welcome-header.ts";
 
 /** Session-local presentation adapters installed by the Pi Stuff UI Capability. */
@@ -88,6 +89,7 @@ class InstalledUiSessionPresentation implements UiSessionPresentation {
 	private readonly notice: DiagnosticNoticeController;
 	private readonly pi: ExtensionAPI;
 	private readonly releaseThinkingLine: () => void;
+	private readonly releaseUserMessage: () => void;
 	private readonly statusline: StatuslineController;
 	private readonly unregisterStatuslineChrome: () => void;
 	private readonly unregisterNoticeChrome: () => void;
@@ -101,10 +103,12 @@ class InstalledUiSessionPresentation implements UiSessionPresentation {
 		coordinator: CommandDialogCoordinatorImplementation,
 		diagnostics: DiagnosticChannel,
 		releaseThinkingLine: () => void,
+		releaseUserMessage: () => void,
 		repeatGoalClock?: StatuslineClock,
 	) {
 		this.pi = pi;
 		this.releaseThinkingLine = releaseThinkingLine;
+		this.releaseUserMessage = releaseUserMessage;
 		this.cwd = () => ctx.sessionManager.getCwd() || ctx.cwd;
 		this.editor = installInputEnhancementEditor(ctx, {
 			getCommands: () => pi.getCommands(),
@@ -146,6 +150,7 @@ class InstalledUiSessionPresentation implements UiSessionPresentation {
 		if (this.disposed) return;
 		this.disposed = true;
 		this.releaseThinkingLine();
+		this.releaseUserMessage();
 		this.unregisterStatuslineChrome();
 		this.unregisterNoticeChrome();
 		this.notice.dispose();
@@ -181,8 +186,10 @@ export function installUiSessionPresentation(
 	repeatGoalClock?: StatuslineClock,
 ): UiSessionPresentation | undefined {
 	if (ctx.mode !== "tui") return undefined;
-	const releaseThinkingLine = installThinkingLineDisplay();
+	const releaseUserMessage = installUserMessageDisplay(diagnostics, ctx.sessionManager);
+	let releaseThinkingLine: (() => void) | undefined;
 	try {
+		releaseThinkingLine = installThinkingLineDisplay();
 		ctx.ui.setHiddenThinkingLabel(HIDDEN_THINKING_LABEL);
 		return new InstalledUiSessionPresentation(
 			pi,
@@ -191,10 +198,12 @@ export function installUiSessionPresentation(
 			coordinator,
 			diagnostics,
 			releaseThinkingLine,
+			releaseUserMessage,
 			repeatGoalClock,
 		);
 	} catch (error) {
-		releaseThinkingLine();
+		releaseThinkingLine?.();
+		releaseUserMessage();
 		throw error;
 	}
 }

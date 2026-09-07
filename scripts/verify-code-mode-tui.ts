@@ -6,12 +6,13 @@ import { promisify } from "node:util";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
 import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/binary.js";
-import { waitForDetachedProcess } from "./detached-process.js";
+import { selectAcceptanceMatrix } from "./acceptance-matrix.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 
 const execFileAsync = promisify(execFile);
-const PI_BINARY = process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi";
 const TIMEOUT_MS = 30_000;
+const VERIFIER_STARTED_AT = Date.now();
 const SCENARIO_FILTER = process.env["PI_STUFF_CODE_MODE_TUI_SCENARIO"];
 const CONTEXT_USAGE_PATTERN = /(󰌨\s*)\d+(?:\.\d+)?%/gu;
 const FULL_FIXTURE_MODEL_PATTERN = /^(󱙺\s*)pi-stuff-code-mode-fixture\/fixture(?=\s*·)/gmu;
@@ -53,16 +54,15 @@ async function capture(tmux: Tmux, session: string, styled = false): Promise<str
 	return (await tmux(["capture-pane", "-p", ...(styled ? ["-e"] : []), "-S", "-", "-t", session])).stdout;
 }
 
-async function waitFor(tmux: Tmux, session: string, expected: string): Promise<void> {
+async function waitFor(tmux: Tmux, session: string, expected: RegExp | string): Promise<void> {
 	const started = Date.now();
 	while (Date.now() - started < TIMEOUT_MS) {
 		const text = await capture(tmux, session).catch(() => "");
-		if (text.toLowerCase().includes(expected.toLowerCase())) return;
+		if (expected instanceof RegExp ? expected.test(text) : text.toLowerCase().includes(expected.toLowerCase()))
+			return;
 		await Bun.sleep(100);
 	}
-	throw new Error(
-		`TUI did not show ${JSON.stringify(expected)}:\n${await capture(tmux, session).catch(() => "<closed>")}`,
-	);
+	throw new Error(`TUI did not show ${String(expected)}:\n${await capture(tmux, session).catch(() => "<closed>")}`);
 }
 
 async function captureSettledScreen(tmux: Tmux, session: string): Promise<{ plain: string; styled: string }> {
@@ -94,67 +94,9 @@ function normalizeRuntimeMetrics(screen: string): string {
 }
 
 async function assertCertifiedPi(): Promise<void> {
-	const version = (await execFileAsync(PI_BINARY, ["--version"])).stdout.trim();
+	const version = (await execFileAsync(resolvePiBinary(), ["--version"])).stdout.trim();
 	if (version !== CERTIFIED_PI_VERSION)
 		throw new Error(`Code Mode TUI acceptance requires Pi ${CERTIFIED_PI_VERSION}, got ${version || "unknown"}`);
-}
-
-async function runOldEnvelopeBenchmark(root: string, temporary: string): Promise<ProviderRequestMetrics> {
-	const logPath = join(temporary, "provider-group-old-envelope.jsonl");
-	const child = Bun.spawn(
-		[
-			PI_BINARY,
-			"--session-dir",
-			join(temporary, "sessions"),
-			"--session-id",
-			"019fdc00-0000-7000-8000-300000000100",
-			"--model",
-			"pi-stuff-code-mode-fixture/fixture",
-			"--no-extensions",
-			"--extension",
-			join(root, "packages", "pi-stuff", "index.ts"),
-			"--extension",
-			join(root, "test", "fixtures", "code-mode-provider.ts"),
-			"--no-skills",
-			"--no-prompt-templates",
-			"--no-context-files",
-			"--no-themes",
-			"--offline",
-			"--approve",
-			"--print",
-			"VERIFY_TOOL_UI",
-		],
-		{
-			cwd: join(temporary, "project"),
-			detached: true,
-			env: {
-				...process.env,
-				PI_CODING_AGENT_DIR: join(temporary, "agent"),
-				PI_OFFLINE: "1",
-				PI_STUFF_CODE_MODE_DEFAULT: "on",
-				PI_STUFF_CODE_MODE_FIXTURE_BENCHMARK: "1",
-				PI_STUFF_CODE_MODE_FIXTURE_LEGACY_SURFACE: "1",
-				PI_STUFF_CODE_MODE_FIXTURE_LOG: logPath,
-				PI_TELEMETRY: "0",
-				XDG_CACHE_HOME: join(temporary, "cache"),
-				XDG_CONFIG_HOME: join(temporary, "config"),
-				XDG_DATA_HOME: join(temporary, "data"),
-				XDG_STATE_HOME: join(temporary, "state"),
-			},
-			stderr: "pipe",
-			stdout: "pipe",
-		},
-	);
-	const [{ exitCode, timedOut }, stdout, stderr] = await Promise.all([
-		waitForDetachedProcess(child, TIMEOUT_MS),
-		new Response(child.stdout).text(),
-		new Response(child.stderr).text(),
-	]);
-	if (timedOut) throw new Error(`Old Code Mode benchmark timed out after ${String(TIMEOUT_MS)} ms`);
-	if (exitCode !== 0) throw new Error(`Old Code Mode benchmark exited ${String(exitCode)}: ${stderr || stdout}`);
-	const line = (await readFile(logPath, "utf8")).trim().split("\n")[0];
-	if (!line) throw new Error("Missing old Code Mode provider capture");
-	return providerRequest(line);
 }
 
 async function stopArm(tmux: Tmux, session: string, socket: string): Promise<void> {
@@ -184,10 +126,13 @@ async function runArm(
 	height: number,
 	launchMode: "resume" | "start",
 ): Promise<ArmCapture> {
+	const started = Date.now();
+	console.error(`[code-mode-tui] start ${scenario}/${mode}/${String(width)}x${String(height)}/${launchMode}`);
 	const session = `pi-stuff-code-mode-${scenario}-${mode}-${String(width)}-${String(process.pid)}`;
 	const socket = join(temporary, `${session}.sock`);
 	const env = {
 		COLORTERM: "truecolor",
+		MAGIC_CONTEXT_TEST_DATA_DIR: join(temporary, "data"),
 		PI_CODING_AGENT_DIR: join(temporary, "agent"),
 		PI_OFFLINE: "1",
 		PI_STUFF_CODE_MODE_DEFAULT: mode === "code" ? "on" : "off",
@@ -200,13 +145,12 @@ async function runArm(
 		TERM: "xterm-256color",
 		XDG_CACHE_HOME: join(temporary, "cache"),
 		XDG_CONFIG_HOME: join(temporary, "config"),
-		XDG_DATA_HOME: join(temporary, "data"),
 		XDG_STATE_HOME: join(temporary, "state"),
 	};
 	const scenarioId = scenario === "group" ? "8" : scenario === "failure" ? "9" : scenario === "media" ? "a" : "b";
 	const sessionId = `019fdc00-0000-7000-${scenarioId}000-${mode === "code" ? "1" : "2"}${String(width).padStart(11, "0")}`;
 	const arguments_ = [
-		PI_BINARY,
+		resolvePiBinary(),
 		"--session-dir",
 		join(temporary, "sessions"),
 		launchMode === "start" ? "--session-id" : "--session",
@@ -219,7 +163,7 @@ async function runArm(
 		"--extension",
 		join(root, "packages", "pi-stuff", "index.ts"),
 		"--extension",
-		join(root, "test", "fixtures", "code-mode-provider.ts"),
+		join(root, "tests", "fixtures", "code-mode-provider.ts"),
 		"--no-skills",
 		"--no-prompt-templates",
 		"--no-context-files",
@@ -229,6 +173,8 @@ async function runArm(
 	];
 	const command = [
 		"env",
+		"-u",
+		"XDG_DATA_HOME",
 		...Object.entries(env).map(([name, value]) => `${name}=${shellQuote(value)}`),
 		...arguments_.map(shellQuote),
 	].join(" ");
@@ -273,17 +219,19 @@ async function runArm(
 	};
 	try {
 		await waitFor(tmux, session, "Pi Stuff Code Mode fixture");
-		await Bun.sleep(750);
+		await waitFor(tmux, session, /󰌨\s+\d+(?:\.\d+)?%/u);
 		const activityMarker = scenario === "cancel" ? "bash(" : scenario === "media" ? "read 3 files" : "read 1 file";
 		if (launchMode === "resume") {
 			await waitFor(tmux, session, activityMarker);
-			const { plain, styled } = await captureSettledScreen(tmux, session);
-			return { activity: activityBlock(plain, styled, activityMarker), screen: plain };
+		} else {
+			await tmux(["send-keys", "-t", session, "-l", "--", "VERIFY_TOOL_UI"]);
+			await submit(scenario !== "cancel");
+			await waitFor(tmux, session, "VERIFY_COMPLETE");
 		}
-		await tmux(["send-keys", "-t", session, "-l", "--", "VERIFY_TOOL_UI"]);
-		await submit(scenario !== "cancel");
-		await waitFor(tmux, session, "VERIFY_COMPLETE");
 		const { plain, styled } = await captureSettledScreen(tmux, session);
+		console.error(
+			`[code-mode-tui] done ${scenario}/${mode}/${String(width)}x${String(height)}/${launchMode} ${String(Date.now() - started)}ms (elapsed ${String(Date.now() - VERIFIER_STARTED_AT)}ms)`,
+		);
 		return { activity: activityBlock(plain, styled, activityMarker), screen: plain };
 	} finally {
 		await stopArm(tmux, session, socket);
@@ -307,18 +255,21 @@ try {
 	await writeFile(join(temporary, "project", "package.json"), '{"packageManager":"bun@1.4.0"}\n');
 	await writeFile(join(temporary, "project", "pixel.png"), Buffer.from(MEDIA_FIXTURE_PNG, "base64"));
 	await writeFile(join(temporary, "project", "pixel-copy.png"), Buffer.from(MEDIA_FIXTURE_PNG, "base64"));
-	const oldEnvelopeRequest = await runOldEnvelopeBenchmark(root, temporary);
 	const scenarios = ["group", "failure", "media", "cancel"] as const;
 	const selectedScenario = SCENARIO_FILTER ? scenarios.find((scenario) => scenario === SCENARIO_FILTER) : undefined;
 	if (SCENARIO_FILTER && !selectedScenario) {
 		throw new Error(`Unknown Code Mode TUI scenario: ${SCENARIO_FILTER}`);
 	}
 	const selectedScenarios = selectedScenario ? [selectedScenario] : scenarios;
-	for (const scenario of selectedScenarios.filter((candidate) => candidate !== "cancel")) {
-		for (const [width, height] of [
+	const sizes = selectAcceptanceMatrix(
+		[
 			[100, 32],
 			[64, 28],
-		] as const) {
+		] as const,
+		[[100, 32]] as const,
+	);
+	for (const scenario of selectedScenarios.filter((candidate) => candidate !== "cancel")) {
+		for (const [width, height] of sizes) {
 			const code = await runArm(root, temporary, "code", scenario, width, height, "start");
 			const direct = await runArm(root, temporary, "direct", scenario, width, height, "start");
 			if (
@@ -343,10 +294,7 @@ try {
 		}
 	}
 	if (selectedScenarios.includes("cancel")) {
-		for (const [width, height] of [
-			[100, 32],
-			[64, 28],
-		] as const) {
+		for (const [width, height] of sizes) {
 			const code = await runArm(root, temporary, "code", "cancel", width, height, "start");
 			const direct = await runArm(root, temporary, "direct", "cancel", width, height, "start");
 			if (
@@ -402,11 +350,6 @@ try {
 	) {
 		throw new Error(`Code Mode exposed an unexpected provider surface: ${JSON.stringify(codeRequest.toolNames)}`);
 	}
-	if (JSON.stringify(oldEnvelopeRequest.toolNames) !== '["codemode"]') {
-		throw new Error(
-			`Old Code Mode benchmark exposed an unexpected surface: ${JSON.stringify(oldEnvelopeRequest.toolNames)}`,
-		);
-	}
 	if (codeRequest.schemaChars > directRequest.schemaChars * 0.2) {
 		throw new Error(
 			`Code Mode Tool schema exceeds 20% of direct mode: ${String(codeRequest.schemaChars)} > ${String(directRequest.schemaChars * 0.2)}`,
@@ -452,7 +395,6 @@ try {
 						first: codeRequest,
 						settled: codeRequests.settled,
 					},
-					oldEnvelope: oldEnvelopeRequest,
 				},
 				null,
 				"\t",
@@ -460,13 +402,13 @@ try {
 		);
 	}
 	console.log(
-		`Real Pi TUI ${selectedScenarios.join("/")} plain-screen layout and ANSI Tool Activity are identical with Code Mode on and off, before and after resume, at 100 and 64 columns (excluding truthful Context pressure and its responsive fixture model label)`,
+		`Real Pi TUI ${selectedScenarios.join("/")} plain-screen layout and ANSI Tool Activity are identical with Code Mode on and off, before and after resume, at ${sizes.map(([width]) => width).join(" and ")} columns (excluding truthful Context pressure and its responsive fixture model label)`,
 	);
 	console.log(
-		`Provider Tool schema: ${String(directRequest.toolNames.length)} Tools / ${String(directRequest.schemaChars)} chars direct; ${String(oldEnvelopeRequest.toolNames.length)} Tool / ${String(oldEnvelopeRequest.schemaChars)} chars old envelope; ${String(codeRequest.toolNames.length)} Tools / ${String(codeRequest.schemaChars)} chars full envelope`,
+		`Provider Tool schema: ${String(directRequest.toolNames.length)} Tools / ${String(directRequest.schemaChars)} chars direct; ${String(codeRequest.toolNames.length)} Tools / ${String(codeRequest.schemaChars)} chars full envelope`,
 	);
 	console.log(
-		`Estimated first-request input: ${String(directRequest.estimatedInputTokens)} tokens direct; ${String(oldEnvelopeRequest.estimatedInputTokens)} old envelope; ${String(codeRequest.estimatedInputTokens)} full envelope`,
+		`Estimated first-request input: ${String(directRequest.estimatedInputTokens)} tokens direct; ${String(codeRequest.estimatedInputTokens)} full envelope`,
 	);
 	console.log(
 		`Estimated post-Tool input: ${String(directRequests.settled.estimatedInputTokens)} tokens direct; ${String(codeRequests.settled.estimatedInputTokens)} full envelope; cumulative ${String(directRequests.cumulativeEstimatedInputTokens)} direct vs ${String(codeRequests.cumulativeEstimatedInputTokens)} full envelope`,

@@ -1,106 +1,73 @@
-<!-- translation-source: docs/capabilities/context-management.md; translation-source-sha256: 40ae936750b44ffacfca68c2975be8b32945c45391b655d183bb54b39fd48e39 -->
+<!-- translation-source: docs/capabilities/context-management.md; translation-source-sha256: 1f91c4893a8c7918164d3864a86c3172ec341f1b390421330732693f0a689f78 -->
 
 # Context Management
 
-[English](../../../../../docs/capabilities/context-management.md)
+[English](../../../../capabilities/context-management.md)
 
-Context Management 为 Pi 增加检索、memory、note、compaction 与压力处理，同时保持 Host 的 conversation 和
-Session 界面不变。
+Context Management 提供检索、记忆、笔记、压缩和压力处理；Pi 保留会话界面、Session、前台执行、重试和队列行为。
 
-## 快速开始
+## 命令和工具
 
-打开 Context 状态 dialog：
-
-```text
-/ctx
-```
-
-已配置的 Context 会在 Session 启动时激活。没有配置时，直接交互输入有权执行首次使用操作，`/ctx` 会显示可用路径。
-
-## 命令界面
-
-| 命令 | 操作 |
+| 命令 | 行为 |
 | --- | --- |
-| `/ctx` 或 `/ctx status` | 打开状态与可用操作 |
-| `/ctx flush` | 随下一条 message 应用 queued drop |
-| `/ctx wrapup [N]` | 压缩较早历史，默认保留 20 条 message |
-| `/ctx recomp [start-end]` | 重建全部或部分历史 compartment |
-| `/ctx upgrade` | 升级受支持的旧版 Session history 与 memory |
+| `/ctx` 或 `/ctx status` | 打开状态和可用操作 |
+| `/ctx flush` | 在下一条消息应用排队的丢弃记录 |
+| `/ctx wrapup [N]` | 压缩较早历史，默认保留 20 条消息 |
+| `/ctx recomp [start-end]` | 显式重建全部或部分历史的 compartment |
+| `/ctx upgrade` | 升级受支持的旧会话历史和记忆 |
 
-状态 dialog 报告 Context 用量、活动与 dropped tag、compartment、memory、note、pending 工作、Historian
-状态、cache、history token、当前错误，以及 Pi native-compaction fallback 被禁用时的 degraded continuity。
+对话框显示用量、保留和丢弃标签、compartment、记忆、笔记、待处理工作、Historian 状态、缓存、历史 token 和错误。
+维护操作持久化为模型不可见的 Context Activity。`recomp` 和 `upgrade` 在后台继续；切换或分叉会话只分离可见更新，
+不取消操作。
 
-维护会保存为 model 不可见的 Context Activity。`recomp` 与 `upgrade` 在后台继续；切换或 fork Session 会让
-可见更新脱离，但不会取消操作。
+配置好的引擎提供延迟发现工具 `ctx_search`、`ctx_expand`、`ctx_memory`、`ctx_note` 和 `ctx_reduce`。
+Pi Stuff 负责 `/ctx`，并抑制上游重复的状态、对话框、公告和 Todo UI。
 
-## Context Tool
+## 启动和投影
 
-已配置 engine 提供时，以下 deferred Tool 会出现：
+已识别且无需迁移的配置在编辑器就绪前激活。缺失或旧配置保持休眠，直到直接输入、`/ctx` 或显式投影授权首次设置。
+自动轮次不能创建或迁移用户配置。Magic 未配置或被显式禁用时，保留 Pi 原生行为。
 
-- `ctx_search` 用于检索；
-- `ctx_expand` 用于展开压缩 context；
-- `ctx_memory` 用于访问 memory；
-- `ctx_note` 用于 note；
-- `ctx_reduce` 用于显式 reduction。
+启用 Magic 后，即使引擎失败，前台投影也仍由 Magic 负责。Suite 不回退到原始历史或原生摘要。Pi Session JSONL
+保留原始记录。Worker 首次绑定或分支不连续时接收完整快照；普通刷新只发送新叶节点。每次前台 Context 事件都调用
+Magic，重试正确性不依赖额外的 Suite 投影缓存。
 
-Engine 也保留投影使用的 history、memory、note 与 Historian 行为。Pi Stuff 负责 `/ctx` 界面，并隐藏重复的
-上游 status、dialog、announcement 与 Todo UI。
+本地载荷估算仅供参考。估算偏高、未知、非有限数或无法获取，本身都不会中止有效的 Magic 请求。状态百分比是估算，
+不是远端 Provider 接受请求的保证。正确投影必须保留当前输入和已完成工具结果；无法取得时进入有界恢复。
+BTW 和 Agents 保留既有的有界引用投影及调用方拥有的快照契约。
 
-## 启动与首次使用
+提示贡献按 Host、Context Management、其他注册 Capability 的顺序组织。直接模式指导仍限制为 8,000 字符。
 
-已识别且无需迁移的配置会在编辑器就绪前激活。缺少或旧版配置在启动期间保持 dormant。
+## 压缩和恢复
 
-第一次直接用户输入、`/ctx` 命令或显式 Context 投影可以授权创建配置或执行受支持迁移。Extension 发起的自动
-turn 无权创建或迁移用户配置。
+Magic 执行普通主动压缩。Provider 实际超限后，Pi 调用公开压缩钩子；Magic 运行现有 Historian，返回真实持久化
+摘要和保留历史边界。Pi 持久化结果并执行既有重试。第二次超限按 Pi 策略结束本次尝试。手动压缩也使用 Magic。
+自动恢复不会调用完整 `/ctx recomp`，也不会重跑已完成工具或重交输入。
 
-## 投影
+一次故障恢复阶段共享十分钟期限，涵盖压缩、现有瞬时失败重试、退避、完成核验和最多一次 Worker 重启。没有进展或
+完成状态不确定时提前停止。回执丢失后检查持久化状态：复用确认完成的结果；只有确认未完成且安全的工作才可重复。
+正常 Agent 执行、普通主动压缩和正常 Provider 响应时间不受恢复期限限制。
 
-Pi Session JSONL 仍是原始 conversation 记录。Context Management 为 model request 构建派生投影，并在输入、
-compaction 或 tree navigation 改变活动 branch 时让缓存失效。
+Pi 的自动压缩设置必须开启，Pi 才会触发自动超限恢复。关闭它不会关闭 Magic 的普通压缩。`/ctx` 说明缺失的 Host
+钩子；Pi Stuff 不自行修改设置。原生自定义轮次预检只在 Magic 未配置或显式禁用时适用。
 
-第一次 bind 或 branch 不连续时，会把完整 Session snapshot 发给 Context worker。普通投影只发送新 leaf。
-启动和 engine 降级路径可以退回 Pi 的原生 context；但处于活动状态、由 Host 管理的前台
-`before_provider_request` 只有在最终 JSON 序列化的 Provider payload 具有有限的 token 估计值，且不超过模型
-Context window 的 95% 时才会通过。窗口缺失、序列化、测量、非有限估计值和超出边界的情况都会在本地产生
-abort/error，并将估计值设为 unknown。绕过此 hook 的直接调用不在范围内。
+## Worker、取消与显示
 
-Prompt contribution 保持固定顺序：Host context、Context Management，再到其他已注册 capability contribution。
-Direct-mode guidance 上限为 8,000 个字符。
+引擎运行在一个内部 Worker 中，保持终端绘制响应。普通镜像生命周期事件不继承当前 Agent 轮次信号。
+压缩接收自身取消信号；工具及支持信号的命令保留调用所属的取消语义。致命 Worker 故障只通过有界关键恢复替换。
+迟到结果和 Host 副作用绑定原始会话；关闭采用有限宽限期。
 
-只有此前在 Provider 边界通过验证的结果，且每个有序 raw message object 以及 Provider、model id 和 Context
-window 均完全相同时，才能复用；输入变化会重新运行验证。Pi 负责现有的 retry、continuation 和 compaction
-行为，不增加新的 budgets。正常状态报告通过验证的百分比，恢复状态报告 `recovering`，失败时报告 `unknown`
-并在本地 abort；成功的 assistant 或 Session lifecycle 会清除恢复状态。
+恢复期间输入遵循 Pi 压缩队列。显式取消停止 Magic 操作；随后 Pi 可能交付排队输入，与没有 Suite 时相同。
+Pi Stuff 不清空、不重交队列，也不修改 Host 来施加另一套终止策略。
 
-## Compaction
+实际恢复在现有 Context 显示中呈现 `recovering` 和简短阶段；成功后清除恢复状态。无法恢复时只说明一次原因，并保留
+会话和当前输入。技术细节留在模型不可见的 `/diagnostics` 中。估算不确定或可选维护失败，不会主动中断仍可继续的 Agent。
 
-Pi 负责原生 compaction 和配置的 threshold。Context Management 不会为同一个前台生命周期再启动第二次原生
-compaction。
+## 配置和参考
 
-对于绕过普通 preflight 的 idle custom turn，如果原生 compaction 已启用并超过 threshold，Context Management
-可以调用 Pi 的公开 compaction 方法。极端 overflow 会交给原生 compaction，并暂时把活动 Context 降级为原生投影。
-Magic Context 活动但 Pi native auto-compaction 被禁用时，`/ctx` 会保持 Magic 活动，同时报告 degraded
-continuity，并引导用户通过 `/settings` 启用 auto-compaction；Pi Stuff 不会自行更改该设置。Magic
-降级到 native Context 后仍保留此警告，启用 native auto-compaction 后才清除。
+Context 引擎及 Worker 配置仍位于 `pi-stuff.json` 之外。修改后重启 Pi，并检查 `/ctx` 和 `/diagnostics`。
 
-## Worker 与恢复
-
-Context engine 运行在一个内部 Worker 中，因此检索与 compaction 工作不会阻塞终端绘制。Worker 是执行边界，
-不是生命周期所有者：Pi 接受 prompt 后，中断其 Agent turn 不会取消 engine 的生命周期事件，也不会重建健康的
-Worker。input callback 不等待延迟 activation，Agent 中断也不能让下一条已接受 prompt 等待一次虚假的恢复。
-Tool 与 augmentation 的取消仍由各自 invocation 所有。
-
-Worker 发生 fatal failure 时立即切换到原生投影。恢复属于当前 Session，而不是已中断的 Agent turn。Shutdown
-会在有界宽限期内等待 pending worker 工作。
-
-## 配置
-
-Context engine 与 worker 选择属于外部配置。Pi Stuff 不在 `pi-stuff.json` 中定义 provider 特定字段。
-修改外部配置后，重启 Pi 并检查 `/ctx` 与 `/diagnostics`。
-
-## 相关文档
-
-- [Context Management Module README](../../packages/pi-stuff/src/context-management/README.md)
+- [模块契约](../../packages/pi-stuff/src/context-management/README.md)
+- [恢复决策](../adr/0031-preserve-magic-context-behavior-through-suite-integration.md)
 - [命令参考](../reference/commands.md#context)
 - [故障排查](../troubleshooting.md#context)
-- [架构](../architecture.md#生命周期所有权)

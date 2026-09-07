@@ -4,6 +4,9 @@ status: accepted
 
 # Isolate Context engine work from the Host UI thread
 
+The Context fallback, request-admission, and recovery clauses below are superseded by
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md). Other decisions remain unchanged.
+
 ## Context
 
 Magic Context projection can perform enough CPU and module-loading work to stall Pi input paint and the Working

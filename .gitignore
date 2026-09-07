@@ -24,3 +24,6 @@ skills-lock.json
 .dolt/
 *.db
 .beads-credential-key
+
+# Python adapter bytecode
+__pycache__/

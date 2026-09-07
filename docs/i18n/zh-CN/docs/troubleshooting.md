@@ -1,4 +1,4 @@
-<!-- translation-source: docs/troubleshooting.md; translation-source-sha256: cce138d572e3433839baae797c22f3955ca7e41d8210edbfe3f8fe069f31d6b3 -->
+<!-- translation-source: docs/troubleshooting.md; translation-source-sha256: 51da6132cfc6afda3689f4c69af5e08a9a64cf50b83030826256ee9410c4a3a7 -->
 
 # 故障排查
 
@@ -10,7 +10,7 @@
 
 ### Package 没有加载
 
-1. 确认 `pi --version` 在已认证 Linux x64 路径上报告 `0.85.0`。
+1. 确认 `pi --version` 在已认证 Linux x64 路径上报告 `0.85.1`。
 2. 在仓库根目录重新运行 `pi install ./packages/pi-stuff`。
 3. 重启 Pi 并打开 `/diagnostics`。
 
@@ -58,6 +58,8 @@ Provider 认证与服务错误会显示在 Tool 结果或 `/diagnostics` 中。
 使用 `/mcp on-demand <server>`。需要自动连接时使用 `/mcp auto-connect <server>`。
 
 ## RTK
+
+本地测试预检失败时，检查报告的可执行文件路径与版本。将 `RTK_BIN` 指向已有受支持版本，或把它放到 `PATH`；同版本源码构建和 shim 不需要匹配官方发布哈希。`PI_BIN` 同样选择已安装的受支持 Pi。本地验证不下载或重装这两个工具。
 
 ### 命令没有被改写
 

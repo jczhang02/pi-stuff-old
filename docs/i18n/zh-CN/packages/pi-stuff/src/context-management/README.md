@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/context-management/README.md; translation-source-sha256: b23a8b88093dad19e844a9830d64a4e8434ea6447ef614dff1b94db0d69be499 -->
+<!-- translation-source: packages/pi-stuff/src/context-management/README.md; translation-source-sha256: 26f7aa821135c376be70c51aae77b09fe74621d56bf3336f5e18cc0b77fd3f55 -->
 
 # Context Management
 
@@ -21,20 +21,25 @@
 ```
 
 Dialog 显示 Context 用量、compartment、memory、note、pending maintenance、Historian 状态、cache、history
-token、当前错误，以及 native-compaction fallback 是否可用。
+token、当前错误，以及 Pi 是否会调用自动 Magic 超限恢复。
 
-## 亮点
+## 主要能力
 
-- 在编辑器就绪前激活已识别配置。
-- 只有直接交互有权执行首次配置与迁移。
-- 通过 `/ctx` 和持久 Context Activity 提供状态与维护。
-- 在 Worker 中运行 Context engine，但不接管 Pi 的输入、Agent turn 或 Session 生命周期。
-- 只把固定引擎必需的 Tool event 字段发送到 Worker。
-- 投影派生 context，同时保留 Pi Session JSONL 作为原始记录。
-- 仅在启动期间或 Engine 不可用导致降级运行时，使用 Pi 原生 context 与 compaction；该 fallback 被禁用时报告 continuity degraded。
-- 激活后，Host 管理的 `before_provider_request` 适配器采用故障关闭策略，并要求最终载荷通过 95% 验证。
-- 仅当每条有序原始消息的身份、provider/model 和 context window 全部匹配时，才复用已验证的投影。
-- Pi 负责重试、继续执行和 compaction；绕过 Host hook 的直接 provider 调用不在支持范围内。
+- 已配置会话在编辑器就绪前激活，首次配置和迁移仍需直接交互授权。
+- 通过 `/ctx` 和持久化 Context Activity 提供状态与维护。
+- 引擎在 Worker 中运行，Pi 保留输入、轮次和会话生命周期。
+- 等待原生 Worker 的 `close` 事件后才完成资源释放；请求终止不代表终止已经完成。
+- Worker 只接收固定引擎需要的工具事件字段，Pi Session JSONL 保留原始记录。
+- 启用 Magic 后，投影和压缩始终由 Magic 负责，失败恢复也不使用原生兜底。
+- 本地估算仅供显示；偏高或未知估算不阻断有效投影。
+- 子 Agent 请求使用相同的 Magic 投影和 Provider 超限恢复；本地序列化估算不会中止请求，原始 child history 仍交由该 Context 所有者进行压力恢复。
+- 每次前台 Context 事件均调用 Magic，包括输入未变的重试。
+- 通过 Pi 公开压缩钩子返回真实 Magic 摘要，由 Pi 负责重试和队列交付。
+- 实际恢复共享十分钟期限、最多重启一次 Worker，核验持久化完成状态，保留输入和已完成工具结果。
+  完整 `/ctx recomp` 仍需显式发起。
+- Child pressure recovery 通过生产 child launch 路径测试，覆盖 seeded fresh/fork history；两次超限恢复后仍保留
+  signed reasoning、findings、completed-check identity、steering 和最终报告。该确定性 Provider 证据覆盖控制流和
+  protocol 完整性；实时容量和 background teardown 仍是独立验收证据。
 
 ## 文档
 

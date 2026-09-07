@@ -36,6 +36,10 @@ The dialog lists current work, follows bounded output, and stops activities owne
 - Labels completed output paths as full or retained according to whether rolling occurred.
 - Stops owned process trees and records authenticated recovery metadata at shutdown.
 
+Shell launch waits up to ten seconds for supervisor readiness before publishing the authenticated command.
+The three-second command acknowledgement deadline starts after readiness. Failed startup rolls back the launch;
+Session shutdown prevents pending launches from releasing a command.
+
 ## Documentation
 
 - [Background Work guide](../../../../docs/capabilities/background-work.md)

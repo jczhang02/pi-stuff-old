@@ -9,6 +9,8 @@ import { auditReadmeScreenshots } from "./check-readme-screenshots.js";
 import { SUITE_REGISTRY_SCHEMA } from "./generate-suite.js";
 import { auditEffectBoundaryInventory, auditEffectBoundarySource } from "./repository-safety/effect-boundaries.js";
 
+import { auditProviderRedirectPolicy } from "./repository-safety/provider-redirect-policy.js";
+
 const FORBIDDEN_HOST_FILES = new Set(["auth.json", "models-store.json"]);
 const FORBIDDEN_PACKAGE_FILES = new Set(["AGENTS.md", "CONTEXT.md"]);
 const LIFECYCLE_SCRIPTS = new Set([
@@ -58,6 +60,8 @@ const HOST_STREAM_WRITE_ALLOWLIST = new Set([
 	"packages/pi-stuff/src/notification/transport.ts",
 ]);
 const HOST_LITERAL_COLOR_ALLOWLIST = new Set([
+	// DESIGN.md explicitly retains the requested workflow rainbow palette for inline Skill commands.
+	"packages/pi-stuff/src/conversation-ui/skill-command-style.ts",
 	// Browser documents cannot consume Pi's terminal Theme API.
 	"packages/pi-stuff/src/mcp/runtime/implementation.ts",
 	"packages/pi-stuff/src/mcp/runtime/mcp-callback-server.ts",
@@ -322,7 +326,7 @@ function pathExists(paths: ReadonlySet<string>, target: string): boolean {
 function isTranslationSource(path: string): boolean {
 	if (!path.endsWith(".md") || path.startsWith(TRANSLATION_ROOT) || path.endsWith(".zh-CN.md")) return false;
 	const basename = posix.basename(path);
-	return basename !== "SKILL.md" && basename !== "THIRD_PARTY_NOTICES.md";
+	return (basename !== "SKILL.md" || path.startsWith(".agents/skills/")) && basename !== "THIRD_PARTY_NOTICES.md";
 }
 
 function translationPath(sourcePath: string): string {
@@ -387,7 +391,11 @@ async function auditTextFile(root: string, path: string): Promise<SafetyFinding[
 		return [];
 	}
 	const text = content.toString("utf8");
-	const findings = [...auditSourceLimits(path, text), ...auditEffectBoundarySource(path, text)];
+	const findings = [
+		...auditSourceLimits(path, text),
+		...auditEffectBoundarySource(path, text),
+		...auditProviderRedirectPolicy(path, text),
+	];
 	if (PRIVATE_PATH_PATTERNS.some((pattern) => pattern.test(text))) {
 		findings.push({ path, rule: "private-absolute-path" });
 	}

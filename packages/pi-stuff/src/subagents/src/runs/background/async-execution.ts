@@ -40,6 +40,8 @@ import type { SpawnedRunnerLifecycle } from "./runner-process.ts";
 import type { AsyncParallelRunnerWorkBuildParams, AsyncSingleRunnerWorkBuildParams } from "./runner-work.ts";
 import { buildAsyncParallelRunnerWork, buildAsyncSingleRunnerWork } from "./runner-work.ts";
 
+export { persistRecoveries } from "./recovery-writer.ts";
+
 export type {
 	AsyncExecutionContext,
 	AsyncParallelTaskInput,

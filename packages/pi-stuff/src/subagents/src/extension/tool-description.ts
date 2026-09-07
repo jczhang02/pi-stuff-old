@@ -30,7 +30,7 @@ export function buildSubagentToolDescription(roster: readonly AgentToolRosterEnt
 		"Pi Stuff does not provide built-in Agent definitions; select an available Package, user, or project Agent.",
 		"Omit timeoutMs and toolBudget for ordinary tasks; set them only when the task explicitly needs a tighter bound.",
 		"Do not invent or pass a background field. Omit foreground for the default background launch; set foreground=true only when the findings must inform the current answer.",
-		"Background completion never starts another main turn and remains inspectable through /agents. Foreground returns only direct-child summaries; inspect full and nested transcripts through /agents.",
+		"Background results return automatically for integration into the original task; a handoff update does not finish pending delegated work. Foreground returns only direct-child summaries; inspect full and nested transcripts through /agents.",
 		formatAgentRoster(roster),
 	]
 		.filter((part): part is string => part !== undefined)

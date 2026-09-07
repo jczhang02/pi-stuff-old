@@ -130,13 +130,8 @@ function deferInputActivation(
 	});
 }
 
-function registerContextProjection(
-	pi: ExtensionAPI,
-	runtime: ContextCapabilityRuntime,
-	status: ReturnType<typeof getContextStatusChannel>,
-): void {
+function registerContextProjection(pi: ExtensionAPI, runtime: ContextCapabilityRuntime): void {
 	pi.on("context", (event, ctx) => {
-		if (runtime.status().state === "active") status.publish({ state: "recovering" });
 		const interactivePaint = runtime.yieldForInteractivePaint();
 		return Effect.runPromise(
 			interactivePaint
@@ -162,9 +157,6 @@ export default async function piStuffContext(
 	const boundary = {
 		activate: (ctx: ExtensionContext, trigger: Parameters<ContextCapability["activate"]>[1]) =>
 			Effect.runPromise(runtime.activate(ctx, trigger)),
-		committed: () => registerContextProviderBoundary(pi, runtime, getContextStatusChannel(pi)),
-		committedFailure: (cause: unknown, ctx: ExtensionContext) =>
-			runContextOwned(foundation, ctx, runtime.handleCommittedFailure(cause, ctx)),
 	};
 	runtime = getHostSharedResource(
 		pi.events,
@@ -209,13 +201,14 @@ export default async function piStuffContext(
 		return Effect.runPromise(runtime.dispose(event, ctx));
 	});
 	const status = getContextStatusChannel(pi);
+	registerContextProviderBoundary(pi, runtime, status);
 	runtime.registerToolHandoffs();
 
 	pi.on("session_start", (event, ctx) => {
 		status.clear();
 		return Effect.runPromise(runtime.startSession(event, ctx));
 	});
-	registerContextProjection(pi, runtime, status);
+	registerContextProjection(pi, runtime);
 	pi.on("session_compact", () => {
 		status.clear();
 		runtime.invalidateProjection();
@@ -250,16 +243,23 @@ export default async function piStuffContext(
 	// This lightweight gate joins the activation already started by input, so an
 	// immediate first submission can paint without allowing native compaction to
 	// race ahead of Magic Context.
-	pi.on("session_before_compact", async (_event, ctx) => {
-		runtime.consumeDirectInputActivation();
-		await boundary.activate(ctx, "input");
-		runtime.yieldExtremeOverflowToNative(ctx);
+	pi.on("session_before_compact", async (event, ctx) => {
+		const trigger = runtime.consumeDirectInputActivation() ? "input" : "automatic-turn";
+		try {
+			// Cancelling the wait does not cancel Session-owned initialization or a healthy Worker.
+			return await Effect.runPromise(
+				Effect.tryPromise(() => boundary.activate(ctx, trigger)).pipe(
+					Effect.andThen(Effect.suspend(() => runtime.compact(event, ctx))),
+				),
+				{ signal: event.signal },
+			);
+		} catch {
+			return { cancel: true };
+		}
 	});
 	pi.on("before_agent_start", async (event, ctx) => {
 		const trigger = runtime.consumeDirectInputActivation() ? "input" : "automatic-turn";
-		await Effect.runPromise(
-			runtime.activate(ctx, trigger).pipe(Effect.andThen(runtime.preflightExtremeOverflow(ctx))),
-		);
+		await Effect.runPromise(runtime.activate(ctx, trigger));
 		return applyContextPromptContributions(pi, event, ctx);
 	});
 }

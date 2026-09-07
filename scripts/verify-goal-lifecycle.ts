@@ -5,16 +5,17 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
 import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/binary.ts";
+import { DEFAULT_SESSION_NAMING_SETTINGS } from "../packages/pi-stuff/src/session-naming/settings.ts";
 import type { JsonInputObject } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
-import { createAssistantMessage } from "../test/fixtures/faux-provider.js";
+import { createAssistantMessage } from "../tests/fixtures/faux-provider.js";
 import {
 	activeGoal,
 	BLOCKED_GOAL_FINAL_RESPONSE,
 	BUDGETED_GOAL_FINAL_RESPONSE,
 	CODE_MODE_GOAL_FINAL_RESPONSE,
 	GOAL_FINAL_RESPONSE,
-} from "../test/fixtures/goal-lifecycle-provider.js";
+} from "../tests/fixtures/goal-lifecycle-provider.js";
 import { terminateDetachedProcessGroup } from "./detached-process.js";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
@@ -173,10 +174,11 @@ interface GoalLifecycleEnvironment {
 function environment(temporaryDirectory: string, scenario: Scenario, logPath: string): GoalLifecycleEnvironment {
 	const { PATH: path } = process.env;
 	if (!path) throw new Error("PATH is required to start the Pi host");
-	const env = {
+	const result: GoalLifecycleEnvironment = {
 		HOME: join(temporaryDirectory, "home"),
 		LANG: "C.UTF-8",
 		LC_ALL: "C.UTF-8",
+		MAGIC_CONTEXT_PI_SUBAGENT: "1",
 		NO_COLOR: "1",
 		PATH: path,
 		PI_CODING_AGENT_DIR: join(temporaryDirectory, "agent"),
@@ -191,8 +193,8 @@ function environment(temporaryDirectory: string, scenario: Scenario, logPath: st
 		XDG_DATA_HOME: join(temporaryDirectory, "data"),
 		XDG_STATE_HOME: join(temporaryDirectory, "state"),
 	};
-	if (scenario === "code-mode") Object.assign(env, { PI_STUFF_CODE_MODE_HOST: codeModeHostBinaryPath() });
-	return env;
+	if (scenario === "code-mode") Object.assign(result, { PI_STUFF_CODE_MODE_HOST: codeModeHostBinaryPath() });
+	return result;
 }
 
 function parseRecords(stdout: string): RpcRecord[] {
@@ -660,7 +662,7 @@ async function runScenario(options: VerifyGoalLifecycleOptions, scenario: Scenar
 	const temporaryDirectory = await mkdtemp(join(tmpdir(), `pi-stuff-goal-${scenario}-`));
 	const agentDirectory = join(temporaryDirectory, "agent");
 	const logPath = join(temporaryDirectory, "lifecycle.jsonl");
-	const fixture = resolve(import.meta.dir, "..", "test", "fixtures", "goal-lifecycle-provider.ts");
+	const fixture = resolve(import.meta.dir, "..", "tests", "fixtures", "goal-lifecycle-provider.ts");
 	try {
 		await Promise.all([
 			mkdir(join(temporaryDirectory, "home"), { recursive: true }),
@@ -674,7 +676,7 @@ async function runScenario(options: VerifyGoalLifecycleOptions, scenario: Scenar
 			await writeFile(
 				join(agentDirectory, "pi-stuff.json"),
 				JSON.stringify({
-					sessionNaming: { enabled: false },
+					sessionNaming: { ...DEFAULT_SESSION_NAMING_SETTINGS, enabled: false },
 					goal: { experimental: { goals: true } },
 				}),
 			);

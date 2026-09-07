@@ -1,8 +1,11 @@
 ---
-status: accepted
+status: superseded by ADR-0031
 ---
 
 # Bound Context-managed Provider requests
+
+The Context fallback, request-admission, and recovery clauses below are superseded by
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md). Other decisions remain unchanged.
 
 ## Context
 

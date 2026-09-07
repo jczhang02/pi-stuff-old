@@ -4,6 +4,9 @@ status: accepted
 
 # Initialize configured Context before editor readiness
 
+The Context fallback, request-admission, and recovery clauses below are superseded by
+[ADR 0031](0031-preserve-magic-context-behavior-through-suite-integration.md). Other decisions remain unchanged.
+
 ## Context
 
 Lazy initialization moved Magic Context module, database, and synthetic-frame work onto the first normal

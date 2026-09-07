@@ -8,6 +8,11 @@
 		"moduleResolution": "Bundler",
 		"tsBuildInfoFile": "../../node_modules/.cache/pi-stuff/typecheck/rtk.tsbuildinfo"
 	},
-	"include": ["../../packages/pi-stuff/src/rtk/**/*.ts", "../../test/rtk/**/*.ts"],
+	"include": [
+		"../../packages/pi-stuff/src/rtk/**/*.ts",
+		"../../tests/rtk/**/*.ts",
+		"../../tests/*/rtk/**/*.ts",
+		"../../packages/pi-stuff/src/code-mode/proxy-from-env.d.ts"
+	],
 	"exclude": ["../../node_modules"]
 }

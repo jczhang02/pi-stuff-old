@@ -1,11 +1,11 @@
-<!-- translation-source: docs/reports/suite-resource-baseline-2026-09-05.md; translation-source-sha256: 2f7de6c507091cc6ccaec44173a3b7624a1505a54de7fbe0c0052b9f9eb3d034 -->
+<!-- translation-source: docs/reports/suite-resource-baseline-2026-09-05.md; translation-source-sha256: 8029b93ea901ad629b1edbf8961c5262f06c8c1c777d74c098e45187488e06cb -->
 
 # Pi 0.85.0 Suite 资源基线
 
 这是优化前基线，不是修复结果或兼容性认证。2026-09-05 的小规模配对离线测量显示，Suite 有明显的启动、
 CPU 和内存成本。另一组静态等待 Provider 的探针仍可交互。这两项结果既没有判定哪些成本属于重复工作，
 也没有覆盖已知的长 Session Execution Ledger 卡顿。决策见
-[ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md)。
+[ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md)。
 
 ## 精确环境
 

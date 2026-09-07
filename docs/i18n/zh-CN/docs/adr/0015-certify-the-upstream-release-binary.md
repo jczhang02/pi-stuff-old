@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0015-certify-the-upstream-release-binary.md; translation-source-sha256: 312b3a6d6709655f8f5cd9fa82a947cdd81c902295553d1ec14040ef056fd241 -->
+<!-- translation-source: docs/adr/0015-certify-the-upstream-release-binary.md; translation-source-sha256: 2370d8bf07deadd53bd58257b3d898197927568b8787a3d44b3bc5ad0db00641 -->
 
 ---
 status: accepted
@@ -12,13 +12,15 @@ Pi Stuff 是 Pi 软件包，不是 Pi 宿主发行版。从固定的源码检出
 
 ## 决策
 
-固定受支持的 Pi 版本、已审查的上游源码提交和 Linux x64 发布二进制文件的 SHA-256。CI 在网络可用阶段下载该上游发行版，拒绝任何不在许可列表内的二进制文件，随后在无外部网络访问的情况下运行现有真实宿主验收套件。精确版本的开发依赖继续提供已发布的类型表面。
+支持 Linux x64 上的 Pi `0.85.1`，保留已审查的上游源码提交作为来源参考，并通过 Pi 公开 API 与真实 Host 能力
+验收验证兼容性。验收必须在实际 Host 上覆盖适用的 Capability Contract Catalog；可执行文件哈希、归档哈希、文件大小、
+内嵌 Bun banner 和字节偏移都不是准入门槛。精确版本的开发依赖继续提供已发布的类型表面。
 
 Pi Stuff 不重新构建、发布或保留 Pi 宿主的生成模型数据。
 
 ## 后果
 
-- 宿主身份取决于已审查发布二进制文件的哈希，而不是可重复使用的版本字符串。
-- 升级 Pi 时，需要一起更新源码提交、二进制哈希、开发依赖和验收证据。
-- 验收的安装阶段依赖固定的上游 GitHub Release 可用。
+- Host 支持取决于受支持版本、公开 API 行为和真实 Host 验收证据。
+- 升级 Pi 时，需要一起更新源码来源、开发依赖和能力验收证据。
+- Release 产物观察结果可以作为历史来源保留，但不阻塞通过版本与行为契约的受支持 Host。
 - 仓库不再声称能够从源码复现上游二进制文件。

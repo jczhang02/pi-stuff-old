@@ -7,13 +7,10 @@ context.
 
 ## Install
 
-Pi Stuff certifies the official RTK `0.45.0` Linux x64 binary:
-
-- archive SHA-256: `c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4`;
-- executable SHA-256: `99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535`;
-- source commit: `b34be37caf3796b69a50952a28e60e32b5daad43`.
-
-Install the official binary and put `rtk` on `PATH`. Pi Stuff does not download RTK.
+Use an installed RTK `0.45.0` on `PATH`. Same-version source builds and PATH shims are accepted; the supported
+profile remains Linux x64. Pi Stuff neither downloads nor reinstalls RTK. Version checks and real command behavior
+establish compatibility; the official release hashes in [Upstream references](../../packages/pi-stuff/src/rtk/UPSTREAM.md)
+record CI download provenance rather than runtime admission requirements.
 
 ## Quick start
 
@@ -42,10 +39,14 @@ Startup performs no RTK process work. The first eligible Bash rewrite or explici
 1. resolves the first `rtk` on `PATH`;
 2. resolves its real path and fingerprints the regular file;
 3. runs `rtk --version`;
-4. checks the certified version and executable SHA-256.
+4. checks the supported version and records the local executable identity.
 
-Every later rewrite rechecks path, real path, fingerprint, and SHA. A changed binary enters `drifted` state and remains
-disabled until explicit verification.
+The selected PATH name is used for execution so ordinary shims retain their invocation behavior.
+
+Every later rewrite rechecks path, real path, fingerprint, SHA, and the reported version. A changed binary enters `drifted` state and remains
+disabled until explicit verification. These checks detect changes to the previously verified local file; they do not
+compare it with an official release hash. Repeated version probes also reject an unsupported version selected behind
+an unchanged shim; the shim's private dispatch configuration is not an executable identity claim.
 
 Dialog states are `✓ ready`, `○ unchecked`, `! drifted`, and `× unavailable`. Press `v` to verify and `c` to clear
 Session savings.
@@ -56,7 +57,7 @@ Empty commands and commands already invoking RTK are left unchanged. Rewrite dis
 bounded timeouts of 600 ms, 1 second, and 2.5 seconds.
 
 RTK exit codes 1 and 2 mean no rewrite. Codes 0 and 3 may return a replacement command. Other results, timeout,
-unsupported platform, missing executable, or failed certification leave the original command unchanged.
+missing executable, or failed verification leave the original command unchanged.
 
 Pi still executes the final Bash call and owns its permissions, lifecycle, and result.
 
@@ -84,7 +85,7 @@ billing or token claim. Clearing savings does not change Tool results.
 
 ## Recovery
 
-If rewriting is unexpectedly inactive, run `/rtk` and verify the runtime. A missing, moved, slow, or non-certified
+If rewriting is unexpectedly inactive, run `/rtk` and verify the runtime. A missing, moved, slow, or unsupported-version
 binary fails open to the original command. See [Troubleshooting](../troubleshooting.md#rtk).
 
 ## See also

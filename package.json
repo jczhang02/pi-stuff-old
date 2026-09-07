@@ -8,45 +8,40 @@
 		"packages/pi-stuff"
 	],
 	"scripts": {
-		"acceptance:code-mode:real": "bun scripts/verify-code-mode-real.ts",
-		"acceptance:code-mode:tui": "bun scripts/verify-code-mode-tui.ts",
-		"acceptance:magic-context:real": "bun scripts/verify-magic-context-real.ts",
 		"beads:publish": "bun scripts/publish-beads.ts",
-		"benchmark:code-mode-image": "bun scripts/benchmark-code-mode-image.ts",
-		"benchmark:conversation-markdown": "bun scripts/benchmark-conversation-markdown.ts",
-		"benchmark:effect-mainline": "bun scripts/benchmark-effect-mainline.ts",
-		"benchmark:ponytail": "bun scripts/benchmark-ponytail.ts",
-		"benchmark:skill-discovery": "bun scripts/benchmark-skill-discovery.ts",
-		"benchmark:lifecycle": "bun scripts/benchmark-lifecycle.ts --acceptance --trace --long-tools 6500 --long-tool-bytes 8192",
-		"benchmark:magic-context": "bun scripts/benchmark-magic-context.ts",
-		"benchmark:magic-context:compare": "bun scripts/compare-magic-context.ts",
-		"benchmark:tool-activity": "bun scripts/benchmark-tool-activity.ts",
-		"ci:acceptance-scope": "bun scripts/ci-acceptance-scope.ts",
-		"check": "bun run check:fast && bun run test && bun run benchmark:tool-activity && bun run pack:verify",
+		"verify": "bun scripts/verify.ts",
+		"check": "bun run format:check && bun run lint && bun run typecheck && bun run knip && bun run check:generated && bun run check:repository && bun run check:capability-contracts && bun scripts/verify-package.ts --static && bun run check:terminal-bench",
 		"check:capability-contracts": "bun scripts/check-capability-contract-catalog.ts",
-		"check:fast": "bun run format:check && bun run lint && bun run typecheck && bun run knip && bun run check:generated && bun run check:repository && bun run check:capability-contracts",
 		"check:generated": "bun scripts/generate-suite.ts --check",
 		"check:repository": "bun scripts/check-repository-safety.ts",
-		"format": "biome check --write .",
 		"format:check": "biome check .",
 		"knip": "knip --no-progress --include files,dependencies,unlisted,binaries,unresolved,cycles",
 		"lint": "oxlint .",
-		"pack:verify": "bun scripts/verify-package.ts",
 		"ponytail:upstream:review": "bun scripts/review-ponytail-upstream.ts",
 		"suite:generate": "bun scripts/generate-suite.ts",
-		"test": "bun run test:isolated && bun run test:goal",
-		"test:ci": "bun run test:isolated && bun run test:goal",
-		"test:goal": "bun scripts/test-goal-upstream.ts",
-		"test:isolated": "bun scripts/run-isolated-tests.ts",
-		"typecheck": "tsc -b tsconfig.json config/typescript/rtk.json config/typescript/agents.json config/typescript/agents-tests.json packages/pi-stuff/tsconfig.json --pretty false"
+		"test": "bun scripts/run-isolated-tests.ts",
+		"typecheck": "tsc -b tsconfig.json config/typescript/rtk.json config/typescript/agents.json config/typescript/agents-tests.json packages/pi-stuff/tsconfig.json --pretty false",
+		"fix": "biome check --write . && oxlint --fix .",
+		"benchmark:capability:conversation-markdown": "bun scripts/benchmark-conversation-markdown.ts",
+		"benchmark:capability:ponytail": "bun scripts/benchmark-ponytail.ts",
+		"benchmark:capability:lifecycle": "bun scripts/benchmark-lifecycle.ts",
+		"benchmark:capability:magic-context": "bun scripts/benchmark-magic-context.ts",
+		"benchmark:capability:magic-context:compare": "bun scripts/compare-magic-context.ts",
+		"benchmark:capability:tool-activity": "bun scripts/benchmark-tool-activity.ts",
+		"test:unit": "bun scripts/run-isolated-tests.ts --level unit",
+		"test:component-integration": "bun scripts/run-isolated-tests.ts --level component-integration",
+		"test:system": "bun scripts/run-isolated-tests.ts --level system",
+		"test:system-integration": "bun scripts/run-isolated-tests.ts --level system-integration",
+		"test:acceptance": "bun scripts/run-isolated-tests.ts --level acceptance",
+		"benchmark:suite:terminal-bench": "bun scripts/benchmark-terminal-bench.ts",
+		"check:terminal-bench": "python3 -m py_compile scripts/terminal-bench/pi_stuff_agent.py"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.6",
-		"@earendil-works/pi-agent-core": "0.85.0",
-		"@earendil-works/pi-ai": "0.85.0",
-		"@earendil-works/pi-coding-agent": "0.85.0",
-		"@earendil-works/pi-server": "0.85.0",
-		"@earendil-works/pi-tui": "0.85.0",
+		"@earendil-works/pi-agent-core": "0.85.1",
+		"@earendil-works/pi-ai": "0.85.1",
+		"@earendil-works/pi-coding-agent": "0.85.1",
+		"@earendil-works/pi-tui": "0.85.1",
 		"@oxlint/plugins": "1.79.0",
 		"@types/bun": "1.4.0",
 		"@types/json-schema": "7.0.15",
@@ -63,22 +58,19 @@
 	"knip": {
 		"workspaces": {
 			".": {
-				"ignoreDependencies": [
-					"@earendil-works/pi-server"
-				],
 				"entry": [
 					"scripts/*.ts",
-					"test/**/*.test.ts",
-					"test/goal-upstream/**/*.node.ts",
-					"test/goal-upstream/ui-node-shim.ts",
-					"test/ui/settings-lock-race-worker.ts",
-					"test/fixtures/**/*.ts",
-					"test/agents/fixtures/**/*.ts"
+					"tests/**/*.test.ts",
+					"tests/**/*.node.ts",
+					"tests/goal-upstream/ui-node-shim.ts",
+					"tests/ui/settings-lock-race-worker.ts",
+					"tests/fixtures/**/*.ts",
+					"tests/agents/fixtures/**/*.ts"
 				],
 				"project": [
 					"scripts/**/*.ts",
 					"tools/**/*.ts",
-					"test/**/*.ts"
+					"tests/**/*.ts"
 				]
 			},
 			"packages/pi-stuff": {

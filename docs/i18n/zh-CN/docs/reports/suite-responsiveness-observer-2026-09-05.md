@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/suite-responsiveness-observer-2026-09-05.md; translation-source-sha256: 7fc388529d492147a38d2e3059aa3f39591f949adb81aad256b1982094b44a7d -->
+<!-- translation-source: docs/reports/suite-responsiveness-observer-2026-09-05.md; translation-source-sha256: 3452ed1495710b643cda4d38fc45705c1726e2beecdf6cbd98a1f288d9d968b4 -->
 
 # 连续响应观察器与 Ledger 首次加载复现
 
@@ -98,7 +98,7 @@ unshare --user --map-root-user --net \
 生命周期或完整资源成本。默认加载了 Capability，不等于执行过其路径。
 本次使用共享机器，没有隔离 CPU；完整响应验收还需要更长的重复工作负载。
 后续工作由 Beads `ps-yon.3`、`ps-yon.4`、`ps-yon.5` 按
-[ADR 0030](../adr/0030-remove-redundant-suite-work-without-feature-cuts.md)持续跟踪。
+[ADR 0034](../adr/0034-remove-redundant-suite-work-without-feature-cuts.md)持续跟踪。
 
 ## 前台 Agent 扩展
 

@@ -53,6 +53,39 @@ const loadTaskRunner = deferredModule(() => import("./child-task-runner.ts"));
 const loadFinalization = deferredModule(() => import("./runner-finalization.ts"));
 const loadControl = deferredModule(() => import("./runner-control.ts"));
 
+function persistWorktreeRecoveryCwd(config: BackgroundRunnerConfig, setup: PreparedWorktrees): void {
+	if (config.work.mode !== "parallel") return;
+	const descriptorPath = fs.existsSync(path.join(config.asyncDir, "recovery-descriptors.json"))
+		? path.join(config.asyncDir, "recovery-descriptors.json")
+		: path.join(config.asyncDir, "recovery-descriptor.json");
+	const parsed = parseJsonValue(fs.readFileSync(descriptorPath, "utf8"));
+	const resolve = setup.operations.resolveWorktreeTaskCwd;
+	if (
+		config.work.group.tasks.length === 1 &&
+		isRuntimeObject(parsed) &&
+		parsed !== null &&
+		!Array.isArray(parsed) &&
+		!Array.isArray(parsed["children"])
+	) {
+		const task = config.work.group.tasks[0];
+		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' has no task.`);
+		parsed["cwd"] = resolve(setup.setup.worktrees[0], setup.setup.cwd, task.cwd);
+		writePrivateAtomicJson(descriptorPath, parsed);
+		return;
+	}
+	if (!isRuntimeObject(parsed) || parsed === null || Array.isArray(parsed) || !Array.isArray(parsed["children"])) {
+		throw new Error(`Async recovery descriptor '${descriptorPath}' is missing its children.`);
+	}
+	for (const [index, child] of parsed["children"].entries()) {
+		if (!isRuntimeObject(child) || child === null || Array.isArray(child))
+			throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} is invalid.`);
+		const task = config.work.group.tasks[index];
+		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} has no task.`);
+		child["cwd"] = resolve(setup.setup.worktrees[index], setup.setup.cwd, task.cwd);
+	}
+	writePrivateAtomicJson(descriptorPath, parsed);
+}
+
 function runConfiguredWork(
 	config: BackgroundRunnerConfig,
 	committedStatus: RunnerStatus | undefined,
@@ -105,7 +138,12 @@ function runConfiguredWork(
 								}),
 							catch: (error) => error,
 						});
-						worktreeSetup = { setup, operations };
+						const preparedWorktrees = { setup, operations };
+						worktreeSetup = preparedWorktrees;
+						yield* Effect.try({
+							try: () => persistWorktreeRecoveryCwd(config, preparedWorktrees),
+							catch: (error) => error,
+						});
 					}
 					const taskResults = yield* runBackgroundWork(
 						config.work,
@@ -117,12 +155,19 @@ function runConfiguredWork(
 										config,
 										task,
 										index,
-										taskCwd: worktreeSetup?.setup.worktrees[index]?.agentCwd ?? task.cwd,
+										taskCwd: worktreeSetup
+											? worktreeSetup.operations.resolveWorktreeTaskCwd(
+													worktreeSetup.setup.worktrees[index],
+													worktreeSetup.setup.cwd,
+													task.cwd,
+												)
+											: task.cwd,
 										status,
 										statusPath,
 										eventsPath,
 										activeControls: control.activeControls,
 										consumeScheduledStop: (index) => control.consumeScheduledStop(index),
+										preStartTerminalCause: () => control.preStartTerminalCause(),
 										onWriterProcess: onWriterProcess ? (writer) => onWriterProcess(index, writer) : undefined,
 									});
 								},

@@ -1,11 +1,11 @@
-<!-- translation-source: docs/capabilities/conversation-ui.md; translation-source-sha256: c48a25fb193058e95d9b070d6d794abf72bc1e0af351c4fb30f5b48351d771fe -->
+<!-- translation-source: docs/capabilities/conversation-ui.md; translation-source-sha256: e75bd030d8600eef300007de09c83d6e76bd72f6cb9cca84327a21a8c6d77c6d -->
 
 # Conversation UI
 
 [English](../../../../../docs/capabilities/conversation-ui.md)
 
 Conversation UI 让 Pi Stuff 的当前状态在 Pi 内保持易读。它负责 Welcome header、响应式 Statusline、输入呈现、
-Thinking 标签、围栏可视化、共享 Command Dialog 和 Suite 诊断。
+User Message 呈现、Thinking 标签、围栏可视化、共享 Command Dialog 和 Suite 诊断。
 
 ## 快速开始
 
@@ -60,6 +60,22 @@ Welcome header 提供活动 model、项目和 Suite 入口的紧凑启动视图�
 插入规范的 `/skill:<name>` 形式。
 
 聚焦 dialog 会暂时占用编辑器界面。关闭后恢复完全相同的草稿和普通 Pi chrome。
+
+## User Message
+
+User Message 保留 Pi 全宽卡片底色和间距。在认证的 `outputPad=1` 设置下，一个 `` 与 Tool 标记对齐，
+prompt 和续行正文与 Tool 正文对齐。标记表示 Provider Prompt，包括自动用户角色消息，不声明由人类输入。
+
+提交 `/skill:implement <prompt>` 后，`/skill:implement` 与 prompt 一起显示在这张卡片中。纯 Skill 使用
+相同呈现。Skill 调用文字采用固定的 workflow 演示中的静态彩虹配色；列表、引用和代码块在需要时从它的下方开始，保留原生 Markdown 结构。
+原生 `Ctrl+O` 在 prompt 后的 `Skill instructions` 标签下展开完整 Skill instructions，不重复 prompt，
+不创建另一张卡片。prompt 中各处的行内 `/skill:<name>` 文本在原位采用相同配色。此装饰不会执行 Skill
+或为文字提及添加 instructions。展开的 instructions 使用相同的行内装饰；围栏代码和超链接目标保留原生呈现。
+
+实时和恢复后的 regular/fullscreen TUI 共用相同渲染。Session 内容、Provider 输入、编辑器历史和 HTML 导出
+保留原生语义。版本约束适配器在 Session 切换、关闭和 `/reload` 时释放。初始化不兼容会明确失败；工作中的
+异常展示故障保留原生消息、停用该 Session 后续的 User Message projection，并通过 `/diagnostics` 报告一次。
+使用 `/reload` 可重新尝试安装。正常认证场景出现非预期回退即验收失败。
 
 ## Thinking 标签
 

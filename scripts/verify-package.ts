@@ -1,39 +1,24 @@
-import { access, mkdir, mkdtemp, readdir, readFile, rm, stat, symlink } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readdir, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
 import { parseJsonValue } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeObject, isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
+import { waitForDetachedProcess } from "./detached-process.ts";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_HOST_PROFILE, CERTIFIED_PI_SOURCE_COMMIT, CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 import { runPiRpcSmoke } from "./smoke-pi.ts";
-import { verifyAgentsExecutionMatrix } from "./verify-agents-execution-matrix.ts";
-import { verifyAgentsPty } from "./verify-agents-pty.ts";
-import { verifyBtwPty } from "./verify-btw-pty.ts";
-import { verifyContextPty } from "./verify-context-pty.ts";
-import { verifyGoalLifecycle } from "./verify-goal-lifecycle.ts";
-import { verifyGoalPty } from "./verify-goal-pty.ts";
-import { verifyMcpPty } from "./verify-mcp-pty.ts";
-import { verifyNotificationPty } from "./verify-notification-pty.ts";
-import { stageCertifiedPiHost } from "./verify-pi-host-provenance.ts";
-import { verifyPiHostSeams } from "./verify-pi-host-seams.ts";
-import { verifyRtkPty } from "./verify-rtk-pty.ts";
-import { verifyToolsPty } from "./verify-tools-pty.ts";
-import { verifyToolsResumePty } from "./verify-tools-resume-pty.ts";
-import { verifyUiPty } from "./verify-ui-pty.ts";
-import { verifyWebIntegration } from "./verify-web-integration.ts";
-import { verifyWorkMonitorMatrix } from "./verify-work-monitor-matrix.ts";
-import { verifyWorkPty } from "./verify-work-pty.ts";
+import { stageSupportedPiHost } from "./verify-pi-host-provenance.ts";
 
 export { CERTIFIED_PI_HOST_PROFILE, CERTIFIED_PI_SOURCE_COMMIT, CERTIFIED_PI_VERSION };
 
 const root = resolve(import.meta.dir, "..");
 const packageDirectory = join(root, "packages", "pi-stuff");
-const goalToolInspector = join(root, "test/fixtures/assert-goal-tools.ts");
-const webToolInspector = join(root, "test/fixtures/assert-web-tools.ts");
-const mcpToolInspector = join(root, "test/fixtures/assert-mcp-tools.ts");
-const workToolInspector = join(root, "test/fixtures/assert-work-tools.ts");
-const DEVELOPMENT_ARCHIVE_FILE = /(?:^|\/)(?:[^/]+\.(?:test|spec)\.[cm]?[jt]sx?|tsconfig(?:\.[^/]+)?\.json)$/u;
+const goalToolInspector = join(root, "tests/fixtures/assert-goal-tools.ts");
+const webToolInspector = join(root, "tests/fixtures/assert-web-tools.ts");
+const mcpToolInspector = join(root, "tests/fixtures/assert-mcp-tools.ts");
+const workToolInspector = join(root, "tests/fixtures/assert-work-tools.ts");
 const RTK_TECHNIQUE_FILES = [
 	"ansi.ts",
 	"build.ts",
@@ -48,7 +33,7 @@ const RTK_TECHNIQUE_FILES = [
 	"truncate.ts",
 ] as const;
 
-const REQUIRED_ARCHIVE_FILES = [
+const REQUIRED_SOURCE_FILES = [
 	"package/index.ts",
 	"package/src/lifecycle-deadline.ts",
 	"package/src/lifecycle-performance.ts",
@@ -139,7 +124,7 @@ const PROVENANCE_REQUIREMENTS = {
 	web: ["nicobailon/pi-web-access", "Pi Stuff delta"],
 } satisfies Readonly<Record<string, readonly string[]>>;
 
-export interface PackageArchiveManifest {
+export interface PackageManifest {
 	dependencies?: unknown;
 	files?: unknown;
 	name?: unknown;
@@ -148,7 +133,7 @@ export interface PackageArchiveManifest {
 	bundledDependencies?: unknown;
 }
 
-const PACKAGE_ARCHIVE_MANIFEST_SCHEMA = Type.Object(
+const PACKAGE_MANIFEST_SCHEMA = Type.Object(
 	{
 		bundledDependencies: Type.Optional(Type.Unknown()),
 		dependencies: Type.Optional(Type.Unknown()),
@@ -165,6 +150,17 @@ const RUNTIME_MANIFEST_SCHEMA = Type.Object(
 );
 const INSTALLED_MANIFEST_SCHEMA = Type.Object(
 	{ name: Type.Optional(Type.Unknown()), version: Type.Optional(Type.Unknown()) },
+	{ additionalProperties: true },
+);
+const INSTALLED_COMMANDS_SCHEMA = Type.Object(
+	{
+		id: Type.Literal("pi-stuff-installed"),
+		success: Type.Literal(true),
+		data: Type.Object(
+			{ commands: Type.Array(Type.Object({ name: Type.String() }, { additionalProperties: true })) },
+			{ additionalProperties: true },
+		),
+	},
 	{ additionalProperties: true },
 );
 
@@ -191,8 +187,8 @@ function normalizedFilesEntry(entry: string): string {
 	return normalized;
 }
 
-export function verifyPackageArchive(manifest: PackageArchiveManifest, archiveFiles: readonly string[]): void {
-	if (manifest.name !== "@jczhang02/pi-stuff") throw new Error("Archive has the wrong Package identity");
+export function verifyPackageManifest(manifest: PackageManifest): void {
+	if (manifest.name !== "@jczhang02/pi-stuff") throw new Error("Package has the wrong identity");
 	if (manifest.private !== true) throw new Error("Pi Stuff must remain a private local Package");
 	if (
 		JSON.stringify(manifest.pi) !==
@@ -202,7 +198,7 @@ export function verifyPackageArchive(manifest: PackageArchiveManifest, archiveFi
 			themes: ["./themes/*.json"],
 		})
 	) {
-		throw new Error("Archive has an invalid Pi resource manifest");
+		throw new Error("Package has an invalid Pi resource manifest");
 	}
 	if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
 		throw new Error("Package manifest files must be a non-empty array");
@@ -221,22 +217,42 @@ export function verifyPackageArchive(manifest: PackageArchiveManifest, archiveFi
 	) {
 		throw new Error("The local Package must declare only external runtime dependencies");
 	}
+}
 
-	const archiveSet = new Set(archiveFiles);
-	if (!archiveSet.has("package/package.json")) throw new Error("Archive is missing package/package.json");
-	const missing = REQUIRED_ARCHIVE_FILES.filter((path) => !archiveSet.has(path));
-	if (missing.length > 0) throw new Error(`Archive is missing runtime files:\n${missing.join("\n")}`);
-	const forbidden = archiveFiles.filter(
-		(path) =>
-			path.startsWith("package/node_modules/") ||
-			path.startsWith("package/src/subagents/agents/") ||
-			/codex-code-mode-host(?:\.exe)?$/u.test(path) ||
-			path.includes("/.changeset/") ||
-			path.includes("/node_modules/") ||
-			(path !== "package/package.json" && path.endsWith("/package.json")) ||
-			DEVELOPMENT_ARCHIVE_FILE.test(path),
+export async function verifyPackageSource(baseDirectory = packageDirectory): Promise<void> {
+	const manifest = await Bun.file(join(baseDirectory, "package.json")).json();
+	if (!Check(PACKAGE_MANIFEST_SCHEMA, manifest)) throw new Error("Package manifest must be an object");
+	verifyPackageManifest(manifest);
+	const files = [...new Bun.Glob("**/*").scanSync({ cwd: baseDirectory, onlyFiles: true, dot: true })];
+	const missing = REQUIRED_SOURCE_FILES.map((path) => path.replace(/^package\//u, "")).filter(
+		(path) => !files.includes(path),
 	);
-	if (forbidden.length > 0) throw new Error(`Archive contains forbidden files:\n${forbidden.sort().join("\n")}`);
+	if (missing.length > 0) throw new Error(`Package is missing runtime files:\n${missing.join("\n")}`);
+	const forbidden = files.filter(
+		(path) =>
+			path.startsWith("node_modules/") ||
+			path.startsWith("src/subagents/agents/") ||
+			/codex-code-mode-host(?:\.exe)?$/u.test(path) ||
+			path.split("/").includes(".changeset") ||
+			(path !== "package.json" && path.endsWith("/package.json")),
+	);
+	if (forbidden.length > 0) throw new Error(`Package contains forbidden files:\n${forbidden.sort().join("\n")}`);
+	await verifyProvenanceAndLicenses(baseDirectory);
+	for (const binary of [
+		"src/codex/native/apply-patch/linux-x64/apply_patch",
+		"src/codex/native/imagegen/linux-x64/imagegen",
+		"src/codex/native/view-image/linux-x64/view_image",
+	]) {
+		if (((await stat(join(baseDirectory, binary))).mode & 0o111) === 0) {
+			throw new Error(`Native Tool is not executable: ${binary}`);
+		}
+	}
+}
+
+export async function verifyStaticPackage(): Promise<void> {
+	await verifySinglePackageBoundary();
+	await verifyInstalledRuntimeDependencies();
+	await verifyPackageSource();
 }
 
 async function verifySinglePackageBoundary(): Promise<void> {
@@ -312,40 +328,103 @@ function verifyPiVersion(piBinary: string): void {
 	}
 }
 
-async function packAndExtract(
-	temporaryDirectory: string,
-): Promise<{ archiveFiles: string[]; extractedPackage: string }> {
-	const packsDirectory = join(temporaryDirectory, "packs");
-	const extractDirectory = join(temporaryDirectory, "extract");
-	await Promise.all([mkdir(packsDirectory), mkdir(extractDirectory)]);
-	run(
-		[process.execPath, "pm", "pack", "--ignore-scripts", "--destination", packsDirectory, "--quiet"],
-		packageDirectory,
-	);
-	const archives = (await readdir(packsDirectory)).filter((entry) => entry.endsWith(".tgz"));
-	if (archives.length !== 1 || !archives[0]) throw new Error("Bun did not produce exactly one Pi Stuff archive");
-	const archivePath = join(packsDirectory, archives[0]);
-	const archiveFiles = run(["tar", "-tzf", archivePath]).trim().split("\n").filter(Boolean).sort();
-	const manifest = JSON.parse(run(["tar", "-xOzf", archivePath, "package/package.json"]));
-	if (!Check(PACKAGE_ARCHIVE_MANIFEST_SCHEMA, manifest)) throw new Error("Archive manifest must be an object");
-	verifyPackageArchive(manifest, archiveFiles);
-	run(["tar", "-xzf", archivePath, "-C", extractDirectory]);
-	const extractedPackage = join(extractDirectory, "package");
-	await verifyProvenanceAndLicenses(extractedPackage);
-	for (const binary of [
-		"src/codex/native/apply-patch/linux-x64/apply_patch",
-		"src/codex/native/imagegen/linux-x64/imagegen",
-		"src/codex/native/view-image/linux-x64/view_image",
-	]) {
-		if (((await stat(join(extractedPackage, binary))).mode & 0o111) === 0) {
-			throw new Error(`Packed native Tool is not executable: ${binary}`);
-		}
+async function installSourcePackage(piBinary: string, temporaryDirectory: string): Promise<string> {
+	const agentDirectory = join(temporaryDirectory, "agent");
+	await mkdir(agentDirectory, { recursive: true });
+	const env = {
+		...process.env,
+		HOME: join(temporaryDirectory, "home"),
+		PI_CODING_AGENT_DIR: agentDirectory,
+		PI_OFFLINE: "1",
+		PI_TELEMETRY: "0",
+		XDG_CACHE_HOME: join(temporaryDirectory, "cache"),
+		XDG_CONFIG_HOME: join(temporaryDirectory, "config"),
+		XDG_DATA_HOME: join(temporaryDirectory, "data"),
+		XDG_STATE_HOME: join(temporaryDirectory, "state"),
+	};
+	const result = Bun.spawnSync([piBinary, "install", packageDirectory], {
+		cwd: temporaryDirectory,
+		env,
+		stdout: "pipe",
+		stderr: "pipe",
+	});
+	if (result.exitCode !== 0) {
+		throw new Error(`pi install failed with ${result.exitCode}: ${result.stderr.toString().trim()}`);
 	}
-	await symlink(join(packageDirectory, "node_modules"), join(extractedPackage, "node_modules"), "dir");
-	return { archiveFiles, extractedPackage };
+	const settingsPath = join(agentDirectory, "settings.json");
+	const settings = parseJsonValue(await readFile(settingsPath, "utf8"));
+	if (
+		!isRuntimeObject(settings) ||
+		settings === null ||
+		Array.isArray(settings) ||
+		!Array.isArray(settings["packages"]) ||
+		settings["packages"].length !== 1
+	) {
+		throw new Error("pi install did not create an isolated Package configuration");
+	}
+	const configuredPath = settings["packages"][0];
+	if (!isRuntimeString(configuredPath) || resolve(agentDirectory, configuredPath) !== packageDirectory) {
+		throw new Error(`pi install configured an unexpected Package path: ${String(configuredPath)}`);
+	}
+	return agentDirectory;
 }
 
-async function verifySuiteSurface(piBinary: string, packagePath: string): Promise<void> {
+async function verifyInstalledSuiteSurface(
+	piBinary: string,
+	temporaryDirectory: string,
+	agentDirectory: string,
+): Promise<void> {
+	const child = Bun.spawn(
+		[
+			piBinary,
+			"--mode",
+			"rpc",
+			"--no-session",
+			"--offline",
+			"--no-context-files",
+			"--no-skills",
+			"--no-prompt-templates",
+			"--no-themes",
+			"--no-builtin-tools",
+			"--no-approve",
+		],
+		{
+			cwd: temporaryDirectory,
+			detached: true,
+			env: {
+				...process.env,
+				HOME: join(temporaryDirectory, "home"),
+				PI_CODING_AGENT_DIR: agentDirectory,
+				PI_OFFLINE: "1",
+				PI_TELEMETRY: "0",
+				XDG_CACHE_HOME: join(temporaryDirectory, "cache"),
+				XDG_CONFIG_HOME: join(temporaryDirectory, "config"),
+				XDG_DATA_HOME: join(temporaryDirectory, "data"),
+				XDG_STATE_HOME: join(temporaryDirectory, "state"),
+			},
+			stdin: new Blob(['{"id":"pi-stuff-installed","type":"get_commands"}\n']),
+			stdout: "pipe",
+			stderr: "pipe",
+		},
+	);
+	const [{ exitCode, timedOut }, stdout, stderr] = await Promise.all([
+		waitForDetachedProcess(child, 60_000),
+		new Response(child.stdout).text(),
+		new Response(child.stderr).text(),
+	]);
+	if (timedOut) throw new Error("Installed Pi RPC smoke timed out");
+	if (exitCode !== 0) throw new Error(`Installed Pi RPC smoke exited with ${exitCode}: ${stderr.trim()}`);
+	const records = stdout.trim().split("\n").map(parseJsonValue);
+	const response = records.find((record) => Check(INSTALLED_COMMANDS_SCHEMA, record));
+	if (!response || !Check(INSTALLED_COMMANDS_SCHEMA, response))
+		throw new Error("Installed Pi returned no successful command response");
+	const commands = response.data.commands.map((command) => command.name);
+	if (!commands.includes("notifications") || !commands.includes("ui") || !commands.includes("codemode")) {
+		throw new Error("Pi did not load the installed source Package");
+	}
+}
+
+export async function verifySuiteSurface(piBinary: string, packagePath: string): Promise<void> {
 	const smoke = await runPiRpcSmoke({
 		piBinary,
 		extensions: [goalToolInspector, webToolInspector, mcpToolInspector, workToolInspector],
@@ -380,41 +459,41 @@ async function verifySuiteSurface(piBinary: string, packagePath: string): Promis
 	if (smoke.commandNames.includes("tool-settings")) throw new Error("Legacy /tool-settings must remain removed");
 }
 
-async function verifyRealPi(piBinary: string, packagePath: string): Promise<void> {
-	await verifySuiteSurface(piBinary, packagePath);
-	await verifyWebIntegration({ packagePath });
-	await verifyGoalLifecycle({ piBinary, packagePath });
-	await verifyUiPty({ piBinary, packagePath });
-	await verifyGoalPty({ piBinary, packagePath, columns: 56, rows: 24 });
-	await verifyAgentsPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyAgentsExecutionMatrix({ piBinary, packagePath });
-	await verifyBtwPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyContextPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyRtkPty({ piBinary, packagePath });
-	await verifyMcpPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyNotificationPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyPiHostSeams({ piBinary, packagePath });
-	await verifyToolsPty({ piBinary, packagePath, columns: 64, rows: 28 });
-	await verifyToolsResumePty({ piBinary, packagePath });
-	await verifyWorkMonitorMatrix({ piBinary, packagePath });
-	await verifyWorkPty({ piBinary, packagePath, columns: 96, rows: 30 });
+async function main(): Promise<void> {
+	const args = process.argv.slice(2);
+	if (
+		args.some((arg) => !["--help", "--list", "--static"].includes(arg)) ||
+		args.filter((arg) => arg === "--static").length > 1
+	) {
+		throw new Error(
+			`Unknown argument: ${args.find((arg) => !["--help", "--list", "--static"].includes(arg)) ?? "--static"}`,
+		);
+	}
+	if (args.includes("--help")) {
+		console.log("Usage: bun scripts/verify-package.ts [--static|--list|--help]");
+		return;
+	}
+	if (args.includes("--list")) {
+		console.log("static-package\nsource-install");
+		return;
+	}
+	if (args.includes("--static")) {
+		await verifyStaticPackage();
+		console.log("Static Package validation passed");
+		return;
+	}
+	await verifySourceInstallation();
 }
 
-async function main(): Promise<void> {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
+export async function verifySourceInstallation(): Promise<void> {
+	const PI_BIN = resolvePiBinary();
 	const temporaryDirectory = await mkdtemp(join(tmpdir(), "pi-stuff-local-package-"));
 	try {
-		const host = await stageCertifiedPiHost(PI_BIN, temporaryDirectory);
+		const host = await stageSupportedPiHost(PI_BIN, temporaryDirectory);
 		verifyPiVersion(host.binaryPath);
-		await verifySinglePackageBoundary();
-		await verifyInstalledRuntimeDependencies();
-		await verifyProvenanceAndLicenses(packageDirectory);
-		await verifySuiteSurface(host.binaryPath, packageDirectory);
-		const { archiveFiles, extractedPackage } = await packAndExtract(temporaryDirectory);
-		await verifyRealPi(host.binaryPath, extractedPackage);
-		console.log(
-			`Certified one local @jczhang02/pi-stuff Package (${archiveFiles.length} files) with Pi Host ${CERTIFIED_PI_HOST_PROFILE}`,
-		);
+		const agentDirectory = await installSourcePackage(host.binaryPath, temporaryDirectory);
+		await verifyInstalledSuiteSurface(host.binaryPath, temporaryDirectory, agentDirectory);
+		console.log(`Certified source installation of @jczhang02/pi-stuff with Pi Host ${CERTIFIED_PI_HOST_PROFILE}`);
 	} finally {
 		await rm(temporaryDirectory, { recursive: true, force: true });
 	}

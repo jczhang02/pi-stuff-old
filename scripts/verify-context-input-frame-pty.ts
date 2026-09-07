@@ -16,8 +16,8 @@ import {
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/context-pty-provider.ts");
-const runner = join(root, "test/fixtures/context-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/context-pty-provider.ts");
+const runner = join(root, "tests/fixtures/context-pty-runner.sh");
 const INPUT_FRAME_LATENCY_LIMIT_MS = 150;
 const WORKING_STALL_LIMIT_MS = 500;
 const HISTORY_MARKER = "CONTEXT_INPUT_HISTORY_499";
@@ -118,7 +118,7 @@ function transcriptContainsUserMessage(frame: string, text: string): boolean {
 	const lines = frame.split("\n");
 	for (let index = 1; index + 1 < lines.length; index += 1) {
 		if (
-			(lines[index] ?? "").trim() === text &&
+			(lines[index] ?? "").trim() === ` ${text}` &&
 			(lines[index - 1] ?? "").trim() === "" &&
 			(lines[index + 1] ?? "").trim() === ""
 		) {

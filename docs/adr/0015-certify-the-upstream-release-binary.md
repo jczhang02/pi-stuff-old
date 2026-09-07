@@ -11,16 +11,17 @@ model data, source hydration, build records, and crash-safe binary publication t
 
 ## Decision
 
-Pin the supported Pi version, reviewed upstream source commit, and Linux x64 release-binary SHA-256. CI downloads that
-upstream release while network access is available, rejects any binary outside the allowlist, and then runs the existing
-real-Host acceptance suite without external network access. Exact development dependencies continue to provide the
-released type surface.
+Support Pi `0.85.1` on Linux x64, retain the reviewed upstream source commit as provenance, and verify compatibility through
+Pi's public APIs and real-Host capability acceptance. Acceptance must exercise the complete applicable Capability
+Contract Catalog against the actual Host; executable hashes, archive hashes, file sizes, embedded Bun banners, and byte
+offsets are not admission gates. Exact development dependencies continue to provide the released type surface.
 
 Pi Stuff does not rebuild, publish, or retain generated model data for Pi Host.
 
 ## Consequences
 
-- Host identity depends on the reviewed release binary hash rather than its reusable version string.
-- A Pi upgrade updates the source commit, binary hash, development dependencies, and acceptance evidence together.
-- Acceptance depends on availability of the pinned upstream GitHub Release during its installation phase.
+- Host support depends on the supported version, public API behavior, and real-Host acceptance evidence.
+- A Pi upgrade updates the source provenance, development dependencies, and capability acceptance evidence together.
+- Release artifact observations may be retained as historical provenance, but they do not block a supported Host that
+  passes the version and behavior contract.
 - The repository no longer claims that it can reproduce the upstream binary from source.

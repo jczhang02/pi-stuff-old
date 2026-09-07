@@ -14,13 +14,13 @@ import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import * as Semaphore from "effect/Semaphore";
 import { Check } from "typebox/value";
-import { getContextStatusChannel, reportDiagnostic, type SuiteAgentMessageOptions } from "../conversation-ui/index.js";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { isRuntimeObject } from "../shared/runtime-type.js";
-import { registerSuiteOwnedTool, registerSuiteToolActivityMetadata } from "../tool-display/index.js";
-import { MAGIC_TOOL_LABELS, MAGIC_TOOL_NAME_SET, MAGIC_TOOL_NAMES } from "./activity.js";
-import { ContextCommandRuntime, type MagicCommandDefinition } from "./command-runtime.js";
-import type { MagicCompactionResult } from "./magic-context-types.js";
+import { getContextStatusChannel, reportDiagnostic, type SuiteAgentMessageOptions } from "../conversation-ui/index.ts";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { isRuntimeObject } from "../shared/runtime-type.ts";
+import { registerSuiteOwnedTool, registerSuiteToolActivityMetadata } from "../tool-display/index.ts";
+import { MAGIC_TOOL_LABELS, MAGIC_TOOL_NAME_SET, MAGIC_TOOL_NAMES } from "./activity.ts";
+import { ContextCommandRuntime, type MagicCommandDefinition } from "./command-runtime.ts";
+import type { MagicCompactionResult } from "./magic-context-types.ts";
 import {
 	addCompactMagicContextPrompt,
 	COMPACT_PROMPT_EVENT_SCHEMA,
@@ -31,20 +31,20 @@ import {
 	magicCommandContext,
 	magicPiAdapter,
 	quietMagicContext,
-} from "./magic-runtime.js";
-import { NativeContextPreflight } from "./native-preflight.js";
-import type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions } from "./projection.js";
-import { ContextProjectionRuntime, type MagicContextEventResult, type MagicContextHandler } from "./projection.js";
-import { applyContextPromptContributions, stripContextPromptContributions } from "./prompt-contributions.js";
-import { ContextRecovery } from "./recovery.js";
+} from "./magic-runtime.ts";
+import { NativeContextPreflight } from "./native-preflight.ts";
+import type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions } from "./projection.ts";
+import { ContextProjectionRuntime, type MagicContextEventResult, type MagicContextHandler } from "./projection.ts";
+import { applyContextPromptContributions, stripContextPromptContributions } from "./prompt-contributions.ts";
+import { ContextRecovery } from "./recovery.ts";
 import {
 	type ContextActivationTrigger,
 	type ContextCapabilityState,
 	type ContextStatusSnapshot,
 	contextStatusWithContinuity,
 	nativeContextStatus,
-} from "./status.js";
-import { magicToolPresentation } from "./tool-presentation.js";
+} from "./status.ts";
+import { magicToolPresentation } from "./tool-presentation.ts";
 
 export interface ContextCapability {
 	status(): ContextStatusSnapshot;

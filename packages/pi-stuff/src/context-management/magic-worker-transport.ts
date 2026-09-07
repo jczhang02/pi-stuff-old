@@ -2,8 +2,8 @@ import { fileURLToPath } from "node:url";
 import type { AgentToolUpdateCallback } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import type { JsonInputValue } from "../shared/json-value.js";
-import { magicWorkerError, magicWorkerErrorMessage } from "./magic-worker-host.js";
+import type { JsonInputValue } from "../shared/json-value.ts";
+import { magicWorkerError, magicWorkerErrorMessage } from "./magic-worker-host.ts";
 import {
 	MAGIC_WORKER_PROTOCOL_VERSION,
 	type MagicWorkerEffectMessage,
@@ -15,7 +15,7 @@ import {
 	type MagicWorkerRequest,
 	type MagicWorkerResultMessage,
 	type MagicWorkerSyncEffectMessage,
-} from "./magic-worker-protocol.js";
+} from "./magic-worker-protocol.ts";
 
 export interface MagicWorkerPort {
 	addEventListener(type: "close", listener: (event: CloseEvent) => void): void;

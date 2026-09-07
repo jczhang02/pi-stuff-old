@@ -4,7 +4,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import * as Option from "effect/Option";
 import * as Semaphore from "effect/Semaphore";
-import { boundTerminalLine } from "../tool-display/index.js";
+import { boundTerminalLine } from "../tool-display/index.ts";
 
 const RESOLVE_TIMEOUT_MS = 600;
 const VERSION_TIMEOUT_MS = 1_000;

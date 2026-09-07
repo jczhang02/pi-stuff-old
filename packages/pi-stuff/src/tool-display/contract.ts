@@ -8,27 +8,27 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import type { Component } from "@earendil-works/pi-tui";
 import type { TSchema } from "typebox";
-import { getHostSharedResource } from "../shared/host-resource.js";
+import { getHostSharedResource } from "../shared/host-resource.ts";
 import {
 	classifyRetrievalGroupInvocation,
 	type RetrievalGroupDisposition,
 	type ToolActivityMetadata,
 	type ToolActivityOutcome,
 	type ToolArguments,
-} from "./activity.js";
-import { ToolActivityPresentation } from "./activity-presentation.js";
-import type { ToolActivity, ToolActivityState } from "./activity-store.js";
-import { ToolEnvelopeProjection } from "./envelope-projection.js";
-import { ToolGroupProjection } from "./group-projection.js";
-import type { CachedToolRow } from "./render.js";
-import { ToolUiSettingsStore } from "./settings.js";
-import { boundedToolArguments, boundedToolResult } from "./tool-text.js";
+} from "./activity.ts";
+import { ToolActivityPresentation } from "./activity-presentation.ts";
+import type { ToolActivity, ToolActivityState } from "./activity-store.ts";
+import { ToolEnvelopeProjection } from "./envelope-projection.ts";
+import { ToolGroupProjection } from "./group-projection.ts";
+import type { CachedToolRow } from "./render.ts";
+import { ToolUiSettingsStore } from "./settings.ts";
+import { boundedToolArguments, boundedToolResult } from "./tool-text.ts";
 
 export {
 	sendSuiteAgentMessage,
 	withAgentWorkOrigin,
 	withDirectUserActivation,
-} from "../conversation-ui/index.js";
+} from "../conversation-ui/index.ts";
 
 const TOOL_RUNTIME_REGISTRY = Symbol.for("@jczhang02/pi-stuff-tools/runtime-registry.v1");
 const TOOL_RUNTIME_DISCOVERY_EVENT = "@jczhang02/pi-stuff-tools/runtime-discovery/v1";

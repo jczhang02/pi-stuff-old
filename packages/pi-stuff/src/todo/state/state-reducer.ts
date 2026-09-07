@@ -1,8 +1,8 @@
-import type { JsonInputObject } from "../../shared/json-value.js";
-import type { Task, TaskAction, TaskMutationParams, TaskStatus } from "../tool/types.js";
-import { isTransitionValid } from "./invariants.js";
-import type { TaskState } from "./state.js";
-import { hasCycle } from "./task-graph.js";
+import type { JsonInputObject } from "../../shared/json-value.ts";
+import type { Task, TaskAction, TaskMutationParams, TaskStatus } from "../tool/types.ts";
+import { isTransitionValid } from "./invariants.ts";
+import type { TaskState } from "./state.ts";
+import { hasCycle } from "./task-graph.ts";
 
 export type Op =
 	| { kind: "create"; task: Task }

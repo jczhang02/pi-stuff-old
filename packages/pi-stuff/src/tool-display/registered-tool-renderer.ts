@@ -10,10 +10,10 @@ import {
 	visibleWidth,
 } from "@earendil-works/pi-tui";
 import type { Static, TSchema } from "typebox";
-import { SELF_RENDERED_TRANSCRIPT_PADDING, TRANSCRIPT_CONTINUATION } from "../conversation-ui/transcript.js";
-import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolActivityMetadata, ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
+import { SELF_RENDERED_TRANSCRIPT_PADDING, TRANSCRIPT_CONTINUATION } from "../conversation-ui/transcript.ts";
+import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolActivityMetadata, ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
 import type {
 	PresentedToolMetadata,
 	RendererState,
@@ -23,18 +23,18 @@ import type {
 	ToolResultRenderOptions,
 	ToolSummaryProjection,
 	ToolUiRuntime,
-} from "./contract.js";
+} from "./contract.ts";
 import {
 	DETAIL_BYTE_LIMIT,
 	DETAIL_LINE_LIMIT,
 	TOOL_DISPLAY_ITEM_LIMIT,
 	TOOL_DISPLAY_MEDIA_CODE_UNIT_LIMIT,
 	TOOL_DISPLAY_MEDIA_LIMIT,
-} from "./limits.js";
-import { isOperationBlockMember } from "./operation-block-presentation.js";
-import { SUITE_ACTIVITY_RENDERER, type SuiteActivityRendererMarker } from "./registration-tracker.js";
-import { CachedToolRow, EmptyToolComponent, type ToolRowModel } from "./render.js";
-import { sanitizeTerminalText } from "./terminal.js";
+} from "./limits.ts";
+import { isOperationBlockMember } from "./operation-block-presentation.ts";
+import { SUITE_ACTIVITY_RENDERER, type SuiteActivityRendererMarker } from "./registration-tracker.ts";
+import { CachedToolRow, EmptyToolComponent, type ToolRowModel } from "./render.ts";
+import { sanitizeTerminalText } from "./terminal.ts";
 import {
 	boundedToolArguments,
 	boundedToolResult,
@@ -43,7 +43,7 @@ import {
 	classifyTerminalState,
 	oneLine,
 	TOOL_DISPLAY_ARGUMENT_KEYS,
-} from "./tool-text.js";
+} from "./tool-text.ts";
 
 const TOOL_ARGUMENT_KEY_LIMIT = 64;
 

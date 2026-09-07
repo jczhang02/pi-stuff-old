@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import { MAX_MODEL_CANDIDATES_PER_CHILD } from "../runs/shared/model-fallback.ts";
 import type { ModelScopeConfig } from "../runs/shared/model-scope.ts";
 import { validateToolBudgetConfig } from "../runs/shared/tool-budget.ts";

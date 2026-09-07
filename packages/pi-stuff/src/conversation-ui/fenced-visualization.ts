@@ -1,5 +1,5 @@
-import { renderTreeSource } from "./indentation-tree.js";
-import { renderChartSource } from "./unicode-chart.js";
+import { renderTreeSource } from "./indentation-tree.ts";
+import { renderChartSource } from "./unicode-chart.ts";
 
 const TARGET_FENCE = /(?:^|\n) {0,3}(?:\x60{3,}|~{3,})[\t ]*(?:chart|tree)(?=[\t \r\n]|$)/iu;
 const OPENING_FENCE = /^( {0,3})(\x60{3,}|~{3,})[^\S\r\n]*(.*)$/u;

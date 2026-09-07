@@ -1,12 +1,12 @@
 import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { formatDuration } from "./accounting.js";
-import { parseTokenBudget } from "./command.js";
-import type { GoalCommandController } from "./commands.js";
-import type { ActiveGoal, PendingQueueAction } from "./persistence.js";
-import { goalQueueIdentity } from "./queue.js";
-import { EMERGENCY_AUTOMATIC_TURN_LIMIT, type GoalRuntime, goalSummary } from "./runtime.js";
-import { type ActionMenuItem, defineMenu, type MenuDefinition, menuWait, runMenu } from "./suite-menu.js";
+import { formatDuration } from "./accounting.ts";
+import { parseTokenBudget } from "./command.ts";
+import type { GoalCommandController } from "./commands.ts";
+import type { ActiveGoal, PendingQueueAction } from "./persistence.ts";
+import { goalQueueIdentity } from "./queue.ts";
+import { EMERGENCY_AUTOMATIC_TURN_LIMIT, type GoalRuntime, goalSummary } from "./runtime.ts";
+import { type ActionMenuItem, defineMenu, type MenuDefinition, menuWait, runMenu } from "./suite-menu.ts";
 
 export const GOAL_MENU_ACTIONS = {
 	start: "Start a goal…",

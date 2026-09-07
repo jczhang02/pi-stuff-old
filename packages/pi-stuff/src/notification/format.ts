@@ -1,5 +1,5 @@
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { boundTerminalLine } from "../tool-display/index.js";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { boundTerminalLine } from "../tool-display/index.ts";
 
 const SESSION_WIDTH = 32;
 const BODY_WIDTH = 160;

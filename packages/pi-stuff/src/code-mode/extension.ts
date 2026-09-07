@@ -1,15 +1,15 @@
 import type { AgentToolResult, ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
-import type { JsonInputObject, JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "../tool-display/activity.js";
-import type { SuiteToolEnvelopeOperation, SuiteToolPresentation } from "../tool-display/contract.js";
-import { TOOL_DISPLAY_ITEM_LIMIT } from "../tool-display/limits.js";
-import { registerSuiteToolEnvelope, registerSuiteToolEnvelopeCompanion } from "../tool-display/registration.js";
-import { SuiteCodeModeConnector } from "./connector.js";
-import { CODE_MODE_TOOL_NAME, CodeModeControls, type CodeModeHost, type PiStuffCodeModeOptions } from "./controls.js";
-import { INVALID_CODE_MODE_IMAGE_MESSAGE, sanitizeCodeModeContent } from "./image-content.js";
-import { CodeModeSessionLedger } from "./ledger.js";
+import type { JsonInputObject, JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "../tool-display/activity.ts";
+import type { SuiteToolEnvelopeOperation, SuiteToolPresentation } from "../tool-display/contract.ts";
+import { TOOL_DISPLAY_ITEM_LIMIT } from "../tool-display/limits.ts";
+import { registerSuiteToolEnvelope, registerSuiteToolEnvelopeCompanion } from "../tool-display/registration.ts";
+import { SuiteCodeModeConnector } from "./connector.ts";
+import { CODE_MODE_TOOL_NAME, CodeModeControls, type CodeModeHost, type PiStuffCodeModeOptions } from "./controls.ts";
+import { INVALID_CODE_MODE_IMAGE_MESSAGE, sanitizeCodeModeContent } from "./image-content.ts";
+import { CodeModeSessionLedger } from "./ledger.ts";
 import {
 	captureCodeModeModelContent,
 	decodeCodeModeMediaSegments,
@@ -17,14 +17,14 @@ import {
 	isCodeModeToolContent,
 	rehydrateCodeModeMessages,
 	separateCodeModeMediaForUi,
-} from "./presentation.js";
-import { CodeModeRuntime, type PiStuffCodeModeDetails } from "./runtime.js";
-import { projectCodeModeSearchResponse } from "./search-response.js";
-import { registerCodeModeSkillDiscovery } from "./skill-discovery.js";
-import { V8CodeModeExecutor } from "./v8-executor.js";
+} from "./presentation.ts";
+import { CodeModeRuntime, type PiStuffCodeModeDetails } from "./runtime.ts";
+import { projectCodeModeSearchResponse } from "./search-response.ts";
+import { registerCodeModeSkillDiscovery } from "./skill-discovery.ts";
+import { V8CodeModeExecutor } from "./v8-executor.ts";
 
-export type { CodeModeHost, PiStuffCodeModeOptions } from "./controls.js";
-export { CODE_MODE_TOOL_NAME, compensateCodeModeExecution } from "./controls.js";
+export type { CodeModeHost, PiStuffCodeModeOptions } from "./controls.ts";
+export { CODE_MODE_TOOL_NAME, compensateCodeModeExecution } from "./controls.ts";
 export const CODE_MODE_SEARCH_TOOL_NAME = "tool_search";
 export const CODE_MODE_PROVIDER_TOOL_NAMES = [CODE_MODE_TOOL_NAME, CODE_MODE_SEARCH_TOOL_NAME] as const;
 

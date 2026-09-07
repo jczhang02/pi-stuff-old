@@ -1,8 +1,8 @@
 import type { ExtensionAPI, ExtensionContext, ExtensionEvent, SessionManager } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { type JsonObject, parseJsonObject } from "../shared/json-value.js";
-import { isRuntimeFunction } from "../shared/runtime-type.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { type JsonObject, parseJsonObject } from "../shared/json-value.ts";
+import { isRuntimeFunction } from "../shared/runtime-type.ts";
 import {
 	MAGIC_WORKER_SYNC_BUFFER_BYTES,
 	type MagicWorkerContextSnapshot,
@@ -11,7 +11,7 @@ import {
 	type MagicWorkerEventInput,
 	type MagicWorkerHostTool,
 	type MagicWorkerSyncEffectMessage,
-} from "./magic-worker-protocol.js";
+} from "./magic-worker-protocol.ts";
 
 export function magicWorkerErrorMessage(cause: unknown): string {
 	return cause instanceof Error ? cause.message : String(cause);

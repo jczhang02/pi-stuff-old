@@ -5,7 +5,7 @@ import {
 	type CommandDialogViewContext,
 	commandDialogRows,
 	fitCommandDialogRows,
-} from "../conversation-ui/index.js";
+} from "../conversation-ui/index.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 24;

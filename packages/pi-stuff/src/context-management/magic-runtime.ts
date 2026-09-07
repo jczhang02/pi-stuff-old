@@ -10,14 +10,14 @@ import type {
 import { Type } from "typebox";
 import { Guard } from "typebox/guard";
 import { Check } from "typebox/value";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { isJsonInputValue, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeObject } from "../shared/runtime-type.js";
-import { MAGIC_TOOL_NAME_SET } from "./activity.js";
-import { MAGIC_COMMAND_NAMES, type MagicCommandDefinition } from "./command-runtime.js";
-import type { MagicContextPreparation, MagicContextPreparationOptions } from "./config.js";
-import type { MagicCompactionResult } from "./magic-context-types.js";
-import type { MagicContextEventResult, MagicContextHandler } from "./projection.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { isJsonInputValue, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeObject } from "../shared/runtime-type.ts";
+import { MAGIC_TOOL_NAME_SET } from "./activity.ts";
+import { MAGIC_COMMAND_NAMES, type MagicCommandDefinition } from "./command-runtime.ts";
+import type { MagicContextPreparation, MagicContextPreparationOptions } from "./config.ts";
+import type { MagicCompactionResult } from "./magic-context-types.ts";
+import type { MagicContextEventResult, MagicContextHandler } from "./projection.ts";
 
 export const MAGIC_TOOL_HANDOFF_PARAMETERS = Type.Object({}, { additionalProperties: true });
 const MAGIC_CONTEXT_PROMPT_MARKER = "## Magic Context";

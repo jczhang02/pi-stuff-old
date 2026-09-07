@@ -1,10 +1,10 @@
 import { validateToolArguments } from "@earendil-works/pi-ai";
 import type { AgentToolResult, Theme, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { type Component, Container, getCapabilities, Text } from "@earendil-works/pi-tui";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { isIssueState } from "./activity-summary.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { isIssueState } from "./activity-summary.ts";
 import type {
 	SuiteToolEnvelopeDecoder,
 	SuiteToolEnvelopeDetails,
@@ -14,9 +14,9 @@ import type {
 	ToolRenderContext,
 	ToolResultRenderOptions,
 	ToolSummaryProjection,
-} from "./contract.js";
-import { DETAIL_BYTE_LIMIT, DETAIL_LINE_LIMIT, TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.js";
-import { normalizeOperationIssueReason, operationResultText } from "./operation-block-evidence.js";
+} from "./contract.ts";
+import { DETAIL_BYTE_LIMIT, DETAIL_LINE_LIMIT, TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.ts";
+import { normalizeOperationIssueReason, operationResultText } from "./operation-block-evidence.ts";
 import {
 	EMBEDDED_HOST_IMAGE_KEYS,
 	EMBEDDED_TOOL_RESULT,
@@ -25,18 +25,18 @@ import {
 	imageMimeKey,
 	terminalSummary,
 	toolArgumentKeys,
-} from "./registered-tool-renderer.js";
-import { CachedToolRow, EmptyToolComponent } from "./render.js";
-import { sanitizeTerminalText } from "./terminal.js";
-import { stripToolControlMetadata } from "./tool-invocation.js";
+} from "./registered-tool-renderer.ts";
+import { CachedToolRow, EmptyToolComponent } from "./render.ts";
+import { sanitizeTerminalText } from "./terminal.ts";
+import { stripToolControlMetadata } from "./tool-invocation.ts";
 import {
 	boundedToolArguments,
 	boundedToolResult,
 	capDetailLines,
 	classifyTerminalState,
 	oneLine,
-} from "./tool-text.js";
-import { isRecordValue, isToolArguments } from "./tool-value.js";
+} from "./tool-text.ts";
+import { isRecordValue, isToolArguments } from "./tool-value.ts";
 
 interface EnvelopeChildRenderer {
 	component?: Component;

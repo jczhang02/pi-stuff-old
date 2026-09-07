@@ -1,5 +1,5 @@
-import { reportDiagnostic } from "../../conversation-ui/diagnostics.js";
-import type { JsonInputValue } from "../../shared/json-value.js";
+import { reportDiagnostic } from "../../conversation-ui/diagnostics.ts";
+import type { JsonInputValue } from "../../shared/json-value.ts";
 
 interface WebDiagnosticOptions {
 	readonly action?: string;

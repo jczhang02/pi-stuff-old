@@ -1,0 +1,1645 @@
+{
+  "date": "2026-09-06",
+  "bead": "ps-yon.20",
+  "status": "bounded history-selection optimization; full resource and single-stall acceptance remain open",
+  "beforeCommit": "67944dfeda231fd2feb026306ee167068e86087c",
+  "host": {
+    "version": "0.85.0",
+    "binarySha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072",
+    "embeddedBun": "1.3.14"
+  },
+  "sourceChanges": [
+    {
+      "path": "packages/pi-stuff/src/session-naming/state.ts",
+      "beforeSha256": "4ec27e94678ed23f436da69291d0271c6df3ee6fce372fcf6d5fb929c43027a6",
+      "afterSha256": "934c0dc47ed1a482ccfe7fcdcce94b73cfa982a2ece1590cadb22660d70b3df3",
+      "beforeLines": 90,
+      "afterLines": 88
+    },
+    {
+      "path": "packages/pi-stuff/src/goal/src/persistence.ts",
+      "beforeSha256": "da2de154765383da05b1b9cefc6206e8b348acade02e31154e55ae27f44238ad",
+      "afterSha256": "1f52c755290f01cfc7030c19348e5efa00bddf2340bc8a01e18c4ae4eebe1f2e",
+      "beforeLines": 402,
+      "afterLines": 401
+    },
+    {
+      "path": "test/session-naming/state.test.ts",
+      "beforeSha256": "ffd9bcec78f7ea7f211dcac3a8dd4ea861077cf7394cb279c701388d8e9f651f",
+      "afterSha256": "cb2fff07090ee9626a6a45ddaa6ec2cace573ac39047531b003077496123a156",
+      "beforeLines": 140,
+      "afterLines": 189
+    },
+    {
+      "path": "test/goal-upstream/persistence.node.ts",
+      "beforeSha256": "9cca231e660e0e602564cc07d1ab16a064232d857368706180b60a09acb59034",
+      "afterSha256": "ba9c6f4aa0ee281f04e6435f60e374ede3e4e7fdc6879c39970638f5c52342df",
+      "beforeLines": 366,
+      "afterLines": 397
+    }
+  ],
+  "method": {
+    "boundary": "Direct production selector calls in a diagnostic Extension loaded by the exact standalone Pi Host, not complete Suite or native Session traversal.",
+    "control": "Original modules copied from beforeCommit; only import specifiers and trailing blank line differ. Non-import Source bodies were checked equal. Imports complete before timing.",
+    "input": "Dense alternating user/assistant branches at 100,1000,10000 entries. Goal canonical/legacy state is the last entry and contains one paused head plus eight queued goals; absent has no Goal entry.",
+    "counts": "Numeric-index Proxy reads counted separately from timing. Output hashes match both variants and every timed trial; input hash unchanged after all calls.",
+    "timing": "20 untimed warmup calls per variant, then 11 alternating-order paired trials of 100 calls; performance.now elapsed and process.cpuUsage include all process threads. Output hashing outside timing.",
+    "differentialCases": 19682,
+    "differentialScope": "Every user/assistant/custom sequence of length0..8 in initial and periodic Naming modes.",
+    "pairedTrials": 165,
+    "trialColumns": [
+      "beforeFirst",
+      "beforeElapsedMs",
+      "afterElapsedMs",
+      "beforeCpuUs",
+      "afterCpuUs"
+    ],
+    "rawSha256": "73b1ef06cbb6f7fff26ba2bdaa1405f99e51b2b25cce7d2df34c88b584fa5af6",
+    "driverSha256": {
+      "measure.ts": "b87ed438ac69c03957279b27c5de748d77c136d68351a179c8a30970745eda7f",
+      "run.ts": "5175ef70fe42550fbad1284e71b240d4b374051caa17ac7b657b5930dee0b645",
+      "extension.ts": "d76cec26c2672227f88f3234586b5d3914e3867948c8f11584597a3ba8e2a1b6",
+      "naming-control.ts": "1c8cf6db114ec3c5fcfa72e223bf8464dcb4029b1d1874cc9de1850c285d9a8f",
+      "goal-control.ts": "a9643bfb1c942609717da33393938da5f7b04b21a123cbcff363fee68998fae6"
+    }
+  },
+  "cases": [
+    {
+      "name": "naming-initial",
+      "branchEntries": 100,
+      "inputSha256": "234e8446577eed4835610b2bde40aeb7fef65a307b792bf8d5e3e62da0ceafa9",
+      "outputSha256": "8dec69b0490d60cd83d67501bb1a0245f3fa071f20bb64c733fd278da0728c5a",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 100,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 0.21525100000008024,
+        "afterElapsedMs": 0.012702000000103908,
+        "beforeCpuUs": 423,
+        "afterCpuUs": 13
+      },
+      "trials": [
+        [
+          true,
+          0.21192499999995107,
+          0.026206999999999425,
+          1258,
+          32
+        ],
+        [
+          false,
+          0.19503199999996923,
+          0.013117000000079315,
+          423,
+          14
+        ],
+        [
+          true,
+          0.18660899999997582,
+          0.010754000000019914,
+          214,
+          12
+        ],
+        [
+          false,
+          0.214422999999897,
+          0.010851999999999862,
+          271,
+          12
+        ],
+        [
+          true,
+          0.26277600000003076,
+          0.01681399999995392,
+          1257,
+          17
+        ],
+        [
+          false,
+          0.21782200000006924,
+          0.010681999999974323,
+          218,
+          11
+        ],
+        [
+          true,
+          0.21525100000008024,
+          0.011141000000066015,
+          217,
+          12
+        ],
+        [
+          false,
+          0.21350200000006225,
+          0.012702000000103908,
+          214,
+          13
+        ],
+        [
+          true,
+          0.23608300000000781,
+          0.010200999999938176,
+          1224,
+          11
+        ],
+        [
+          false,
+          0.44080799999994724,
+          0.017444000000068627,
+          1042,
+          18
+        ],
+        [
+          true,
+          0.3792550000000574,
+          0.0166150000000016,
+          629,
+          17
+        ]
+      ]
+    },
+    {
+      "name": "naming-periodic",
+      "branchEntries": 100,
+      "inputSha256": "234e8446577eed4835610b2bde40aeb7fef65a307b792bf8d5e3e62da0ceafa9",
+      "outputSha256": "8dec69b0490d60cd83d67501bb1a0245f3fa071f20bb64c733fd278da0728c5a",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 100,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 0.16935100000000602,
+        "afterElapsedMs": 0.011471000000028653,
+        "beforeCpuUs": 170,
+        "afterCpuUs": 12
+      },
+      "trials": [
+        [
+          true,
+          1.4572940000000472,
+          0.042059999999992215,
+          2695,
+          43
+        ],
+        [
+          false,
+          0.2896540000000414,
+          0.04335199999991346,
+          421,
+          152
+        ],
+        [
+          true,
+          0.228287000000023,
+          0.02248799999995299,
+          229,
+          22
+        ],
+        [
+          false,
+          0.21757400000001326,
+          0.01292399999999816,
+          431,
+          14
+        ],
+        [
+          true,
+          0.18752199999994446,
+          0.011471000000028653,
+          184,
+          12
+        ],
+        [
+          false,
+          0.16935100000000602,
+          0.012535999999954583,
+          170,
+          13
+        ],
+        [
+          true,
+          0.11152900000001864,
+          0.010492999999996755,
+          112,
+          10
+        ],
+        [
+          false,
+          0.10789699999997993,
+          0.009657000000061089,
+          109,
+          10
+        ],
+        [
+          true,
+          0.1173750000000382,
+          0.009536999999909312,
+          118,
+          10
+        ],
+        [
+          false,
+          0.11364700000001449,
+          0.010961999999949512,
+          115,
+          12
+        ],
+        [
+          true,
+          0.11596399999996265,
+          0.010124000000018896,
+          117,
+          11
+        ]
+      ]
+    },
+    {
+      "name": "goal-canonical",
+      "branchEntries": 100,
+      "inputSha256": "e872bcd63cb35c6c6a67a12c8bdfeca3265f101e1e000f9d834c8187746f9bce",
+      "outputSha256": "7e545e6601f68b5dba8d8b351770bfb96e3b9163d048bacceb245613a1f5a971",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 100,
+        "after": 1
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 3.3698969999999235,
+        "afterElapsedMs": 2.9986049999999977,
+        "beforeCpuUs": 6170,
+        "afterCpuUs": 6154
+      },
+      "trials": [
+        [
+          true,
+          3.9935110000000122,
+          2.9103000000000065,
+          14099,
+          6831
+        ],
+        [
+          false,
+          3.255602999999951,
+          2.8441550000000007,
+          9221,
+          6842
+        ],
+        [
+          true,
+          3.4132230000000163,
+          3.7066520000000764,
+          9387,
+          10754
+        ],
+        [
+          false,
+          3.7880989999999883,
+          3.686467000000107,
+          10915,
+          10121
+        ],
+        [
+          true,
+          3.072326000000089,
+          2.9921580000000176,
+          6057,
+          5976
+        ],
+        [
+          false,
+          3.3017280000000255,
+          3.043780999999967,
+          3785,
+          5964
+        ],
+        [
+          true,
+          3.376412999999957,
+          3.3024239999999736,
+          4264,
+          6154
+        ],
+        [
+          false,
+          3.3698969999999235,
+          3.338828999999919,
+          5429,
+          7243
+        ],
+        [
+          true,
+          4.652118999999971,
+          2.9986049999999977,
+          9017,
+          4146
+        ],
+        [
+          false,
+          3.005251000000044,
+          2.872948000000065,
+          6025,
+          3193
+        ],
+        [
+          true,
+          3.0323379999999815,
+          2.9424639999999727,
+          6170,
+          3679
+        ]
+      ]
+    },
+    {
+      "name": "goal-legacy",
+      "branchEntries": 100,
+      "inputSha256": "3d1b3537f7d079c7d19250478862d4a410f07094f78638acb71d12737de3512b",
+      "outputSha256": "3d8d22d822e84e86c320177a7cd1d8cf21a00ab45ea2ffc0189a4107d273db4c",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 200,
+        "after": 100
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 3.2701620000000275,
+        "afterElapsedMs": 3.065277999999921,
+        "beforeCpuUs": 7480,
+        "afterCpuUs": 6527
+      },
+      "trials": [
+        [
+          true,
+          3.4234210000000758,
+          3.1900320000000875,
+          13639,
+          12110
+        ],
+        [
+          false,
+          3.271253999999999,
+          3.2431569999999965,
+          12219,
+          12174
+        ],
+        [
+          true,
+          3.3179000000000087,
+          3.0427910000000793,
+          14244,
+          9231
+        ],
+        [
+          false,
+          3.2601640000000316,
+          3.1037810000000263,
+          12202,
+          9178
+        ],
+        [
+          true,
+          3.3004489999999578,
+          3.0083519999999453,
+          12182,
+          11295
+        ],
+        [
+          false,
+          3.17818699999998,
+          2.9651560000000927,
+          7480,
+          6527
+        ],
+        [
+          true,
+          3.233532000000082,
+          3.0828829999999243,
+          7026,
+          5042
+        ],
+        [
+          false,
+          3.1971269999999095,
+          3.0474879999999303,
+          3193,
+          3038
+        ],
+        [
+          true,
+          3.2171059999999443,
+          3.0585680000000366,
+          3412,
+          3216
+        ],
+        [
+          false,
+          3.2701620000000275,
+          3.1006289999999126,
+          3265,
+          3097
+        ],
+        [
+          true,
+          3.3925100000000157,
+          3.065277999999921,
+          5880,
+          3958
+        ]
+      ]
+    },
+    {
+      "name": "goal-absent",
+      "branchEntries": 100,
+      "inputSha256": "234e8446577eed4835610b2bde40aeb7fef65a307b792bf8d5e3e62da0ceafa9",
+      "outputSha256": "304abe112a44043aed8ea0fc679ee2a78bdcba5d2b93aedd62f7a41e7f972903",
+      "outputLength": 0,
+      "indexedReadsPerCall": {
+        "before": 200,
+        "after": 100
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 0.19754600000010214,
+        "afterElapsedMs": 0.03802600000005896,
+        "beforeCpuUs": 200,
+        "afterCpuUs": 38
+      },
+      "trials": [
+        [
+          true,
+          0.2283270000000357,
+          0.07677699999999277,
+          686,
+          86
+        ],
+        [
+          false,
+          0.19376599999998234,
+          0.04818899999997939,
+          195,
+          48
+        ],
+        [
+          true,
+          0.18244900000001962,
+          0.04142300000000887,
+          799,
+          42
+        ],
+        [
+          false,
+          0.17912799999999152,
+          0.03802600000005896,
+          180,
+          39
+        ],
+        [
+          true,
+          0.19425200000000586,
+          0.03441000000009353,
+          195,
+          35
+        ],
+        [
+          false,
+          0.19961399999999685,
+          0.036582999999950516,
+          200,
+          37
+        ],
+        [
+          true,
+          0.2063709999999901,
+          0.035195000000044274,
+          202,
+          35
+        ],
+        [
+          false,
+          0.20333599999992202,
+          0.03662900000006175,
+          204,
+          37
+        ],
+        [
+          true,
+          0.19675800000004529,
+          0.03853500000002441,
+          198,
+          39
+        ],
+        [
+          false,
+          0.20010899999999765,
+          0.03558799999996154,
+          200,
+          36
+        ],
+        [
+          true,
+          0.19754600000010214,
+          0.040348999999991975,
+          198,
+          38
+        ]
+      ]
+    },
+    {
+      "name": "naming-initial",
+      "branchEntries": 1000,
+      "inputSha256": "15606aaafd1c47e2467d66d00c33af23d14ad7b68cbfe9e9c4ec3efbd590776d",
+      "outputSha256": "abea33afaaa119418186bd7c836e11d1b404418308884984b002407a4e7c906c",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 1000,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 1.114404000000036,
+        "afterElapsedMs": 0.011887000000001535,
+        "beforeCpuUs": 1234,
+        "afterCpuUs": 12
+      },
+      "trials": [
+        [
+          true,
+          2.7223359999999275,
+          0.01513199999999415,
+          4096,
+          16
+        ],
+        [
+          false,
+          1.114404000000036,
+          0.06954700000005687,
+          1453,
+          60
+        ],
+        [
+          true,
+          1.2356019999999717,
+          0.017591000000038548,
+          1234,
+          18
+        ],
+        [
+          false,
+          3.143750999999952,
+          0.011629999999968277,
+          3680,
+          12
+        ],
+        [
+          true,
+          1.0456060000000207,
+          0.014126999999916734,
+          1045,
+          14
+        ],
+        [
+          false,
+          2.25826799999993,
+          0.009898999999904845,
+          2914,
+          11
+        ],
+        [
+          true,
+          0.9817149999998946,
+          0.011887000000001535,
+          979,
+          12
+        ],
+        [
+          false,
+          1.011064000000033,
+          0.010020000000054097,
+          1009,
+          11
+        ],
+        [
+          true,
+          2.5299580000000788,
+          0.014267000000018015,
+          3146,
+          15
+        ],
+        [
+          false,
+          1.004901000000018,
+          0.010375999999951091,
+          1000,
+          11
+        ],
+        [
+          true,
+          0.9518050000000358,
+          0.011557000000038897,
+          950,
+          12
+        ]
+      ]
+    },
+    {
+      "name": "naming-periodic",
+      "branchEntries": 1000,
+      "inputSha256": "15606aaafd1c47e2467d66d00c33af23d14ad7b68cbfe9e9c4ec3efbd590776d",
+      "outputSha256": "abea33afaaa119418186bd7c836e11d1b404418308884984b002407a4e7c906c",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 1000,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 1.162824999999998,
+        "afterElapsedMs": 0.013979000000063024,
+        "beforeCpuUs": 1241,
+        "afterCpuUs": 15
+      },
+      "trials": [
+        [
+          true,
+          1.0476759999999103,
+          0.01365099999998165,
+          1048,
+          14
+        ],
+        [
+          false,
+          1.029184999999984,
+          0.02004799999997431,
+          1413,
+          20
+        ],
+        [
+          true,
+          2.2657669999999825,
+          0.015382000000045082,
+          3611,
+          16
+        ],
+        [
+          false,
+          1.1421870000000354,
+          0.013979000000063024,
+          1134,
+          15
+        ],
+        [
+          true,
+          1.0691949999999224,
+          0.01303799999993771,
+          1067,
+          14
+        ],
+        [
+          false,
+          2.3156110000001036,
+          0.012565999999992528,
+          3812,
+          13
+        ],
+        [
+          true,
+          1.2449409999999261,
+          0.014769000000001142,
+          1241,
+          16
+        ],
+        [
+          false,
+          1.1177400000000262,
+          0.012046999999938635,
+          1112,
+          13
+        ],
+        [
+          true,
+          2.478864000000044,
+          0.016872999999918648,
+          3855,
+          17
+        ],
+        [
+          false,
+          1.162824999999998,
+          0.011756999999988693,
+          1161,
+          12
+        ],
+        [
+          true,
+          2.425389999999993,
+          0.015399999999999636,
+          3783,
+          16
+        ]
+      ]
+    },
+    {
+      "name": "goal-canonical",
+      "branchEntries": 1000,
+      "inputSha256": "64f52097701f43f590f25de3fc54d77bb4ac3f6efb206bc69f430a68fc1bee15",
+      "outputSha256": "7e545e6601f68b5dba8d8b351770bfb96e3b9163d048bacceb245613a1f5a971",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 1000,
+        "after": 1
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 3.846952999999985,
+        "afterElapsedMs": 3.0091970000000856,
+        "beforeCpuUs": 3871,
+        "afterCpuUs": 3016
+      },
+      "trials": [
+        [
+          true,
+          3.9388020000000097,
+          3.050891999999976,
+          5404,
+          5487
+        ],
+        [
+          false,
+          3.6456459999999424,
+          2.9518769999999677,
+          4001,
+          3246
+        ],
+        [
+          true,
+          3.400463000000059,
+          3.0571820000000116,
+          3395,
+          3045
+        ],
+        [
+          false,
+          3.6784900000000107,
+          3.0485680000000457,
+          4940,
+          3040
+        ],
+        [
+          true,
+          3.876790000000028,
+          2.978448999999955,
+          3865,
+          2970
+        ],
+        [
+          false,
+          3.7824040000000423,
+          2.947172000000023,
+          3772,
+          2937
+        ],
+        [
+          true,
+          3.7913509999999633,
+          2.9902519999999413,
+          3779,
+          2979
+        ],
+        [
+          false,
+          3.846952999999985,
+          3.0399320000000216,
+          4455,
+          3016
+        ],
+        [
+          true,
+          3.8685010000000375,
+          3.055896000000075,
+          3858,
+          3048
+        ],
+        [
+          false,
+          3.906312000000071,
+          2.998625000000061,
+          3882,
+          2994
+        ],
+        [
+          true,
+          3.8868380000000116,
+          3.0091970000000856,
+          3871,
+          2996
+        ]
+      ]
+    },
+    {
+      "name": "goal-legacy",
+      "branchEntries": 1000,
+      "inputSha256": "c993583b164b5e60795923f48c8f3d7b4c8cf18fbc15a325762a1a638a71d0bc",
+      "outputSha256": "3d8d22d822e84e86c320177a7cd1d8cf21a00ab45ea2ffc0189a4107d273db4c",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 2000,
+        "after": 1000
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 3.6182189999999537,
+        "afterElapsedMs": 3.4715589999999565,
+        "beforeCpuUs": 3611,
+        "afterCpuUs": 4150
+      },
+      "trials": [
+        [
+          true,
+          4.662444999999934,
+          3.5246849999999768,
+          10040,
+          4377
+        ],
+        [
+          false,
+          4.773081000000047,
+          3.799195999999938,
+          8830,
+          4150
+        ],
+        [
+          true,
+          4.886977000000002,
+          4.018788000000086,
+          11401,
+          5248
+        ],
+        [
+          false,
+          3.6182189999999537,
+          3.507188000000042,
+          3611,
+          3500
+        ],
+        [
+          true,
+          3.5243430000000444,
+          3.4541550000000143,
+          3515,
+          3836
+        ],
+        [
+          false,
+          3.5291070000000673,
+          3.3287690000000794,
+          3513,
+          3320
+        ],
+        [
+          true,
+          3.4748710000000074,
+          4.785010000000057,
+          3468,
+          6088
+        ],
+        [
+          false,
+          3.42760300000009,
+          3.2951440000000503,
+          3420,
+          3284
+        ],
+        [
+          true,
+          3.381561999999917,
+          3.4715589999999565,
+          3373,
+          6157
+        ],
+        [
+          false,
+          3.7417990000000145,
+          3.3923540000000685,
+          4364,
+          5905
+        ],
+        [
+          true,
+          3.7069950000000063,
+          3.3531809999999496,
+          3695,
+          3348
+        ]
+      ]
+    },
+    {
+      "name": "goal-absent",
+      "branchEntries": 1000,
+      "inputSha256": "15606aaafd1c47e2467d66d00c33af23d14ad7b68cbfe9e9c4ec3efbd590776d",
+      "outputSha256": "304abe112a44043aed8ea0fc679ee2a78bdcba5d2b93aedd62f7a41e7f972903",
+      "outputLength": 0,
+      "indexedReadsPerCall": {
+        "before": 2000,
+        "after": 1000
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 0.45015200000000277,
+        "afterElapsedMs": 0.18533400000001166,
+        "beforeCpuUs": 456,
+        "afterCpuUs": 185
+      },
+      "trials": [
+        [
+          true,
+          0.4727029999999104,
+          0.1964140000000043,
+          1245,
+          196
+        ],
+        [
+          false,
+          0.4591609999999946,
+          0.1953129999999419,
+          936,
+          196
+        ],
+        [
+          true,
+          0.45015200000000277,
+          0.19775300000003426,
+          533,
+          198
+        ],
+        [
+          false,
+          0.4454880000000685,
+          0.18451599999991686,
+          444,
+          185
+        ],
+        [
+          true,
+          0.44630399999994097,
+          0.18430399999999736,
+          444,
+          185
+        ],
+        [
+          false,
+          0.4427460000000565,
+          0.18702000000007502,
+          443,
+          185
+        ],
+        [
+          true,
+          0.4575080000000753,
+          0.18254899999999452,
+          456,
+          183
+        ],
+        [
+          false,
+          0.4381109999999353,
+          0.18427200000007815,
+          438,
+          184
+        ],
+        [
+          true,
+          0.44628000000000156,
+          0.18533400000001166,
+          445,
+          185
+        ],
+        [
+          false,
+          0.4588900000001104,
+          0.1838189999999713,
+          456,
+          185
+        ],
+        [
+          true,
+          0.4809339999999338,
+          0.1919470000000274,
+          482,
+          193
+        ]
+      ]
+    },
+    {
+      "name": "naming-initial",
+      "branchEntries": 10000,
+      "inputSha256": "cb85383f13fffe298fef992a9c906e36f2e84368867853f05a9408e23fc60cb3",
+      "outputSha256": "56ad9e4c3a1f306123351657abc6f2073c890500967ad28339f18855aff911c8",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 10000,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 17.214936999999964,
+        "afterElapsedMs": 0.017585000000053697,
+        "beforeCpuUs": 22865,
+        "afterCpuUs": 18
+      },
+      "trials": [
+        [
+          true,
+          28.434078,
+          0.018613999999956832,
+          65956,
+          19
+        ],
+        [
+          false,
+          22.30826400000001,
+          0.011592000000064218,
+          30075,
+          12
+        ],
+        [
+          true,
+          21.701531000000045,
+          0.02186400000005051,
+          34038,
+          23
+        ],
+        [
+          false,
+          15.780465999999933,
+          0.011349999999993088,
+          21057,
+          12
+        ],
+        [
+          true,
+          18.193604999999934,
+          0.020061999999825275,
+          27156,
+          20
+        ],
+        [
+          false,
+          15.82517299999995,
+          0.014171000000033018,
+          21886,
+          15
+        ],
+        [
+          true,
+          15.145187999999962,
+          0.018258999999943626,
+          21299,
+          19
+        ],
+        [
+          false,
+          17.506204000000025,
+          0.010995999999977357,
+          22865,
+          12
+        ],
+        [
+          true,
+          15.062816000000112,
+          0.018219999999928405,
+          20022,
+          18
+        ],
+        [
+          false,
+          17.214936999999964,
+          0.011698000000023967,
+          22693,
+          12
+        ],
+        [
+          true,
+          16.274311000000125,
+          0.017585000000053697,
+          24501,
+          19
+        ]
+      ]
+    },
+    {
+      "name": "naming-periodic",
+      "branchEntries": 10000,
+      "inputSha256": "cb85383f13fffe298fef992a9c906e36f2e84368867853f05a9408e23fc60cb3",
+      "outputSha256": "56ad9e4c3a1f306123351657abc6f2073c890500967ad28339f18855aff911c8",
+      "outputLength": 6,
+      "indexedReadsPerCall": {
+        "before": 10000,
+        "after": 6
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 16.704971000000114,
+        "afterElapsedMs": 0.014932000000044354,
+        "beforeCpuUs": 25042,
+        "afterCpuUs": 15
+      },
+      "trials": [
+        [
+          true,
+          16.704971000000114,
+          0.021062000000029002,
+          25095,
+          22
+        ],
+        [
+          false,
+          14.669593000000077,
+          0.011445000000094296,
+          18661,
+          12
+        ],
+        [
+          true,
+          14.633329000000003,
+          0.01590600000008635,
+          19768,
+          16
+        ],
+        [
+          false,
+          19.888018999999986,
+          0.011385000000018408,
+          25042,
+          11
+        ],
+        [
+          true,
+          17.47187699999995,
+          0.014932000000044354,
+          25159,
+          15
+        ],
+        [
+          false,
+          17.908537000000024,
+          0.009816000000000713,
+          25527,
+          11
+        ],
+        [
+          true,
+          15.248606999999993,
+          0.017084999999951833,
+          21172,
+          19
+        ],
+        [
+          false,
+          18.413389000000052,
+          0.011969000000135566,
+          25554,
+          13
+        ],
+        [
+          true,
+          25.35313700000006,
+          0.01836900000012065,
+          63382,
+          19
+        ],
+        [
+          false,
+          15.345980999999938,
+          0.010352000000011685,
+          19721,
+          11
+        ],
+        [
+          true,
+          15.704142000000047,
+          0.019939999999905922,
+          23428,
+          21
+        ]
+      ]
+    },
+    {
+      "name": "goal-canonical",
+      "branchEntries": 10000,
+      "inputSha256": "3ae00742ccf3a49323280791fd026b5c044d672b3fd12d81e72afb92f6ee7ae8",
+      "outputSha256": "7e545e6601f68b5dba8d8b351770bfb96e3b9163d048bacceb245613a1f5a971",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 10000,
+        "after": 1
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 5.440724999999929,
+        "afterElapsedMs": 3.0966530000000603,
+        "beforeCpuUs": 5451,
+        "afterCpuUs": 3090
+      },
+      "trials": [
+        [
+          true,
+          5.5227350000000115,
+          3.685468000000128,
+          5506,
+          3674
+        ],
+        [
+          false,
+          6.329029999999875,
+          3.7041759999999613,
+          6315,
+          3687
+        ],
+        [
+          true,
+          5.826048000000128,
+          3.0966530000000603,
+          5808,
+          3090
+        ],
+        [
+          false,
+          5.373344000000088,
+          3.121114000000034,
+          5358,
+          3116
+        ],
+        [
+          true,
+          5.301722000000154,
+          2.9903450000001612,
+          5282,
+          2975
+        ],
+        [
+          false,
+          5.583147000000054,
+          3.069757999999865,
+          5559,
+          3057
+        ],
+        [
+          true,
+          5.286497999999938,
+          3.064681000000064,
+          5485,
+          3058
+        ],
+        [
+          false,
+          5.467769999999973,
+          3.0793679999999313,
+          5451,
+          3075
+        ],
+        [
+          true,
+          5.440724999999929,
+          3.199339000000009,
+          5425,
+          3190
+        ],
+        [
+          false,
+          5.422413000000006,
+          4.520785999999816,
+          5404,
+          6035
+        ],
+        [
+          true,
+          5.248757000000069,
+          2.999189000000115,
+          5221,
+          2992
+        ]
+      ]
+    },
+    {
+      "name": "goal-legacy",
+      "branchEntries": 10000,
+      "inputSha256": "fdff17135f150b25a01bc58b06d330e00f9e8206570dcde073515d774ef26886",
+      "outputSha256": "3d8d22d822e84e86c320177a7cd1d8cf21a00ab45ea2ffc0189a4107d273db4c",
+      "outputLength": 8,
+      "indexedReadsPerCall": {
+        "before": 20000,
+        "after": 10000
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 7.527610999999979,
+        "afterElapsedMs": 4.873741999999993,
+        "beforeCpuUs": 7617,
+        "afterCpuUs": 4856
+      },
+      "trials": [
+        [
+          true,
+          7.6341630000001715,
+          5.591948000000002,
+          7617,
+          5575
+        ],
+        [
+          false,
+          7.857827000000043,
+          5.576142000000118,
+          7833,
+          5559
+        ],
+        [
+          true,
+          7.184628999999859,
+          4.826236999999992,
+          7169,
+          4815
+        ],
+        [
+          false,
+          7.455526000000191,
+          4.817986999999903,
+          8542,
+          4806
+        ],
+        [
+          true,
+          7.527610999999979,
+          4.918507000000091,
+          7510,
+          4905
+        ],
+        [
+          false,
+          7.2070199999998295,
+          4.858410999999933,
+          7186,
+          4849
+        ],
+        [
+          true,
+          8.035637000000179,
+          4.842713999999887,
+          8002,
+          4820
+        ],
+        [
+          false,
+          7.399706000000151,
+          4.8419320000000425,
+          7380,
+          4828
+        ],
+        [
+          true,
+          7.299284000000171,
+          4.873741999999993,
+          7274,
+          4856
+        ],
+        [
+          false,
+          7.672696999999971,
+          5.529816999999866,
+          7653,
+          5509
+        ],
+        [
+          true,
+          9.68063200000006,
+          5.804744999999912,
+          9647,
+          5792
+        ]
+      ]
+    },
+    {
+      "name": "goal-absent",
+      "branchEntries": 10000,
+      "inputSha256": "cb85383f13fffe298fef992a9c906e36f2e84368867853f05a9408e23fc60cb3",
+      "outputSha256": "304abe112a44043aed8ea0fc679ee2a78bdcba5d2b93aedd62f7a41e7f972903",
+      "outputLength": 0,
+      "indexedReadsPerCall": {
+        "before": 20000,
+        "after": 10000
+      },
+      "callsPerTrial": 100,
+      "medians": {
+        "beforeElapsedMs": 4.273071000000073,
+        "afterElapsedMs": 1.7820439999998143,
+        "beforeCpuUs": 4261,
+        "afterCpuUs": 1779
+      },
+      "trials": [
+        [
+          true,
+          8.77252199999998,
+          3.3141809999999623,
+          8705,
+          3302
+        ],
+        [
+          false,
+          4.886410000000069,
+          2.4707610000000386,
+          4878,
+          2466
+        ],
+        [
+          true,
+          4.1127480000000105,
+          1.6254229999999552,
+          4108,
+          1621
+        ],
+        [
+          false,
+          4.129908999999998,
+          1.5940850000001774,
+          4122,
+          1590
+        ],
+        [
+          true,
+          4.561708999999837,
+          1.8994769999999335,
+          4547,
+          1895
+        ],
+        [
+          false,
+          4.537988999999925,
+          1.8944739999999456,
+          4531,
+          1889
+        ],
+        [
+          true,
+          4.4044340000000375,
+          1.7820439999998143,
+          4395,
+          1779
+        ],
+        [
+          false,
+          4.273071000000073,
+          1.7924669999999878,
+          4261,
+          1787
+        ],
+        [
+          true,
+          4.263430999999855,
+          1.7402369999999792,
+          4253,
+          1736
+        ],
+        [
+          false,
+          4.267439999999851,
+          1.7463279999999486,
+          4256,
+          1743
+        ],
+        [
+          true,
+          4.2282739999998284,
+          1.7769089999999323,
+          4221,
+          1775
+        ]
+      ]
+    }
+  ],
+  "nativeChecks": [
+    {
+      "lookup": "sXTDbx",
+      "startedAt": "2026-09-06T09:51:31.418Z",
+      "headCommit": "8c5b90150814da3dbc74c59d44d2f221fe428a6f",
+      "sourceDiffSha256": "17b3e56e19e78b1af0043c8cb40f3e1a1ebc61bde53475f73065ca9cd9443d3b",
+      "evidenceSha256": "8fe07250b5c17cb60992ee5a714a814d8fe6fda530dd859b81619a3d6d47d839",
+      "observerSource": [
+        {
+          "path": "scripts/benchmark-responsiveness.ts",
+          "sha256": "820d86f5322a486dd9ac41ca26c06226d30d1a542074890636f47e473ab31ef9"
+        },
+        {
+          "path": "scripts/host-resource-scope.ts",
+          "sha256": "a0c5347b33004bdcff59f6b8155ed3951507bf13cd1209001ce8af741cbdfaee"
+        },
+        {
+          "path": "scripts/pty-observation.ts",
+          "sha256": "462aa80ee6ea261e4063ad0fdbf0a5669bdf8bdc479115304ba8207e48680e40"
+        },
+        {
+          "path": "test/fixtures/responsiveness-provider.ts",
+          "sha256": "921ecc1e7fb94a7d6c077a4202578ee491a083c7e2707ba9477ee9b99e86c1d3"
+        },
+        {
+          "path": "test/fixtures/faux-provider.ts",
+          "sha256": "1e164539c4319c4e8392f84c5d3b56ac19910c8975fe4734ce78f7efd69df07e"
+        }
+      ],
+      "summary": {
+        "purpose": "observer-validation",
+        "certification": false,
+        "profile": "0.85.0+source.107d79f11072.binary.0cfd1bf3e946.bun.1.3.14",
+        "seededSession": false,
+        "codeMode": false,
+        "agentRowObserved": false,
+        "backgroundOutcomes": 0,
+        "parentCompletedWhileChildRunning": false,
+        "completedChildTools": 0,
+        "reapedChildProcesses": 0,
+        "requestedToolCount": 1,
+        "contextProjectionRequests": 0,
+        "contextRetrievals": 0,
+        "goalContinuationRequests": 1,
+        "firstGoalToolRowMs": 14706.806262,
+        "goalCompleted": true,
+        "negativeBlockMs": 0,
+        "negativeBlockPhase": "pre-tool",
+        "automaticUsageRefreshes": 1,
+        "suite": true,
+        "columns": 120,
+        "rows": 40,
+        "captureCount": 1606,
+        "durationMs": 19240.066186,
+        "maximumCaptureMs": 2.924645999999484,
+        "maximumObservationGapMs": 16.248359999999593,
+        "maximumSpinnerAbsenceMs": 0,
+        "maximumSpinnerFrameMs": 114.08898399999998,
+        "spinnerChanges": 149,
+        "activeDurationMs": 12174.991872,
+        "activeCaptureCount": 1019,
+        "firstSpinnerMs": 6570.5573269999995,
+        "firstReadyMs": 4998.2787069999995,
+        "firstEditorMs": 4841.216635,
+        "promptToSpinnerMs": 1171.921851,
+        "startupInputMs": 4854.74795,
+        "settledMs": 18755.421990000003,
+        "postSettlementObservationMs": 491.90936599999986,
+        "observerCpu": {
+          "user": 346502,
+          "system": 454321
+        },
+        "maximumInputMs": 14.425207000000228,
+        "maximumStartupInputMs": 13.968982999999753,
+        "maximumSteadyInputMs": 14.425207000000228,
+        "maximumSelectionMs": 14.070063999999547,
+        "maximumSelectionSetupMs": 13.968982999999753,
+        "actionCount": 79
+      },
+      "resources": {
+        "boundary": "after-observation-before-host-shutdown",
+        "readStartedMs": 19822.696441,
+        "readCompletedMs": 19874.491936,
+        "cpuUs": {
+          "total": 11770115,
+          "user": 10701736,
+          "system": 1068379
+        },
+        "memoryCurrentChargedBytes": 674795520,
+        "memoryPeakChargedBytes": 919261184,
+        "rssSnapshotBytes": 656826368,
+        "io": [
+          {
+            "rchar": 52646112,
+            "wchar": 24527926,
+            "syscr": 6152,
+            "syscw": 3409,
+            "read_bytes": 0,
+            "write_bytes": 24425165,
+            "cancelled_write_bytes": 0
+          }
+        ]
+      },
+      "namingRequests": 1,
+      "persistedNames": 1,
+      "gates": "suite-responsiveness-gates-2026-09-05.json",
+      "gateVerdict": "pass",
+      "resourceScopeAfterShutdown": {
+        "load": "not-found",
+        "active": "inactive",
+        "sub": "dead"
+      }
+    }
+  ],
+  "limits": [
+    "No measured allocation, GC, peak process-tree RSS, network or wakeup saving is inferred from selector timings.",
+    "Long custom-only tails still need scanning. Goal legacy/absent search remains O(branch entries); canonical validation and queue normalization are unchanged.",
+    "Native getBranch construction, initial import cost and Goal accounting are outside the selector diagnostic. The full-Suite sample verifies normal Goal continuation and automatic Naming/Usage, not long-session replay or a paired whole-Host resource saving.",
+    "The final loop candidate replaces an ES2023 findLast intermediate rejected by the existing ES2022 Goal typecheck. Its old diagnostic is not this source result.",
+    "Earlier diagnostic setup failed in Jiti before measurement; another run produced data but left RPC stdin open and was killed by the deadline. Both remain private failed diagnostics; the final driver closes stdin and exits0.",
+    "CI failures and historical unassigned 270/489ms Agent holds remain open under ps-yon.21 and ps-yon.6; this report does not close the16-Capability audit."
+  ]
+}

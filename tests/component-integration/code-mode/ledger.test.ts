@@ -155,6 +155,52 @@ test("Session ledger invalidates its fold for branch and Session changes", () =>
 	expect(state.branchReads).toBe(3);
 });
 
+test("cold ledger normalization preserves canonical Session records and owns its cleaned values", () => {
+	const { context, ledger, branch } = fixture();
+	const source = {
+		at: 1,
+		kind: "snippet-saved",
+		schemaVersion: 1,
+		extra: "keep in Session",
+		snippet: {
+			name: "saved",
+			code: "text(1)",
+			description: "Saved program",
+			savedAt: 1,
+			inputSchema: { minimum: -0, constructor: "keep in Session only" },
+			extra: "keep nested data too",
+		},
+	};
+	branch.push({ customType: CODE_MODE_LEDGER_ENTRY_TYPE, data: source, id: "saved", type: "custom" });
+	const [snippet] = ledger.snippets(context);
+	expect(snippet).toEqual({
+		name: "saved",
+		code: "text(1)",
+		description: "Saved program",
+		savedAt: 1,
+		inputSchema: { minimum: 0 },
+	});
+	expect(source.extra).toBe("keep in Session");
+	expect(source.snippet.extra).toBe("keep nested data too");
+	expect(source.snippet.inputSchema.minimum).toBe(-0);
+	expect(source.snippet.inputSchema.constructor).toBe("keep in Session only");
+	expect(snippet).not.toBe(source.snippet);
+	expect(snippet?.inputSchema).not.toBe(source.snippet.inputSchema);
+});
+
+test("cold ledger ignores unknown event kinds and invalid known events", () => {
+	const { context, ledger, branch } = fixture();
+	for (const [index, data] of [
+		null,
+		{},
+		{ kind: "future-event", at: 1, schemaVersion: 1 },
+		{ kind: "snippet-saved", at: 1, schemaVersion: 1, snippet: { name: "missing-fields" } },
+	].entries()) {
+		branch.push({ customType: CODE_MODE_LEDGER_ENTRY_TYPE, data, id: String(index), type: "custom" });
+	}
+	expect(ledger.snippets(context)).toEqual([]);
+});
+
 test("the Session ledger replays completed values and preserves binary, bigint, history, and snippets", () => {
 	const { branch, context, ledger, start } = fixture();
 	const controller = start("outer-read", { read: "record" });
@@ -412,14 +458,16 @@ test("rejects oversized Tool arguments before the external effect starts", () =>
 	);
 });
 
-test("large durable results remain exact across replay", () => {
-	const { start } = fixture();
+test("large durable results remain exact across replay and cold recovery", () => {
+	const { context, ledger, start, state } = fixture();
 	const value = "x".repeat(1_000_001);
 	const controller = start("outer-large", { read: "record" });
 	const call = controller.beginToolCall("read", { path: "large" });
 	controller.completeToolCall(call, { status: "success", value });
 	controller.beginPass(1);
 	expect(controller.beginToolCall("read", { path: "large" }).replay).toEqual({ kind: "result", value });
+	state.leafRevision++;
+	expect(ledger.compensationTargets(context, controller.executionId)).toMatchObject([{ value }]);
 });
 
 test("explicit compensation attempts applied calls in reverse order and records what was undone", async () => {

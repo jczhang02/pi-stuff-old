@@ -2,10 +2,10 @@ import { defineTool, type ExtensionAPI, type ExtensionContext } from "@earendil-
 import * as Effect from "effect/Effect";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
-import { registerSuiteOwnedTool } from "../../tool-display/registration.js";
-import { formatDuration, formatTokenCount } from "./accounting.js";
-import type { ActiveGoal } from "./persistence.js";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
+import { registerSuiteOwnedTool } from "../../tool-display/registration.ts";
+import { formatDuration, formatTokenCount } from "./accounting.ts";
+import type { ActiveGoal } from "./persistence.ts";
 import {
 	abortCurrentTurn,
 	GOAL_BLOCKED_TOOL,
@@ -14,8 +14,8 @@ import {
 	goalIdRejectionReason,
 	isContradictoryCompletionSummary,
 	transitionGoal,
-} from "./runtime.js";
-import { blockerReportRejectionReason, completionEvidenceRejectionReason, recordGoalBlockerAttempt } from "./safety.js";
+} from "./runtime.ts";
+import { blockerReportRejectionReason, completionEvidenceRejectionReason, recordGoalBlockerAttempt } from "./safety.ts";
 import {
 	GOAL_COMPLETION_EVIDENCE_INPUT_SCHEMA,
 	type GoalBlockedDetails,
@@ -23,7 +23,7 @@ import {
 	goalBlockedPresentation,
 	goalCompletePresentation,
 	MAX_COMPLETION_EVIDENCE_TEXT_LENGTH,
-} from "./tool-contract.js";
+} from "./tool-contract.ts";
 
 const MAX_BLOCKER_REASON_LENGTH = 1_000;
 const MAX_BLOCKER_EVIDENCE_LENGTH = 4_000;

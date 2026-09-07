@@ -1,13 +1,13 @@
 import { createRequire } from "node:module";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../../../shared/json-value.js";
+import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeFunction,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import type { JsonSchemaObject } from "../../shared/types.ts";
 import { PI_CODING_AGENT_PACKAGE_ROOT_ENV } from "../../shared/utils.ts";
 

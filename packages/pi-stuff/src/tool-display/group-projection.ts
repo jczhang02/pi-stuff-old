@@ -1,24 +1,24 @@
 import type { AssistantMessageEvent } from "@earendil-works/pi-ai";
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 import type {
 	PlannedRetrievalGroup,
 	PlannedToolActivityMember,
 	RetrievalGroupDisposition,
 	ToolArguments,
-} from "./activity.js";
-import { assistantTerminalState, isIssueState, terminalStateFromResult } from "./activity-summary.js";
-import type { SuiteToolEnvelopeDetails } from "./contract.js";
-import type { ToolEnvelopeProjection } from "./envelope-projection.js";
-import { envelopeOperationResult } from "./envelope-renderer.js";
-import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.js";
+} from "./activity.ts";
+import { assistantTerminalState, isIssueState, terminalStateFromResult } from "./activity-summary.ts";
+import type { SuiteToolEnvelopeDetails } from "./contract.ts";
+import type { ToolEnvelopeProjection } from "./envelope-projection.ts";
+import { envelopeOperationResult } from "./envelope-renderer.ts";
+import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.ts";
 import {
 	boundedToolTranscript,
 	directBashCancelledByHostAbort,
 	planRetrievalPage,
 	RETRIEVAL_GROUP_MEMBER_LIMIT,
-} from "./retrieval-groups.js";
-import { isRecordValue, isToolArguments } from "./tool-value.js";
+} from "./retrieval-groups.ts";
+import { isRecordValue, isToolArguments } from "./tool-value.ts";
 
 const PENDING_RESULT_LIMIT = 768;
 const GROUP_PROJECTION_LIMIT = 768;

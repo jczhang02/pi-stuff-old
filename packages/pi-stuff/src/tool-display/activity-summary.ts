@@ -12,9 +12,9 @@ import {
 	type ToolActivityCategory,
 	type ToolActivityItem,
 	type ToolArguments,
-} from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { classifyTerminalState } from "./tool-text.js";
+} from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { classifyTerminalState } from "./tool-text.ts";
 
 const ERROR_RESULT_SCHEMA = Type.Object({ isError: Type.Literal(true) }, { additionalProperties: true });
 

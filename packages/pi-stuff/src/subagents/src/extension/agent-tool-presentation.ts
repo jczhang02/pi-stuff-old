@@ -1,15 +1,15 @@
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import type { Static } from "typebox";
-import { isRuntimeString } from "../../../shared/runtime-type.js";
-import type { ToolArguments } from "../../../tool-display/activity.js";
-import type { ToolActivityState } from "../../../tool-display/activity-store.js";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
+import type { ToolArguments } from "../../../tool-display/activity.ts";
+import type { ToolActivityState } from "../../../tool-display/activity-store.ts";
 import {
 	activityKey,
 	boundTerminalLine,
 	formatElapsed,
 	type SuiteToolPresentation,
 	singleActivity,
-} from "../../../tool-display/index.js";
+} from "../../../tool-display/index.ts";
 import { boundedTerminalLine, resolveDisplayDescription } from "../shared/display-description.ts";
 import type { Details } from "../shared/types.ts";
 import type { FanoutChildSubagentParams, SubagentParams } from "./schemas.ts";

@@ -3,9 +3,9 @@ import { homedir, platform } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { sanitizeTerminalText as sanitizeUntrustedTerminalText } from "../../shared/terminal-text.js";
+import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { sanitizeTerminalText as sanitizeUntrustedTerminalText } from "../../shared/terminal-text.ts";
 import type { McpConfig, ServerEntry } from "./types.ts";
 
 const execAsync = promisify(exec);

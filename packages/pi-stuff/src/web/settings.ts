@@ -2,17 +2,17 @@ import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { isJsonInputValue, type JsonInputValue, parseJsonValue } from "../shared/json-value.js";
-import { isRuntimeObject } from "../shared/runtime-type.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { isJsonInputValue, type JsonInputValue, parseJsonValue } from "../shared/json-value.ts";
+import { isRuntimeObject } from "../shared/runtime-type.ts";
 import {
 	EffectNamespacedSettingsStore,
 	mergedSettingsPath,
 	mergeNamespaceRecordEffect,
 	readTextFileEffect,
 	type SettingsRecord,
-} from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
+} from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
 
 const WEB_NAMESPACE = "web";
 const LEGACY_FILE = "web-search.json";

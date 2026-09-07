@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as Effect from "effect/Effect";
-import { isRuntimeBoolean, isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../../../shared/runtime-type.js";
+import { isRuntimeBoolean, isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../../../shared/runtime-type.ts";
 import { scanAgentReport } from "../runtime/final-report-scanner.ts";
 import {
 	type IntercomEventBus,

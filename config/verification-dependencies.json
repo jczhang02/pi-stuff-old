@@ -1,6 +1,6 @@
 {
 	"packages/pi-stuff/src/subagents/src/runs/shared/structured-output.ts": {
-		"sha256": "07fa32f25777f9b329e2ba51a20d1359804610c05ac7d7750e4255724729f617",
+		"sha256": "5ffc7ff10f5d29c97e5842f78f60e58cc0611e597976d0aac16b15bfc9968d04",
 		"dependencies": [],
 		"reason": "Loads the external TypeBox compiler from the selected Package root."
 	},

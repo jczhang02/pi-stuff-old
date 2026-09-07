@@ -1,13 +1,13 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	skillReadName,
 	type ToolActivityCategory,
 	type ToolActivityMetadata,
 	type ToolArguments,
-} from "./activity-model.js";
-import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.js";
-import { isToolArguments } from "./tool-value.js";
+} from "./activity-model.ts";
+import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.ts";
+import { isToolArguments } from "./tool-value.ts";
 
 export interface PlannedToolActivityMember {
 	readonly args: ToolArguments;

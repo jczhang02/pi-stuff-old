@@ -1,11 +1,11 @@
-/** Validate and load durable background recovery descriptors. */
+/** Validate and load durable Agent recovery descriptors. */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { type Static, type TSchema, Type } from "typebox";
 import { Value } from "typebox/value";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeObject } from "../../../../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeObject } from "../../../../shared/runtime-type.ts";
 import { readBoundedOwnedFile } from "../../shared/private-directory.ts";
 import type { ArtifactConfig, ResolvedControlConfig } from "../../shared/types.ts";
 import { getErrorMessage } from "../../shared/utils.ts";
@@ -16,7 +16,7 @@ import {
 import { MAX_MODEL_CANDIDATES_PER_CHILD } from "../shared/model-fallback.ts";
 import { validateToolBudgetConfig } from "../shared/tool-budget.ts";
 import { resolveTurnBudgetConfig } from "../shared/turn-budget.ts";
-import type { BackgroundRecoveryDescriptor } from "./async-execution.ts";
+import type { BackgroundRecoveryDescriptor } from "./resolved-task.ts";
 
 export type LegacyRecoveryDescriptor = Omit<BackgroundRecoveryDescriptor, "version" | "childIndex" | "context"> & {
 	version: 1;

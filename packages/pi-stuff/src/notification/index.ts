@@ -8,14 +8,14 @@ import {
 	getCommandDialogCoordinator,
 	readCurrentAgentWorkOrigin,
 	reportDiagnostic,
-} from "../conversation-ui/index.js";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.js";
-import { extractNotificationPreview, formatNotificationContent } from "./format.js";
-import { createNotificationSettingsView } from "./notification-settings-dialog.js";
-import { type NotificationClock, NotificationRuntime, type NotificationRuntimeEvent } from "./runtime.js";
-import { type NotificationSettings, NotificationSettingsStore } from "./settings.js";
-import { sendTerminalNotification, type TerminalNotificationResult } from "./transport.js";
+} from "../conversation-ui/index.ts";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { extractNotificationPreview, formatNotificationContent } from "./format.ts";
+import { createNotificationSettingsView } from "./notification-settings-dialog.ts";
+import { type NotificationClock, NotificationRuntime, type NotificationRuntimeEvent } from "./runtime.ts";
+import { type NotificationSettings, NotificationSettingsStore } from "./settings.ts";
+import { sendTerminalNotification, type TerminalNotificationResult } from "./transport.ts";
 
 export type NotificationHost = CommandDialogCoordinatorHost & Pick<ExtensionAPI, "registerCommand">;
 

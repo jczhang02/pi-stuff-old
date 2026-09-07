@@ -3,7 +3,7 @@ import { isIP } from "node:net";
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import { configureRuntimeSsrfDefaults } from "./runtime/index.js";
-import type { WebFetchInput } from "./url-policy.js";
+import type { WebFetchInput } from "./url-policy.ts";
 
 const FAKE_IP_CANARY = "example.com";
 const FAKE_IP_RANGE = "198.18.0.0/15";

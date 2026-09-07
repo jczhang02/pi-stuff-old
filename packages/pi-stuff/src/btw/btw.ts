@@ -23,10 +23,10 @@ import {
 	sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { projectCurrentContext } from "../context-management/index.js";
-import { fitBranch } from "./btw-budget.js";
-import { assistantMessageText } from "./btw-messages.js";
-import { openBtwStream } from "./pi-compat.js";
+import { projectCurrentContext } from "../context-management/index.ts";
+import { fitBranch } from "./btw-budget.ts";
+import { assistantMessageText } from "./btw-messages.ts";
+import { openBtwStream } from "./pi-compat.ts";
 import btwSystemPrompt from "./prompts/btw-system.txt" with { type: "text" };
 
 export const BTW_COMMAND_NAME = "btw";

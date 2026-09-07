@@ -20,7 +20,7 @@ import {
 	type SessionEntry,
 	sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 
 // ---------------------------------------------------------------------------
 // Budget constants — the engine's tuning surface. Defined in this leaf module so

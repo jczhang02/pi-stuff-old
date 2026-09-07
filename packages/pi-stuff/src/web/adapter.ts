@@ -3,15 +3,15 @@ import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import type { TSchema } from "typebox";
-import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.js";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { registerSuiteOwnedTool, type SuiteToolRegistrationHost } from "../tool-display/index.js";
-import { FakeIpCompatibility } from "./fake-ip.js";
-import { WEB_CONTENT_PRESENTATION, WEB_FETCH_PRESENTATION, WEB_SEARCH_PRESENTATION } from "./presentation.js";
+import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { registerSuiteOwnedTool, type SuiteToolRegistrationHost } from "../tool-display/index.ts";
+import { FakeIpCompatibility } from "./fake-ip.ts";
+import { WEB_CONTENT_PRESENTATION, WEB_FETCH_PRESENTATION, WEB_SEARCH_PRESENTATION } from "./presentation.ts";
 import piWebAccess, { type PiWebAccessHost, WebContentSessionError } from "./runtime/index.js";
-import { WebSettingsStore } from "./settings.js";
-import { WEB_CONTENT_PARAMETERS, WEB_FETCH_PARAMETERS, WEB_SEARCH_PARAMETERS } from "./tool-contracts.js";
-import { validateWebFetchInput } from "./url-policy.js";
+import { WebSettingsStore } from "./settings.ts";
+import { WEB_CONTENT_PARAMETERS, WEB_FETCH_PARAMETERS, WEB_SEARCH_PARAMETERS } from "./tool-contracts.ts";
+import { validateWebFetchInput } from "./url-policy.ts";
 
 type CapturedTool = ToolDefinition<TSchema, unknown, unknown>;
 type SharedToolFields = Pick<CapturedTool, "label" | "name"> &

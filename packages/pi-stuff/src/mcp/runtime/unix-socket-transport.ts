@@ -2,7 +2,7 @@ import { createConnection, type Socket } from "node:net";
 import { ReadBuffer, serializeMessage } from "@modelcontextprotocol/sdk/shared/stdio.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 
 /** MCP JSONL transport for an explicitly configured Unix-domain socket. */
 export class UnixSocketClientTransport implements Transport {

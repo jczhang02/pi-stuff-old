@@ -1,4 +1,4 @@
-import type { JsonSchemaToolDescriptors } from "./json-schema-types.js";
+import type { JsonSchemaToolDescriptors } from "./json-schema-types.ts";
 
 // ---------------------------------------------------------------------------
 // Annotations — per-method permissions/classification.

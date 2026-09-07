@@ -8,4 +8,4 @@ export {
 	default,
 	type PiStuffCodeModeOptions,
 	registerCodeModeContextProjection,
-} from "./extension.js";
+} from "./extension.ts";

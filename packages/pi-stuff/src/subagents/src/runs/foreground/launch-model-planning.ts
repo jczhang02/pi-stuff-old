@@ -10,21 +10,31 @@ import {
 	type SessionEntry,
 	sessionEntryToContextMessages,
 } from "@earendil-works/pi-coding-agent";
-import { isRuntimeFunction, isRuntimeNumber } from "../../../../shared/runtime-type.js";
+import { isRuntimeFunction, isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import type { AgentConfig } from "../../agents/agents.ts";
-import { normalizeSkillInput } from "../../agents/skills.ts";
 import { findModelInfo, type ModelInfo } from "../../shared/model-info.ts";
 import { type ResolvedToolBudget, wrapForkTask } from "../../shared/types.ts";
-import { type AsyncParallelTaskInput, buildResolvedTask } from "../background/async-execution.ts";
-import type { AsyncExecutionContext } from "../background/resolved-task.ts";
+import type {
+	AsyncExecutionContext,
+	ResolvedTaskBuildInput,
+	ResolvedTaskProjection,
+} from "../background/resolved-task.ts";
 import type { resolveCurrentSubagentCapabilityCeiling } from "../shared/capability-ceiling.ts";
 import type { ContextMode } from "../shared/context-mode.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import { buildModelCandidates, resolveEffectiveSubagentModel, resolveModelOrigin } from "../shared/model-fallback.ts";
 import type { RunnerAgentTask } from "../shared/parallel-utils.ts";
 import { resolvePiLaunchToolPlan } from "../shared/pi-args.ts";
-import type { PreparedLaunch, SubagentParamsLike, TaskParam } from "./executor-contract.ts";
+import {
+	type PreparedLaunch,
+	resolvedTaskInput,
+	type SubagentParamsLike,
+	type TaskParam,
+	taskInputs,
+} from "./executor-contract.ts";
 
 const CHILD_RUNTIME_RESERVE_RATIO = 0.25;
+const loadResolvedTask = deferredModule(() => import("../background/resolved-task.ts"));
 const CHILD_TOOL_REQUEST_FRAMING_TOKENS = 512;
 const CHILD_UNKNOWN_TOOL_SURFACE_TOKENS = 32 * 1024;
 const CHILD_EXPLICIT_EXTENSION_SURFACE_TOKENS = 16 * 1024;
@@ -106,12 +116,13 @@ function inheritedLaunchPromptTokens(ctx: ExtensionContext): number {
 }
 
 function inheritedReplacementPromptTokens(
-	task: Pick<RunnerAgentTask, "cwd" | "inheritProjectContext" | "inheritSkills">,
+	cwd: string,
+	agent: Pick<RunnerAgentTask, "inheritProjectContext" | "inheritSkills">,
 ) {
 	try {
 		let retained = "";
-		if (task.inheritProjectContext) {
-			const contextFiles = loadProjectContextFiles({ cwd: task.cwd, agentDir: getAgentDir() });
+		if (agent.inheritProjectContext) {
+			const contextFiles = loadProjectContextFiles({ cwd, agentDir: getAgentDir() });
 			if (contextFiles.length > 0) {
 				retained += "\n\n<project_context>\n\nProject-specific instructions and guidelines:\n\n";
 				for (const contextFile of contextFiles) {
@@ -120,45 +131,50 @@ function inheritedReplacementPromptTokens(
 				retained += "</project_context>\n";
 			}
 		}
-		if (task.inheritSkills) {
+		if (agent.inheritSkills) {
 			const skills = loadSkills({
-				cwd: task.cwd,
+				cwd,
 				agentDir: getAgentDir(),
 				skillPaths: [],
 				includeDefaults: true,
 			}).skills;
 			if (skills.length > 0) retained += formatSkillsForPrompt(skills);
 		}
-		retained += `\nCurrent working directory: ${task.cwd.replace(/\\/gu, "/")}`;
+		retained += `\nCurrent working directory: ${cwd.replace(/\\/gu, "/")}`;
 		return {
 			tokens: estimateTextTokens(retained),
 			// ExtensionContext deliberately does not expose the command-only Host
 			// construction options. When replacement mode retains any ambient
 			// resources, use a bounded projection and let the final payload gate cover
 			// package-provided resources that cannot be inspected at this seam.
-			rawForkSafe: !task.inheritProjectContext && !task.inheritSkills,
+			rawForkSafe: !agent.inheritProjectContext && !agent.inheritSkills,
 		};
 	} catch {
 		// Resource discovery failure must not admit an unmeasured child payload.
 	}
-	if (!task.inheritProjectContext && !task.inheritSkills) {
-		return { tokens: estimateTextTokens(task.cwd), rawForkSafe: true };
+	if (!agent.inheritProjectContext && !agent.inheritSkills) {
+		return { tokens: estimateTextTokens(cwd), rawForkSafe: true };
 	}
 	return { tokens: Number.POSITIVE_INFINITY, rawForkSafe: false };
 }
 
-function childLaunchSurfaceTokens(pi: ExtensionAPI, task: RunnerAgentTask): number {
+function childLaunchSurfaceTokens(
+	pi: ExtensionAPI,
+	input: ResolvedTaskBuildInput,
+	resolved: ResolvedTaskProjection,
+): number {
 	if (!isRuntimeFunction(pi.getAllTools) || !isRuntimeFunction(pi.getActiveTools)) return 0;
+	const { agent, params } = input;
 	try {
 		const plan = resolvePiLaunchToolPlan({
-			tools: task.tools,
-			extensions: task.extensions,
-			subagentOnlyExtensions: task.subagentOnlyExtensions,
-			mcpDirectTools: task.mcpDirectTools,
-			cwd: task.cwd,
-			childBaseExtensionPath: task.childBaseExtensionPath,
-			requireReadTool: task.inheritSkills || Boolean(task.skills?.length),
-			capabilityCeiling: task.capabilityCeiling,
+			tools: agent.tools,
+			extensions: agent.extensions,
+			subagentOnlyExtensions: agent.subagentOnlyExtensions,
+			mcpDirectTools: agent.mcpDirectTools,
+			cwd: resolved.taskCwd,
+			childBaseExtensionPath: params.childBaseExtensionPath,
+			requireReadTool: agent.inheritSkills || resolved.skillNames.length > 0,
+			capabilityCeiling: resolved.capabilityCeiling,
 		});
 		const requestedNames = [
 			...new Set(
@@ -187,8 +203,8 @@ function childLaunchSurfaceTokens(pi: ExtensionAPI, task: RunnerAgentTask): numb
 			JSON.stringify({
 				extensions: plan.extensionArgs,
 				mcpTools: plan.effectiveMcpTools,
-				inheritProjectContext: task.inheritProjectContext,
-				inheritSkills: task.inheritSkills,
+				inheritProjectContext: agent.inheritProjectContext,
+				inheritSkills: agent.inheritSkills,
 			}),
 		);
 		return tokens;
@@ -283,12 +299,16 @@ interface TaskModelPlanState {
 	readonly rawForkByIndex: boolean[];
 }
 
-function planTaskModels(state: TaskModelPlanState, task: TaskParam, index: number): string[] | undefined {
+async function planTaskModels(
+	state: TaskModelPlanState,
+	task: TaskParam,
+	index: number,
+): Promise<string[] | undefined> {
 	const { input } = state;
 	const agent = input.agents.find((candidate) => candidate.name === task.agent);
 	if (!agent) throw new Error(`Unknown Agent: ${task.agent}`);
 	const taskInput = resolvedTaskInput(task, input.context === "fork" ? wrapForkTask(task.task) : task.task);
-	const buildInput: Parameters<typeof buildResolvedTask>[0] = {
+	const buildInput: ResolvedTaskBuildInput = {
 		runId: input.runId,
 		index,
 		taskInput,
@@ -308,18 +328,19 @@ function planTaskModels(state: TaskModelPlanState, task: TaskParam, index: numbe
 		thinkingOverride: input.params.thinking,
 	};
 	if (taskInput.skill === false) buildInput.skills = [];
-	const built = buildResolvedTask(buildInput);
-	if ("error" in built) throw new Error(built.error);
-	const candidates = built.task.modelCandidates ?? [];
+	const { resolveTaskProjection } = await loadResolvedTask();
+	const resolved = await resolveTaskProjection(buildInput);
+	if ("error" in resolved) throw new Error(resolved.error);
+	const candidates = resolved.modelCandidates;
 	const replacementPromptEstimate =
-		built.task.systemPromptMode === "replace"
-			? inheritedReplacementPromptTokens(built.task)
+		agent.systemPromptMode === "replace"
+			? inheritedReplacementPromptTokens(resolved.taskCwd, agent)
 			: { tokens: state.launchPromptTokens, rawForkSafe: true };
 	const taskTokens =
-		estimateTextTokens(built.task.task) +
-		estimateTextTokens(built.task.systemPrompt?.trim() ?? "") +
+		estimateTextTokens(taskInput.task) +
+		estimateTextTokens(resolved.systemPrompt.trim()) +
 		replacementPromptEstimate.tokens +
-		childLaunchSurfaceTokens(input.executionContext.pi, built.task);
+		childLaunchSurfaceTokens(input.executionContext.pi, buildInput, resolved);
 	state.fixedInputTokensByIndex[index] = taskTokens;
 	if (input.context !== "fork") {
 		state.rawForkByIndex[index] = false;
@@ -364,7 +385,7 @@ function planTaskModels(state: TaskModelPlanState, task: TaskParam, index: numbe
 	);
 }
 
-export function prepareLaunchModelPlan(input: LaunchModelPlanInput) {
+export async function prepareLaunchModelPlan(input: LaunchModelPlanInput) {
 	const tasks = taskInputs(input.params);
 	const forkSnapshot: { readonly messages?: ContextEvent["messages"]; readonly tokens: number } =
 		input.context === "fork" ? inheritedContextSnapshot(input.ctx) : { tokens: 0 };
@@ -378,7 +399,10 @@ export function prepareLaunchModelPlan(input: LaunchModelPlanInput) {
 		fixedInputTokensByIndex,
 		rawForkByIndex,
 	};
-	const modelCandidatesByIndex = tasks.map((task, index) => planTaskModels(state, task, index));
+	const modelCandidatesByIndex: Array<string[] | undefined> = [];
+	for (const [index, task] of tasks.entries()) {
+		modelCandidatesByIndex.push(await planTaskModels(state, task, index));
+	}
 	const plan: Pick<PreparedLaunch, "rawForkByIndex" | "fixedInputTokensByIndex" | "modelCandidatesByIndex"> &
 		Partial<Pick<PreparedLaunch, "forkContextTokens" | "forkSourceMessages">> = {
 		rawForkByIndex,
@@ -388,32 +412,4 @@ export function prepareLaunchModelPlan(input: LaunchModelPlanInput) {
 	if (input.context === "fork") plan.forkContextTokens = forkSnapshot.tokens;
 	if (input.context === "fork" && forkSnapshot.messages) plan.forkSourceMessages = forkSnapshot.messages;
 	return plan;
-}
-export function taskInputs(params: SubagentParamsLike): TaskParam[] {
-	if (params.tasks?.length) return params.tasks;
-	if (!params.agent || !params.task) return [];
-	const task: TaskParam = { agent: params.agent, task: params.task };
-	if (params.description) task.description = params.description;
-	if (params.model) task.model = params.model;
-	if (params.skill !== undefined) task.skill = params.skill;
-	if (params.toolBudget) task.toolBudget = params.toolBudget;
-	if (params.toolTimeoutMs !== undefined) task.toolTimeoutMs = params.toolTimeoutMs;
-	return [task];
-}
-
-export function resolvedTaskInput(
-	task: TaskParam,
-	projectedTask: string,
-	delegatedTask?: string,
-): AsyncParallelTaskInput {
-	const input: AsyncParallelTaskInput = { agent: task.agent, task: projectedTask };
-	if (task.description) input.description = task.description;
-	if (delegatedTask) input.delegatedTask = delegatedTask;
-	if (task.cwd) input.cwd = task.cwd;
-	if (task.model) input.model = task.model;
-	const skill = normalizeSkillInput(task.skill);
-	if (skill !== undefined) input.skill = skill;
-	if (task.toolBudget) input.toolBudget = task.toolBudget;
-	if (task.toolTimeoutMs !== undefined) input.toolTimeoutMs = task.toolTimeoutMs;
-	return input;
 }

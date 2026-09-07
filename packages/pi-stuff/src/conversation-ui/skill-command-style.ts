@@ -1,5 +1,5 @@
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
-import { terminalControlEnd } from "../shared/terminal-text.js";
+import { terminalControlEnd } from "../shared/terminal-text.ts";
 
 // pi-dynamic-workflows, 56489683, src/workflow-editor.ts. Freeze the violet phase for transcript text.
 const RAINBOW = [

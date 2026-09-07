@@ -1,5 +1,5 @@
 import { type Component, type Focusable, isFocusable, type TUI } from "@earendil-works/pi-tui";
-import type { CommandDialogComponent } from "./command-dialog-types.js";
+import type { CommandDialogComponent } from "./command-dialog-types.ts";
 
 export interface CommandDialogHostLifecycle {
 	dismiss(): void;

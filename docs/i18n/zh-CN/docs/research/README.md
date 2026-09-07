@@ -1,4 +1,4 @@
-<!-- translation-source: docs/research/README.md; translation-source-sha256: 7df94251f6eb1efd02348725508a04b8b5adef639ecd00f9f065829f6212b538 -->
+<!-- translation-source: docs/research/README.md; translation-source-sha256: c779d8173b66b6593971ddd0a00d0e4d213c6845e0007256e2beb3efa3b87843 -->
 
 # 研究
 
@@ -16,6 +16,7 @@
 
 ## 架构与可行性
 
+- [ps-yon 性能测量权限核查](ps-yon-profiling-permissions-20260906.md)
 - [Pi Stuff 可靠性修复方案](pi-stuff-reliability-repair-plan-20260906.md)
 - [Pi Stuff 可靠性 fork 适配审计](pi-stuff-reliability-fork-audit-20260906.md)
 - [Code Mode 图像基准](code-mode-image-benchmark-20260827.md)

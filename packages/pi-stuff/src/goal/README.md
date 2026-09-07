@@ -34,6 +34,11 @@ longer remain active.
 - Ignores settlement notifications after Session teardown, so stale Goal context cannot start a continuation in a closed Session.
 - Shows current status, usage, budget, and elapsed time in the shared Statusline.
 
+Restoration searches backward to the latest canonical Goal entry and uses legacy state only if no canonical entry
+exists. Malformed or cleared canonical state never revives an older or newer legacy Goal. Validation and queue
+normalization remain unchanged; [measurements](../../../../docs/reports/history-selection-cost-2026-09-06.md) cover
+the discarded scans removed from this selector, not Goal accounting or Host branch construction.
+
 ## Compaction continuation
 
 Pi 0.85.1 emits `session_compact` before clearing its manual-compaction busy state, without a later `agent_settled`

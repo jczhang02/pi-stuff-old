@@ -1,13 +1,13 @@
 import { Buffer } from "node:buffer";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import type { Message } from "@earendil-works/pi-ai";
-import type { JsonObject, JsonValue } from "../../../../shared/json-value.js";
+import type { JsonObject, JsonValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import type { ProtocolOutputLimit } from "../../shared/types.ts";
 
 export type { ProtocolOutputLimit } from "../../shared/types.ts";

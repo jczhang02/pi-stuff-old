@@ -1,8 +1,8 @@
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as Effect from "effect/Effect";
-import { readTextFileEffect } from "../shared/settings-io/index.js";
-import { normalizePonytailMode, PONYTAIL_DEFAULT_MODE, type PonytailMode } from "./types.js";
+import { readTextFileEffect } from "../shared/settings-io/index.ts";
+import { normalizePonytailMode, PONYTAIL_DEFAULT_MODE, type PonytailMode } from "./types.ts";
 
 const SKILL_PATH = path.join(path.dirname(fileURLToPath(import.meta.url)), "skills", "ponytail", "SKILL.md");
 let canonicalSkill: string | undefined;

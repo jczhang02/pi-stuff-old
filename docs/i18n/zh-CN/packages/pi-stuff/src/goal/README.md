@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: 4da0432846b37bda4eef3f870e07160a87d6a9fdcaccc2de32e5e7e3f7767253 -->
+<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: c56e89a435cd66ee7d3affde046a4f16f4b8d9a1ff0e06ac542daa5f8d3f278e -->
 
 # Goal
 
@@ -34,6 +34,11 @@
 - 向有界的后台结果投递暴露当前 Goal identity 与 continuation 权限，并在投递期间延后 continuation。
 - Session teardown 后忽略 settlement notification，避免陈旧 Goal context 在已关闭 Session 中启动 continuation。
 - 在共享 Statusline 中显示当前状态、用量、budget 和经过时间。
+
+恢复从后向前查找最新规范 Goal 条目，仅在不存在规范条目时使用旧版状态。无效或已清除的规范状态不会
+重新启用更早或更晚的旧版 Goal。校验和队列规范化不变；
+[测量记录](../../../../docs/reports/history-selection-cost-2026-09-06.md)覆盖选择器移除的已丢弃历史扫描，
+不包含 Goal 记账或 Host 分支构建。
 
 ## 压缩后的继续执行
 

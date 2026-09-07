@@ -1,6 +1,6 @@
 import type { AgentToolResult, ToolDefinition } from "@earendil-works/pi-coding-agent";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	activityKey,
 	registerSuiteOwnedTool,
@@ -9,10 +9,10 @@ import {
 	type ToolActivityCategory,
 	type ToolActivityItem,
 	type ToolArguments,
-} from "../tool-display/index.js";
-import { applyTaskMutation, type Op } from "./state/state-reducer.js";
-import { commitState, getState, sid } from "./state/store.js";
-import { buildToolResult } from "./tool/response-envelope.js";
+} from "../tool-display/index.ts";
+import { applyTaskMutation, type Op } from "./state/state-reducer.ts";
+import { commitState, getState, sid } from "./state/store.ts";
+import { buildToolResult } from "./tool/response-envelope.ts";
 import {
 	TASK_CREATE_TOOL_NAME,
 	TASK_GET_TOOL_NAME,
@@ -25,7 +25,7 @@ import {
 	TaskListParamsSchema,
 	type TaskMutationParams,
 	TaskUpdateParamsSchema,
-} from "./tool/types.js";
+} from "./tool/types.ts";
 
 interface TaskMutationEvent {
 	readonly action: "create" | "update";

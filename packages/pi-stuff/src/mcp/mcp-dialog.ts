@@ -18,10 +18,10 @@ import {
 	matchesCommandDialogConfirm,
 	matchesCommandDialogHelp,
 	renderCommandDialogKeyHelp,
-} from "../conversation-ui/index.js";
-import { type McpDialogRows, mcpDialogPriority } from "./mcp-dialog-rows.js";
+} from "../conversation-ui/index.ts";
+import { type McpDialogRows, mcpDialogPriority } from "./mcp-dialog-rows.ts";
 import type { McpServerStatusSnapshot, McpStatusSnapshot } from "./runtime/index.js";
-import type { McpStatusStore } from "./status-store.js";
+import type { McpStatusStore } from "./status-store.ts";
 
 const GUTTER = "  ";
 

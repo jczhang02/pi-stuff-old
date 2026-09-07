@@ -8,21 +8,21 @@ import type { AutocompleteItem } from "@earendil-works/pi-tui";
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { registerContextPromptContributor } from "../context-management/index.js";
+import { registerContextPromptContributor } from "../context-management/index.ts";
 import {
 	createPonytailDialogView,
 	getCommandDialogCoordinator,
 	type PonytailDialogAction,
 	type PonytailDialogSnapshot,
 	reportDiagnostic,
-} from "../conversation-ui/index.js";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.js";
-import { isJsonInputObject } from "../shared/json-value.js";
-import { type PonytailSettingsPatch, PonytailSettingsStore } from "./config.js";
-import { preparePonytailInstructions } from "./instructions.js";
-import { PonytailPromptRenderer } from "./prompt.js";
-import { type PonytailRuntimeRegistry, ponytailRuntimeRegistry } from "./state.js";
+} from "../conversation-ui/index.ts";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { isJsonInputObject } from "../shared/json-value.ts";
+import { type PonytailSettingsPatch, PonytailSettingsStore } from "./config.ts";
+import { preparePonytailInstructions } from "./instructions.ts";
+import { PonytailPromptRenderer } from "./prompt.ts";
+import { type PonytailRuntimeRegistry, ponytailRuntimeRegistry } from "./state.ts";
 import {
 	inheritedPonytailMode,
 	isPonytailDeactivationCommand,
@@ -34,11 +34,11 @@ import {
 	PONYTAIL_SPECIALIZED_SKILLS,
 	type PonytailMode,
 	type PonytailSpecializedSkill,
-} from "./types.js";
+} from "./types.ts";
 
 const PONYTAIL_STATUS_KEY = "ponytail";
 
-export { getPonytailMode } from "./state.js";
+export { getPonytailMode } from "./state.ts";
 
 function entryMode(entry: SessionEntry): PonytailMode | undefined {
 	if (entry.type !== "custom" || entry.customType !== PONYTAIL_SESSION_ENTRY_TYPE) return undefined;

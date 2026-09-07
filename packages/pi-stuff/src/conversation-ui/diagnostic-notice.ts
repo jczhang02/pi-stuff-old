@@ -1,7 +1,7 @@
 import type { ExtensionUIContext, Theme } from "@earendil-works/pi-coding-agent";
 import { type TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import type { DiagnosticChannel, DiagnosticRecord, DiagnosticSeverity } from "./diagnostics.js";
-import type { CommandDialogChrome } from "./index.js";
+import type { DiagnosticChannel, DiagnosticRecord, DiagnosticSeverity } from "./diagnostics.ts";
+import type { CommandDialogChrome } from "./index.ts";
 
 const WIDGET_KEY = "pi-stuff-diagnostic-notice";
 const GUTTER = "  ";

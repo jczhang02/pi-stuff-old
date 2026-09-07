@@ -1,6 +1,6 @@
 import type { AgentToolResult, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	activityKey,
 	BASH_CODE_MODE_CONTRACT,
@@ -11,10 +11,10 @@ import {
 	type SuiteToolPresentation,
 	type SuiteToolRegistrationHost,
 	singleActivity,
-} from "../../tool-display/index.js";
-import { startMonitor } from "./monitor.js";
-import { DEFAULT_MODEL_OUTPUT_LIMIT } from "./output.js";
-import type { BackgroundWorkBashDetails, BackgroundWorkOutcome, BackgroundWorkRuntime } from "./runtime.js";
+} from "../../tool-display/index.ts";
+import { startMonitor } from "./monitor.ts";
+import { DEFAULT_MODEL_OUTPUT_LIMIT } from "./output.ts";
+import type { BackgroundWorkBashDetails, BackgroundWorkOutcome, BackgroundWorkRuntime } from "./runtime.ts";
 
 const BASH_PARAMETERS = Type.Object({
 	command: Type.String({ description: "Shell command to execute", maxLength: 1_000_000, minLength: 1 }),

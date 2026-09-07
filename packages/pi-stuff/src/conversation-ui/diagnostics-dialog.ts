@@ -1,6 +1,6 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { isKeyRelease, matchesKey, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
-import type { DiagnosticChannel, DiagnosticRecord, DiagnosticSeverity } from "./diagnostics.js";
+import type { DiagnosticChannel, DiagnosticRecord, DiagnosticSeverity } from "./diagnostics.ts";
 import {
 	commandDialogListIndex,
 	commandDialogListKeyHelp,
@@ -16,8 +16,8 @@ import {
 	matchesCommandDialogConfirm,
 	matchesCommandDialogHelp,
 	renderCommandDialogKeyHelp,
-} from "./dialog-layout.js";
-import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.js";
+} from "./dialog-layout.ts";
+import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.ts";
 
 type DiagnosticsMode = "detail" | "list";
 

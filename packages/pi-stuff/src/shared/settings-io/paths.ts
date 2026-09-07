@@ -8,7 +8,7 @@
 
 import { join } from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
-import { xdgRuntimeHome } from "../../xdg/index.js";
+import { xdgRuntimeHome } from "../../xdg/index.ts";
 
 /** The single merged settings file name every Capability converges into. */
 export const MERGED_SETTINGS_FILE = "pi-stuff.json";

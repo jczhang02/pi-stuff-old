@@ -9,19 +9,11 @@ import { type Static, type TSchema, Type } from "typebox";
 import { Check } from "typebox/value";
 import type { AgentConfig } from "../../packages/pi-stuff/src/subagents/src/agents/agents.js";
 import {
-	acquireRunnerProcessStartIdentity as acquireRunnerProcessStartIdentityEffect,
 	buildAsyncParallelRunnerWork,
 	buildAsyncSingleRunnerWork,
-	buildNestedTerminalFallbackStatus,
 	claimBackgroundRunDirectory,
 	cleanupBackgroundRunAfterAbort,
-	finalizeSpawnedRunnerClose,
-	initializePreIdentityWriterAbsenceProof,
-	removeRunnerStartupMarkerBestEffort,
-	resolveAsyncRunnerBunCommand,
 	resolveBackgroundOwnershipFailure,
-	resolveNestedTerminalStatus,
-	terminateRunnerBeforeProceed,
 } from "../../packages/pi-stuff/src/subagents/src/runs/background/async-execution.js";
 import { readAsyncRecoveryDescriptor } from "../../packages/pi-stuff/src/subagents/src/runs/background/async-resume.js";
 import { listAsyncRuns } from "../../packages/pi-stuff/src/subagents/src/runs/background/async-status.js";
@@ -39,18 +31,32 @@ import {
 	writeProcessTerminalCandidate,
 } from "../../packages/pi-stuff/src/subagents/src/runs/background/process-terminal.js";
 import { appendDiagnosticEvent } from "../../packages/pi-stuff/src/subagents/src/runs/background/runner-output.js";
+import {
+	acquireRunnerProcessStartIdentity as acquireRunnerProcessStartIdentityEffect,
+	finalizeSpawnedRunnerClose,
+	initializePreIdentityWriterAbsenceProof,
+	removeRunnerStartupMarkerBestEffort,
+	resolveAsyncRunnerBunCommand,
+	terminateRunnerBeforeProceed,
+} from "../../packages/pi-stuff/src/subagents/src/runs/background/runner-process.js";
 import type { BackgroundCompletion } from "../../packages/pi-stuff/src/subagents/src/runs/background/runner-state.js";
 import { reconcileAsyncRun } from "../../packages/pi-stuff/src/subagents/src/runs/background/stale-run-reconciler.js";
 import {
-	buildWriterProcessEnv,
-	buildWriterSpawnCommand,
-	captureWriterProcessStartIdentity,
 	createBackgroundCompletion,
 	createInitialStatus,
 	runBackgroundWork as runBackgroundWorkEffect,
 	runConfiguredBackground,
 	waitForStartupControl,
 } from "../../packages/pi-stuff/src/subagents/src/runs/background/subagent-runner.js";
+import {
+	buildNestedTerminalFallbackStatus,
+	resolveNestedTerminalStatus,
+} from "../../packages/pi-stuff/src/subagents/src/runs/background/terminal-status.js";
+import {
+	buildWriterProcessEnv,
+	buildWriterSpawnCommand,
+	captureWriterProcessStartIdentity,
+} from "../../packages/pi-stuff/src/subagents/src/runs/background/writer-process-lifecycle.js";
 import {
 	initializeWriterProcessRegistry,
 	inspectWriterProcessLiveness,

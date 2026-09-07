@@ -7,9 +7,9 @@ import {
 	PONYTAIL_SPECIALIZED_SKILLS,
 	type PonytailMode,
 	type PonytailSpecializedSkill,
-} from "../ponytail/types.js";
-import { commandDialogRows, fitCommandDialogRows } from "./dialog-layout.js";
-import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.js";
+} from "../ponytail/types.ts";
+import { commandDialogRows, fitCommandDialogRows } from "./dialog-layout.ts";
+import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.ts";
 
 export interface PonytailDialogSnapshot {
 	readonly mode: PonytailMode;

@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { getHostSharedResource } from "../shared/host-resource.js";
-import { hasDirectUserActivation } from "./agent-run-origin.js";
+import { getHostSharedResource } from "../shared/host-resource.ts";
+import { hasDirectUserActivation } from "./agent-run-origin.ts";
 
 const SUITE_AGENT_MESSAGE_BROKER_DISCOVERY = "@jczhang02/pi-stuff-ui/suite-agent-message-broker/v1";
 const SUITE_AGENT_MESSAGE_BROKERS = Symbol.for("@jczhang02/pi-stuff-ui/suite-agent-message-brokers/v1");

@@ -1,6 +1,6 @@
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import { sanitizeMultilineTerminalText, sanitizeTerminalText, wellFormedText } from "../shared/terminal-text.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import { sanitizeMultilineTerminalText, sanitizeTerminalText, wellFormedText } from "../shared/terminal-text.ts";
 
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 // Keep fold ink inside its terminal cells instead of relying on a font's ellipsis bearing.

@@ -1,0 +1,1615 @@
+{
+  "capturedOn": "2026-09-06",
+  "baseCommit": "2428f1c1d1f24c6a91a3f26e387842e3259bffd3",
+  "host": {
+    "profile": "0.85.0+source.107d79f11072.binary.0cfd1bf3e946.bun.1.3.14",
+    "sha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072",
+    "embeddedBun": "1.3.14",
+    "repositoryBun": "1.4.0"
+  },
+  "finalSourceDiffSha256": "0e88e8a44e454ce01ed241eed1a98dd6584cdfcea6b1e0f2556d709786c7a5ae",
+  "finalSamples": [
+    "PaHqrD",
+    "Rpps9R",
+    "i21pqi"
+  ],
+  "gatesFile": "docs/reports/suite-responsiveness-gates-2026-09-05.json",
+  "gatesSha256": "db75fe458f275724b9a030c59395d888c0421d0515c4c6cca01c3e02ad39d677",
+  "sourceChanges": [
+    {
+      "file": "packages/pi-stuff/src/subagents/src/extension/public-agent-execution.ts",
+      "linesBefore": 316,
+      "linesAfter": 307,
+      "sha256": "76f6caa1c339f32ac260f94d28dbebe3494e77fd85c9f9e9f02f6af496c76450"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/background/child-process-contract.ts",
+      "linesBefore": 0,
+      "linesAfter": 59,
+      "sha256": "8a27592a6dffe797bc45c202d736b751dcf8e3fc49ba693a9f7afbf1d2180d1a"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/background/child-process-engine.ts",
+      "linesBefore": 799,
+      "linesAfter": 767,
+      "sha256": "88e9b00d429b31c54a710880499b1716e275008d37eafc3dee669b0342360d6f"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/background/child-task-runner.ts",
+      "linesBefore": 572,
+      "linesAfter": 571,
+      "sha256": "653765cbfc73539fe5cadc6e80f07b3a78c26ae7f28d00883e9670c5bceb45a8"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/background/subagent-runner.ts",
+      "linesBefore": 446,
+      "linesAfter": 435,
+      "sha256": "3a108a1a3e09b1953e31098b4c796116ed4393af30b6c9d0be9112cfcf964e2b"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/execution.ts",
+      "linesBefore": 345,
+      "linesAfter": 351,
+      "sha256": "25ee578e5848b98ee6483753d01e0694cc5d2e0f73ecbb191620f662b6b24948"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/executor-contract.ts",
+      "linesBefore": 156,
+      "linesAfter": 195,
+      "sha256": "b4af3a235d1cbcb9f954c6d8697e2a0aff504a685450753102f17cfe046f3d71"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/launch-builders.ts",
+      "linesBefore": 255,
+      "linesAfter": 270,
+      "sha256": "28d7d70502f688ce25da1125bb15d05ad61b49e82dbcff881c5641c0db95720c"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/launch-model-planning.ts",
+      "linesBefore": 437,
+      "linesAfter": 415,
+      "sha256": "4626940cc1302fdb3a3abf8546ba294e49653e40820be2adf5389c0e4e586063"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/launch-preparation.ts",
+      "linesBefore": 323,
+      "linesAfter": 320,
+      "sha256": "fcdc617fee19a6ca0106433b1294f5e03bf78043153677f5fff61e7cc5127bc5"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/foreground/subagent-executor.ts",
+      "linesBefore": 141,
+      "linesAfter": 129,
+      "sha256": "0088fce8ab4e0323705ab589ee758aff575b35760aebac7b5ad6b33bf0a12a9e"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/shared/deferred-module.ts",
+      "linesBefore": 0,
+      "linesAfter": 18,
+      "sha256": "0448cf0fc823774dc6f83675b1d57633eacbf0fed571a07f65c01dbfee35cd9c"
+    },
+    {
+      "file": "packages/pi-stuff/src/subagents/src/runs/shared/nested-registry-projection.ts",
+      "linesBefore": 435,
+      "linesAfter": 435,
+      "sha256": "756728215eff8eaef695edf73d9d1d80b51e4ce40a0a2c4ea6db234a6a795a31"
+    },
+    {
+      "file": "scripts/repository-safety/effect-boundaries.ts",
+      "linesBefore": 700,
+      "linesAfter": 701,
+      "sha256": "c83e058809b3bfd3bc9bd36bcd8ec0bf0b5b589d2bc71967b1b448722fb0d2b7"
+    },
+    {
+      "file": "test/agents/background-engine-fixtures.ts",
+      "linesBefore": 410,
+      "linesAfter": 412,
+      "sha256": "73f8d8e8b278d2d6a584b7f1e7f083aa928e9b39be692592c596d05e911c5083"
+    },
+    {
+      "file": "test/agents/deferred-module.test.ts",
+      "linesBefore": 0,
+      "linesAfter": 39,
+      "sha256": "02728bb2b29cba3a0d07c79f63041020aaf4b65aa3ec4d4312f0e002f8e91558"
+    },
+    {
+      "file": "test/agents/foreground-loading.test.ts",
+      "linesBefore": 0,
+      "linesAfter": 32,
+      "sha256": "a2aa9534c69494c409e092cbc182558137b51347ba9681f34539089c4b339332"
+    },
+    {
+      "file": "test/agents/nested-events.test.ts",
+      "linesBefore": 504,
+      "linesAfter": 527,
+      "sha256": "ae86a39eeffa599a0a4399f083b3ad0a34d26e65c3a3299d23ffaefe3c83d08f"
+    },
+    {
+      "file": "test/agents/ponytail-propagation.test.ts",
+      "linesBefore": 51,
+      "linesAfter": 51,
+      "sha256": "12c98ed396a199dad04990fb4d29423b5b7f6496d264d86e29d31d5a1130f6d1"
+    }
+  ],
+  "comparisonLimits": [
+    "Full Suite, exact Host, 120x40, two foreground children, automatic parent Naming and Usage; Code Mode and old Ledger remain explicit per sample.",
+    "Each run stages fresh private configuration and temporary source caches. Kernel page cache is not reset. No resource run overlaps tests or profiling.",
+    "The environment restarted before 8UraCb. Pre-restart resource totals are not same-boot paired savings.",
+    "CPU scopes include the Host and descendants, not the observer. Final RSS is a snapshot; charged-memory peak is not peak process-tree RSS or allocation.",
+    "Per-process I/O includes only live members at readout and kernel-aggregated waited children; it is not complete process-tree I/O.",
+    "Diagnostic probes perturb scheduling. Their zero exit is not frozen-gate acceptance; CPU profiles have substantial additional overhead.",
+    "Earlier passing and failing intermediate sources do not certify the final source. No stable whole-Host CPU, RSS, allocation, GC or wakeup saving is inferred.",
+    "Historical late 9LkXjG 270.053281 ms and U4SAr9 489.594 ms holds lack direct causal traces. Subsequent passes do not retrospectively attribute them."
+  ],
+  "earlySourceBindingLimit": {
+    "samples": [
+      "42duv5",
+      "NNlRE0"
+    ],
+    "reason": "Their source diffs predate intent-to-add for four new files; bind the missing file bodies by the hashes below, not by pretending the original diffs contain them.",
+    "files": {
+      "packages/pi-stuff/src/subagents/src/runs/background/child-process-contract.ts": "8a27592a6dffe797bc45c202d736b751dcf8e3fc49ba693a9f7afbf1d2180d1a",
+      "packages/pi-stuff/src/subagents/src/runs/shared/deferred-module.ts": "0448cf0fc823774dc6f83675b1d57633eacbf0fed571a07f65c01dbfee35cd9c",
+      "test/agents/deferred-module.test.ts": "02728bb2b29cba3a0d07c79f63041020aaf4b65aa3ec4d4312f0e002f8e91558",
+      "test/agents/foreground-loading.test.ts": "95d2b74398057995987337481e7555f30d5d603a33466a312b6297909e405869"
+    }
+  },
+  "trials": [
+    {
+      "id": "BNAB3R",
+      "observerStartUtc": "2026-09-06T06:17:12.175Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceSha256": "072faa796f322b6fd8b93ed43409fd415adcaa5eef2524d42c34d9855d7046a8",
+      "providerSha256": "be85800f5d57d7a76b74b7013270ee5c13618b86d1cf6e833127157b95034b0e",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs",
+        "maximumSteadyInputMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 209.220041999999,
+      "maximumSteadyInputMs": 73.2431830000005,
+      "maximumStartupInputMs": 13.971158999999716,
+      "maximumSelectionMs": 13.926820000000589,
+      "maximumObservationGapMs": 17.19061899999997,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37014.242452,
+      "activeCaptureCount": 3116,
+      "captureCount": 3681,
+      "cpuUs": {
+        "total": 22903936,
+        "user": 19788490,
+        "system": 3115445
+      },
+      "rssSnapshotBytes": 599420928,
+      "memoryPeakChargedBytes": 1277517824,
+      "memoryCurrentChargedBytes": 618483712,
+      "liveProcesses": [
+        {
+          "rssBytes": 599420928,
+          "io": {
+            "rchar": 241872965,
+            "wchar": 27447522,
+            "syscr": 22080,
+            "syscw": 7295,
+            "read_bytes": 1179648,
+            "write_bytes": 27183271,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "5qyQdR",
+      "observerStartUtc": "2026-09-06T06:19:59.181Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "176b88a9e9aa9516b0d117569c9cfa9e7a12c929c3d1b9f3bcde38f8760bfcee",
+      "evidenceSha256": "b3c829c1098ab3c8443b3b9e72d3f93e584d564112afd15e62ba114aa3634948",
+      "providerSha256": "601640b76c414fe6061dc7d34831984b830452ffd2159ab9160a7d9bdab5a17a",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 267.91716199999973,
+      "maximumSteadyInputMs": 73.42443099999946,
+      "maximumStartupInputMs": 13.935147000000143,
+      "maximumSelectionMs": 14.289721999999529,
+      "maximumObservationGapMs": 16.88360900000407,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38529.94502,
+      "activeCaptureCount": 3243,
+      "captureCount": 3910,
+      "cpuUs": {
+        "total": 31734688,
+        "user": 21876069,
+        "system": 9858619
+      },
+      "rssSnapshotBytes": 612773888,
+      "memoryPeakChargedBytes": 1281900544,
+      "memoryCurrentChargedBytes": 628662272,
+      "liveProcesses": [
+        {
+          "rssBytes": 3874816,
+          "io": {
+            "rchar": 26377,
+            "wchar": 11963865,
+            "syscr": 49,
+            "syscw": 150925,
+            "read_bytes": 2449408,
+            "write_bytes": 11963865,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "rssBytes": 608899072,
+          "io": {
+            "rchar": 241863776,
+            "wchar": 27457904,
+            "syscr": 22255,
+            "syscw": 7310,
+            "read_bytes": 0,
+            "write_bytes": 27186001,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "8UraCb",
+      "observerStartUtc": "2026-09-06T06:38:13.593Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "9feb3d88f09b6962c991d7b558d6e425aa4890971865f366a1e6c5cece299798",
+      "evidenceSha256": "1c05e89f6ee61d3669f3ecc1f4c7ca3e60e62ffc27aa33ab228243eebbec6331",
+      "providerSha256": "3b7d4d9672dcac24238521633ace6f6bcd04f8c639afe1ea0fc28c2c3b88d353",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 224.31854999999996,
+      "maximumSteadyInputMs": 25.963439999999537,
+      "maximumStartupInputMs": 13.81441199999972,
+      "maximumSelectionMs": 26.282556000000113,
+      "maximumObservationGapMs": 17.993830999999773,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37409.877989,
+      "activeCaptureCount": 3051,
+      "captureCount": 3667,
+      "cpuUs": {
+        "total": 25723504,
+        "user": 22464786,
+        "system": 3258717
+      },
+      "rssSnapshotBytes": 602550272,
+      "memoryPeakChargedBytes": 1264443392,
+      "memoryCurrentChargedBytes": 625401856,
+      "liveProcesses": [
+        {
+          "rssBytes": 602550272,
+          "io": {
+            "rchar": 241879781,
+            "wchar": 27450182,
+            "syscr": 22079,
+            "syscw": 7297,
+            "read_bytes": 36222464,
+            "write_bytes": 27183038,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "procSampleCount": 3221,
+      "maximumProcReadMs": 0.8044129999980214
+    },
+    {
+      "id": "ZvFFVd",
+      "observerStartUtc": "2026-09-06T06:47:18.335Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "3214b3dc40e5cb8fbac9c7f03dacfdb2784cb39d31b455bf98ed96c30b142ad7",
+      "evidenceSha256": "b7abebf1ccf43bda676618bf3c635b8855759cc763983f9bca8de6973e587fdb",
+      "providerSha256": "9b50b45927f6b294606af30e0d75e5e652cb35707554ca0fdf951d0efae830ca",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 327.8557639999999,
+      "maximumSteadyInputMs": 76.99047299999984,
+      "maximumStartupInputMs": 50.99195899999995,
+      "maximumSelectionMs": 63.72593700000289,
+      "maximumObservationGapMs": 18.33381600000007,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 40929.937368,
+      "activeCaptureCount": 3295,
+      "captureCount": 4076,
+      "cpuUs": {
+        "total": 57657585,
+        "user": 53670689,
+        "system": 3986895
+      },
+      "rssSnapshotBytes": 1302888448,
+      "memoryPeakChargedBytes": 1910489088,
+      "memoryCurrentChargedBytes": 1324539904,
+      "liveProcesses": [
+        {
+          "rssBytes": 1302888448,
+          "io": {
+            "rchar": 241892344,
+            "wchar": 27787272,
+            "syscr": 22480,
+            "syscw": 7246,
+            "read_bytes": 188416,
+            "write_bytes": 27517489,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "0bVOtq",
+      "observerStartUtc": "2026-09-06T07:04:36.045Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "446b6c9cec656e72bba7dabb672e859b8974279757a7c1edb5b256d99f572eeb",
+      "evidenceSha256": "7f90895056135476eebe3ec22b1982db421b55a3182f4ade62aec49cc0506a4b",
+      "providerSha256": "7a223f5c3b2abe6868b35a0c28580c2f76a06b5278dcca5c726584cd7d14890c",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 181.01418199999898,
+      "maximumSteadyInputMs": 26.636489999998958,
+      "maximumStartupInputMs": 14.761563000000024,
+      "maximumSelectionMs": 26.74145000000135,
+      "maximumObservationGapMs": 18.105365000000347,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38275.959038,
+      "activeCaptureCount": 3055,
+      "captureCount": 3724,
+      "cpuUs": {
+        "total": 29598433,
+        "user": 25910930,
+        "system": 3687502
+      },
+      "rssSnapshotBytes": 591470592,
+      "memoryPeakChargedBytes": 1224855552,
+      "memoryCurrentChargedBytes": 609173504,
+      "liveProcesses": [
+        {
+          "rssBytes": 591470592,
+          "io": {
+            "rchar": 241880308,
+            "wchar": 27456568,
+            "syscr": 22274,
+            "syscw": 7313,
+            "read_bytes": 428544,
+            "write_bytes": 27185032,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "PR6MBx",
+      "observerStartUtc": "2026-09-06T07:06:58.660Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "c0ee009072033d8a9d8f3c61514fbbe50464270b617336e0c3401810d144bd57",
+      "evidenceSha256": "a8c08f4d4433fba2d7539e1d1ba57f213688e76e543c283169c50580ece484c3",
+      "providerSha256": "ab9519ed15caab6f9f8db00174f446b8e90be2ed7ff8e496258fff614f4a7328",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 187.1264229999997,
+      "maximumSteadyInputMs": 115.53384300000107,
+      "maximumStartupInputMs": 14.593845999999758,
+      "maximumSelectionMs": 15.517255999999179,
+      "maximumObservationGapMs": 17.717789999999695,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38129.225557,
+      "activeCaptureCount": 3068,
+      "captureCount": 3718,
+      "cpuUs": {
+        "total": 28649096,
+        "user": 24988239,
+        "system": 3660857
+      },
+      "rssSnapshotBytes": 603545600,
+      "memoryPeakChargedBytes": 1250971648,
+      "memoryCurrentChargedBytes": 621588480,
+      "liveProcesses": [
+        {
+          "rssBytes": 603545600,
+          "io": {
+            "rchar": 241898467,
+            "wchar": 27465172,
+            "syscr": 22304,
+            "syscw": 7332,
+            "read_bytes": 0,
+            "write_bytes": 27193355,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Wk7U0i",
+      "observerStartUtc": "2026-09-06T07:10:23.553Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "a4fb78f33ec21355f2914e17b0ddd1851abf65f736b53c2c5417d23955d22e93",
+      "evidenceSha256": "3e2c503ab9e762a4577036e020e80268f25969ca71fd1366c7f3f224781310ca",
+      "providerSha256": "f6563d805abd37cdcde63bfd295de1a740e05264e50c7b4d1b70fc2b08cf9c32",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 126.068491,
+      "maximumSteadyInputMs": 14.58375199999864,
+      "maximumStartupInputMs": 14.054000999999516,
+      "maximumSelectionMs": 14.705331999999544,
+      "maximumObservationGapMs": 15.952492999999777,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37348.286523,
+      "activeCaptureCount": 3102,
+      "captureCount": 3698,
+      "cpuUs": {
+        "total": 24943235,
+        "user": 21758785,
+        "system": 3184449
+      },
+      "rssSnapshotBytes": 591814656,
+      "memoryPeakChargedBytes": 1275867136,
+      "memoryCurrentChargedBytes": 610779136,
+      "liveProcesses": [
+        {
+          "rssBytes": 591814656,
+          "io": {
+            "rchar": 241886033,
+            "wchar": 27470545,
+            "syscr": 22168,
+            "syscw": 7319,
+            "read_bytes": 0,
+            "write_bytes": 27202365,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "dyLBS2",
+      "observerStartUtc": "2026-09-06T07:17:33.041Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "464f0de34880d3e9303d43838f7a308a648e4a49624a16252cf183bbe81ab81d",
+      "evidenceSha256": "443031f6a734c39e95547ee11da95d48f91a8ebb9a91c0546c1c19a151f5c4ec",
+      "providerSha256": "d3c5d8e15e3c0ad9204072e2737047fc98ff091c61ad2a860e7e9fddce6d152d",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSelectionMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 160.2263039999998,
+      "maximumSteadyInputMs": 26.023560999999972,
+      "maximumStartupInputMs": 14.434366999999838,
+      "maximumSelectionMs": 62.16484700000001,
+      "maximumObservationGapMs": 16.45608700000048,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37082.710569,
+      "activeCaptureCount": 3116,
+      "captureCount": 3702,
+      "cpuUs": {
+        "total": 23759379,
+        "user": 20716315,
+        "system": 3043063
+      },
+      "rssSnapshotBytes": 592580608,
+      "memoryPeakChargedBytes": 1273954304,
+      "memoryCurrentChargedBytes": 611966976,
+      "liveProcesses": [
+        {
+          "rssBytes": 592580608,
+          "io": {
+            "rchar": 241068903,
+            "wchar": 27450633,
+            "syscr": 22089,
+            "syscw": 7305,
+            "read_bytes": 0,
+            "write_bytes": 27186184,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "2SY0O7",
+      "observerStartUtc": "2026-09-06T07:23:04.226Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "e9f5fd86b9bf0727d78082c59420a4cee413e46f3372954f2755cc734a8f652e",
+      "evidenceSha256": "ca12fc017bdafc7485c5a9ee775cf489a2d2aa7d1b148b3b0bf0e2822dfe8eb5",
+      "providerSha256": "79b008a3a4a80dcd5f24da5a5ce4652fbebaca39854d044bfe7db2143e633b05",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 139.50313499999902,
+      "maximumSteadyInputMs": 15.333674999999857,
+      "maximumStartupInputMs": 14.096303000000262,
+      "maximumSelectionMs": 15.619667999999365,
+      "maximumObservationGapMs": 16.48211700000047,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37632.171898,
+      "activeCaptureCount": 3053,
+      "captureCount": 3640,
+      "cpuUs": {
+        "total": 26104463,
+        "user": 22601541,
+        "system": 3502921
+      },
+      "rssSnapshotBytes": 605519872,
+      "memoryPeakChargedBytes": 1255796736,
+      "memoryCurrentChargedBytes": 624070656,
+      "liveProcesses": [
+        {
+          "rssBytes": 605519872,
+          "io": {
+            "rchar": 241060470,
+            "wchar": 27453691,
+            "syscr": 22204,
+            "syscw": 7292,
+            "read_bytes": 0,
+            "write_bytes": 27186388,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "KFKGtn",
+      "observerStartUtc": "2026-09-06T07:24:52.614Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "e9f5fd86b9bf0727d78082c59420a4cee413e46f3372954f2755cc734a8f652e",
+      "evidenceSha256": "dc7704eca8ee2d35be67ddf96b3992adf07553ed379f7e3c5b52569492bf3c4e",
+      "providerSha256": "f74839fceee8d68a1b73a0daa1658145c544af7e24a4cce18d7f95e3d8986309",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 125.15054299999974,
+      "maximumSteadyInputMs": 24.85823800000071,
+      "maximumStartupInputMs": 13.65635999999995,
+      "maximumSelectionMs": 15.338470999999117,
+      "maximumObservationGapMs": 16.395736999999826,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37074.736159,
+      "activeCaptureCount": 3091,
+      "captureCount": 3680,
+      "cpuUs": {
+        "total": 23719244,
+        "user": 20620356,
+        "system": 3098888
+      },
+      "rssSnapshotBytes": 585007104,
+      "memoryPeakChargedBytes": 1267916800,
+      "memoryCurrentChargedBytes": 603648000,
+      "liveProcesses": [
+        {
+          "rssBytes": 585007104,
+          "io": {
+            "rchar": 241064917,
+            "wchar": 27452388,
+            "syscr": 22063,
+            "syscw": 7305,
+            "read_bytes": 0,
+            "write_bytes": 27186249,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "tQnapb",
+      "observerStartUtc": "2026-09-06T07:26:16.864Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "e9f5fd86b9bf0727d78082c59420a4cee413e46f3372954f2755cc734a8f652e",
+      "evidenceSha256": "26f468f1eb99bca91c5866ee6055e199208b325ca600b0c2dbc3d81f8223f7fb",
+      "providerSha256": "a9d03e33c13810700917a887b348b4517a5d033ef94336437dfdbc4cf39bffb1",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": true,
+      "seededSession": true,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 151.10188300000118,
+      "maximumSteadyInputMs": 26.03383500000018,
+      "maximumStartupInputMs": 13.997830999999678,
+      "maximumSelectionMs": 26.074769999999262,
+      "maximumObservationGapMs": 16.41371900000013,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37299.325142,
+      "activeCaptureCount": 3092,
+      "captureCount": 3663,
+      "cpuUs": {
+        "total": 24735201,
+        "user": 21454148,
+        "system": 3281053
+      },
+      "rssSnapshotBytes": 667439104,
+      "memoryPeakChargedBytes": 1289969664,
+      "memoryCurrentChargedBytes": 651784192,
+      "liveProcesses": [
+        {
+          "rssBytes": 658710528,
+          "io": {
+            "rchar": 260283180,
+            "wchar": 27197263,
+            "syscr": 22258,
+            "syscw": 7603,
+            "read_bytes": 0,
+            "write_bytes": 26882857,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "rssBytes": 8728576,
+          "io": {
+            "rchar": 164875,
+            "wchar": 2652,
+            "syscr": 18,
+            "syscw": 120,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "codeModeHostSha256": "60bf16414be5333f09ff082540082304c7352931ef64bdeb170d4c35a82e6ef8"
+    },
+    {
+      "id": "42duv5",
+      "observerStartUtc": "2026-09-06T07:37:13.868Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "0d7787e995c6bc79713cecf22c71ad747fa49bf03c2ec776e17d42d7141fc43a",
+      "evidenceSha256": "34f8471705461989a0253beda1ffd820de0fe4c16ad38d73090ff5c0f6355544",
+      "providerSha256": "63050520cca03f23e3cd8f73b9ecaefdd78ab2a5bf586af7167ca328446bcf52",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 126.32147900000018,
+      "maximumSteadyInputMs": 26.065732999999454,
+      "maximumStartupInputMs": 25.15708899999936,
+      "maximumSelectionMs": 25.674063999998907,
+      "maximumObservationGapMs": 17.861755999999332,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37358.053576,
+      "activeCaptureCount": 3075,
+      "captureCount": 3717,
+      "cpuUs": {
+        "total": 25967115,
+        "user": 22604282,
+        "system": 3362832
+      },
+      "rssSnapshotBytes": 592752640,
+      "memoryPeakChargedBytes": 1260507136,
+      "memoryCurrentChargedBytes": 610443264,
+      "liveProcesses": [
+        {
+          "rssBytes": 592752640,
+          "io": {
+            "rchar": 241067388,
+            "wchar": 27454882,
+            "syscr": 22158,
+            "syscw": 7322,
+            "read_bytes": 8192,
+            "write_bytes": 27184774,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "16AYGL",
+      "observerStartUtc": "2026-09-06T07:38:47.524Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidenceSha256": "b4bc3fa0c2a988e5ca97636d480f9b137a553e5bda093272e7cfd253e58b5796",
+      "providerSha256": "79bb45b20ab447bc76281a5548719f3ac8dc810829ee9b6c8cfd417cfc43a136",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs",
+        "maximumSteadyInputMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 258.46637999999984,
+      "maximumSteadyInputMs": 78.35370200000034,
+      "maximumStartupInputMs": 26.23079300000063,
+      "maximumSelectionMs": 15.627932999999757,
+      "maximumObservationGapMs": 18.289859000000433,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38286.873796,
+      "activeCaptureCount": 3062,
+      "captureCount": 3726,
+      "cpuUs": {
+        "total": 29935688,
+        "user": 26218469,
+        "system": 3717219
+      },
+      "rssSnapshotBytes": 611528704,
+      "memoryPeakChargedBytes": 1227837440,
+      "memoryCurrentChargedBytes": 629686272,
+      "liveProcesses": [
+        {
+          "rssBytes": 611528704,
+          "io": {
+            "rchar": 241874289,
+            "wchar": 27451817,
+            "syscr": 22274,
+            "syscw": 7305,
+            "read_bytes": 0,
+            "write_bytes": 27183294,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "NNlRE0",
+      "observerStartUtc": "2026-09-06T07:40:23.376Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "0d7787e995c6bc79713cecf22c71ad747fa49bf03c2ec776e17d42d7141fc43a",
+      "evidenceSha256": "f15acc6985f96306549670265b67b5290fa1974dda1e3599afeb5606aa943a9e",
+      "providerSha256": "2f90f4092a31a5c731a85d73b2d1d62946b7bcde93b4f7fed250177ed2cf1198",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSteadyInputMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 162.40895799999998,
+      "maximumSteadyInputMs": 40.99026199999935,
+      "maximumStartupInputMs": 14.954662000000098,
+      "maximumSelectionMs": 26.673571999999695,
+      "maximumObservationGapMs": 23.830214999999953,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38334.782155,
+      "activeCaptureCount": 3095,
+      "captureCount": 3775,
+      "cpuUs": {
+        "total": 29850040,
+        "user": 26144026,
+        "system": 3706013
+      },
+      "rssSnapshotBytes": 582643712,
+      "memoryPeakChargedBytes": 1205338112,
+      "memoryCurrentChargedBytes": 601542656,
+      "liveProcesses": [
+        {
+          "rssBytes": 582643712,
+          "io": {
+            "rchar": 241066951,
+            "wchar": 27458868,
+            "syscr": 22331,
+            "syscw": 7329,
+            "read_bytes": 0,
+            "write_bytes": 27184912,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "qlGGRY",
+      "observerStartUtc": "2026-09-06T07:43:06.574Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "209af7a6be18de2370ac30a141cdfade24a2c5588fdda969ae5b750a65252bda",
+      "evidenceSha256": "74ad07bde4911b0138e61c9c5e6f8f6d2b842fc4c7d0353b6e1b8ee4850c8d35",
+      "providerSha256": "8e4edd02183cbc5e63ae3fdefdf34443a9a725a7c8a4a76084cef9ec8e5aad24",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 126.09733199999937,
+      "maximumSteadyInputMs": 38.51117999999951,
+      "maximumStartupInputMs": 14.207610999999815,
+      "maximumSelectionMs": 15.04250999999931,
+      "maximumObservationGapMs": 17.157514999999876,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38031.753131000005,
+      "activeCaptureCount": 3057,
+      "captureCount": 3682,
+      "cpuUs": {
+        "total": 28259560,
+        "user": 24649418,
+        "system": 3610142
+      },
+      "rssSnapshotBytes": 616038400,
+      "memoryPeakChargedBytes": 1260474368,
+      "memoryCurrentChargedBytes": 633774080,
+      "liveProcesses": [
+        {
+          "rssBytes": 616038400,
+          "io": {
+            "rchar": 241066817,
+            "wchar": 27471816,
+            "syscr": 22279,
+            "syscw": 7321,
+            "read_bytes": 0,
+            "write_bytes": 27201971,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "gIda88",
+      "observerStartUtc": "2026-09-06T07:52:28.637Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "be28a7b0f6bfcaa292e8302c388d76afc43ebe11763ed0e00005e34709d96ffa",
+      "evidenceSha256": "6c3a23182fde94f1c9d6d739fb9a7060a047c3ee577aeb21a2fa843d7f22a8cd",
+      "providerSha256": "77d6839e233fed9347de08be32547d7c022cc3d06353c963e9ddb0eb5ed122d5",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs",
+        "maximumSelectionMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 166.41149399999995,
+      "maximumSteadyInputMs": 28.31094999999914,
+      "maximumStartupInputMs": 15.966393000000608,
+      "maximumSelectionMs": 80.56250600000021,
+      "maximumObservationGapMs": 21.70364999999947,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 39234.945896000005,
+      "activeCaptureCount": 3112,
+      "captureCount": 3872,
+      "cpuUs": {
+        "total": 33424049,
+        "user": 29348503,
+        "system": 4075545
+      },
+      "rssSnapshotBytes": 612278272,
+      "memoryPeakChargedBytes": 1240166400,
+      "memoryCurrentChargedBytes": 629817344,
+      "liveProcesses": [
+        {
+          "rssBytes": 612278272,
+          "io": {
+            "rchar": 241088799,
+            "wchar": 27465076,
+            "syscr": 22423,
+            "syscw": 7374,
+            "read_bytes": 4260864,
+            "write_bytes": 27185543,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "77i3qe",
+      "observerStartUtc": "2026-09-06T07:55:39.528Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "8c6bef6c59fafd74dfa3f311f09871b203a3a4d1557945546bc989bcf9cbdced",
+      "evidenceSha256": "acd1aff34dc0b34012235bf4d69dc2d4cad60a829e560f5ab3299db6679a1d7a",
+      "providerSha256": "f8cda0fc445dcd8117f7890a4e71ceb56c1076f32765aa670e0345209cba75f4",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 167.1400849999991,
+      "maximumSteadyInputMs": 27.692597000001115,
+      "maximumStartupInputMs": 15.255623000000924,
+      "maximumSelectionMs": 26.62278299999889,
+      "maximumObservationGapMs": 17.588541999999507,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 39359.588594,
+      "activeCaptureCount": 3076,
+      "captureCount": 3841,
+      "cpuUs": {
+        "total": 34051866,
+        "user": 29865463,
+        "system": 4186402
+      },
+      "rssSnapshotBytes": 586899456,
+      "memoryPeakChargedBytes": 1221214208,
+      "memoryCurrentChargedBytes": 603815936,
+      "liveProcesses": [
+        {
+          "rssBytes": 586899456,
+          "io": {
+            "rchar": 241090365,
+            "wchar": 27465269,
+            "syscr": 22488,
+            "syscw": 7369,
+            "read_bytes": 1460736,
+            "write_bytes": 27184870,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "TCpo8u",
+      "observerStartUtc": "2026-09-06T07:58:29.754Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "4aef3884c44a7c2edaed8573e29c2c2ef4db8ed53035dcd79fa1e219ec9a8465",
+      "evidenceSha256": "3fa15dba99a0653fc9d711fca004994dbed4494a36c32ac1d3665eb223ace27d",
+      "providerSha256": "214b57d582542774bbe3774edef886a46f7a89755f66d718bc13d110744d09ea",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 156.68022800000108,
+      "maximumSteadyInputMs": 42.19275199999902,
+      "maximumStartupInputMs": 27.126946000000316,
+      "maximumSelectionMs": 40.03576599999906,
+      "maximumObservationGapMs": 20.493565999997372,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 39280.258503,
+      "activeCaptureCount": 3067,
+      "captureCount": 3784,
+      "cpuUs": {
+        "total": 33731931,
+        "user": 29750626,
+        "system": 3981305
+      },
+      "rssSnapshotBytes": 608526336,
+      "memoryPeakChargedBytes": 1234161664,
+      "memoryCurrentChargedBytes": 626495488,
+      "liveProcesses": [
+        {
+          "rssBytes": 608526336,
+          "io": {
+            "rchar": 241086875,
+            "wchar": 27484728,
+            "syscr": 22374,
+            "syscw": 7374,
+            "read_bytes": 1228288,
+            "write_bytes": 27205325,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "9LkXjG",
+      "observerStartUtc": "2026-09-06T08:27:56.950Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "b2bb2d4d177c6281ec64e5c8c022709840b7378a24c6fac241e9c24caa5cf5bd",
+      "evidenceSha256": "962af57c170427c16f6620b8e2b0f99bafcecc813cbb5db191ce239e96bef103",
+      "providerSha256": "54e289c78200e2cf995b331c81634f7777237c193aa4abdaa904da298ca767a9",
+      "verdict": "FAIL",
+      "breaches": [
+        "maximumSpinnerFrameMs"
+      ],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 270.0532810000004,
+      "maximumSteadyInputMs": 26.152412000001277,
+      "maximumStartupInputMs": 14.645461000000068,
+      "maximumSelectionMs": 15.333925999999337,
+      "maximumObservationGapMs": 17.794543999999405,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37926.012984,
+      "activeCaptureCount": 3035,
+      "captureCount": 3680,
+      "cpuUs": {
+        "total": 27938893,
+        "user": 24468289,
+        "system": 3470603
+      },
+      "rssSnapshotBytes": 603385856,
+      "memoryPeakChargedBytes": 1252249600,
+      "memoryCurrentChargedBytes": 621928448,
+      "liveProcesses": [
+        {
+          "rssBytes": 603385856,
+          "io": {
+            "rchar": 241073348,
+            "wchar": 27456914,
+            "syscr": 22214,
+            "syscw": 7315,
+            "read_bytes": 1507840,
+            "write_bytes": 27186088,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "6g8LEG",
+      "observerStartUtc": "2026-09-06T08:38:12.666Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "d1369f3b0ca73b5ca9ce627a4a545639715e876ed1f91e1baa95557bd5ddada9",
+      "evidenceSha256": "c4fa3f00469d607de44f962ef6e24405876808e7b0e6ccdd884cef9c895443e5",
+      "providerSha256": "21cdc2ff6dad7008315f821c1676e94a657dcfeaffb08254aea5abc1570d0cb6",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 139.46343100000013,
+      "maximumSteadyInputMs": 38.6904799999993,
+      "maximumStartupInputMs": 15.160767000001215,
+      "maximumSelectionMs": 27.84522300000026,
+      "maximumObservationGapMs": 28.773679999999786,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38344.365855,
+      "activeCaptureCount": 3063,
+      "captureCount": 3756,
+      "cpuUs": {
+        "total": 29430413,
+        "user": 25974261,
+        "system": 3456152
+      },
+      "rssSnapshotBytes": 590696448,
+      "memoryPeakChargedBytes": 1266057216,
+      "memoryCurrentChargedBytes": 608600064,
+      "liveProcesses": [
+        {
+          "rssBytes": 590696448,
+          "io": {
+            "rchar": 241081755,
+            "wchar": 27498507,
+            "syscr": 22362,
+            "syscw": 7333,
+            "read_bytes": 522752,
+            "write_bytes": 27225450,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "periodicMeasures": {
+        "result-scan": {
+          "count": 14,
+          "totalMs": 45.47990900000514,
+          "maximumMs": 31.82612700000027
+        },
+        "result-schedule files=0": {
+          "count": 14,
+          "totalMs": 0.3172780000113562,
+          "maximumMs": 0.11417299999993702
+        },
+        "foreground-refresh": {
+          "count": 50,
+          "totalMs": 563.5743810000058,
+          "maximumMs": 35.91572100000121
+        }
+      },
+      "procSampleCount": 3246,
+      "maximumProcReadMs": 0.15119699999922886
+    },
+    {
+      "id": "7YhlYi",
+      "observerStartUtc": "2026-09-06T08:41:05.932Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "36679615ff69d9b0ecef45496bde4c88ea238fd29d02ea187c23567078053fef",
+      "evidenceSha256": "c4c1535cf3c1ee3c5587c6639088c7c2a65318f10d89acf75ca8bf2dce0ad0ed",
+      "providerSha256": "07a074af9f0480e3439ebe68ad2e91bd8773971d4acc98e09a328ba9b3d533da",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 121.023333000001,
+      "maximumSteadyInputMs": 26.71773200000098,
+      "maximumStartupInputMs": 14.743555000000015,
+      "maximumSelectionMs": 15.430480999999418,
+      "maximumObservationGapMs": 17.81165299999975,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 38182.768354,
+      "activeCaptureCount": 3039,
+      "captureCount": 3679,
+      "cpuUs": {
+        "total": 28418574,
+        "user": 24942045,
+        "system": 3476528
+      },
+      "rssSnapshotBytes": 596054016,
+      "memoryPeakChargedBytes": 1229225984,
+      "memoryCurrentChargedBytes": 613826560,
+      "liveProcesses": [
+        {
+          "rssBytes": 596054016,
+          "io": {
+            "rchar": 241080349,
+            "wchar": 27572447,
+            "syscr": 22282,
+            "syscw": 7327,
+            "read_bytes": 540672,
+            "write_bytes": 27300651,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "periodicMeasures": {
+        "result-scan": {
+          "count": 14,
+          "totalMs": 14.504914999997709,
+          "maximumMs": 4.479913000002853
+        },
+        "result-schedule files=0": {
+          "count": 14,
+          "totalMs": 0.32843999999204243,
+          "maximumMs": 0.13390900000013062
+        },
+        "foreground-refresh": {
+          "count": 49,
+          "totalMs": 547.7237579999928,
+          "maximumMs": 50.9588610000028
+        },
+        "nested-projection": {
+          "count": 49,
+          "totalMs": 531.8706169999932,
+          "maximumMs": 50.60151500000211
+        },
+        "registry-claim-owner-fsync": {
+          "count": 53,
+          "totalMs": 510.8466139999837,
+          "maximumMs": 49.669920000000275
+        },
+        "current-agents": {
+          "count": 49,
+          "totalMs": 15.525265000011132,
+          "maximumMs": 1.0956480000022566
+        }
+      },
+      "procSampleCount": 3212,
+      "maximumProcReadMs": 0.22467800000595162
+    },
+    {
+      "id": "6CBaI8",
+      "observerStartUtc": "2026-09-06T08:45:53.836Z",
+      "purpose": "diagnostic",
+      "sourceDiffSha256": "b4a48f8bdcfdd49d3b3803bfe8c5cab8c7d65bfdf4c90151e95d0c9683a161d0",
+      "evidenceSha256": "81fcb77409be4b5a094e9422b8317df905de7a72b063543241507b5932649979",
+      "providerSha256": "50401536d332c2779ce498c079e8b9a8e9158151d72f5b120e5d64e43965821f",
+      "verdict": "NOT_ACCEPTANCE",
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 125.32078200000069,
+      "maximumSteadyInputMs": 25.80671699999948,
+      "maximumStartupInputMs": 14.311494999999923,
+      "maximumSelectionMs": 14.813920000000508,
+      "maximumObservationGapMs": 18.891327999999703,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37000.41317299999,
+      "activeCaptureCount": 3079,
+      "captureCount": 3764,
+      "cpuUs": {
+        "total": 25758874,
+        "user": 22629939,
+        "system": 3128935
+      },
+      "rssSnapshotBytes": 593018880,
+      "memoryPeakChargedBytes": 1262448640,
+      "memoryCurrentChargedBytes": 610897920,
+      "liveProcesses": [
+        {
+          "rssBytes": 593018880,
+          "io": {
+            "rchar": 241058280,
+            "wchar": 27529939,
+            "syscr": 22047,
+            "syscw": 7255,
+            "read_bytes": 678912,
+            "write_bytes": 27263494,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "periodicMeasures": {
+        "result-scan": {
+          "count": 13,
+          "totalMs": 7.948429000009128,
+          "maximumMs": 2.102127999998629
+        },
+        "result-schedule files=0": {
+          "count": 13,
+          "totalMs": 0.12037200000122539,
+          "maximumMs": 0.024145999999745982
+        },
+        "foreground-refresh": {
+          "count": 48,
+          "totalMs": 26.89368199999808,
+          "maximumMs": 0.9554369999987102
+        },
+        "nested-projection": {
+          "count": 48,
+          "totalMs": 16.05889900000693,
+          "maximumMs": 0.8318619999990915
+        },
+        "current-agents": {
+          "count": 48,
+          "totalMs": 10.436515999987023,
+          "maximumMs": 0.3541220000006433
+        }
+      },
+      "procSampleCount": 3264,
+      "maximumProcReadMs": 0.17158399999971152
+    },
+    {
+      "id": "PaHqrD",
+      "observerStartUtc": "2026-09-06T08:47:17.205Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "0e88e8a44e454ce01ed241eed1a98dd6584cdfcea6b1e0f2556d709786c7a5ae",
+      "evidenceSha256": "78e8d864e4b68e62f0d67c98f250bc51883a0056d382b38dfa078b78f7ac63a6",
+      "providerSha256": "6ff96c768d6493439f26e586c004d6e0b01da2826f53ee5cddc640fd18979266",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 126.40907900000093,
+      "maximumSteadyInputMs": 25.686023000002024,
+      "maximumStartupInputMs": 13.496055000000524,
+      "maximumSelectionMs": 13.819618000001356,
+      "maximumObservationGapMs": 15.932775999999649,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37039.654549,
+      "activeCaptureCount": 3092,
+      "captureCount": 3652,
+      "cpuUs": {
+        "total": 22535590,
+        "user": 19774722,
+        "system": 2760868
+      },
+      "rssSnapshotBytes": 611377152,
+      "memoryPeakChargedBytes": 1267195904,
+      "memoryCurrentChargedBytes": 629964800,
+      "liveProcesses": [
+        {
+          "rssBytes": 611377152,
+          "io": {
+            "rchar": 241054083,
+            "wchar": 27444394,
+            "syscr": 22054,
+            "syscw": 7247,
+            "read_bytes": 1137664,
+            "write_bytes": 27179118,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "Rpps9R",
+      "observerStartUtc": "2026-09-06T08:48:26.348Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "0e88e8a44e454ce01ed241eed1a98dd6584cdfcea6b1e0f2556d709786c7a5ae",
+      "evidenceSha256": "5e5b4c255950d74513233a1a75cd1f84449f24854c9bbeeb07dad327fde6a9f2",
+      "providerSha256": "a3b3a3eb927543f83634f5e4964a48d5ef8720386031f78c5718951b93c45af7",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": true,
+      "seededSession": true,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 126.01926099999946,
+      "maximumSteadyInputMs": 37.909388000000035,
+      "maximumStartupInputMs": 13.765599999999722,
+      "maximumSelectionMs": 14.159230000001116,
+      "maximumObservationGapMs": 16.146523000000343,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37307.063666,
+      "activeCaptureCount": 3118,
+      "captureCount": 3683,
+      "cpuUs": {
+        "total": 23247954,
+        "user": 20292626,
+        "system": 2955328
+      },
+      "rssSnapshotBytes": 653545472,
+      "memoryPeakChargedBytes": 1283276800,
+      "memoryCurrentChargedBytes": 637489152,
+      "liveProcesses": [
+        {
+          "rssBytes": 644796416,
+          "io": {
+            "rchar": 260288407,
+            "wchar": 27191839,
+            "syscr": 22315,
+            "syscw": 7565,
+            "read_bytes": 561152,
+            "write_bytes": 26875803,
+            "cancelled_write_bytes": 0
+          }
+        },
+        {
+          "rssBytes": 8749056,
+          "io": {
+            "rchar": 164875,
+            "wchar": 2652,
+            "syscr": 18,
+            "syscw": 120,
+            "read_bytes": 0,
+            "write_bytes": 0,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ],
+      "codeModeHostSha256": "60bf16414be5333f09ff082540082304c7352931ef64bdeb170d4c35a82e6ef8"
+    },
+    {
+      "id": "i21pqi",
+      "observerStartUtc": "2026-09-06T08:49:48.824Z",
+      "purpose": "frozen-gate-sample",
+      "sourceDiffSha256": "0e88e8a44e454ce01ed241eed1a98dd6584cdfcea6b1e0f2556d709786c7a5ae",
+      "evidenceSha256": "d33f68d87696169d1dec69c60d840d97fdaa108b2718a52877eb609c07c63cb0",
+      "providerSha256": "f4144eaafd532cf474dd3098946e9813da97f91382be3a41c22571cdb9f68c62",
+      "verdict": "PASS",
+      "breaches": [],
+      "suite": true,
+      "codeMode": false,
+      "seededSession": false,
+      "terminal": [
+        120,
+        40
+      ],
+      "completedChildTools": 2,
+      "reapedChildren": 2,
+      "namingRequests": 1,
+      "namesPersisted": 1,
+      "automaticUsageRefreshes": 1,
+      "maximumSpinnerFrameMs": 137.18385900000067,
+      "maximumSteadyInputMs": 25.970519000000422,
+      "maximumStartupInputMs": 13.945262999999613,
+      "maximumSelectionMs": 25.955878000000666,
+      "maximumObservationGapMs": 22.25319300000001,
+      "maximumSpinnerAbsenceMs": 0,
+      "activeDurationMs": 37302.567693000005,
+      "activeCaptureCount": 3088,
+      "captureCount": 3654,
+      "cpuUs": {
+        "total": 23540538,
+        "user": 20708915,
+        "system": 2831622
+      },
+      "rssSnapshotBytes": 603226112,
+      "memoryPeakChargedBytes": 1269948416,
+      "memoryCurrentChargedBytes": 621821952,
+      "liveProcesses": [
+        {
+          "rssBytes": 603226112,
+          "io": {
+            "rchar": 241054802,
+            "wchar": 27446835,
+            "syscr": 22073,
+            "syscw": 7251,
+            "read_bytes": 8192,
+            "write_bytes": 27179114,
+            "cancelled_write_bytes": 0
+          }
+        }
+      ]
+    }
+  ]
+}

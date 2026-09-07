@@ -1,10 +1,9 @@
-import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import type { projectCurrentContext } from "../../../../context-management/index.js";
-import { isRuntimeNumber } from "../../../../shared/runtime-type.js";
+import type { projectCurrentContext } from "../../../../context-management/index.ts";
+import { isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import type { AgentConfig } from "../../agents/agents.ts";
 import { getArtifactsDir } from "../../shared/artifacts.ts";
 import { createForkContextResolver, forkedChildRequiresThinkingOff } from "../../shared/fork-context.ts";
@@ -19,6 +18,7 @@ import {
 import type { AsyncExecutionContext } from "../background/resolved-task.ts";
 import { resolveCurrentSubagentCapabilityCeiling } from "../shared/capability-ceiling.ts";
 import type { ContextMode } from "../shared/context-mode.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import { normalizeParentModel, type ParentModel } from "../shared/model-fallback.ts";
 import {
 	createNestedRoute,
@@ -29,21 +29,16 @@ import { SUBAGENT_PARENT_PHYSICAL_SESSION_ENV, SUBAGENT_PARENT_SESSION_ENV } fro
 import { validateToolBudgetConfig } from "../shared/tool-budget.ts";
 import {
 	type AgentToolResult,
+	deriveLaunchRunId,
 	type ExecutorDeps,
 	errorResult,
-	type LaunchIdentityScope,
 	type PreparedLaunch,
 	type SubagentParamsLike,
+	taskInputs,
 } from "./executor-contract.ts";
-import { prepareLaunchModelPlan, projectionTokenBudget, taskInputs } from "./launch-model-planning.ts";
+import type { prepareLaunchModelPlan } from "./launch-model-planning.ts";
 
-/** Stable launch identity shared by the public tool, storage, and session-wide governor. */
-export function deriveLaunchRunId(toolCallId: string, scope?: LaunchIdentityScope): string {
-	const hash = createHash("sha256");
-	if (scope) hash.update(JSON.stringify([scope.sessionId, scope.ownerAgentPath]));
-	hash.update("\0").update(toolCallId);
-	return hash.digest("hex").slice(0, 12);
-}
+const loadModelPlanning = deferredModule(() => import("./launch-model-planning.ts"));
 
 function requestedMode(params: SubagentParamsLike): "single" | "parallel" {
 	return params.tasks?.length ? "parallel" : "single";
@@ -66,6 +61,7 @@ export function attachContextProjection(
 		data.params.contextProjection = undefined;
 		if (!projectContext) return;
 		if (data.context === "fork" && data.rawForkByIndex.every(Boolean)) return;
+		const { projectionTokenBudget } = yield* Effect.promise(loadModelPlanning);
 		const maxTokens = projectionTokenBudget(data);
 		if (maxTokens <= 0) return;
 		const audience = data.context === "fork" ? "agent-fork" : "agent-fresh";
@@ -245,9 +241,10 @@ export async function prepareLaunch(
 	const context = contextFor(params);
 	const capabilityCeiling = resolveCurrentSubagentCapabilityCeiling(currentSessionId);
 	const maxSubagentDepth = resolveCurrentMaxSubagentDepth();
-	let modelPlan: ReturnType<typeof prepareLaunchModelPlan>;
+	let modelPlan: Awaited<ReturnType<typeof prepareLaunchModelPlan>>;
 	try {
-		modelPlan = prepareLaunchModelPlan({
+		const { prepareLaunchModelPlan } = await loadModelPlanning();
+		modelPlan = await prepareLaunchModelPlan({
 			runId,
 			params,
 			agents,

@@ -11,8 +11,8 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "@earendil-works/pi-tui";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../shared/runtime-type.js";
-import { TRANSCRIPT_MARKER } from "./transcript.js";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../shared/runtime-type.ts";
+import { TRANSCRIPT_MARKER } from "./transcript.ts";
 
 export const HIDDEN_THINKING_LABEL = `${TRANSCRIPT_MARKER} thoughts`;
 const VISIBLE_THINKING_PREFIX = `${HIDDEN_THINKING_LABEL}: `;

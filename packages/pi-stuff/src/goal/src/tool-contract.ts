@@ -1,11 +1,11 @@
 /** Stateless terminal Goal Tool schemas and Tool Activity projection. */
 
 import { Type } from "typebox";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import { activityKey, singleActivity } from "../../tool-display/activity.js";
-import type { SuiteToolPresentation } from "../../tool-display/contract.js";
-import { safeGoalMenuText } from "./menu.js";
-import type { GoalCompletionEvidence } from "./safety.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import { activityKey, singleActivity } from "../../tool-display/activity.ts";
+import type { SuiteToolPresentation } from "../../tool-display/contract.ts";
+import { safeGoalMenuText } from "./menu.ts";
+import type { GoalCompletionEvidence } from "./safety.ts";
 
 export interface GoalCompleteDetails {
 	goal: string;

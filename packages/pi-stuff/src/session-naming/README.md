@@ -31,6 +31,11 @@ policy, and the primary naming model.
 - Produces bounded two-to-four-word English names.
 - Uses bounded, redacted conversation text without Tools.
 
+Message selection walks backward only until it finds the six most recent user/assistant messages, then restores
+chronological order. The first short exchange still requires a user followed by an assistant. No history cache is
+retained; [measurements](../../../../docs/reports/history-selection-cost-2026-09-06.md) distinguish selector cost from
+Host branch construction and naming-model work.
+
 ## Documentation
 
 - [Session Naming guide](../../../../docs/capabilities/session-naming.md)

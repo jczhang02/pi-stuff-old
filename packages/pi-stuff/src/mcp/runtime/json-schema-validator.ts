@@ -7,7 +7,7 @@ import type {
 import { Ajv } from "ajv";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import formatsModule from "ajv-formats";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 
 type SchemaDialect = { status: "unstamped" } | { status: "stamped"; uri: string };
 

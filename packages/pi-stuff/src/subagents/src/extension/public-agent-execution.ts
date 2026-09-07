@@ -1,7 +1,8 @@
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import type { AgentWorkOrigin } from "../../../conversation-ui/index.js";
+import type { AgentWorkOrigin } from "../../../conversation-ui/index.ts";
 import type { SubagentExecutionHooks, SubagentParamsLike } from "../runs/foreground/executor-contract.ts";
+import { deferredModule } from "../runs/shared/deferred-module.ts";
 import { PI_STUFF_AGENT_PATH_ENV } from "../runs/shared/pi-args.ts";
 import {
 	type AgentExecutionCoordinatorPort,
@@ -70,17 +71,7 @@ export type ExecutePublicAgent = (
 	parentRunOrigin: AgentWorkOrigin,
 ) => Promise<AgentEngineResult>;
 
-let executorModulePromise: Promise<typeof import("../runs/foreground/subagent-executor.ts")> | undefined;
-
-export function loadSubagentExecutorModule(): Promise<typeof import("../runs/foreground/subagent-executor.ts")> {
-	if (!executorModulePromise) {
-		executorModulePromise = import("../runs/foreground/subagent-executor.ts").catch((error) => {
-			executorModulePromise = undefined;
-			throw error;
-		});
-	}
-	return executorModulePromise;
-}
+export const loadSubagentExecutorModule = deferredModule(() => import("../runs/foreground/subagent-executor.ts"));
 
 export function projectPublicAgentFailure(params: PublicAgentParams, message: string): AgentEngineResult {
 	return projectEngineResult(params, {
@@ -250,7 +241,7 @@ export async function runPublicAgent(
 			);
 		}
 	}
-	const { deriveLaunchRunId, resolveLegacyAgentParams, resolveResumeTargetRunId } = await loadSubagentExecutorModule();
+	const { deriveLaunchRunId, loadAgentControls } = await loadSubagentExecutorModule();
 	if (sessionChanged(runtime, requestedRoot.sessionEpoch, requestedSessionId)) {
 		return projectPublicAgentFailure(params, "Agent request cancelled because the parent session ended or changed.");
 	}
@@ -269,18 +260,29 @@ export async function runPublicAgent(
 	const invocationEpoch = launchRoot.sessionEpoch;
 	const invocationSessionId = runtime.state.currentSessionId;
 	let targetParams = params;
+	let controls: Awaited<ReturnType<typeof loadAgentControls>> | undefined;
 	if (params.action === "resume" || params.action === "steer" || params.action === "stop") {
+		controls = await loadAgentControls();
+		if (sessionChanged(runtime, invocationEpoch, invocationSessionId)) {
+			return projectPublicAgentFailure(
+				params,
+				"Agent request cancelled because the parent session ended or changed.",
+			);
+		}
 		try {
-			targetParams = resolveLegacyAgentParams(params, runtime.state);
+			targetParams = controls.resolveLegacyAgentParams(params, runtime.state);
 		} catch (error) {
 			return projectPublicAgentFailure(params, error instanceof Error ? error.message : String(error));
 		}
 	}
 	const nestedControl = await routeLiveNestedAgentControl(targetParams, runtime.state, signal, { parentRunOrigin });
 	if (nestedControl) return projectEngineResult(params, nestedControl);
+	if (sessionChanged(runtime, invocationEpoch, invocationSessionId)) {
+		return projectPublicAgentFailure(params, "Agent request cancelled because the parent session ended or changed.");
+	}
 	let resumeTargetRunId: string | undefined;
 	try {
-		resumeTargetRunId = resolveResumeTargetRunId(targetParams, runtime.state);
+		resumeTargetRunId = controls?.resolveResumeTargetRunId(targetParams, runtime.state);
 	} catch (error) {
 		return projectPublicAgentFailure(params, error instanceof Error ? error.message : String(error));
 	}

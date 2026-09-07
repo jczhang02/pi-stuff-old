@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import { checkpointGoalActiveTime, formatDuration, formatTokenCount, type UsageContext } from "./accounting.js";
-import type { ActiveGoal, PendingQueueAction } from "./persistence.js";
-import type { GoalStatus } from "./prompts.js";
+import { checkpointGoalActiveTime, formatDuration, formatTokenCount, type UsageContext } from "./accounting.ts";
+import type { ActiveGoal, PendingQueueAction } from "./persistence.ts";
+import type { GoalStatus } from "./prompts.ts";
 
 export interface StatusContext extends UsageContext {
 	cwd: string;

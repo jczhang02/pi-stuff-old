@@ -1,7 +1,7 @@
 {
 	"extends": "./base.json",
 	"compilerOptions": {
-		"allowImportingTsExtensions": false,
+		"rewriteRelativeImportExtensions": true,
 		"noEmit": false,
 		"outDir": "../../.artifacts/goal-upstream-tests",
 		"rootDir": "../.."

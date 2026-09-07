@@ -1,7 +1,7 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import type { PlannedToolActivityMember } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { diffRowsFromResult, type FileChange, parseApplyPatchDiff, projectDiff } from "./operation-block-diff.js";
+import type { PlannedToolActivityMember } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { diffRowsFromResult, type FileChange, parseApplyPatchDiff, projectDiff } from "./operation-block-diff.ts";
 import {
 	baseOperationBlockModel,
 	boundedOperationLines,
@@ -11,9 +11,9 @@ import {
 	operationDetailStrings,
 	operationIssueLine,
 	operationLineCount,
-} from "./operation-block-evidence.js";
-import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.js";
-import { oneLine } from "./tool-text.js";
+} from "./operation-block-evidence.ts";
+import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.ts";
+import { oneLine } from "./tool-text.ts";
 
 type FileOperationName = "apply_patch" | "edit" | "write";
 const PATCH_METADATA_LIMIT = 64;

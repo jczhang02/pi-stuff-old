@@ -6,14 +6,14 @@ import {
 	type CommandDialogCoordinatorHost,
 	getCommandDialogCoordinator,
 	listenForUserAgentRunSettled,
-} from "../conversation-ui/index.js";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.js";
-import { SessionNamingController } from "./controller.js";
-import { generateSessionName } from "./model.js";
-import { SessionNamingSettingsStore } from "./settings.js";
-import { createSessionNamingSettingsView, type SessionNamingModelChoice } from "./settings-dialog.js";
-import { type RenameMarker, SESSION_NAMING_STATE_ENTRY_TYPE } from "./state.js";
+} from "../conversation-ui/index.ts";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { SessionNamingController } from "./controller.ts";
+import { generateSessionName } from "./model.ts";
+import { SessionNamingSettingsStore } from "./settings.ts";
+import { createSessionNamingSettingsView, type SessionNamingModelChoice } from "./settings-dialog.ts";
+import { type RenameMarker, SESSION_NAMING_STATE_ENTRY_TYPE } from "./state.ts";
 
 const CHILD_AGENT_ENV = "PI_SUBAGENT_CHILD";
 

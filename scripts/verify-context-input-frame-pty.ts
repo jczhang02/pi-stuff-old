@@ -316,7 +316,7 @@ function requestBodyDiagnostic(requestBodies: readonly string[]): string {
 	);
 }
 
-async function verifySubmittedPromptFrame(
+export async function verifySubmittedPromptFrame(
 	capture: () => string,
 	submit: () => void,
 	prompt: string,
@@ -335,10 +335,14 @@ async function verifySubmittedPromptFrame(
 	let workingFrame: string | undefined;
 	let workingFrameChangedAt: number | undefined;
 	let transcriptVisibleMs: number | undefined;
+	let lastAbsentCaptureMs = 0;
 	while (Date.now() < workingDeadline) {
+		const captureStartedMs = performance.now() - submittedAt;
 		const frame = capture();
-		if (transcriptVisibleMs === undefined && transcriptContainsUserMessage(frame, prompt)) {
-			transcriptVisibleMs = Math.max(0, performance.now() - submittedAt - captureOverheadMs);
+		if (transcriptVisibleMs === undefined) {
+			if (transcriptContainsUserMessage(frame, prompt)) {
+				transcriptVisibleMs = Math.max(0, performance.now() - submittedAt - captureOverheadMs);
+			} else lastAbsentCaptureMs = captureStartedMs;
 		}
 		const indicator = /([⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏])\s+Working/u.exec(frame)?.[1];
 		const observedAt = performance.now();
@@ -358,13 +362,15 @@ async function verifySubmittedPromptFrame(
 			workingFrameChangedAt = undefined;
 		}
 		if (transcriptVisibleMs !== undefined && !verifyWorkingAnimation) break;
-		await Bun.sleep(50);
+		await Bun.sleep(transcriptVisibleMs === undefined ? 10 : 50);
 	}
 	if (transcriptVisibleMs === undefined) {
 		fail("the submitted prompt did not appear in the Conversation Transcript during the 2s observation window");
 	}
 	if (transcriptVisibleMs > INPUT_FRAME_LATENCY_LIMIT_MS) {
-		fail(`submitted prompt took ${transcriptVisibleMs.toFixed(1)}ms to appear in the Conversation Transcript`);
+		fail(
+			`submitted prompt took ${transcriptVisibleMs.toFixed(1)}ms to appear in the Conversation Transcript; last absent capture started at ${lastAbsentCaptureMs.toFixed(1)}ms, median capture overhead ${captureOverheadMs.toFixed(1)}ms`,
+		);
 	}
 	if (verifyWorkingAnimation && workingFrames.size < 2) {
 		fail(`Vibe Line Working animation did not advance: ${JSON.stringify([...workingFrames])}`);

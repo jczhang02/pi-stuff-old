@@ -1,5 +1,5 @@
-import { boundTerminalLine } from "../../../tool-display/index.js";
-import { matchesCommandPatterns, normalizeCommandForDetection } from "./command-detection.js";
+import { boundTerminalLine } from "../../../tool-display/index.ts";
+import { matchesCommandPatterns, normalizeCommandForDetection } from "./command-detection.ts";
 
 const GIT_COMMAND_PATTERNS = [/^git\s+(diff|status|log|show|stash)\b/] as const;
 const RAW_GIT_DIFF_PATTERN = /^diff --git /m;

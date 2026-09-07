@@ -1,4 +1,4 @@
-import { boundTerminalLine } from "../../../tool-display/index.js";
+import { boundTerminalLine } from "../../../tool-display/index.ts";
 
 const MAX_DISPLAY_DESCRIPTION_WIDTH = 60;
 const MAX_DISPLAY_SOURCE_WIDTH = 4_096;

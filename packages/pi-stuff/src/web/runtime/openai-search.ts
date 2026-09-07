@@ -6,8 +6,8 @@ import {
 	type JsonInputValue,
 	parseJsonObject,
 	parseJsonValue,
-} from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { normalizeProviderDomain as normalizeDomain } from "../provider-domain-filter.ts";
 import { activityMonitor, throwRedactedActivityError } from "./activity.ts";
 import { readWebConfig } from "./config.ts";

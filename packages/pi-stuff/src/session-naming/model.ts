@@ -1,9 +1,9 @@
 import type { Api, AssistantMessage, Context, Model, ModelsApiStreamOptions } from "@earendil-works/pi-ai";
 import * as Effect from "effect/Effect";
 import * as Option from "effect/Option";
-import type { NamingMessage } from "./prompt.js";
-import { assistantText, buildNamingPrompt, cleanModelName, fallbackName, isHighQualityName } from "./prompt.js";
-import type { SessionNamingSettings } from "./settings.js";
+import type { NamingMessage } from "./prompt.ts";
+import { assistantText, buildNamingPrompt, cleanModelName, fallbackName, isHighQualityName } from "./prompt.ts";
+import type { SessionNamingSettings } from "./settings.ts";
 
 const MAX_OUTPUT_TOKENS = 64;
 const PER_ATTEMPT_TIMEOUT_MS = 12_000;

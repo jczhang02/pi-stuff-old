@@ -4,7 +4,7 @@
  * High-level OAuth flow management using the MCP SDK's built-in auth functions.
  */
 
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import { abortable, throwIfAborted } from "./abort.ts";
 import { logger } from "./logger.ts";
 import {

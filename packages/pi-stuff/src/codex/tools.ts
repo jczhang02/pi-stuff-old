@@ -7,15 +7,15 @@ import {
 	withFileMutationQueue,
 } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	activityKey,
 	registerSuiteOwnedTool,
 	type SuiteToolRegistrationHost,
 	singleActivity,
-} from "../tool-display/index.js";
-import { isOpenAICodexResponsesModel, resolveCodexAccount, supportsCodexImages } from "./account.js";
-import { parseNativeJson, runNativeTool } from "./native-runner.js";
+} from "../tool-display/index.ts";
+import { isOpenAICodexResponsesModel, resolveCodexAccount, supportsCodexImages } from "./account.ts";
+import { parseNativeJson, runNativeTool } from "./native-runner.ts";
 
 export const IMAGE_GENERATION_MODEL = "gpt-image-2";
 

@@ -15,7 +15,7 @@ import {
 	commandDialogRows,
 	fitCommandDialogRows,
 	getCommandDialogCoordinator,
-} from "../../conversation-ui/index.js";
+} from "../../conversation-ui/index.ts";
 
 type MenuTransition<ScreenId extends string> =
 	| { kind: "stay" }

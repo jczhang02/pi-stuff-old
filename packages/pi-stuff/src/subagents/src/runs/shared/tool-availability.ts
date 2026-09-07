@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeString } from "../../../../shared/runtime-type.ts";
 
 export const REQUIRED_CHILD_TOOLS_ENV = "PI_SUBAGENT_REQUIRED_TOOLS";
 export const MCP_DIRECT_CHILD_TOOLS_ENV = "PI_SUBAGENT_MCP_DIRECT_TOOLS";

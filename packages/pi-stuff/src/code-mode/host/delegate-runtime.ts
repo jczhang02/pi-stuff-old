@@ -1,10 +1,10 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { type JsonInputValue, type JsonValue, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { type CodemodeValue, parseForStorage, stringifyForStorage } from "../cloudflare/codec.js";
-import { SuiteToolInvocationError } from "../connector.js";
+import { type JsonInputValue, type JsonValue, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { type CodemodeValue, parseForStorage, stringifyForStorage } from "../cloudflare/codec.ts";
+import { SuiteToolInvocationError } from "../connector.ts";
 import {
 	type ExecutorContext,
 	MAX_CONCURRENT_CODE_MODE_TOOL_CALLS,
@@ -12,10 +12,10 @@ import {
 	type RuntimeToolCallPlan,
 	type RuntimeToolTrace,
 	type SuiteSandboxTool,
-} from "../protocol.js";
-import type { CodeModeEffectOwner, CodeModeEffectTask } from "./effect-owner.js";
-import type { DelegateRequestMessage, DelegateResponseMessage, HostResult } from "./host-protocol.js";
-import { CodeModeTraceStore } from "./trace-store.js";
+} from "../protocol.ts";
+import type { CodeModeEffectOwner, CodeModeEffectTask } from "./effect-owner.ts";
+import type { DelegateRequestMessage, DelegateResponseMessage, HostResult } from "./host-protocol.ts";
+import { CodeModeTraceStore } from "./trace-store.ts";
 
 const MAX_NOTIFICATION_CHARS = 16_384;
 const MAX_NOTIFICATIONS_PER_CELL = 100;

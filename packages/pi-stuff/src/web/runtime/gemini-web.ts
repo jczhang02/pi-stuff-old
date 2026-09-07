@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
 import * as Effect from "effect/Effect";
-import type { JsonInputValue } from "../../shared/json-value.js";
-import { isJsonInputObject, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
+import { isJsonInputObject, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { activityMonitor } from "./activity.ts";
 import { type CookieMap, getGoogleCookies, getLastGoogleCookieDiagnostic } from "./chrome-cookies.ts";
 import {

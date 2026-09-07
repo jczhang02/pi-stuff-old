@@ -1,5 +1,5 @@
-import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isFiniteRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.js";
+import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isFiniteRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.ts";
 import type { NestedRouteInfo, NestedRunState, NestedRunSummary, NestedStepSummary } from "../../shared/types.ts";
 import { isSafeNestedPathId } from "./nested-path.ts";
 import { MAX_CHILDREN, MAX_DEPTH, MAX_STEPS, sanitizeSummary } from "./nested-summary.ts";

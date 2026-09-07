@@ -1,9 +1,9 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import type { PlannedToolActivityMember, ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import type { ToolFormattedSection } from "./contract.js";
-import { operationBlockModel } from "./operation-block-presentation.js";
-import type { OperationEvidenceLine } from "./operation-block-renderer.js";
+import type { PlannedToolActivityMember, ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import type { ToolFormattedSection } from "./contract.ts";
+import { operationBlockModel } from "./operation-block-presentation.ts";
+import type { OperationEvidenceLine } from "./operation-block-renderer.ts";
 
 function formattedEvidence(line: OperationEvidenceLine): string {
 	if (line.kind === "source") return `${String(line.newLine ?? line.oldLine ?? "")} │ ${line.text}`;

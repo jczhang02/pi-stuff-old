@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import type { JsonInputValue } from "../../shared/json-value.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
 
 export const MCP_STATUS_EVENT: "pi-mcp-adapter/status/v1";
 export const MCP_STATUS_SNAPSHOT_VERSION: 1;

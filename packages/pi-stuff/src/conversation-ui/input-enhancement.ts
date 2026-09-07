@@ -18,8 +18,8 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "@earendil-works/pi-tui";
-import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.js";
-import { sanitizeTerminalText, styleKnownInvocations } from "./input-highlighting.js";
+import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.ts";
+import { sanitizeTerminalText, styleKnownInvocations } from "./input-highlighting.ts";
 
 const COMMAND_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9:._-]{0,127}$/u;
 const BACKSPACE_INPUT = "\u007f";
@@ -373,7 +373,10 @@ class InputEnhancementEditor implements EditorComponent {
 		this.refreshInlineAutocomplete();
 		const rendered = this.editor.render(width);
 		this.reportAutocompleteVisibility();
-		const names = settings.inputHighlighting ? commandNames(this.options, this.providerCommandNames) : undefined;
+		const names =
+			settings.inputHighlighting && rendered.some((line) => line.includes("/"))
+				? commandNames(this.options, this.providerCommandNames)
+				: undefined;
 		const currentTheme = names ? this.options.getTheme() : undefined;
 		const lines =
 			names && currentTheme ? rendered.map((line) => styleKnownInvocations(line, names, currentTheme)) : rendered;

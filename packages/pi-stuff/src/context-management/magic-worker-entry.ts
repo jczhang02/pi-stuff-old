@@ -9,8 +9,8 @@ import type {
 	MagicContextExtensionContext,
 	MagicContextToolDefinition,
 	MagicContextToolInfo,
-} from "./magic-context-types.js";
-import { MagicWorkerContextStore } from "./magic-worker-context.js";
+} from "./magic-context-types.ts";
+import { MagicWorkerContextStore } from "./magic-worker-context.ts";
 import {
 	MAGIC_WORKER_PROTOCOL_VERSION,
 	type MagicWorkerCommandName,
@@ -25,7 +25,7 @@ import {
 	type MagicWorkerToolRequest,
 	magicWorkerCommandName,
 	magicWorkerToolName,
-} from "./magic-worker-protocol.js";
+} from "./magic-worker-protocol.ts";
 
 type HandlerRegistry = {
 	readonly [Name in MagicContextEventName]: MagicContextEventHandler<Name>[];

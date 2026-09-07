@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { type OwnedFileSnapshot, readBoundedOwnedFileSnapshot } from "../../shared/private-directory.ts";
 import type { NestedRunSummary } from "../../shared/types.ts";
 import * as nestedEventModel from "./nested-events-model.ts";

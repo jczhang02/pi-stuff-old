@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
-import { isJsonSourceValue } from "../shared/json-value.js";
-import type { CodemodeValue } from "./cloudflare/codec.js";
-import type { Snippet } from "./cloudflare/snippet.js";
-import { stableStringify } from "./cloudflare/stable-stringify.js";
+import { isJsonSourceValue } from "../shared/json-value.ts";
+import type { CodemodeValue } from "./cloudflare/codec.ts";
+import type { Snippet } from "./cloudflare/snippet.ts";
+import { stableStringify } from "./cloudflare/stable-stringify.ts";
 import {
 	applyEvent,
 	type CallPendingEvent,
@@ -26,8 +26,8 @@ import {
 	optionalPresentationValue,
 	type ReplayPolicy,
 	trimTerminalExecutions,
-} from "./ledger-state.js";
-import type { RuntimeToolCallPlan, RuntimeToolCallSettlement, RuntimeToolReplay } from "./protocol.js";
+} from "./ledger-state.ts";
+import type { RuntimeToolCallPlan, RuntimeToolCallSettlement, RuntimeToolReplay } from "./protocol.ts";
 
 export type {
 	CodeModeCompensationTarget,

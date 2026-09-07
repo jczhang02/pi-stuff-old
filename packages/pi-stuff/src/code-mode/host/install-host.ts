@@ -9,9 +9,9 @@ import { promisify } from "node:util";
 import { getProxyForUrl } from "proxy-from-env";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
-import { isRuntimeObject } from "../../shared/runtime-type.js";
-import { codeModeHostBinaryName, hostAssetUrl, resolveCodeModeHostAsset } from "./host-assets.js";
-import { readProcessStartIdentity } from "./process-start-identity.js";
+import { isRuntimeObject } from "../../shared/runtime-type.ts";
+import { codeModeHostBinaryName, hostAssetUrl, resolveCodeModeHostAsset } from "./host-assets.ts";
+import { readProcessStartIdentity } from "./process-start-identity.ts";
 
 const execFileAsync = promisify(execFile);
 

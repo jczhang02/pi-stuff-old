@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: befdab094f145bc2a033775d8fb2e7f08f3ce1b3ee592e632077b82199ffd134 -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: e0879298b931c8939e025aefa0f105a7b9a284efd0746b5783f2898166bafad1 -->
 
 # 质量保障
 
@@ -22,7 +22,7 @@ bun run benchmark:suite:terminal-bench --help
 
 `check` 执行格式、lint、TypeScript、依赖和未使用源码、生成组合、仓库安全、Capability Contract Catalog 以及 Package/resource/license 静态验证；不会改写源码或运行 Benchmark。`fix` 才会执行格式和安全 lint 修复。
 
-`test` 当前发现五个层级下的 340 个文件（334 个离线文件、1 个显式在线文件）：Component (`unit`)、Component Integration (`component-integration`)、System (`system`)、System Integration (`system-integration`) 与 Acceptance (`acceptance`)。离线清单按上述层级分别有 135、159、2、10、28 个文件。目录按 `level/capability/scenario` 组织，每个文件独立 OS process。Goal smoke 是原生 Bun test；其余 21 个 `.node.ts` 保留 Node 兼容边界，只编译一次后运行。同一维度的重复 selector 取并集，不同维度取交集。`--name` 使用原生 test runner 的 regex candidate filter，不扫描源码名称。`--help` 和 `--list` 不执行场景。报告默认写入 `.artifacts/tests/`，记录文件状态、process duration、setup duration 和 Acceptance 矩阵；失败或空选择返回非零。
+`test` 当前发现五个层级下的 357 个文件（356 个离线文件、1 个显式在线文件）：Component (`unit`)、Component Integration (`component-integration`)、System (`system`)、System Integration (`system-integration`) 与 Acceptance (`acceptance`)。离线清单按上述层级分别有 144、170、2、10、30 个文件。目录按 `level/capability/scenario` 组织，每个文件独立 OS process。Goal smoke 是原生 Bun test；其余 21 个 `.node.ts` 保留 Node 兼容边界，只编译一次后运行。同一维度的重复 selector 取并集，不同维度取交集。`--name` 使用原生 test runner 的 regex candidate filter，不扫描源码名称。`--help` 和 `--list` 不执行场景。报告默认写入 `.artifacts/tests/`，记录文件状态、process duration、setup duration 和 Acceptance 矩阵；失败或空选择返回非零。
 
 Tests 在首个失败后停止剩余文件；缺少原生执行证据同样算失败。`--keep-going` 收集全部选中文件的结果，但不会把失败变成成功；`verify --keep-going` 也会在 Checks 命令失败后继续运行 Tests。每个文件开始前和结束后都持久化报告，区分已完成、尚未开始，以及执行中断时最后记录为进行中的文件。缺失、取消或未完成的证据不能通过 CI 汇总。
 
@@ -38,7 +38,16 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 
 现有实验使用 `benchmark:capability:<name>` 命名，保留 Ponytail、Markdown、生命周期、Magic Context 和 Tool Activity。它们是 Capability 范围问题，不建立 complete-Suite public-task 结果。执行前使用 `--help` 或 `--list`；Ponytail 必须显式选择 `--profile live`。历史报告仍是 dated evidence，新报告默认写入本地 artifacts。已移除的 Effect/mainline、Code Mode 图片和 Skill Discovery 实验可从 Git 历史恢复；保留其带日期报告和锁定输入作为历史证据。
 
+资源效率观察器（`scripts/benchmark-responsiveness.ts`）使用当前受支持的 Pi Host。可选的 `--gates` 输入必须匹配实际观察 Host 二进制的 SHA-256；保留的 Pi 0.85.0 阈值不能认证 Pi 0.85.1。重新校准需要新的匹配输入和测量，历史阈值与报告保持不变。观察器的离线 Acceptance 测试检查观察契约，不认证当前 Host 的性能。
+
+后台观察保留首次交接后的父 Agent 空闲窗口，再验证子结果恰好交付一次，以及主 Agent 的结果整合续轮。每次用户工作运行结束后仍遵守 Codex 用量刷新契约。
+
+临时 Ubuntu CI runner 单独放置 `unshare` 可执行文件，并用仅匹配该文件的 AppArmor 配置授予 `userns` 权限，在 Tests 前检查命名空间创建。这项准备支持观察器嵌套的 user/network/PID 隔离，不修改本机策略或共享的断网测试入口。
+
 完成的实验即使结果较差也可成功；setup failure 或 incomplete experiment 仍失败。Tool Activity 过去的 250 ms 和 relative 25 ms benchmark 值仅保留为诊断报告值。显式 PTY 要求仍为首个 Tool UI/input/selection 反馈 150 ms，以及不变 Vibe Line Spinner 帧不超过 200 ms；ADR 0025 的 500 ms severe-stall 是独立 backstop。Tools PTY 验证器报告每种终端尺寸的测量值，未满足必需目标时失败。`benchmark:suite` 尚未注册。
+
+Context 输入首帧验证器保留 150 ms 上限。在提交的 prompt 出现之前每 10 ms 采样，随后每 50 ms 观察 Working 动画。
+确定性时钟测试防止粗粒度轮询造成误报，同时保留对慢帧的拒绝；失败信息包含最后一次未显示首帧的采样时间和捕获开销。
 
 Suite Outcome Evaluation 使用公开任务评测完整 Suite。具体入口是 `benchmark:suite:terminal-bench`；通用别名 `benchmark:suite` 仍未注册。
 

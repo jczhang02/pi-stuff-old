@@ -9,10 +9,10 @@ import {
 	type TUI,
 } from "@earendil-works/pi-tui";
 import * as Effect from "effect/Effect";
-import type { FooterTailComponent } from "../../../conversation-ui/index.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../../../shared/runtime-type.js";
+import type { FooterTailComponent } from "../../../conversation-ui/index.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject } from "../../../shared/runtime-type.ts";
 import type { AgentEffectOwner, AgentEffectTask } from "../runtime/agent-effect-owner.ts";
-import type { AgentRow, AgentSessionSnapshot, CurrentAgentsView } from "../session/current-agents.js";
+import type { AgentRow, AgentSessionSnapshot, CurrentAgentsView } from "../session/current-agents.ts";
 import { reportAgentDiagnostic } from "../shared/diagnostics.ts";
 import { isTerminalAgentRow, renderAgentRoster } from "./agent-roster-render.ts";
 

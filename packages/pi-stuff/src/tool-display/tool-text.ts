@@ -1,5 +1,5 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
 import {
 	isRuntimeBigInt,
 	isRuntimeBoolean,
@@ -9,9 +9,9 @@ import {
 	isRuntimeString,
 	isRuntimeSymbol,
 	isRuntimeUndefined,
-} from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
+} from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
 import {
 	DETAIL_BYTE_LIMIT,
 	DETAIL_LINE_LIMIT,
@@ -19,8 +19,8 @@ import {
 	ROW_PREVIEW_CODE_UNIT_LIMIT,
 	TOOL_DISPLAY_ITEM_LIMIT,
 	TOOL_DISPLAY_MEDIA_CODE_UNIT_LIMIT,
-} from "./limits.js";
-import { graphemePrefix, graphemeSuffix, sanitizeTerminalText, truncateUtf8Graphemes } from "./terminal.js";
+} from "./limits.ts";
+import { graphemePrefix, graphemeSuffix, sanitizeTerminalText, truncateUtf8Graphemes } from "./terminal.ts";
 
 const DETAIL_RAW_SCAN_FACTOR = 4;
 const SUMMARY_TEXT_MAX_CODE_UNITS = 64 * 1024;

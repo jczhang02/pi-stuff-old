@@ -23,8 +23,8 @@ import {
 	renderCommandDialogKeyHelp,
 	renderCommandDialogSplit,
 	WIDE_COMMAND_DIALOG_MIN_WIDTH,
-} from "../../conversation-ui/index.js";
-import type { BackgroundWorkOutcome, BackgroundWorkSnapshot } from "./runtime.js";
+} from "../../conversation-ui/index.ts";
+import type { BackgroundWorkOutcome, BackgroundWorkSnapshot } from "./runtime.ts";
 
 type TaskDialogMode = "detail" | "list";
 

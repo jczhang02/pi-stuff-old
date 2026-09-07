@@ -1,8 +1,8 @@
 /** Reconstruct terminal background status from durable semantic evidence. */
 
 import * as path from "node:path";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { readBoundedOwnedFile } from "../../shared/private-directory.ts";
 import type { AsyncStatus, ProcessTerminalV1 } from "../../shared/types.ts";
 import { MAX_ASYNC_STATUS_FILE_BYTES } from "../../shared/utils.ts";

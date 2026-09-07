@@ -1,6 +1,6 @@
 import type * as nodeFs from "node:fs/promises";
-import type { JsonValue } from "../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import type { JsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 
 export interface SessionGovernorLimits {
 	readonly maxDepth: number;

@@ -15,9 +15,9 @@ import {
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../shared/runtime-type.js";
-import { DiagnosticChannel } from "./diagnostics.js";
-import { UserMessageCard } from "./user-message-card.js";
+} from "../shared/runtime-type.ts";
+import { DiagnosticChannel } from "./diagnostics.ts";
+import { UserMessageCard } from "./user-message-card.ts";
 
 const LAST_HOST = Symbol.for("@jczhang02/pi-stuff:user-message-host/v1");
 

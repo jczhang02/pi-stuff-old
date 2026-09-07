@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type JsonValue, parseJsonValue } from "../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { type JsonValue, parseJsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import {
 	ARTIFACT_CLEANUP_CONTROL_DIRECTORY,
 	ARTIFACT_MAINTENANCE_INTERVAL_MS,

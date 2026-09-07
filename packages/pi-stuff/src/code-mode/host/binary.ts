@@ -1,9 +1,9 @@
 import { existsSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { piStuffCachePath } from "../../xdg/index.js";
-import { codeModeHostBinaryName, HOST_RELEASE } from "./host-assets.js";
-import { installCodeModeHost } from "./install-host.js";
+import { piStuffCachePath } from "../../xdg/index.ts";
+import { codeModeHostBinaryName, HOST_RELEASE } from "./host-assets.ts";
+import { installCodeModeHost } from "./install-host.ts";
 
 function packageRoot(): string {
 	return dirname(dirname(fileURLToPath(import.meta.url)));

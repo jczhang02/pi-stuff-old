@@ -1,5 +1,7 @@
 import { Guard } from "typebox/guard";
 
+const { IsNumber, IsObject, IsNull } = Guard;
+
 export const isRuntimeBigInt = Guard.IsBigInt;
 export const isRuntimeBoolean = Guard.IsBoolean;
 export const isRuntimeFunction = Guard.IsFunction;
@@ -9,7 +11,7 @@ export const isRuntimeUndefined = Guard.IsUndefined;
 
 export function isRuntimeNumber<Value>(value: Value): value is Value & number {
 	return (
-		Guard.IsNumber(value) ||
+		IsNumber(value) ||
 		Object.is(value, Number.NaN) ||
 		Object.is(value, Number.POSITIVE_INFINITY) ||
 		Object.is(value, Number.NEGATIVE_INFINITY)
@@ -17,11 +19,11 @@ export function isRuntimeNumber<Value>(value: Value): value is Value & number {
 }
 
 export function isFiniteRuntimeNumber<Value>(value: Value): value is Value & number {
-	return isRuntimeNumber(value) && Number.isFinite(value);
+	return IsNumber(value);
 }
 
 export function isRuntimeObject<Value>(value: Value): value is Value & (object | null) {
-	return Guard.IsObject(value) || Guard.IsNull(value);
+	return IsObject(value) || IsNull(value);
 }
 
 export function runtimeErrorCode<Value>(value: Value): string | undefined {

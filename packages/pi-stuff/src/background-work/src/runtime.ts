@@ -11,27 +11,27 @@ import {
 	type AgentWorkOrigin,
 	readCurrentAgentWorkOrigin,
 	withAgentWorkOrigin,
-} from "../../conversation-ui/agent-run-origin.js";
-import { requestStatuslineGitRefreshAfterUserWork, sendSuiteAgentMessage } from "../../conversation-ui/index.js";
-import type { SuiteAgentMessageHost } from "../../conversation-ui/suite-agent-message.js";
-import { settleWithin } from "../../lifecycle-deadline.js";
-import { reportWorkDiagnostic } from "./diagnostics.js";
-import type { BackgroundWorkEffectOwner, BackgroundWorkEffectTask } from "./effect-owner.js";
-import { projectNotificationBatch } from "./notification-projection.js";
-import { BoundedOutputFile, boundedTextTail, DEFAULT_MODEL_OUTPUT_LIMIT, tryReadBoundedTail } from "./output.js";
+} from "../../conversation-ui/agent-run-origin.ts";
+import { requestStatuslineGitRefreshAfterUserWork, sendSuiteAgentMessage } from "../../conversation-ui/index.ts";
+import type { SuiteAgentMessageHost } from "../../conversation-ui/suite-agent-message.ts";
+import { settleWithin } from "../../lifecycle-deadline.ts";
+import { reportWorkDiagnostic } from "./diagnostics.ts";
+import type { BackgroundWorkEffectOwner, BackgroundWorkEffectTask } from "./effect-owner.ts";
+import { projectNotificationBatch } from "./notification-projection.ts";
+import { BoundedOutputFile, boundedTextTail, DEFAULT_MODEL_OUTPUT_LIMIT, tryReadBoundedTail } from "./output.ts";
 import {
 	captureProcessIdentityWithRetry,
 	resolveSupervisorExecutable,
 	signalVerifiedSupervisor,
 	spawnSupervisor,
-} from "./process.js";
+} from "./process.ts";
 import {
 	ShellActivity,
 	type ShellActivityDependencies,
 	type ShellActivityOwner,
 	type ShellLaunchInput,
-} from "./shell-activity.js";
-import { reconcileStaleRuns, WorkRunStorage } from "./storage.js";
+} from "./shell-activity.ts";
+import { reconcileStaleRuns, WorkRunStorage } from "./storage.ts";
 
 const DEFAULT_BACKGROUND_AFTER_MS = 120_000;
 const MAX_TIMER_DELAY_MS = 2_147_483_647;
@@ -56,7 +56,7 @@ const ID_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 export type BackgroundWorkKind = "monitor" | "shell";
 export type BackgroundWorkStatus = "running" | "stopping";
 export type BackgroundWorkTerminalStatus = "completed" | "failed" | "stopped" | "timed_out";
-export { projectNotificationBatch } from "./notification-projection.js";
+export { projectNotificationBatch } from "./notification-projection.ts";
 
 export interface BackgroundWorkBashDetails extends BashToolDetails {
 	readonly backgroundTaskId?: string;

@@ -4,9 +4,9 @@
  * Normalizes camelCase, snake_case, dots, and path separators into tokens,
  * scores fields by weight, requires one lexical match, and sorts by score.
  */
-import type { ConnectorDescription, SearchOutput, SearchResult } from "./connector-types.js";
-import type { Snippet } from "./snippet.js";
-import { toolPath } from "./utils.js";
+import type { ConnectorDescription, SearchOutput, SearchResult } from "./connector-types.ts";
+import type { Snippet } from "./snippet.ts";
+import { toolPath } from "./utils.ts";
 
 const SEARCH_RESULT_LIMIT = 50;
 

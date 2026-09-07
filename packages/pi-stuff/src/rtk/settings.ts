@@ -3,9 +3,9 @@ import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { EffectNamespacedSettingsStore, mergedSettingsPath, readTextFileEffect } from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { EffectNamespacedSettingsStore, mergedSettingsPath, readTextFileEffect } from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
 
 const SETTINGS_FILE_NAME = "pi-stuff-rtk.json";
 const RTK_NAMESPACE = "rtk";

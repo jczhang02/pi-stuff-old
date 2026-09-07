@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import type { ActiveGoal, GoalBlockerAudit } from "./persistence.js";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import type { ActiveGoal, GoalBlockerAudit } from "./persistence.ts";
 
 interface GoalTranscriptRecord {
 	readonly content?: unknown;

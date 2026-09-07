@@ -9,14 +9,14 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	parseJsonValue,
-} from "../../shared/json-value.js";
-import { readTextFileEffect } from "../../shared/settings-io/file.js";
-import { mergedSettingsPath } from "../../shared/settings-io/paths.js";
+} from "../../shared/json-value.ts";
+import { readTextFileEffect } from "../../shared/settings-io/file.ts";
+import { mergedSettingsPath } from "../../shared/settings-io/paths.ts";
 import {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceStoreOptions,
 	type NamespaceRecord,
-} from "../../shared/settings-io/store.js";
+} from "../../shared/settings-io/store.ts";
 
 export const GOAL_SETTINGS_FILE = "pi-stuff.json";
 const GOAL_NAMESPACE = "goal";
@@ -163,7 +163,7 @@ function goalSettingsRecord(settings: GoalSettings, current: NamespaceRecord = {
 function acquireGoalSettingsLock(lockPath: string, _owner: string): Effect.Effect<void, Error, Scope.Scope> {
 	return Effect.flatMap(
 		Effect.tryPromise({
-			try: () => import("../../shared/settings-io/lock.js"),
+			try: () => import("../../shared/settings-io/lock.ts"),
 			catch: toError,
 		}),
 		({ acquireSettingsLockEffect }) => acquireSettingsLockEffect(lockPath, "Goal"),

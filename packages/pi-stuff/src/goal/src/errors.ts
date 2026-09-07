@@ -4,9 +4,9 @@ import {
 	type AssistantMessage as PiAssistantMessage,
 	type Usage,
 } from "@earendil-works/pi-ai";
-import { isJsonInputObject, isJsonInputValue, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { assistantUsageTokens, nonNegativeFiniteNumber } from "./accounting.js";
+import { isJsonInputObject, isJsonInputValue, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { assistantUsageTokens, nonNegativeFiniteNumber } from "./accounting.ts";
 
 type AgentStopReason = "stop" | "length" | "toolUse" | "error" | "aborted";
 

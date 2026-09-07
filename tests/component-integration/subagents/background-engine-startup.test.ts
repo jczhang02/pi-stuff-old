@@ -224,6 +224,47 @@ printf '%s\\n' '{"type":"message_end","message":{"role":"assistant","content":[{
 	}
 }, 10_000);
 
+test("attaches both writer pipe readers before a delayed dispatcher observes a fast exit", async () => {
+	if (process.platform === "win32") return;
+	const root = fixtureRoot();
+	const preload = path.join(root, "delayed-dispatch.mjs");
+	// Delay only this supervisor's asynchronous Effect dispatcher, not the writer or test process.
+	fs.writeFileSync(
+		preload,
+		"globalThis.setImmediate = (callback, ...args) => setTimeout(callback, 25, ...args);\n" +
+			"globalThis.clearImmediate = (timer) => clearTimeout(timer);\n",
+	);
+	const frame = `${JSON.stringify({
+		type: "message_end",
+		message: { role: "assistant", content: [{ type: "text", text: "FAST_WRITER_OK" }], stopReason: "stop" },
+	})}\n`;
+	const command = buildWriterSpawnCommand("/bin/sh", [
+		"-c",
+		'printf "%s" "$1"; printf "FAST_WRITER_STDERR\\n" >&2',
+		"writer",
+		frame,
+	]);
+	const supervisor = Bun.spawn([command.command, "--preload", preload, ...command.args], {
+		cwd: root,
+		detached: true,
+		stdin: "pipe",
+		stdout: "pipe",
+		stderr: "pipe",
+		timeout: 5_000,
+		killSignal: "SIGKILL",
+	});
+	supervisor.stdin.write("proceed\n");
+	supervisor.stdin.end();
+	const [code, stdout, stderr] = await Promise.all([
+		supervisor.exited,
+		new Response(supervisor.stdout).text(),
+		new Response(supervisor.stderr).text(),
+	]);
+	expect(code).toBe(0);
+	expect(stdout).toBe(frame);
+	expect(stderr).toBe("FAST_WRITER_STDERR\n");
+}, 8_000);
+
 test("drains a fast writer's backpressured asynchronous stdout before the supervisor exits", async () => {
 	const root = fixtureRoot();
 	const writer = path.join(root, "backpressured-writer.ts");

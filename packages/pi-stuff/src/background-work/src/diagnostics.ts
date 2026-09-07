@@ -1,4 +1,4 @@
-import { reportDiagnostic } from "../../conversation-ui/diagnostics.js";
+import { reportDiagnostic } from "../../conversation-ui/diagnostics.ts";
 
 interface WorkDiagnosticOptions {
 	readonly action?: string;

@@ -1,0 +1,1094 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "3789e99e1ebdbc5092af73894a4fc5b88ae662e8",
+  "hostBinarySha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072",
+  "hostBunVersion": "1.3.14",
+  "productionChanges": false,
+  "samples": [
+    {
+      "id": "aXfEfm",
+      "workload": "suite-foreground-agents",
+      "observerStartUtc": "2026-09-06T10:20:24.114Z",
+      "evidenceSha256": "cc6cc645c3bb678b8590e3a3cc7fdf24925b9e2d8f2975253d0586c872aeb5b3",
+      "rawGcLogSha256": "8367f2316f509e86b0818d6c46a6f063f89c2e81811f3220be04af271494bbe6",
+      "sourceDiffSha256": "cb6eb8bd3230c2f6caaeb85783c601a88a7c8ba8d4b0584d596f8d6bdc157452",
+      "fixtureHashes": [
+        {
+          "file": "scripts/benchmark-responsiveness.ts",
+          "sha256": "56171f411da17eba2fc9e2b7cf0af9571fab2e2951b70a284a626cba4fe439cf"
+        },
+        {
+          "file": "scripts/host-resource-scope.ts",
+          "sha256": "a0c5347b33004bdcff59f6b8155ed3951507bf13cd1209001ce8af741cbdfaee"
+        },
+        {
+          "file": "scripts/pty-observation.ts",
+          "sha256": "462aa80ee6ea261e4063ad0fdbf0a5669bdf8bdc479115304ba8207e48680e40"
+        },
+        {
+          "file": "test/fixtures/responsiveness-provider.ts",
+          "sha256": "921ecc1e7fb94a7d6c077a4202578ee491a083c7e2707ba9477ee9b99e86c1d3"
+        },
+        {
+          "file": "test/fixtures/faux-provider.ts",
+          "sha256": "1e164539c4319c4e8392f84c5d3b56ac19910c8975fe4734ce78f7efd69df07e"
+        }
+      ],
+      "fullLogBytes": 807195,
+      "capturedLogBytes": 805615,
+      "gc": {
+        "boundary": "Only the GC log prefix read before the last external capture; shutdown tail excluded",
+        "heapCount": 2,
+        "pauseDurationMs": {
+          "count": 1532,
+          "sum": 4140.769177000002,
+          "maximum": 20.157458
+        },
+        "cycleDurationMs": {
+          "count": 1494,
+          "sum": 4215.61022299999,
+          "maximum": 53.456806
+        },
+        "finalizeDurationMs": {
+          "count": 1492,
+          "sum": 32.03002199999997,
+          "maximum": 2.107144
+        },
+        "preCollectionAllocationKiB": {
+          "count": 1494,
+          "sum": 2846290.674776003,
+          "maximum": 191904.306641
+        },
+        "allocationByLogArrival": {
+          "beforeFirstSpinner": {
+            "count": 86,
+            "sumKiB": 2194613.3125040005
+          },
+          "duringAgentRun": {
+            "count": 1391,
+            "sumKiB": 646189.1484060019
+          },
+          "afterAgentEnd": {
+            "count": 17,
+            "sumKiB": 5488.213866
+          }
+        },
+        "edenCollections": 1487,
+        "fullCollections": 7,
+        "nonemptyObserverReads": 1712,
+        "maximumObserverReadMs": 0.2580610000004526
+      },
+      "summary": {
+        "purpose": "observer-validation",
+        "certification": false,
+        "profile": "0.85.0+source.107d79f11072.binary.0cfd1bf3e946.bun.1.3.14",
+        "seededSession": false,
+        "codeMode": false,
+        "agentMode": "foreground",
+        "agentRowObserved": true,
+        "backgroundOutcomes": 0,
+        "parentCompletedWhileChildRunning": false,
+        "firstAgentRowMs": 11683.086785,
+        "completedChildTools": 2,
+        "reapedChildProcesses": 2,
+        "requestedToolCount": 2,
+        "contextProjectionRequests": 0,
+        "contextRetrievals": 0,
+        "goalContinuationRequests": 0,
+        "goalCompleted": false,
+        "negativeBlockMs": 0,
+        "negativeBlockPhase": "pre-tool",
+        "automaticUsageRefreshes": 1,
+        "suite": true,
+        "columns": 120,
+        "rows": 40,
+        "captureCount": 3702,
+        "durationMs": 45701.493465,
+        "maximumCaptureMs": 4.097980999999891,
+        "maximumObservationGapMs": 17.80702199999996,
+        "maximumSpinnerAbsenceMs": 0,
+        "maximumSpinnerFrameMs": 148.42757800000072,
+        "spinnerChanges": 460,
+        "activeDurationMs": 37649.300835999995,
+        "activeCaptureCount": 3050,
+        "firstSpinnerMs": 7598.898185,
+        "firstReadyMs": 5793.096127000001,
+        "firstEditorMs": 5653.8374650000005,
+        "promptToSpinnerMs": 1366.1342530000002,
+        "startupInputMs": 5667.936246,
+        "settledMs": 45270.563427,
+        "postSettlementObservationMs": 438.2614109999995,
+        "observerCpu": {
+          "user": 954367,
+          "system": 1288341
+        },
+        "maximumInputMs": 26.531192999998893,
+        "maximumStartupInputMs": 13.971542999999656,
+        "maximumSteadyInputMs": 26.531192999998893,
+        "maximumSelectionMs": 38.25143600000047,
+        "maximumSelectionSetupMs": 26.531192999998893,
+        "actionCount": 217,
+        "resourceScope": {
+          "boundary": "after-observation-before-host-shutdown",
+          "readStartedMs": 46294.422805,
+          "readCompletedMs": 46317.695185,
+          "cpuUs": {
+            "total": 29439637,
+            "user": 24759731,
+            "system": 4679905
+          },
+          "memoryCurrentChargedBytes": 632889344,
+          "memoryPeakChargedBytes": 1258582016,
+          "rssSnapshotBytes": 614072320,
+          "processes": [
+            {
+              "rssBytes": 614072320,
+              "io": {
+                "rchar": 241449736,
+                "wchar": 29006550,
+                "syscr": 26171,
+                "syscw": 236264,
+                "read_bytes": 114688,
+                "write_bytes": 28489157,
+                "cancelled_write_bytes": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Ea8bDB",
+      "workload": "native-two-bash-tools",
+      "observerStartUtc": "2026-09-06T10:22:10.606Z",
+      "evidenceSha256": "54d522a3fdffe2b05c4b2e238d9a1347585df2841dcffede6504c3507010e034",
+      "rawGcLogSha256": "5828d5447b570525680874768a01f6c5a7d004c59e2a5960e62e3bc96ea9927e",
+      "sourceDiffSha256": "cb6eb8bd3230c2f6caaeb85783c601a88a7c8ba8d4b0584d596f8d6bdc157452",
+      "fixtureHashes": [
+        {
+          "file": "scripts/benchmark-responsiveness.ts",
+          "sha256": "56171f411da17eba2fc9e2b7cf0af9571fab2e2951b70a284a626cba4fe439cf"
+        },
+        {
+          "file": "scripts/host-resource-scope.ts",
+          "sha256": "a0c5347b33004bdcff59f6b8155ed3951507bf13cd1209001ce8af741cbdfaee"
+        },
+        {
+          "file": "scripts/pty-observation.ts",
+          "sha256": "462aa80ee6ea261e4063ad0fdbf0a5669bdf8bdc479115304ba8207e48680e40"
+        },
+        {
+          "file": "test/fixtures/responsiveness-provider.ts",
+          "sha256": "921ecc1e7fb94a7d6c077a4202578ee491a083c7e2707ba9477ee9b99e86c1d3"
+        },
+        {
+          "file": "test/fixtures/faux-provider.ts",
+          "sha256": "1e164539c4319c4e8392f84c5d3b56ac19910c8975fe4734ce78f7efd69df07e"
+        }
+      ],
+      "fullLogBytes": 234991,
+      "capturedLogBytes": 233951,
+      "gc": {
+        "boundary": "Only the GC log prefix read before the last external capture; shutdown tail excluded",
+        "heapCount": 1,
+        "pauseDurationMs": {
+          "count": 454,
+          "sum": 837.9136810000006,
+          "maximum": 7.342396
+        },
+        "cycleDurationMs": {
+          "count": 447,
+          "sum": 865.9379859999988,
+          "maximum": 26.955434
+        },
+        "finalizeDurationMs": {
+          "count": 447,
+          "sum": 10.355961999999998,
+          "maximum": 2.624894
+        },
+        "preCollectionAllocationKiB": {
+          "count": 447,
+          "sum": 189160.79591100008,
+          "maximum": 38691.706055
+        },
+        "allocationByLogArrival": {
+          "beforeFirstSpinner": {
+            "count": 19,
+            "sumKiB": 78599.320313
+          },
+          "duringAgentRun": {
+            "count": 422,
+            "sumKiB": 107271.19630100005
+          },
+          "afterAgentEnd": {
+            "count": 6,
+            "sumKiB": 3290.279297
+          }
+        },
+        "edenCollections": 444,
+        "fullCollections": 3,
+        "nonemptyObserverReads": 505,
+        "maximumObserverReadMs": 0.13464699999997265
+      },
+      "summary": {
+        "purpose": "observer-validation",
+        "certification": false,
+        "profile": "0.85.0+source.107d79f11072.binary.0cfd1bf3e946.bun.1.3.14",
+        "seededSession": false,
+        "codeMode": false,
+        "agentRowObserved": false,
+        "backgroundOutcomes": 0,
+        "parentCompletedWhileChildRunning": false,
+        "completedChildTools": 0,
+        "reapedChildProcesses": 0,
+        "requestedToolCount": 2,
+        "contextProjectionRequests": 0,
+        "contextRetrievals": 0,
+        "goalContinuationRequests": 0,
+        "goalCompleted": false,
+        "negativeBlockMs": 0,
+        "negativeBlockPhase": "pre-tool",
+        "automaticUsageRefreshes": 0,
+        "suite": false,
+        "columns": 120,
+        "rows": 40,
+        "captureCount": 1425,
+        "durationMs": 17509.090575,
+        "maximumCaptureMs": 3.7668679999987944,
+        "maximumObservationGapMs": 17.176569999999856,
+        "maximumSpinnerAbsenceMs": 0,
+        "maximumSpinnerFrameMs": 117.62248900000122,
+        "spinnerChanges": 196,
+        "activeDurationMs": 16022.860245,
+        "activeCaptureCount": 1305,
+        "firstSpinnerMs": 1185.704235,
+        "firstReadyMs": 689.730076,
+        "firstEditorMs": 587.981149,
+        "promptToSpinnerMs": 15.189815999999837,
+        "startupInputMs": 615.042567,
+        "settledMs": 17218.156302,
+        "postSettlementObservationMs": 298.436737,
+        "observerCpu": {
+          "user": 373866,
+          "system": 487468
+        },
+        "maximumInputMs": 26.936897000000044,
+        "maximumStartupInputMs": 26.936897000000044,
+        "maximumSteadyInputMs": 15.449720999999045,
+        "maximumSelectionMs": 14.539750999998432,
+        "maximumSelectionSetupMs": 15.449720999999045,
+        "actionCount": 93,
+        "resourceScope": {
+          "boundary": "after-observation-before-host-shutdown",
+          "readStartedMs": 18131.644976,
+          "readCompletedMs": 18141.607203,
+          "cpuUs": {
+            "total": 3012711,
+            "user": 2238245,
+            "system": 774465
+          },
+          "memoryCurrentChargedBytes": 157569024,
+          "memoryPeakChargedBytes": 196661248,
+          "rssSnapshotBytes": 145158144,
+          "processes": [
+            {
+              "rssBytes": 145158144,
+              "io": {
+                "rchar": 765925,
+                "wchar": 457590,
+                "syscr": 1784,
+                "syscw": 58213,
+                "read_bytes": 0,
+                "write_bytes": 260663,
+                "cancelled_write_bytes": 0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "lhPzrE",
+      "workload": "suite-two-bash-tools",
+      "observerStartUtc": "2026-09-06T10:23:09.401Z",
+      "evidenceSha256": "d17743e4319ebd20b57510e51b13a259b2b8841ccd2cb799ef53bed306db3abf",
+      "rawGcLogSha256": "1364bad127b3ada6764c7c364b6584e72141faede6b1726b1faabaf9da6a9e5c",
+      "sourceDiffSha256": "cb6eb8bd3230c2f6caaeb85783c601a88a7c8ba8d4b0584d596f8d6bdc157452",
+      "fixtureHashes": [
+        {
+          "file": "scripts/benchmark-responsiveness.ts",
+          "sha256": "56171f411da17eba2fc9e2b7cf0af9571fab2e2951b70a284a626cba4fe439cf"
+        },
+        {
+          "file": "scripts/host-resource-scope.ts",
+          "sha256": "a0c5347b33004bdcff59f6b8155ed3951507bf13cd1209001ce8af741cbdfaee"
+        },
+        {
+          "file": "scripts/pty-observation.ts",
+          "sha256": "462aa80ee6ea261e4063ad0fdbf0a5669bdf8bdc479115304ba8207e48680e40"
+        },
+        {
+          "file": "test/fixtures/responsiveness-provider.ts",
+          "sha256": "921ecc1e7fb94a7d6c077a4202578ee491a083c7e2707ba9477ee9b99e86c1d3"
+        },
+        {
+          "file": "test/fixtures/faux-provider.ts",
+          "sha256": "1e164539c4319c4e8392f84c5d3b56ac19910c8975fe4734ce78f7efd69df07e"
+        }
+      ],
+      "fullLogBytes": 352435,
+      "capturedLogBytes": 350868,
+      "gc": {
+        "boundary": "Only the GC log prefix read before the last external capture; shutdown tail excluded",
+        "heapCount": 2,
+        "pauseDurationMs": {
+          "count": 667,
+          "sum": 1681.8543049999987,
+          "maximum": 20.030676
+        },
+        "cycleDurationMs": {
+          "count": 638,
+          "sum": 1712.7305510000006,
+          "maximum": 26.579264
+        },
+        "finalizeDurationMs": {
+          "count": 636,
+          "sum": 16.549354,
+          "maximum": 2.439445
+        },
+        "preCollectionAllocationKiB": {
+          "count": 638,
+          "sum": 2359415.32812,
+          "maximum": 194415.445312
+        },
+        "allocationByLogArrival": {
+          "beforeFirstSpinner": {
+            "count": 86,
+            "sumKiB": 2202749.5595720015
+          },
+          "duringAgentRun": {
+            "count": 536,
+            "sumKiB": 153008.39550000004
+          },
+          "afterAgentEnd": {
+            "count": 16,
+            "sumKiB": 3657.3730480000004
+          }
+        },
+        "edenCollections": 633,
+        "fullCollections": 5,
+        "nonemptyObserverReads": 700,
+        "maximumObserverReadMs": 0.17481099999713479
+      },
+      "summary": {
+        "purpose": "observer-validation",
+        "certification": false,
+        "profile": "0.85.0+source.107d79f11072.binary.0cfd1bf3e946.bun.1.3.14",
+        "seededSession": false,
+        "codeMode": false,
+        "agentRowObserved": false,
+        "backgroundOutcomes": 0,
+        "parentCompletedWhileChildRunning": false,
+        "completedChildTools": 0,
+        "reapedChildProcesses": 0,
+        "requestedToolCount": 2,
+        "contextProjectionRequests": 0,
+        "contextRetrievals": 0,
+        "goalContinuationRequests": 0,
+        "goalCompleted": false,
+        "negativeBlockMs": 0,
+        "negativeBlockPhase": "pre-tool",
+        "automaticUsageRefreshes": 1,
+        "suite": true,
+        "columns": 120,
+        "rows": 40,
+        "captureCount": 1983,
+        "durationMs": 24058.552451,
+        "maximumCaptureMs": 5.088782000000265,
+        "maximumObservationGapMs": 17.046943999999712,
+        "maximumSpinnerAbsenceMs": 0,
+        "maximumSpinnerFrameMs": 112.47992499999964,
+        "spinnerChanges": 200,
+        "activeDurationMs": 16394.862756000002,
+        "activeCaptureCount": 1354,
+        "firstSpinnerMs": 7322.755453,
+        "firstReadyMs": 5447.608155,
+        "firstEditorMs": 5290.876322,
+        "promptToSpinnerMs": 1474.9645289999999,
+        "startupInputMs": 5304.745376,
+        "settledMs": 23739.972041999998,
+        "postSettlementObservationMs": 326.06207500000164,
+        "observerCpu": {
+          "user": 472800,
+          "system": 618008
+        },
+        "maximumInputMs": 14.810617000002821,
+        "maximumStartupInputMs": 14.258115999999973,
+        "maximumSteadyInputMs": 14.810617000002821,
+        "maximumSelectionMs": 15.148001999999906,
+        "maximumSelectionSetupMs": 14.248632000000725,
+        "actionCount": 103,
+        "resourceScope": {
+          "boundary": "after-observation-before-host-shutdown",
+          "readStartedMs": 24639.03204,
+          "readCompletedMs": 24654.227962,
+          "cpuUs": {
+            "total": 14634395,
+            "user": 12759150,
+            "system": 1875245
+          },
+          "memoryCurrentChargedBytes": 607854592,
+          "memoryPeakChargedBytes": 898576384,
+          "rssSnapshotBytes": 591310848,
+          "processes": [
+            {
+              "rssBytes": 591310848,
+              "io": {
+                "rchar": 61580104,
+                "wchar": 25053313,
+                "syscr": 7029,
+                "syscw": 88859,
+                "read_bytes": 0,
+                "write_bytes": 24890114,
+                "cancelled_write_bytes": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "coldStartAttribution": {
+    "sourceCommit": "9a5c97304a58833795035d5b8bbcb516c9524138",
+    "productionChangesAfterProbeRemoval": false,
+    "summarizerSha256": "5ea7dc9b7ecda34c7e3908762fb4dc3fad0cc9649f0c935d135b5368efe3abd6",
+    "sourceTreeInventory": {
+      "entries": 648,
+      "directoriesIncludingRoot": 61,
+      "symlinks": 0,
+      "method": "Read-only enumeration after restoring Source; counts derive lstat/readdir/readlink calls from the exact fingerprint implementation, not intercepted syscall totals."
+    },
+    "samples": [
+      {
+        "id": "3e2h9r",
+        "firstCaptureUtc": "2026-09-06T10:55:28.879Z",
+        "evidenceSha256": "781350eb4210696a636e6750f3279647bf5c7847c1d72d3a4b000a06b0c192d0",
+        "sourceDiffSha256": "fea323aa7bceca0a0e725c52799e81001f0531e3340c30e5afbb8741b947dc40",
+        "gcLogSha256": "e6421370f0b2b839a30cb79f8a5a2846f361e5f05da4e2cf3cd78e30f560fdcb",
+        "lifecycleSha256": "af6e33289587809247bba3e9122dd370f7026f1aad56b824f10fa05d28f5cc58",
+        "providerLogSha256": "5b99eb35b43e45446e0ca9b6ee003a34f96a24571a2eeaeb024df5bc7aae1829",
+        "sessionSha256": "72b3bee83198ebcf211a9347a072fefcfabdbaef5299af4e2baacdfedc95996d",
+        "instrumentation": "GC plus existing lifecycle marks",
+        "intervalsMs": {
+          "fingerprint": 25.338,
+          "suiteRuntimeImport": 4131.331,
+          "capabilityInstallation": 1011.067,
+          "agentsInstallation": 960.159,
+          "sessionStartHandlers": 57.188195,
+          "beforeAgentStartHandlers": 1333.697092,
+          "contextHandlers": [
+            75.016238,
+            19.118233,
+            16.966228
+          ]
+        },
+        "capabilityInstallersMs": {
+          "conversation-ui": 16.347,
+          "session-naming": 0.799,
+          "tool-display": 1.394,
+          "rtk": 1.05,
+          "codex": 2.121,
+          "goal": 0.791,
+          "context-management": 1.385,
+          "ponytail": 1.264,
+          "web": 1.572,
+          "mcp": 0.704,
+          "background-work": 0.459,
+          "subagents": 960.159,
+          "todo": 0.575,
+          "btw": 0.066,
+          "notification": 19.839,
+          "code-mode": 0.879
+        },
+        "allocationArrivalBuckets": {
+          "suiteRuntimeImport": {
+            "count": 18,
+            "caKiBSum": 1478807.902345
+          },
+          "agentsInstallation": {
+            "count": 2,
+            "caKiBSum": 377056.864258
+          },
+          "sessionStartHandlers": {
+            "count": 2,
+            "caKiBSum": 4338.728515
+          },
+          "beforeAgentStartHandlers": {
+            "count": 38,
+            "caKiBSum": 40900.491212
+          },
+          "otherOrBoundaryOverlapping": {
+            "count": 596,
+            "caKiBSum": 561461.563473
+          }
+        },
+        "gcPrefix": {
+          "byteLength": 363526,
+          "sha256": "9dc1e0d6ac709aa8e76574ce3d2f7d29906b0deacd21fb6aee0c59fdefb73ae6",
+          "actualPauseCount": 690,
+          "actualPauseSumMs": 1818.741241,
+          "actualPauseMaxMs": 18.630776,
+          "readMaxMs": 0.2235259999997652
+        },
+        "observation": {
+          "activeMs": 16397.926657,
+          "activeCaptureCount": 1357,
+          "spinnerMaxMs": 116.55306000000019,
+          "inputMaxMs": 27.309892999999647,
+          "selectionMaxMs": 14.850873999999749,
+          "captureGapMaxMs": 18.8494069999997,
+          "spinnerAbsenceMs": 0,
+          "firstEditorMs": 5849.351122,
+          "promptToSpinnerMs": 1361.3899269999993
+        },
+        "resources": {
+          "cpuUs": {
+            "total": 15643725,
+            "user": 13725731,
+            "system": 1917993
+          },
+          "rssSnapshotBytes": 592265216,
+          "memoryCurrentChargedBytes": 610557952,
+          "memoryPeakChargedBytes": 887631872,
+          "parentIo": {
+            "rchar": 61577188,
+            "wchar": 25067134,
+            "syscr": 7119,
+            "syscw": 91828,
+            "read_bytes": 1345024,
+            "write_bytes": 24906911,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "namingRequests": 1,
+        "namesPersisted": 1,
+        "usageRefreshes": 1,
+        "completedBashTools": 2
+      },
+      {
+        "id": "OIq1QG",
+        "firstCaptureUtc": "2026-09-06T10:59:41.528Z",
+        "evidenceSha256": "e5b60c1ee379fe6991e575a6aa68de0d8ef88a7167a3f9d5c4c2b7b84d9726c9",
+        "sourceDiffSha256": "e706fde6add20a573eb74e8991c2e2b82ae3327c69970f85b018e327a10b6605",
+        "gcLogSha256": "54b639e1ef85bb34ad18164500b190075b1a1f44705c17cb035f57eddd87f740",
+        "lifecycleSha256": "92b6a77aeac6d82ca216cfd7bc80e9ac977b832ad0857082fb1532c7d17e335e",
+        "providerLogSha256": "02801d7bea0270e749077e482d3f014287e3daba172cb6fa471060a730c2e2fa",
+        "sessionSha256": "7ea85c55064adfd729ae588d9cb33fccbc6fa6e2c68fe5b3fa7b0b1a3f0ae4d2",
+        "instrumentation": "plus Agents import and first-request owner boundaries",
+        "intervalsMs": {
+          "fingerprint": 20.37,
+          "suiteRuntimeImport": 3285.994,
+          "capabilityInstallation": 778.795,
+          "agentsInstallation": 741.724,
+          "sessionStartHandlers": 35.575698,
+          "beforeAgentStartHandlers": 1184.381137,
+          "contextHandlers": [
+            50.944998,
+            18.917149,
+            15.725317
+          ],
+          "agentsRootImport": 739.795,
+          "agentsRootRegistration": 1.907,
+          "contextActivationJoin": 1168.706,
+          "contextPreflight": 0.025,
+          "promptContributions": 0.465,
+          "agentsDiscovery": 2.724,
+          "codeModeProjectBinding": 0.171,
+          "codeModeApply": 0.078
+        },
+        "capabilityInstallersMs": {
+          "conversation-ui": 15.074,
+          "session-naming": 0.589,
+          "tool-display": 0.862,
+          "rtk": 0.542,
+          "codex": 1.535,
+          "goal": 0.625,
+          "context-management": 0.982,
+          "ponytail": 0.862,
+          "web": 1.259,
+          "mcp": 0.484,
+          "background-work": 0.357,
+          "subagents": 741.724,
+          "todo": 0.423,
+          "btw": 0.052,
+          "notification": 11.292,
+          "code-mode": 0.626
+        },
+        "allocationArrivalBuckets": {
+          "suiteRuntimeImport": {
+            "count": 17,
+            "caKiBSum": 1439905.016602
+          },
+          "agentsInstallation": {
+            "count": 2,
+            "caKiBSum": 380619.62207
+          },
+          "sessionStartHandlers": {
+            "count": 1,
+            "caKiBSum": 4519.157227
+          },
+          "beforeAgentStartHandlers": {
+            "count": 31,
+            "caKiBSum": 40952.46289
+          },
+          "otherOrBoundaryOverlapping": {
+            "count": 594,
+            "caKiBSum": 446951.206055
+          }
+        },
+        "gcPrefix": {
+          "byteLength": 353988,
+          "sha256": "a1366ccd8a305a7225aa6c530ea9d7b4334f2e378a689dc2ee7dacde232a6c87",
+          "actualPauseCount": 670,
+          "actualPauseSumMs": 1575.065625,
+          "actualPauseMaxMs": 16.178816,
+          "readMaxMs": 0.16767700000036712
+        },
+        "observation": {
+          "activeMs": 16383.487548000001,
+          "activeCaptureCount": 1373,
+          "spinnerMaxMs": 112.57357899999988,
+          "inputMaxMs": 13.83754399999998,
+          "selectionMaxMs": 26.088674000000537,
+          "captureGapMaxMs": 16.22334300000057,
+          "spinnerAbsenceMs": 0,
+          "firstEditorMs": 4628.745081,
+          "promptToSpinnerMs": 1217.1754930000006
+        },
+        "resources": {
+          "cpuUs": {
+            "total": 12526226,
+            "user": 10839729,
+            "system": 1686497
+          },
+          "rssSnapshotBytes": 574443520,
+          "memoryCurrentChargedBytes": 593178624,
+          "memoryPeakChargedBytes": 903507968,
+          "parentIo": {
+            "rchar": 61572643,
+            "wchar": 25062554,
+            "syscr": 6968,
+            "syscw": 89594,
+            "read_bytes": 0,
+            "write_bytes": 24899712,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "namingRequests": 1,
+        "namesPersisted": 1,
+        "usageRefreshes": 1,
+        "completedBashTools": 2
+      },
+      {
+        "id": "s4V3Du",
+        "firstCaptureUtc": "2026-09-06T11:01:29.377Z",
+        "evidenceSha256": "f7f8f3307b15240bc75bb4d8616d5a66d18db5739b9ba6ab7e3f2843533aee66",
+        "sourceDiffSha256": "f833217ce2acfc3eb8d5d25824785a8804013dcc33078b7fbd777fcbd30eb24c",
+        "gcLogSha256": "e45ac0ba47dfe1643a460175cb92d47f9de8536b936522a1d542d2fd5ccfd322",
+        "lifecycleSha256": "2566adcd1368a330f1f313b6b26f46b252614d19c61ea6bdcb808880adc656b6",
+        "providerLogSha256": "e3b8502fb073f32d7e1ba12a20c3094f51998fbe8843f83a9bca35d35848c1b3",
+        "sessionSha256": "787674930c61147952aa8acd22096c069b0e1ae6457064ed4cf6e34497c675b3",
+        "instrumentation": "plus Context activation transaction and bundle boundaries",
+        "intervalsMs": {
+          "fingerprint": 16.976,
+          "suiteRuntimeImport": 3299.364,
+          "capabilityInstallation": 809.416,
+          "agentsInstallation": 769.196,
+          "sessionStartHandlers": 50.927481,
+          "beforeAgentStartHandlers": 1134.303293,
+          "contextHandlers": [
+            50.049846,
+            24.302147,
+            24.051258
+          ],
+          "agentsRootImport": 767.343,
+          "agentsRootRegistration": 1.837,
+          "contextActivationJoin": 1113.019,
+          "contextPreflight": 0.02,
+          "promptContributions": 0.498,
+          "agentsDiscovery": 6.404,
+          "codeModeProjectBinding": 0.178,
+          "codeModeApply": 0.07,
+          "contextStartupDeferredPreparation": 5.117,
+          "contextDirectInputPreparation": 5.27,
+          "contextModuleLoad": 0.084,
+        "contextModuleInstallation": 1096.278,
+        "contextBeforeBundle": 1.793,
+          "contextWorkerBundle": 140.632,
+          "contextAfterBundleToInstalled": 953.853,
+          "contextSessionReplay": 9.104
+        },
+        "capabilityInstallersMs": {
+          "conversation-ui": 15.471,
+          "session-naming": 0.556,
+          "tool-display": 0.861,
+          "rtk": 0.524,
+          "codex": 1.618,
+          "goal": 0.614,
+          "context-management": 0.944,
+          "ponytail": 0.772,
+          "web": 1.192,
+          "mcp": 0.485,
+          "background-work": 0.343,
+          "subagents": 769.196,
+          "todo": 0.452,
+          "btw": 0.053,
+          "notification": 13.926,
+          "code-mode": 0.776
+        },
+        "allocationArrivalBuckets": {
+          "suiteRuntimeImport": {
+            "count": 18,
+            "caKiBSum": 1487883.536132
+          },
+          "agentsInstallation": {
+            "count": 2,
+            "caKiBSum": 382122.377929
+          },
+          "sessionStartHandlers": {
+            "count": 1,
+            "caKiBSum": 3187.425781
+          },
+          "beforeAgentStartHandlers": {
+            "count": 29,
+            "caKiBSum": 40777.617189
+          },
+          "otherOrBoundaryOverlapping": {
+            "count": 577,
+            "caKiBSum": 543817.708006
+          }
+        },
+        "gcPrefix": {
+          "byteLength": 344957,
+          "sha256": "72ebbb0f451afac3aa31838e656ef3c903fb63c8d3da493910700099a27a619b",
+          "actualPauseCount": 651,
+          "actualPauseSumMs": 1648.714668,
+          "actualPauseMaxMs": 18.060552,
+          "readMaxMs": 0.17165099999874656
+        },
+        "observation": {
+          "activeMs": 16409.640750000002,
+          "activeCaptureCount": 1371,
+          "spinnerMaxMs": 113.91324200000054,
+          "inputMaxMs": 14.084059999999226,
+          "selectionMaxMs": 14.249778999999762,
+          "captureGapMaxMs": 16.828740999999354,
+          "spinnerAbsenceMs": 0,
+          "firstEditorMs": 4648.161359,
+          "promptToSpinnerMs": 1151.2434910000002
+        },
+        "resources": {
+          "cpuUs": {
+            "total": 13047237,
+            "user": 11384180,
+            "system": 1663056
+          },
+          "rssSnapshotBytes": 584568832,
+          "memoryCurrentChargedBytes": 602173440,
+          "memoryPeakChargedBytes": 941637632,
+          "parentIo": {
+            "rchar": 61577904,
+            "wchar": 25055151,
+            "syscr": 7073,
+            "syscw": 87244,
+            "read_bytes": 782336,
+            "write_bytes": 24900243,
+            "cancelled_write_bytes": 0
+          }
+        },
+        "namingRequests": 1,
+        "namesPersisted": 1,
+        "usageRefreshes": 1,
+        "completedBashTools": 2
+      }
+    ],
+    "limits": [
+      "Serial diagnostic runs with fresh isolated configuration and caches, exact Pi0.85.0/Bun1.3.14, full Suite, two Bash Tools and automatic Naming/Usage. No concurrent local tests/scouts/profiles; kernel page cache and ambient activity not controlled.",
+      "Instrumentation becomes more detailed across runs; these are not before/after optimization pairs or responsiveness acceptance. Durations include logging, scheduling, compilation and dependency work within each boundary, not exclusive main-thread CPU.",
+      "Prelude is verified before Suite import and postlude after Suite/Provider factory. Existing and temporary in-memory lifecycle marks are aligned through performance.timeOrigin; capture timestamps and 0.001ms-rounded Suite marks are observations, not hard real-time synchronization guarantees.",
+      "GC allocation buckets count only ca tokens whose complete external read-arrival bounds fit inside one disjoint named interval; boundary-overlapping or other arrivals stay separate. Allocation can precede collection/log arrival and overlap concurrent cycles; buckets are not per-owner allocated bytes.",
+      "Context after-bundle-to-installed includes Worker creation, module evaluation, initialization request and host-side registration; the measurement does not split those costs or isolate Worker CPU.",
+      "This workload does not launch an Agent child, exercise cold Ledger restoration, use live services or close remaining recovery/late-stall investigation. Full allocation, exact wakeups and peak process-tree RSS remain outside these measurements.",
+      "All three owned scopes were read back as not-found/inactive/dead; all temporary production/observer changes were removed and the observer hash restored. No function, cadence, permission, canonical record or production policy changed."
+    ]
+  },
+  "ownerProbe": {
+    "rawEvidenceSha256": "5983f62af6b0c3ad38a4416d2c132c1c3f09f04c9e147a3506a54d7158991084",
+    "sourceHashes": [
+      {
+        "file": "packages/pi-stuff/src/notification/runtime.ts",
+        "sha256": "b0693aded9a169d03e9813406791bccd9e948e633be2a7499e129fbf5f57d81e"
+      },
+      {
+        "file": "packages/pi-stuff/src/codex/usage.ts",
+        "sha256": "5d7e8df89ce150853891c540d32977fb34e751d200d25e93e60b492b5b714ec4"
+      },
+      {
+        "file": "packages/pi-stuff/src/web/runtime/implementation.ts",
+        "sha256": "552e01ba4051543994a20ed84cdec067d6823b41ba2e75966af58b0fac932e42"
+      },
+      {
+        "file": "packages/pi-stuff/src/web/runtime/storage.ts",
+        "sha256": "7e54773927b11a9c2ca4c96f29825ca0f34fd0b0b62e8029899327722f7f0eba"
+      }
+    ],
+    "driverHashes": [
+      {
+        "file": "notify-codex-0nBdVj/measure.ts",
+        "sha256": "d6a6ee892a481920ab5ad1831861d0fc71ed1ddfe424623944752d6c080d178c"
+      },
+      {
+        "file": "web-storage-hooks.ioDE81/fixture.ts",
+        "sha256": "7a11ae9baa1832dc4c1036e3088f303370e87b3895f2bbe537962505eb2c9756"
+      },
+      {
+        "file": "yon-resource-owner.8PW2ta/extension.ts",
+        "sha256": "ee8502a5b36b9e88f720945a77a0d5ea70e255fd62760b2692d9a81b35ccf011"
+      },
+      {
+        "file": "yon-resource-owner.8PW2ta/run.ts",
+        "sha256": "99f3a763e13883fb78b96beb55f5eae2bf50cb3aeb1ed74717dd5ca1fbad81cf"
+      }
+    ],
+    "summarizerSha256": "c1af515f533c72dea9b01fd3ab4c8b4ab9b08ed327eec67baec53574d57d4fa2",
+    "boundary": "Exact native Pi VM; owner methods and installed Web hooks driven by synthetic Host, clock and service fixtures; not whole-Suite acceptance; no forced GC",
+    "records": [
+      {
+        "name": "notification-and-direct-usage",
+        "elapsedMs": 6.978611000000001,
+        "usedCpu": {
+          "user": 12798,
+          "system": 66
+        },
+        "resourceBefore": {
+          "userCPUTime": 471397,
+          "systemCPUTime": 34756,
+          "maxRSS": 138036,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 30289,
+          "majorPageFault": 0,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 0,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 917,
+          "involuntaryContextSwitches": 224
+        },
+        "resourceAfter": {
+          "userCPUTime": 484206,
+          "systemCPUTime": 34823,
+          "maxRSS": 140600,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 30823,
+          "majorPageFault": 25,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 0,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 928,
+          "involuntaryContextSwitches": 227
+        },
+        "result": {
+          "notification": [
+            {
+              "settlements": 1,
+              "scheduled": 2,
+              "canceled": 1,
+              "fired": 1,
+              "alerts": 1,
+              "pendingAfterDispose": 0,
+              "disposeReleasedPending": true
+            },
+            {
+              "settlements": 100,
+              "scheduled": 101,
+              "canceled": 1,
+              "fired": 100,
+              "alerts": 100,
+              "pendingAfterDispose": 0,
+              "disposeReleasedPending": true
+            },
+            {
+              "settlements": 1000,
+              "scheduled": 1001,
+              "canceled": 1,
+              "fired": 1000,
+              "alerts": 1000,
+              "pendingAfterDispose": 0,
+              "disposeReleasedPending": true
+            }
+          ],
+          "notificationEdges": {
+            "terminalInput": {
+              "canceled": 1,
+              "fired": 0,
+              "alerts": 0
+            },
+            "restartedAutomatic": {
+              "canceledPrior": 1,
+              "fired": 1,
+              "alerts": 1,
+              "elapsedMs": 35
+            },
+            "noUserAutomatic": {
+              "scheduled": 0,
+              "alerts": 0
+            },
+            "duplicateIdleEndSettled": {
+              "scheduled": 0,
+              "canceled": 0
+            }
+          },
+          "codex": {
+            "requests": 1,
+            "bodyReads": 1,
+            "bodyBytes": 71,
+            "outputHash": "c79e3c78414ce7cfdf991fa709d681ef84d4dac658849d4c6c94cc7232fc933d",
+            "coalescerCoverage": "direct fetchCodexUsage only; extension refresh closure requires Pi SDK event/foundation seam"
+          }
+        }
+      },
+      {
+        "name": "web-owner-hooks",
+        "elapsedMs": 90.75399199999998,
+        "usedCpu": {
+          "user": 223961,
+          "system": 24168
+        },
+        "resourceBefore": {
+          "userCPUTime": 484234,
+          "systemCPUTime": 34825,
+          "maxRSS": 140600,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 30823,
+          "majorPageFault": 25,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 0,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 928,
+          "involuntaryContextSwitches": 227
+        },
+        "resourceAfter": {
+          "userCPUTime": 708197,
+          "systemCPUTime": 58993,
+          "maxRSS": 208524,
+          "sharedMemorySize": 0,
+          "unsharedDataSize": 0,
+          "unsharedStackSize": 0,
+          "minorPageFault": 47960,
+          "majorPageFault": 34,
+          "swappedOut": 0,
+          "fsRead": 0,
+          "fsWrite": 0,
+          "ipcSent": 0,
+          "ipcReceived": 0,
+          "signalsCount": 0,
+          "voluntaryContextSwitches": 1266,
+          "involuntaryContextSwitches": 330
+        },
+        "result": {
+          "toolNames": [
+            "web_search",
+            "fetch_content",
+            "get_search_content"
+          ],
+          "lifecycleHooks": [
+            "session_start",
+            "session_tree",
+            "session_shutdown"
+          ],
+          "records": [
+            {
+              "n": 100,
+              "registeredToolExecutions": 100,
+              "appendEntries": 100,
+              "branchEntries": 100,
+              "branchReads": 100,
+              "switchBranchReads": 1,
+              "liveRetainedBeforeExpiry": 100,
+              "restoredAfterExpiry": 0,
+              "canonicalAppendBytes": 66890,
+              "appendPayloadIsStoredObject": true,
+              "registeredRetrievalPreserved": true,
+              "liveGetResultIgnoresTtl": true,
+              "shutdownRetained": 0
+            },
+            {
+              "n": 1000,
+              "registeredToolExecutions": 1000,
+              "appendEntries": 1000,
+              "branchEntries": 1000,
+              "branchReads": 1000,
+              "switchBranchReads": 1,
+              "liveRetainedBeforeExpiry": 1000,
+              "restoredAfterExpiry": 0,
+              "canonicalAppendBytes": 670890,
+              "appendPayloadIsStoredObject": true,
+              "registeredRetrievalPreserved": true,
+              "liveGetResultIgnoresTtl": true,
+              "shutdownRetained": 0
+            },
+            {
+              "n": 10000,
+              "registeredToolExecutions": 10000,
+              "appendEntries": 10000,
+              "branchEntries": 10000,
+              "branchReads": 10000,
+              "switchBranchReads": 1,
+              "liveRetainedBeforeExpiry": 10000,
+              "restoredAfterExpiry": 0,
+              "canonicalAppendBytes": 6728890,
+              "appendPayloadIsStoredObject": true,
+              "registeredRetrievalPreserved": true,
+              "liveGetResultIgnoresTtl": true,
+              "shutdownRetained": 0
+            }
+          ]
+        }
+      }
+    ],
+    "limits": [
+      "The reused driver's original No native Pi execution note describes its prior repository-Bun invocation; this wrapper's Bun assertion and binary hash establish the exact-Pi execution boundary.",
+      "Notification uses a controlled clock and notify callback; scheduling counts are not measured OS timer wakeups or terminal output.",
+      "Codex uses direct fetchCodexUsage with a supplied synthetic fetcher; automatic coalescing and real HTTP cost are excluded.",
+      "Web uses installed factory hooks and registered fetch/retrieval callbacks with a supplied content result; search, DNS, extraction, remote HTTP and native Session persistence are excluded.",
+      "One invocation per fixture suite, with harness construction, assertions and payload-byte accounting inside the interval; elapsed and all-thread CPU are not per-owner isolated costs or before/after savings.",
+      "getrusage context-switch counters are not exact wakeups; maxRSS is a process lifetime high-water mark in KiB, not retained object bytes.",
+      "An initial PI_OFFLINE=1 attempt reached the expected Codex offline guard and produced no complete measurement; the successful namespace-isolated run used PI_OFFLINE=0 with only synthetic service callbacks."
+    ]
+  },
+  "limits": [
+    "JSC_logGC=1 is diagnostic instrumentation; no forced GC, heap snapshot or GC tuning was used. Its logging overhead is unbounded here; these are not acceptance samples.",
+    "GC text is parent stderr; it can contain more than one VM. Heap identities do not attribute pauses to a particular Module or thread, and child-process stderr is not included.",
+    "Summed pause/cycle durations across heaps can overlap and are not process CPU or exclusive main-thread blocked time. The tp target-pause field is excluded from actual p pause statistics.",
+    "ca values report JSC heap-accounted allocation at collection start in units of 1024 bytes, not live heap capacity. Concurrent-cycle allocation, the uncollected tail, child heaps and native allocations are not covered by their sum.",
+    "External read-arrival intervals bound log observation, not exact GC-start timestamps. Raw logs, capture intervals and source snapshots are retained privately with hashes.",
+    "All runs used two Tool requests, fresh private configuration/caches and 120x40 terminals; the OS page cache was not cleared. Agent and Bash workload durations differ; the Bash pair isolates Suite presence only within its stated functional difference.",
+    "The Suite runs retain automatic Naming and Usage; native-only does not execute those capabilities. Total resource differences are not all redundant work.",
+    "No concurrent local tests, scouts, profilers or benchmark workloads; ambient machine activity remains uncontrolled. The remote CI job ran on a separate machine.",
+    "RSS snapshots and cgroup charged-memory peaks do not establish peak process-tree RSS, full allocation or exact wakeups. Earlier unexplained 270/489 ms stalls and the remaining owner/recovery audit are not closed by these samples."
+  ]
+}

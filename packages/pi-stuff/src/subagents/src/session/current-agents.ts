@@ -1,4 +1,4 @@
-import { isRuntimeBoolean } from "../../../shared/runtime-type.js";
+import { isRuntimeBoolean } from "../../../shared/runtime-type.ts";
 import {
 	type AgentRow,
 	type AgentSessionSnapshot,

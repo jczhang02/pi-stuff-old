@@ -1,7 +1,7 @@
 import { exec, execFile } from "node:child_process";
 import { promisify } from "node:util";
-import type { JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 
 const execAsync = promisify(exec);
 const execFileAsync = promisify(execFile);

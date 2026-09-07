@@ -1,4 +1,4 @@
-import type { JsonInputValue } from "../../shared/json-value.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
 import { supportsOAuth } from "./mcp-auth-flow.ts";
 import { redactTraceText } from "./mcp-trace.ts";
 import type { McpExtensionState } from "./state.ts";

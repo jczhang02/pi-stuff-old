@@ -1,8 +1,8 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isJsonInputObject } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isJsonInputObject } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { normalizeProviderDomain as normalizeDomain } from "../provider-domain-filter.ts";
 import { activityMonitor, throwRedactedActivityError } from "./activity.ts";
 import { readWebConfig } from "./config.ts";

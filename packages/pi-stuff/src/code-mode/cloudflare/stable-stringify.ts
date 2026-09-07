@@ -1,5 +1,5 @@
-import { isRuntimeBigInt, isRuntimeObject } from "../../shared/runtime-type.js";
-import type { CodemodeValue } from "./codec.js";
+import { isRuntimeBigInt, isRuntimeObject } from "../../shared/runtime-type.ts";
+import type { CodemodeValue } from "./codec.ts";
 /**
  * Deterministic JSON of a value: object keys sorted recursively, BigInt tagged.
  * Used to compare a replayed call's args against the recorded args. Best-effort

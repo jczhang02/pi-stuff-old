@@ -1,16 +1,16 @@
 import { basename } from "node:path";
 import type { ExtensionContext, Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { isRuntimeNumber } from "../shared/runtime-type.js";
+import { isRuntimeNumber } from "../shared/runtime-type.ts";
 import type {
 	CodexStatusSnapshot,
 	ContextStatusSnapshot,
 	GoalStatus,
 	GoalStatusSnapshot,
-} from "./statusline-channels.js";
-import type { GitChangeCounts } from "./statusline-git.js";
-import type { PromptPreview, UsageTotals } from "./statusline-session.js";
-import { sanitizeOneLine } from "./terminal-text.js";
+} from "./statusline-channels.ts";
+import type { GitChangeCounts } from "./statusline-git.ts";
+import type { PromptPreview, UsageTotals } from "./statusline-session.ts";
+import { sanitizeOneLine } from "./terminal-text.ts";
 
 const MIN_TRUNCATED_PROMPT_WIDTH = 6;
 const STATUSLINE_SEPARATOR = " · ";

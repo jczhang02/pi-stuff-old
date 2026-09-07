@@ -1,7 +1,7 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
 import type { JSONSchema7 } from "json-schema";
 import type { TSchema } from "typebox";
-import { parseJsonValue } from "../shared/json-value.js";
+import { parseJsonValue } from "../shared/json-value.ts";
 import {
 	isRuntimeBigInt,
 	isRuntimeBoolean,
@@ -11,28 +11,28 @@ import {
 	isRuntimeString,
 	isRuntimeSymbol,
 	isRuntimeUndefined,
-} from "../shared/runtime-type.js";
+} from "../shared/runtime-type.ts";
 import type {
 	SuiteToolCodeModeExecutionEndStatus,
 	SuiteToolCodeModeLifecycle,
 	SuiteToolCodeModePassEndStatus,
 	SuiteToolDefinitionRegistry,
 	SuiteToolInvocation,
-} from "../tool-display/contract.js";
-import { type CodemodeValue, isCodemodeValue, requireCodemodeValue } from "./cloudflare/codec.js";
-import type { ConnectorDescription, ToolAnnotations } from "./cloudflare/connector-types.js";
-import { describeTarget } from "./cloudflare/describe.js";
-import { normalizeCode } from "./cloudflare/normalize.js";
-import { searchConnectors } from "./cloudflare/search.js";
-import type { Snippet } from "./cloudflare/snippet.js";
-import { toolPath } from "./cloudflare/utils.js";
+} from "../tool-display/contract.ts";
+import { type CodemodeValue, isCodemodeValue, requireCodemodeValue } from "./cloudflare/codec.ts";
+import type { ConnectorDescription, ToolAnnotations } from "./cloudflare/connector-types.ts";
+import { describeTarget } from "./cloudflare/describe.ts";
+import { normalizeCode } from "./cloudflare/normalize.ts";
+import { searchConnectors } from "./cloudflare/search.ts";
+import type { Snippet } from "./cloudflare/snippet.ts";
+import { toolPath } from "./cloudflare/utils.ts";
 import {
 	assertDecodableSupportedCodeModeImages,
 	INVALID_CODE_MODE_IMAGE_MESSAGE,
 	InvalidCodeModeImageError,
-} from "./image-content.js";
-import { isCodeModeToolContent } from "./presentation.js";
-import type { SandboxToolExecutionContext, SuiteSandboxTool } from "./protocol.js";
+} from "./image-content.ts";
+import { isCodeModeToolContent } from "./presentation.ts";
+import type { SandboxToolExecutionContext, SuiteSandboxTool } from "./protocol.ts";
 
 const INTERNAL_DESCRIBE_TOOL = "__pi_stuff_codemode_describe_v1";
 const INTERNAL_SEARCH_TOOL = "__pi_stuff_codemode_search_v1";

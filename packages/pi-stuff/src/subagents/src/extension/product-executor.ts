@@ -1,5 +1,5 @@
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../../shared/runtime-type.js";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { SubagentParamsLike } from "../runs/foreground/subagent-executor.ts";
 import { scanAgentReport } from "../runtime/final-report-scanner.ts";
 import { resolveDisplayDescription } from "../shared/display-description.ts";

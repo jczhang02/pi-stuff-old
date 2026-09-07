@@ -6,11 +6,11 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { Message } from "@earendil-works/pi-ai";
-import { getAgentDir as getPiAgentDir } from "@earendil-works/pi-coding-agent";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
-import type { ToolArguments } from "../../../tool-display/activity.js";
-import { boundTerminalLine } from "../../../tool-display/index.js";
+import { CONFIG_DIR_NAME, getAgentDir as getPiAgentDir } from "@earendil-works/pi-coding-agent";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
+import type { ToolArguments } from "../../../tool-display/activity.ts";
+import { boundTerminalLine } from "../../../tool-display/index.ts";
 import {
 	assertPrivateDirectory,
 	readBoundedOwnedFileSnapshot,
@@ -22,8 +22,6 @@ import type { AsyncStatus, ErrorInfo } from "./types.ts";
 // File System Utilities
 // ============================================================================
 
-const DEFAULT_CONFIG_DIR_NAME = ".pi";
-const PI_CODING_AGENT_PACKAGE_NAME = "@earendil-works/pi-coding-agent";
 export const PI_CODING_AGENT_PACKAGE_ROOT_ENV = "PI_SUBAGENTS_PI_CODING_AGENT_PACKAGE_ROOT";
 
 export function resolveWatchPath(
@@ -38,75 +36,8 @@ export function resolveWatchPath(
 	}
 }
 
-function validConfigDirName<Value>(value: Value): string | undefined {
-	return isRuntimeString(value) && value.trim() ? value : undefined;
-}
-
-function readConfigDirNameFromPackageRoot(packageRoot: string | undefined): string | undefined {
-	if (!packageRoot) return undefined;
-	try {
-		const pkg = parseJsonValue(fs.readFileSync(path.join(packageRoot, "package.json"), "utf-8"));
-		if (
-			!isRuntimeObject(pkg) ||
-			pkg === null ||
-			Array.isArray(pkg) ||
-			!("name" in pkg) ||
-			pkg["name"] !== PI_CODING_AGENT_PACKAGE_NAME
-		) {
-			return undefined;
-		}
-		if (
-			!("piConfig" in pkg) ||
-			!isRuntimeObject(pkg["piConfig"]) ||
-			pkg["piConfig"] === null ||
-			Array.isArray(pkg["piConfig"])
-		) {
-			return undefined;
-		}
-		return "configDir" in pkg["piConfig"] ? validConfigDirName(pkg["piConfig"]["configDir"]) : undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-function resolveConfigDirNameFromPackageJson(
-	entryPoint = process.argv[1],
-	packageRoot = process.env[PI_CODING_AGENT_PACKAGE_ROOT_ENV],
-): string | undefined {
-	const packageRootValue = readConfigDirNameFromPackageRoot(packageRoot);
-	if (packageRootValue) return packageRootValue;
-	if (!entryPoint) return undefined;
-	try {
-		let dir = path.dirname(fs.realpathSync(entryPoint));
-		while (dir !== path.dirname(dir)) {
-			const value = readConfigDirNameFromPackageRoot(dir);
-			if (value) return value;
-			dir = path.dirname(dir);
-		}
-	} catch {
-		// Package metadata lookup is best-effort; detached runners must not fail here.
-	}
-	return undefined;
-}
-
-export function resolveConfigDirName<CodingAgentModule>(
-	codingAgentModule?: CodingAgentModule,
-	entryPoint?: string,
-	packageRoot?: string,
-): string {
-	const moduleValue =
-		codingAgentModule && isRuntimeObject(codingAgentModule) && "CONFIG_DIR_NAME" in codingAgentModule
-			? validConfigDirName(codingAgentModule.CONFIG_DIR_NAME)
-			: undefined;
-	return moduleValue ?? resolveConfigDirNameFromPackageJson(entryPoint, packageRoot) ?? DEFAULT_CONFIG_DIR_NAME;
-}
-
-export function getConfigDirName(): string {
-	return resolveConfigDirName();
-}
-
 export function getProjectConfigDir(projectRoot: string): string {
-	return path.join(projectRoot, getConfigDirName());
+	return path.join(projectRoot, CONFIG_DIR_NAME);
 }
 
 export function getAgentDir(): string {
@@ -300,11 +231,28 @@ export function findLatestSessionFile(sessionDir: string | undefined): string | 
 // Message Parsing Utilities
 // ============================================================================
 
+function acceptanceMessageText(content: readonly unknown[]): string {
+	const texts: string[] = [];
+	for (const part of content) {
+		if (
+			part !== null &&
+			isRuntimeObject(part) &&
+			"type" in part &&
+			part.type === "text" &&
+			"text" in part &&
+			isRuntimeString(part.text) &&
+			part.text.trim().length > 0
+		)
+			texts.push(part.text);
+	}
+	return texts.join("\n");
+}
+
 /**
  * Get the final text output from a list of messages
  */
 export function getFinalOutput(messages: readonly { role?: string; content?: unknown }[]): string {
-	const validTextParts: string[] = [];
+	let latestText: string | undefined;
 	for (let i = messages.length - 1; i >= 0; i--) {
 		const msg = messages[i];
 		if (!msg || !isRuntimeObject(msg) || msg.role !== "assistant" || !Array.isArray(msg.content)) continue;
@@ -312,17 +260,6 @@ export function getFinalOutput(messages: readonly { role?: string; content?: unk
 			("errorMessage" in msg && isRuntimeString(msg.errorMessage) && msg.errorMessage.length > 0) ||
 			("stopReason" in msg && msg.stopReason === "error");
 		if (hasAssistantError) continue;
-		const messageText = msg.content
-			.filter(
-				(part) =>
-					part !== null &&
-					isRuntimeObject(part) &&
-					part.type === "text" &&
-					isRuntimeString(part.text) &&
-					part.text.trim().length > 0,
-			)
-			.map((part) => (part.type === "text" ? part.text : ""))
-			.join("\n");
 		for (let j = msg.content.length - 1; j >= 0; j--) {
 			const part = msg.content[j];
 			if (
@@ -333,8 +270,8 @@ export function getFinalOutput(messages: readonly { role?: string; content?: unk
 				part.text.trim().length === 0
 			)
 				continue;
-			validTextParts.push(part.text);
-			if (/```acceptance[-_]report\s*\n[\s\S]*?```/i.test(part.text)) return messageText;
+			latestText ??= part.text;
+			if (/```acceptance[-_]report\s*\n[\s\S]*?```/i.test(part.text)) return acceptanceMessageText(msg.content);
 			for (const match of part.text.matchAll(/```(?:json|jsonc|json5)\s*\n([\s\S]*?)```/gi)) {
 				const body = match[1] ?? "";
 				if (
@@ -343,13 +280,13 @@ export function getFinalOutput(messages: readonly { role?: string; content?: unk
 						body,
 					)
 				) {
-					return messageText;
+					return acceptanceMessageText(msg.content);
 				}
 			}
-			if (/ACCEPTANCE_REPORT\s*:/i.test(part.text)) return messageText;
+			if (/ACCEPTANCE_REPORT\s*:/i.test(part.text)) return acceptanceMessageText(msg.content);
 		}
 	}
-	return validTextParts[0] ?? "";
+	return latestText ?? "";
 }
 
 export const MAX_STREAMED_OUTPUT_LINE_CHARS = 2000;

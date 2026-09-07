@@ -15,8 +15,8 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { dirname, extname, join, resolve, sep } from "node:path";
-import { isJsonInputObject, parseJsonObject } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, parseJsonObject } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { piStuffCachePath } from "../../xdg/index.ts";
 import { throwIfAborted } from "./abort.ts";
 

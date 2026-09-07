@@ -13,10 +13,10 @@ import {
 	Spacer,
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
-import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { highlightSkillCommands, rainbowSkillCommand } from "./skill-command-style.js";
-import { sanitizeOneLine } from "./terminal-text.js";
-import { TRANSCRIPT_CONTINUATION } from "./transcript.js";
+import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { highlightSkillCommands, rainbowSkillCommand } from "./skill-command-style.ts";
+import { sanitizeOneLine } from "./terminal-text.ts";
+import { TRANSCRIPT_CONTINUATION } from "./transcript.ts";
 
 type SkillBlock = NonNullable<ReturnType<typeof parseSkillBlock>>;
 

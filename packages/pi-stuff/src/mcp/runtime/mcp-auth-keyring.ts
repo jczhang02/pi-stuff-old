@@ -4,8 +4,8 @@ import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 
 const require = createRequire(import.meta.url);
 const AUTH_SECRET_SERVICE = "pi-mcp-adapter.oauth";

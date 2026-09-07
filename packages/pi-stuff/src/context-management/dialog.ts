@@ -14,9 +14,9 @@ import {
 	commandDialogRows,
 	commandDialogSectionHeading,
 	fitCommandDialogRows,
-} from "../conversation-ui/index.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { boundTerminalText } from "../tool-display/index.js";
+} from "../conversation-ui/index.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { boundTerminalText } from "../tool-display/index.ts";
 
 export type ContextDialogAction = "flush" | "recomp" | "upgrade" | "wrapup";
 

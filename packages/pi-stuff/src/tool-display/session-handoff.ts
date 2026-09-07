@@ -1,4 +1,4 @@
-import type { SuiteToolReplayDefinition } from "./contract.js";
+import type { SuiteToolReplayDefinition } from "./contract.ts";
 
 const BUILTIN_NAMES = new Set(["bash", "edit", "find", "grep", "ls", "powershell", "read", "write"]);
 

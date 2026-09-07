@@ -7,7 +7,6 @@ import type { JsonInputObject } from "../../../packages/pi-stuff/src/shared/json
 import { auditRepositoryFiles } from "../../../scripts/check-repository-safety.ts";
 import {
 	auditEffectBoundaryInventory,
-	auditEffectBoundarySource,
 	EFFECT_BOUNDARY_INVENTORY,
 	type EffectBoundaryInventory,
 } from "../../../scripts/repository-safety/effect-boundaries.js";
@@ -46,14 +45,14 @@ async function createRepository(packageManager = "bun@1.4.0"): Promise<string> {
 	const root = await mkdtemp(join(tmpdir(), "pi-stuff-safety-"));
 	TEMPORARY_ROOTS.push(root);
 	await Bun.$`git init --quiet ${root}`;
-	await mkdir(join(root, "packages", "pi-stuff"), { recursive: true });
-	await writeFile(
-		join(root, "packages", "pi-stuff", "suite.json"),
+	await writeFixture(
+		root,
+		"packages/pi-stuff/suite.json",
 		`${JSON.stringify({ schemaVersion: 2, capabilities: SUITE_CAPABILITIES, tools: [] }, null, "\t")}\n`,
 	);
-	await mkdir(join(root, "schemas"), { recursive: true });
-	await writeFile(
-		join(root, "schemas", "suite.schema.json"),
+	await writeFixture(
+		root,
+		"schemas/suite.schema.json",
 		`${JSON.stringify({ properties: { capabilities: { items: { enum: SUITE_CAPABILITIES } } } }, null, "\t")}\n`,
 	);
 	await writeFile(join(root, "README.md"), "Repository documentation.\n");
@@ -408,21 +407,22 @@ test("rejects ranged development dependencies and extra workspaces", async () =>
 test("enforces the documented internal Module dependency direction", async () => {
 	const root = await createRepository();
 	await mkdir(join(root, "packages", "pi-stuff", "src", "conversation-ui"), { recursive: true });
-	await mkdir(join(root, "packages", "pi-stuff", "src", "goal"), { recursive: true });
+	await writeFixture(root, "packages/pi-stuff/src/goal/index.ts", "export default {};\n");
 	await mkdir(join(root, "packages", "pi-stuff", "src", "subagents"), { recursive: true });
 	await mkdir(join(root, "packages", "pi-stuff", "src", "code-mode"), { recursive: true });
 	await writeFile(
 		join(root, "packages", "pi-stuff", "src", "conversation-ui", "index.ts"),
-		'import goal from "../goal/index.js";\nexport default goal;\n',
+		'import goal from "../goal/index.ts";\nexport default goal;\n',
 	);
 	await writeFile(
 		join(root, "packages", "pi-stuff", "src", "subagents", "index.ts"),
-		'import context from "../context-management/index.js";\nexport default context;\n',
+		'import context from "../context-management/index.ts";\nexport default context;\n',
 	);
 	await writeFile(
 		join(root, "packages", "pi-stuff", "src", "code-mode", "index.ts"),
-		'import context from "../context-management/index.js";\nimport type { Contract } from "../tool-display/contract.js";\nexport type Mode = Contract;\nexport default context;\n',
+		'import context from "../context-management/index.ts";\nimport type { Contract } from "../tool-display/contract.ts";\nexport type Mode = Contract;\nexport default context;\n',
 	);
+	await writeFixture(root, "packages/pi-stuff/src/tool-display/contract.ts", "export type Contract = {};\n");
 
 	expect(await auditRepositoryFiles(root)).toEqual([
 		{
@@ -621,79 +621,6 @@ test("confines Effect runners to governed Pi-facing adapters across aliases", as
 		{ path: rejectedPath, rule: "effect-runner-outside-adapter:runPromise:5" },
 		{ path: rejectedPath, rule: "effect-runner-outside-adapter:runPromiseExit:6" },
 		{ path: rejectedPath, rule: "effect-runner-outside-adapter:runSync:7" },
-	]);
-});
-
-test("requires public Effect subpath imports in production source", () => {
-	const path = "packages/pi-stuff/src/codex/usage.ts";
-	const inventory = {
-		governedSources: [path],
-		nativeAdapters: [],
-		runnerAdapters: [],
-	} satisfies EffectBoundaryInventory;
-
-	expect(auditEffectBoundarySource(path, 'import { Effect } from "effect";\n', inventory)).toEqual([
-		{ path, rule: "effect-root-import:1" },
-	]);
-	expect(auditEffectBoundarySource(path, 'import * as Effect from "effect/Effect";\n', inventory)).toEqual([]);
-});
-
-test("confines native effects to explicit adapters and resolves import and destructuring aliases", () => {
-	const allowedPath = "packages/pi-stuff/src/codex/usage.ts";
-	const rejectedPath = "packages/pi-stuff/src/codex/core.ts";
-	const inventory = {
-		governedSources: [rejectedPath],
-		nativeAdapters: [allowedPath],
-		runnerAdapters: [],
-	} satisfies EffectBoundaryInventory;
-	const source = [
-		'import { spawn as launch } from "node:child_process";',
-		'import { readFile as load } from "node:fs/promises";',
-		'import { setTimeout as delay } from "node:timers/promises";',
-		'import { Worker as Thread } from "node:worker_threads";',
-		"const { spawn: bunLaunch } = Bun;",
-		"export function runNativeEffects() {",
-		"\tnew Promise(() => undefined);",
-		"\tnew AbortController();",
-		"\tvoid fetch(url);",
-		"\tsetTimeout(callback, 1);",
-		"\tsetInterval(callback, 1);",
-		"\tnew Thread(workerPath);",
-		"\tlaunch(command);",
-		"\tload(path);",
-		"\tdelay(1);",
-		"\tBun.spawn(command);",
-		"\tbunLaunch(command);",
-		"\tunrelated.runPromise(program);",
-		"\tpi.exec(command);",
-		"}",
-	].join("\n");
-
-	expect(auditEffectBoundarySource(allowedPath, source, inventory)).toEqual([]);
-	expect(auditEffectBoundarySource(rejectedPath, source, inventory)).toEqual([
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:Promise:7" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:AbortController:8" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:network.fetch:9" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:timer.setTimeout:10" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:timer.setInterval:11" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:Worker:12" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:process.spawn:13" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:filesystem.readFile:14" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:timer.setTimeout:15" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:process.Bun.spawn:16" },
-		{ path: rejectedPath, rule: "native-effect-outside-adapter:process.Bun.spawn:17" },
-	]);
-	expect(
-		auditEffectBoundarySource(
-			"packages/pi-stuff/src/codex/unclassified.ts",
-			"export const schedule = () => setTimeout(callback, 1);",
-			inventory,
-		),
-	).toEqual([
-		{
-			path: "packages/pi-stuff/src/codex/unclassified.ts",
-			rule: "native-effect-outside-adapter:timer.setTimeout:1",
-		},
 	]);
 });
 

@@ -1,7 +1,7 @@
 import type { JSONSchema7, JSONSchema7Definition } from "json-schema";
-import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { escapeJsDoc, escapeStringLiteral, quoteProp, sanitizeToolName, toPascalCase } from "./utils.js";
+import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { escapeJsDoc, escapeStringLiteral, quoteProp, sanitizeToolName, toPascalCase } from "./utils.ts";
 
 export interface ConversionContext {
 	root: JSONSchema7;

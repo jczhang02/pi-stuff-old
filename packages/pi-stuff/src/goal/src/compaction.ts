@@ -1,9 +1,9 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { isSuiteNativeCompactionPreflight } from "../../conversation-ui/index.js";
-import type { GoalCommandController } from "./commands.js";
-import { loadGoalStateFromSession } from "./persistence.js";
-import type { GoalCompactionEvent, GoalRuntime, StatusContext } from "./runtime.js";
+import { isSuiteNativeCompactionPreflight } from "../../conversation-ui/index.ts";
+import type { GoalCommandController } from "./commands.ts";
+import { loadGoalStateFromSession } from "./persistence.ts";
+import type { GoalCompactionEvent, GoalRuntime, StatusContext } from "./runtime.ts";
 
 type GoalCompactionContext = ExtensionContext & StatusContext;
 

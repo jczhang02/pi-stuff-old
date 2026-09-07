@@ -12,8 +12,8 @@ import {
 	type CommandDialogViewContext,
 	commandDialogRows,
 	fitCommandDialogRows,
-} from "../conversation-ui/index.js";
-import { type CodexUsageSnapshot, formatCodexUsage } from "./usage.js";
+} from "../conversation-ui/index.ts";
+import { type CodexUsageSnapshot, formatCodexUsage } from "./usage.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 24;

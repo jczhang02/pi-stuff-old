@@ -1,13 +1,13 @@
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "../tool-display/activity.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "../tool-display/activity.ts";
 import {
 	activityKey,
 	activityTarget,
 	type SuiteToolPresentation,
 	singleActivity,
 	type ToolActivityMetadata,
-} from "../tool-display/index.js";
-import { MAGIC_TOOL_LABELS } from "./activity.js";
+} from "../tool-display/index.ts";
+import { MAGIC_TOOL_LABELS } from "./activity.ts";
 
 const MAGIC_TOOL_CATEGORIES = new Map<string, ToolActivityMetadata<ToolArguments, unknown>["categories"]>([
 	["ctx_expand", ["review-history-range"]],

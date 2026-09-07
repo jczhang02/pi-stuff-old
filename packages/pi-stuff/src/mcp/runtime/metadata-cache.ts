@@ -8,8 +8,8 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	parseJsonObject,
-} from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import { piStuffCachePath } from "../../xdg/index.ts";
 import { resourceNameToToolName } from "./resource-tools.ts";
 import type {

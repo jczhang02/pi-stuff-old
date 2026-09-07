@@ -15,9 +15,9 @@ import { dirname } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { resolveSettingsLockPath } from "./paths.js";
+import { resolveSettingsLockPath } from "./paths.ts";
 
-export { MERGED_SETTINGS_FILE, mergedSettingsPath, resolveSettingsLockPath } from "./paths.js";
+export { MERGED_SETTINGS_FILE, mergedSettingsPath, resolveSettingsLockPath } from "./paths.ts";
 
 const SETTINGS_LOCK_POLL_MS = 10;
 const SETTINGS_LOCK_TIMEOUT_MS = 10_000;

@@ -3,8 +3,8 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { markLifecyclePhase } from "./src/lifecycle-performance.js";
-import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.js";
+import { markLifecyclePhase } from "./src/lifecycle-performance.ts";
+import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.ts";
 
 const ENTRY_PATH = fileURLToPath(import.meta.url);
 const SOURCE_ROOT = join(dirname(ENTRY_PATH), "src");
@@ -17,7 +17,7 @@ export default async function piStuff(pi: ExtensionAPI): Promise<void> {
 	const runtime = await loadSuiteRuntime({
 		sourceRoot: SOURCE_ROOT,
 		load: (_fingerprint, mode) =>
-			mode === "initial" ? import("./src/suite-runtime.js") : importFreshSuiteRuntime(RUNTIME_PATH),
+			mode === "initial" ? import("./src/suite-runtime.ts") : importFreshSuiteRuntime(RUNTIME_PATH),
 	});
 	await runtime.installPiStuff(pi, { childBaseExtensionPath: ENTRY_PATH });
 	markLifecyclePhase("suite.wrapper.factory.end");

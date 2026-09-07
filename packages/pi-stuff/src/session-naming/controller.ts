@@ -1,15 +1,15 @@
 import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import type { GeneratedSessionName } from "./model.js";
-import type { NamingMessage } from "./prompt.js";
-import type { SessionNamingSettings } from "./settings.js";
+import type { GeneratedSessionName } from "./model.ts";
+import type { NamingMessage } from "./prompt.ts";
+import type { SessionNamingSettings } from "./settings.ts";
 import {
 	getLastRenameMarker,
 	getSessionNameTimestamp,
 	namingMessages,
 	type RenameMarker,
 	type RenameMode,
-} from "./state.js";
+} from "./state.ts";
 
 export type SessionNamingState = "disabled" | "failed" | "fallback" | "named" | "running" | "unnamed";
 

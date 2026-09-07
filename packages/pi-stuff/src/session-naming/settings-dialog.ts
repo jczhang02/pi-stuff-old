@@ -17,8 +17,8 @@ import {
 	type CommandDialogViewContext,
 	commandDialogRows,
 	fitCommandDialogRows,
-} from "../conversation-ui/index.js";
-import type { SessionNamingSettings, SessionNamingSettingsPatch, SessionNamingSettingsStore } from "./settings.js";
+} from "../conversation-ui/index.ts";
+import type { SessionNamingSettings, SessionNamingSettingsPatch, SessionNamingSettingsStore } from "./settings.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 40;

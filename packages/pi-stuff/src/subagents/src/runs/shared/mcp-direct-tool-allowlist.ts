@@ -2,13 +2,13 @@ import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type JsonInputValue, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
+import { type JsonInputValue, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import { piStuffCachePath, xdgConfigHome } from "../../../../xdg/index.ts";
 import { getAgentDir, getProjectConfigDir } from "../../shared/utils.ts";
 

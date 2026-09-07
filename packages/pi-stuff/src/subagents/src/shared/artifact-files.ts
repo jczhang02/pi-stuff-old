@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRuntimeFunction, isRuntimeObject } from "../../../shared/runtime-type.js";
+import { isRuntimeFunction, isRuntimeObject } from "../../../shared/runtime-type.ts";
 import { shardedDurableClaimName, tryAcquireKernelClaim } from "./durable-claim.ts";
 import { type ArtifactDirPreference, type ArtifactPaths, TEMP_ARTIFACTS_DIR } from "./types.ts";
 

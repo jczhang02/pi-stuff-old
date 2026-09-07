@@ -2,10 +2,10 @@ import { existsSync } from "node:fs";
 import type { AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { isRuntimeNumber } from "../../shared/runtime-type.js";
-import { boundTerminalLine } from "../../tool-display/index.js";
-import { reportWorkDiagnostic } from "./diagnostics.js";
-import { type BoundedOutputFile, foregroundOutputSnapshot } from "./output.js";
+import { isRuntimeNumber } from "../../shared/runtime-type.ts";
+import { boundTerminalLine } from "../../tool-display/index.ts";
+import { reportWorkDiagnostic } from "./diagnostics.ts";
+import { type BoundedOutputFile, foregroundOutputSnapshot } from "./output.ts";
 import type {
 	BackgroundWorkBashDetails,
 	BackgroundWorkKind,
@@ -13,8 +13,8 @@ import type {
 	BackgroundWorkSnapshot,
 	BackgroundWorkTerminalStatus,
 	BashExecutionInput,
-} from "./runtime.js";
-import type { ShellLaunchInput } from "./shell-activity-launch.js";
+} from "./runtime.ts";
+import type { ShellLaunchInput } from "./shell-activity-launch.ts";
 
 const QUICK_COMPLETION_MS = 2_000;
 

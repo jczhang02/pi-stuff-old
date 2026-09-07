@@ -1,6 +1,6 @@
 import { type ExtensionAPI, formatSkillsForPrompt, type Skill } from "@earendil-works/pi-coding-agent";
-import { registerContextPromptContributor } from "../context-management/index.js";
-import { CODE_MODE_TOOL_NAME, type PiStuffCodeModeOptions } from "./controls.js";
+import { registerContextPromptContributor } from "../context-management/index.ts";
+import { CODE_MODE_TOOL_NAME, type PiStuffCodeModeOptions } from "./controls.ts";
 
 const READ_TOOL_NAME = "read";
 const CODE_MODE_READ_BRIDGE =

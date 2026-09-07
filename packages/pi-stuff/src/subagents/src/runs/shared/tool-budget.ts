@@ -1,5 +1,5 @@
-import { isJsonInputObject, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isJsonInputObject, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import type { ResolvedToolBudget, ToolBudgetConfig, ToolBudgetState } from "../../shared/types.ts";
 
 export const DEFAULT_TOOL_BUDGET_BLOCK = ["read", "grep", "find", "ls"] as const;

@@ -4,19 +4,19 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	jsonInputKind,
-} from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeString } from "../../shared/runtime-type.js";
-import { type DomainPolicy, validateRemoteAllowRanges } from "../../shared/ssrf-protection.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeString } from "../../shared/runtime-type.ts";
+import { type DomainPolicy, validateRemoteAllowRanges } from "../../shared/ssrf-protection.ts";
 import { readWebConfig } from "./config.ts";
 import { getWebSearchConfigPath } from "./utils.ts";
 
-export type { DomainPolicy } from "../../shared/ssrf-protection.js";
+export type { DomainPolicy } from "../../shared/ssrf-protection.ts";
 export {
 	fetchRemoteUrl,
 	type Lookup,
 	type LookupAddress,
 	validateRemoteUrl,
-} from "../../shared/ssrf-protection.js";
+} from "../../shared/ssrf-protection.ts";
 
 const WEB_SEARCH_CONFIG_PATH = `${getWebSearchConfigPath()} under "web"`;
 

@@ -4,21 +4,20 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import * as Effect from "effect/Effect";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { tryAcquireStatusMutationClaim } from "../../shared/status-mutation.ts";
 import type { AsyncStatus, Details, NestedRunSummary } from "../../shared/types.ts";
 import { readStatus } from "../../shared/utils.ts";
 import { deliverStopRequest } from "../background/control-channel.ts";
-import { runConfiguredBackground } from "../background/subagent-runner.ts";
-import { reapOrphanWriterProcesses } from "../background/writer-process-registry.ts";
+import type { BackgroundRunnerStatus } from "../background/initial-status.ts";
 import type { BackgroundRunnerConfig, BackgroundTaskResult, RunnerAgentTask } from "../shared/parallel-utils.ts";
 import { recordForegroundOwnerExit } from "./owner-exit.ts";
 import {
@@ -27,11 +26,16 @@ import {
 	projectForegroundCompletion,
 	projectForegroundStatus,
 } from "./result-projection.ts";
+import { runForegroundWorker } from "./worker.ts";
 
 export interface ForegroundExecutionDependencies {
 	acquireStatusClaim(asyncDir: string): { release(): void } | undefined;
 	onStatus(status: AsyncStatus): void;
-	runConfigured(config: BackgroundRunnerConfig, onStatus: (status: AsyncStatus) => void): Effect.Effect<void, unknown>;
+	runConfigured(
+		config: BackgroundRunnerConfig,
+		onStatus: (status: AsyncStatus) => void,
+		committedStatus?: BackgroundRunnerStatus,
+	): Effect.Effect<void, unknown>;
 	readCompletion(filePath: string): ForegroundCompletion;
 	readNestedChildren(asyncDir: string, runId: string): NestedRunSummary[] | undefined;
 	requestStop(asyncDir: string): void;
@@ -42,12 +46,7 @@ export interface ForegroundExecutionDependencies {
 const DEFAULT_DEPENDENCIES: ForegroundExecutionDependencies = {
 	acquireStatusClaim: tryAcquireStatusMutationClaim,
 	onStatus() {},
-	runConfigured(config, onStatus) {
-		return Effect.tryPromise({
-			try: () => runConfiguredBackground(config, { afterStatusUpdate: onStatus }),
-			catch: (error) => error,
-		});
-	},
+	runConfigured: runForegroundWorker,
 	readCompletion(filePath) {
 		const value = parseJsonValue(fs.readFileSync(filePath, "utf8"));
 		return validateCompletion(value, filePath);
@@ -68,7 +67,11 @@ const DEFAULT_DEPENDENCIES: ForegroundExecutionDependencies = {
 	requestStop(asyncDir) {
 		deliverStopRequest({ asyncDir, source: "foreground-cancel" });
 	},
-	reapWriters: reapOrphanWriterProcesses,
+	reapWriters: (asyncDir) =>
+		Effect.tryPromise({
+			try: () => import("../background/writer-process-registry.ts"),
+			catch: (error) => error,
+		}).pipe(Effect.flatMap(({ reapOrphanWriterProcesses }) => reapOrphanWriterProcesses(asyncDir))),
 	writeStatus: writePrivateAtomicJson,
 };
 
@@ -235,6 +238,7 @@ export function runForegroundConfig(
 	config: BackgroundRunnerConfig,
 	signal?: AbortSignal,
 	dependencies: Partial<ForegroundExecutionDependencies> = {},
+	committedStatus?: BackgroundRunnerStatus,
 ): Effect.Effect<AgentToolResult<Details> & { isError?: boolean }, unknown> {
 	const deps = { ...DEFAULT_DEPENDENCIES, ...dependencies };
 	const notifyStatus = (status: AsyncStatus) => {
@@ -262,7 +266,7 @@ export function runForegroundConfig(
 		}
 	};
 	const execute = Effect.gen(function* () {
-		yield* deps.runConfigured(config, notifyStatus);
+		yield* deps.runConfigured(config, notifyStatus, committedStatus);
 		const projected = yield* Effect.try({
 			try: () => {
 				const completion = deps.readCompletion(config.resultPath);
@@ -328,6 +332,11 @@ export function runForegroundConfig(
 					details,
 				};
 			}),
+		),
+		Effect.onInterrupt(() =>
+			recoverForegroundRun(config, deps, notifyStatus, "Foreground Agent execution owner was interrupted.").pipe(
+				Effect.asVoid,
+			),
 		),
 	);
 	if (!signal) return execute;

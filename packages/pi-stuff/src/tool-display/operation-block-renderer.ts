@@ -4,13 +4,13 @@ import {
 	SELF_RENDERED_TRANSCRIPT_PADDING,
 	TRANSCRIPT_CONTINUATION,
 	TRANSCRIPT_MARKER,
-} from "../conversation-ui/transcript.js";
-import type { ToolActivityState } from "./activity-store.js";
-import type { OperationEvidenceLine } from "./contract.js";
-import { ROW_PREVIEW_CODE_UNIT_LIMIT } from "./limits.js";
-import { boundTerminalText, graphemePrefix, sanitizeTerminalText } from "./terminal.js";
+} from "../conversation-ui/transcript.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import type { OperationEvidenceLine } from "./contract.ts";
+import { ROW_PREVIEW_CODE_UNIT_LIMIT } from "./limits.ts";
+import { boundTerminalText, graphemePrefix, sanitizeTerminalText } from "./terminal.ts";
 
-export type { OperationEvidenceLine } from "./contract.js";
+export type { OperationEvidenceLine } from "./contract.ts";
 
 const COMPACT_IDENTITY_CODE_UNITS = 160;
 const COMPACT_IDENTITY_LINES = 2;

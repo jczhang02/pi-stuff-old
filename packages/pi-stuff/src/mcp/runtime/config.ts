@@ -8,8 +8,8 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	requireJsonInputValue,
-} from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	buildConfigWritePreview,
 	type ConfigWritePreview,

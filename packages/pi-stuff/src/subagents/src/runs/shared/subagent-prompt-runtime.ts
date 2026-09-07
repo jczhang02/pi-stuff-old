@@ -3,9 +3,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ContextEvent, ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
-import { type JsonInputValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.js";
-import { activityKey, registerSuiteOwnedTool, singleActivity } from "../../../../tool-display/index.js";
+import { type JsonInputValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.ts";
+import { activityKey, registerSuiteOwnedTool, singleActivity } from "../../../../tool-display/index.ts";
 import { registerNativeSupervisorClient } from "../../intercom/native-supervisor-channel.ts";
 import type { ResolvedToolBudget } from "../../shared/types.ts";
 import {

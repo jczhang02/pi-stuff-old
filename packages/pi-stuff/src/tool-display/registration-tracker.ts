@@ -1,8 +1,8 @@
 import type { AgentToolResult, ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { Guard } from "typebox/guard";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { isRuntimeBoolean, isRuntimeFunction, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolActivityMetadata, ToolArguments } from "./activity.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { isRuntimeBoolean, isRuntimeFunction, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolActivityMetadata, ToolArguments } from "./activity.ts";
 import type {
 	SuiteToolCatalogEntry,
 	SuiteToolCodeModeContract,
@@ -17,9 +17,9 @@ import type {
 	SuiteToolSurfaceController,
 	SuiteToolTrackerHost,
 	ToolUiRuntime,
-} from "./contract.js";
-import { type CapturedToolHandler, SuiteToolInvocationRuntime } from "./tool-invocation.js";
-import { isRecordValue } from "./tool-value.js";
+} from "./contract.ts";
+import { type CapturedToolHandler, SuiteToolInvocationRuntime } from "./tool-invocation.ts";
+import { isRecordValue } from "./tool-value.ts";
 
 export const SUITE_ACTIVITY_RENDERER = Symbol.for("@jczhang02/pi-stuff-tools/activity-renderer.v1");
 export const SUITE_TOOL_ENVELOPE = Symbol.for("@jczhang02/pi-stuff-tools/tool-envelope.v1");

@@ -13,8 +13,9 @@ import {
 	SUBAGENT_FOREGROUND_COMPLETE_EVENT,
 	type SubagentState,
 } from "../../shared/types.ts";
-import { type BackgroundRecoveryDescriptor, persistRecoveries } from "../background/async-execution.ts";
-import { createInitialStatus } from "../background/initial-status.ts";
+import { type BackgroundRunnerStatus, createInitialStatus } from "../background/initial-status.ts";
+import { persistRecoveries } from "../background/recovery-writer.ts";
+import type { BackgroundRecoveryDescriptor } from "../background/resolved-task.ts";
 import { initializeWriterProcessRegistry } from "../background/writer-process-registry.ts";
 import type { BackgroundRunnerConfig } from "../shared/parallel-utils.ts";
 import type { runForegroundConfig } from "./execution.ts";
@@ -64,7 +65,7 @@ function commitForegroundStart(
 	prepared: PreparedForegroundConfig,
 	hooks?: ForegroundLifecycleHooks,
 	onLifecycleCommitted?: (() => void) | undefined,
-): Effect.Effect<AsyncStatus, unknown> {
+): Effect.Effect<BackgroundRunnerStatus, unknown> {
 	const { config, directoryClaim, recoveries } = prepared;
 	return Effect.gen(function* () {
 		const initialStatus = yield* Effect.try({
@@ -200,13 +201,18 @@ export function executeForegroundLifecycle(
 				details: { mode: data.mode, runId: data.runId, results: [], context: data.context },
 			});
 			let abortedBeforeStart = false;
-			const result = yield* engine(config, signal, {
-				onStatus(status) {
-					liveStatus = { ...liveStatus, ...status };
-					updateForegroundControl(control, status);
-					runtime.onForegroundStatus?.();
+			const result = yield* engine(
+				config,
+				signal,
+				{
+					onStatus(status) {
+						liveStatus = { ...liveStatus, ...status };
+						updateForegroundControl(control, status);
+						runtime.onForegroundStatus?.();
+					},
 				},
-			}).pipe(
+				initialStatus,
+			).pipe(
 				Effect.catch((error) => {
 					if (!directoryClaim.abortIfUnstarted()) return Effect.fail(error);
 					abortedBeforeStart = true;

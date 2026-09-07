@@ -1,8 +1,10 @@
+import { createHash } from "node:crypto";
 import type { AgentToolResult as CoreAgentToolResult } from "@earendil-works/pi-agent-core";
 import type { ContextEvent, ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import type { projectCurrentContext } from "../../../../context-management/index.js";
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
+import type { projectCurrentContext } from "../../../../context-management/index.ts";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
 import type { AgentConfig, AgentScope } from "../../agents/agents.ts";
+import { normalizeSkillInput } from "../../agents/skill-input.ts";
 import type { ModelInfo } from "../../shared/model-info.ts";
 import type {
 	ArtifactConfig,
@@ -12,7 +14,7 @@ import type {
 	ToolBudgetConfig,
 } from "../../shared/types.ts";
 import type { executeAsyncParallel, executeAsyncSingle } from "../background/async-execution.ts";
-import type { AsyncExecutionContext } from "../background/resolved-task.ts";
+import type { AsyncExecutionContext, AsyncParallelTaskInput } from "../background/resolved-task.ts";
 import type { resolveCurrentSubagentCapabilityCeiling } from "../shared/capability-ceiling.ts";
 import type { ContextMode } from "../shared/context-mode.ts";
 import type {
@@ -43,6 +45,14 @@ export function resultIsError(value: AgentToolResult<Details>): boolean {
 export interface LaunchIdentityScope {
 	readonly sessionId: string;
 	readonly ownerAgentPath: readonly string[];
+}
+
+/** Stable launch identity shared by the public tool, storage, and session-wide governor. */
+export function deriveLaunchRunId(toolCallId: string, scope?: LaunchIdentityScope): string {
+	const hash = createHash("sha256");
+	if (scope) hash.update(JSON.stringify([scope.sessionId, scope.ownerAgentPath]));
+	hash.update("\0").update(toolCallId);
+	return hash.digest("hex").slice(0, 12);
 }
 
 export interface TaskParam {
@@ -86,6 +96,35 @@ export interface ExecutorEngines {
 	backgroundSingle: typeof executeAsyncSingle;
 	backgroundParallel: typeof executeAsyncParallel;
 	foreground: typeof runForegroundConfig;
+}
+
+export function taskInputs(params: SubagentParamsLike): TaskParam[] {
+	if (params.tasks?.length) return params.tasks;
+	if (!params.agent || !params.task) return [];
+	const task: TaskParam = { agent: params.agent, task: params.task };
+	if (params.description) task.description = params.description;
+	if (params.model) task.model = params.model;
+	if (params.skill !== undefined) task.skill = params.skill;
+	if (params.toolBudget) task.toolBudget = params.toolBudget;
+	if (params.toolTimeoutMs !== undefined) task.toolTimeoutMs = params.toolTimeoutMs;
+	return [task];
+}
+
+export function resolvedTaskInput(
+	task: TaskParam,
+	projectedTask: string,
+	delegatedTask?: string,
+): AsyncParallelTaskInput {
+	const input: AsyncParallelTaskInput = { agent: task.agent, task: projectedTask };
+	if (task.description) input.description = task.description;
+	if (delegatedTask) input.delegatedTask = delegatedTask;
+	if (task.cwd) input.cwd = task.cwd;
+	if (task.model) input.model = task.model;
+	const skill = normalizeSkillInput(task.skill);
+	if (skill !== undefined) input.skill = skill;
+	if (task.toolBudget) input.toolBudget = task.toolBudget;
+	if (task.toolTimeoutMs !== undefined) input.toolTimeoutMs = task.toolTimeoutMs;
+	return input;
 }
 
 export interface ExecutorDeps {

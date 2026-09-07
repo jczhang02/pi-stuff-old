@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { sanitizeOneLine } from "./terminal-text.js";
+import { sanitizeOneLine } from "./terminal-text.ts";
 
 const GIT_STATUS_TIMEOUT_MS = 2_000;
 

@@ -8,9 +8,9 @@ import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import * as Semaphore from "effect/Semaphore";
-import { getCommandDialogCoordinator } from "../conversation-ui/index.js";
-import type { SuiteAgentMessageHost } from "../conversation-ui/suite-agent-message.js";
-import type { EffectFoundation } from "../shared/effect-foundation.js";
+import { getCommandDialogCoordinator } from "../conversation-ui/index.ts";
+import type { SuiteAgentMessageHost } from "../conversation-ui/suite-agent-message.ts";
+import type { EffectFoundation } from "../shared/effect-foundation.ts";
 import {
 	type SuiteToolDefinitionRegistry,
 	type SuiteToolRegistrationHost,
@@ -18,18 +18,18 @@ import {
 	sendSuiteAgentMessage,
 	withAgentWorkOrigin,
 	withDirectUserActivation,
-} from "../tool-display/contract.js";
-import { stringifyForStorage } from "./cloudflare/codec.js";
-import type { SuiteCodeModeConnector } from "./connector.js";
-import { type CodeModeEffectiveSource, createCodeModeDialogView } from "./dialog.js";
-import type { CodeModeSessionLedger } from "./ledger.js";
-import type { CodeModeRuntime, PiStuffCodeModeDetails } from "./runtime.js";
+} from "../tool-display/contract.ts";
+import { stringifyForStorage } from "./cloudflare/codec.ts";
+import type { SuiteCodeModeConnector } from "./connector.ts";
+import { type CodeModeEffectiveSource, createCodeModeDialogView } from "./dialog.ts";
+import type { CodeModeSessionLedger } from "./ledger.ts";
+import type { CodeModeRuntime, PiStuffCodeModeDetails } from "./runtime.ts";
 import {
 	readCodeModeGlobalEnabled,
 	readCodeModeProjectEnabled,
 	writeCodeModeGlobalEnabled,
 	writeCodeModeProjectEnabled,
-} from "./settings.js";
+} from "./settings.ts";
 
 export const CODE_MODE_TOOL_NAME = "codemode";
 const CODE_MODE_DECISION_MESSAGE_TYPE = "pi-stuff-code-mode-decision";

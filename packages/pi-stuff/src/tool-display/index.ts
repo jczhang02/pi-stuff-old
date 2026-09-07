@@ -12,18 +12,18 @@ import {
 	getCommandDialogCoordinator,
 	getHostSharedResource,
 	type UiSettingRegistry,
-} from "../conversation-ui/index.js";
-import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.js";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import { TOOL_ACTIVITY_TICK_MS } from "./activity-clock.js";
-import { registerBuiltins, resolveBuiltinHostSettings } from "./builtin-tools.js";
-import { installToolUiRuntime } from "./contract.js";
-import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.js";
-import { registerHistoricalSuiteToolDefinitions } from "./registration.js";
-import { consumeResumeToolHandoff, prepareResumeToolHandoff, restoreResumeActiveToolOrder } from "./session-handoff.js";
-import { ToolUiSettingsStore } from "./settings.js";
-import { createToolDialogView } from "./tool-dialog.js";
-import { isRecordValue } from "./tool-value.js";
+} from "../conversation-ui/index.ts";
+import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import { TOOL_ACTIVITY_TICK_MS } from "./activity-clock.ts";
+import { registerBuiltins, resolveBuiltinHostSettings } from "./builtin-tools.ts";
+import { installToolUiRuntime } from "./contract.ts";
+import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT, TOOL_DISPLAY_TRANSCRIPT_MESSAGE_LIMIT } from "./limits.ts";
+import { registerHistoricalSuiteToolDefinitions } from "./registration.ts";
+import { consumeResumeToolHandoff, prepareResumeToolHandoff, restoreResumeActiveToolOrder } from "./session-handoff.ts";
+import { ToolUiSettingsStore } from "./settings.ts";
+import { createToolDialogView } from "./tool-dialog.ts";
+import { isRecordValue } from "./tool-value.ts";
 
 const BUILTIN_TOOL_NAMES = new Set(["bash", "edit", "find", "grep", "ls", "powershell", "read", "write"]);
 const TOOL_LIFECYCLE_STATES = Symbol.for("@jczhang02/pi-stuff-tools/lifecycle-states/v1");
@@ -345,8 +345,8 @@ export {
 	type ToolActivityItem,
 	type ToolActivityMetadata,
 	type ToolArguments,
-} from "./activity.js";
-export { BASH_CODE_MODE_CONTRACT } from "./builtin-tools.js";
+} from "./activity.ts";
+export { BASH_CODE_MODE_CONTRACT } from "./builtin-tools.ts";
 export {
 	getToolUiRuntime,
 	type SuiteToolCatalogEntry,
@@ -369,7 +369,7 @@ export {
 	type ToolActivityView,
 	ToolUiRuntime,
 	type ToolUiRuntimeHost,
-} from "./contract.js";
+} from "./contract.ts";
 export {
 	assertSuiteToolActivityCoverage,
 	configureSuiteToolReplay,
@@ -379,16 +379,16 @@ export {
 	registerSuiteToolActivityMetadata,
 	registerSuiteToolEnvelope,
 	registerSuiteToolEnvelopeCompanion,
-} from "./registration.js";
-export { CachedToolRow } from "./render.js";
+} from "./registration.ts";
+export { CachedToolRow } from "./render.ts";
 export {
 	boundTerminalLine,
 	boundTerminalText,
 	compactTerminalPath,
 	graphemePrefix,
 	sanitizeTerminalText,
-} from "./terminal.js";
-export { formatElapsed } from "./tool-text.js";
+} from "./terminal.ts";
+export { formatElapsed } from "./tool-text.ts";
 
 export default async function piStuffTools(pi: ExtensionAPI): Promise<void> {
 	const foundation = installEffectFoundation(pi);

@@ -1,5 +1,5 @@
 import { Key, type KeybindingsManager, matchesKey } from "@earendil-works/pi-tui";
-import { commandDialogNavigation } from "../../conversation-ui/index.js";
+import { commandDialogNavigation } from "../../conversation-ui/index.ts";
 
 /** The `tui.select.*` keybinding ids the adapter panels resolve. */
 export type PanelSelectKeybinding =

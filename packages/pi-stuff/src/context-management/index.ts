@@ -9,27 +9,27 @@ import {
 	hasDirectUserActivation,
 	registerSuiteAgentMessagePreparation,
 	reportDiagnostic,
-} from "../conversation-ui/index.js";
-import { deferToHostTurn } from "../lifecycle-deadline.js";
-import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.js";
-import { type MagicContextPreparation, type MagicContextPreparationOptions, prepareMagicContext } from "./config.js";
-import type { MagicModule, NativeCompactionSettings } from "./magic-runtime.js";
-import { loadMagicContextWorker } from "./magic-worker-client.js";
-import type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions } from "./projection.js";
-import { estimateProjectionTokens, extractMagicProjection, formatProjection, nativeProjection } from "./projection.js";
-import { applyContextPromptContributions } from "./prompt-contributions.js";
-import { registerContextProviderBoundary } from "./provider-boundary.js";
-import { type ContextCapability, type ContextCapabilityRegistry, ContextCapabilityRuntime } from "./runtime.js";
-import type { ContextCapabilityState } from "./status.js";
+} from "../conversation-ui/index.ts";
+import { deferToHostTurn } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { type MagicContextPreparation, type MagicContextPreparationOptions, prepareMagicContext } from "./config.ts";
+import type { MagicModule, NativeCompactionSettings } from "./magic-runtime.ts";
+import { loadMagicContextWorker } from "./magic-worker-client.ts";
+import type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions } from "./projection.ts";
+import { estimateProjectionTokens, extractMagicProjection, formatProjection, nativeProjection } from "./projection.ts";
+import { applyContextPromptContributions } from "./prompt-contributions.ts";
+import { registerContextProviderBoundary } from "./provider-boundary.ts";
+import { type ContextCapability, type ContextCapabilityRegistry, ContextCapabilityRuntime } from "./runtime.ts";
+import type { ContextCapabilityState } from "./status.ts";
 
-export type { NativeCompactionSettings } from "./magic-runtime.js";
+export type { NativeCompactionSettings } from "./magic-runtime.ts";
 export type {
 	ContextProjection,
 	ContextProjectionAudience,
 	ContextProjectionOptions,
-} from "./projection.js";
-export type { ContextCapability } from "./runtime.js";
-export type { ContextActivationTrigger, ContextCapabilityState, ContextStatusSnapshot } from "./status.js";
+} from "./projection.ts";
+export type { ContextCapability } from "./runtime.ts";
+export type { ContextActivationTrigger, ContextCapabilityState, ContextStatusSnapshot } from "./status.ts";
 
 const CONTEXT_CAPABILITY_REGISTRY = Symbol.for("@jczhang02/pi-stuff-context/runtime/v2");
 const CONTEXT_CAPABILITY_DISCOVERY_EVENT = "@jczhang02/pi-stuff-context/runtime-discovery/v1";
@@ -264,7 +264,7 @@ export default async function piStuffContext(
 	});
 }
 
-export { registerContextPromptContributor } from "./prompt-contributions.js";
+export { registerContextPromptContributor } from "./prompt-contributions.ts";
 
 export const __test = {
 	async clear(): Promise<void> {

@@ -2,34 +2,34 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import * as Effect from "effect/Effect";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
-import { installEffectFoundation } from "../shared/effect-foundation.js";
-import { getHostSharedResource } from "../shared/host-resource.js";
-import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.js";
+import { installEffectFoundation } from "../shared/effect-foundation.ts";
+import { getHostSharedResource } from "../shared/host-resource.ts";
+import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.ts";
 import {
 	AgentRunOriginTracker,
 	listenForActiveAgentWorkUserPromotions,
 	listenForAgentWorkOriginQueries,
-} from "./agent-run-origin.js";
-import type { CommandDialogCoordinatorImplementation } from "./command-dialog.js";
-import { getCommandDialogCoordinator } from "./command-dialog-registry.js";
-import { registerConversationMarkdown } from "./conversation-markdown.js";
-import { activateDiagnosticChannel, type DiagnosticChannel, getDiagnosticChannel } from "./diagnostics.js";
-import { createDiagnosticsView } from "./diagnostics-dialog.js";
-import { UiEffectOwner } from "./effect-owner.js";
-import { globalWeakMap } from "./global-registry.js";
+} from "./agent-run-origin.ts";
+import type { CommandDialogCoordinatorImplementation } from "./command-dialog.ts";
+import { getCommandDialogCoordinator } from "./command-dialog-registry.ts";
+import { registerConversationMarkdown } from "./conversation-markdown.ts";
+import { activateDiagnosticChannel, type DiagnosticChannel, getDiagnosticChannel } from "./diagnostics.ts";
+import { createDiagnosticsView } from "./diagnostics-dialog.ts";
+import { UiEffectOwner } from "./effect-owner.ts";
+import { globalWeakMap } from "./global-registry.ts";
 import {
 	installUiSessionPresentation as installPresentation,
 	type UiSessionPresentation,
-} from "./session-presentation.js";
+} from "./session-presentation.ts";
 import {
 	beginUiSettingsGeneration,
 	registerOwnedUiSettings,
 	type UiSettingRegistry,
 	UiSettingsStore,
-} from "./settings.js";
-import { createUiSettingsView } from "./ui-settings-dialog.js";
+} from "./settings.ts";
+import { createUiSettingsView } from "./ui-settings-dialog.ts";
 
-export { getHostSharedResource } from "../shared/host-resource.js";
+export { getHostSharedResource } from "../shared/host-resource.ts";
 export {
 	type AgentWorkOrigin,
 	hasDirectUserActivation,
@@ -38,8 +38,8 @@ export {
 	readCurrentAgentWorkOrigin,
 	withAgentWorkOrigin,
 	withDirectUserActivation,
-} from "./agent-run-origin.js";
-export { getCommandDialogCoordinator } from "./command-dialog-registry.js";
+} from "./agent-run-origin.ts";
+export { getCommandDialogCoordinator } from "./command-dialog-registry.ts";
 export type {
 	CommandDialogChrome,
 	CommandDialogComponent,
@@ -53,7 +53,7 @@ export type {
 	FooterFactory,
 	FooterTailComponent,
 	FooterTailFactory,
-} from "./command-dialog-types.js";
+} from "./command-dialog-types.ts";
 export {
 	activateDiagnosticChannel,
 	DiagnosticChannel,
@@ -63,7 +63,7 @@ export {
 	type DiagnosticVisibility,
 	getDiagnosticChannel,
 	reportDiagnostic,
-} from "./diagnostics.js";
+} from "./diagnostics.ts";
 export {
 	type CommandDialogKeyHelpEntry,
 	type CommandDialogNavigation,
@@ -89,20 +89,20 @@ export {
 	renderCommandDialogKeyHelp,
 	renderCommandDialogSplit,
 	WIDE_COMMAND_DIALOG_MIN_WIDTH,
-} from "./dialog-layout.js";
+} from "./dialog-layout.ts";
 export {
 	type GoalCoordinationSnapshot,
 	listenForGoalCoordinationQueries,
 	listenForPendingGoalResultQueries,
 	readGoalCoordination,
-} from "./goal-coordination.js";
-export { createMarkdownRenderer } from "./markdown.js";
+} from "./goal-coordination.ts";
+export { createMarkdownRenderer } from "./markdown.ts";
 export {
 	createPonytailDialogView,
 	type PonytailDialogAction,
 	type PonytailDialogOptions,
 	type PonytailDialogSnapshot,
-} from "./ponytail-dialog.js";
+} from "./ponytail-dialog.ts";
 export {
 	beginUiSettingsGeneration,
 	getUiSettingRegistry,
@@ -112,7 +112,7 @@ export {
 	type UiSettingRegistry,
 	type UiSettings,
 	UiSettingsStore,
-} from "./settings.js";
+} from "./settings.ts";
 export {
 	type CodexStatusChannel,
 	type CodexStatusSnapshot,
@@ -128,7 +128,7 @@ export {
 	getCodexStatusChannel,
 	getContextStatusChannel,
 	getGoalStatusChannel,
-} from "./statusline.js";
+} from "./statusline.ts";
 export {
 	beginSuiteNativeCompactionPreflight,
 	isSuiteNativeCompactionPreflight,
@@ -136,13 +136,13 @@ export {
 	type SuiteAgentMessageOptions,
 	type SuiteAgentMessagePreparation,
 	sendSuiteAgentMessage,
-} from "./suite-agent-message.js";
+} from "./suite-agent-message.ts";
 export {
 	installSuiteSessionReadiness,
 	markSuiteSessionReady,
 	rejectSuiteSessionReadiness,
 	whenSuiteSessionReady,
-} from "./suite-lifecycle.js";
+} from "./suite-lifecycle.ts";
 
 interface UiSettingsCommandState {
 	active: boolean;

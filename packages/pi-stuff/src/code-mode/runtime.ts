@@ -1,22 +1,22 @@
 import type { AgentToolResult, AgentToolUpdateCallback, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { SuiteToolEnvelopeOperation } from "../tool-display/contract.js";
-import { type CodemodeValue, isCodemodeObject, requireCodemodeValue } from "./cloudflare/codec.js";
-import type { Snippet } from "./cloudflare/snippet.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { SuiteToolEnvelopeOperation } from "../tool-display/contract.ts";
+import { type CodemodeValue, isCodemodeObject, requireCodemodeValue } from "./cloudflare/codec.ts";
+import type { Snippet } from "./cloudflare/snippet.ts";
 import {
 	buildSuiteSandboxSource,
 	INTERNAL_STEP_DECIDE_TOOL,
 	INTERNAL_STEP_RECORD_TOOL,
 	type SuiteCodeModeConnector,
-} from "./connector.js";
-import { CodeModeHostLostError } from "./host/host-client.js";
+} from "./connector.ts";
+import { CodeModeHostLostError } from "./host/host-client.ts";
 import {
 	assertDecodableSupportedCodeModeImages,
 	codeModeImageFromDataUrl,
 	InvalidCodeModeImageError,
-} from "./image-content.js";
-import type { CodeModeExecutionController, CodeModePendingAction, CodeModeSessionLedger } from "./ledger.js";
-import { captureCodeModeModelContent } from "./presentation.js";
+} from "./image-content.ts";
+import type { CodeModeExecutionController, CodeModePendingAction, CodeModeSessionLedger } from "./ledger.ts";
+import { captureCodeModeModelContent } from "./presentation.ts";
 import type {
 	CodeModeExecuteOptions,
 	CodeModeWaitOptions,
@@ -26,8 +26,8 @@ import type {
 	RuntimeToolCallPlan,
 	RuntimeToolTrace,
 	SuiteSandboxTool,
-} from "./protocol.js";
-import { MAX_RETAINED_CODE_MODE_TRACES } from "./protocol.js";
+} from "./protocol.ts";
+import { MAX_RETAINED_CODE_MODE_TRACES } from "./protocol.ts";
 
 const AUTO_WAIT_MS = 60_000;
 const MAX_OUTPUT_CHARS = 400_000;

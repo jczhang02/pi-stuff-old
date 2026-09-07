@@ -1,4 +1,4 @@
-import { fetchRemoteUrl } from "../../shared/ssrf-protection.js";
+import { fetchRemoteUrl } from "../../shared/ssrf-protection.ts";
 import { throwIfAborted } from "./abort.ts";
 import type { AuthDiscovery } from "./mcp-auth-config.ts";
 import { combineAbortSignals } from "./runtime-owner.ts";

@@ -6,9 +6,9 @@ import {
 	readGoalCoordination,
 	sendSuiteAgentMessage,
 	withAgentWorkOrigin,
-} from "../../../conversation-ui/index.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
-import { CachedToolRow } from "../../../tool-display/index.js";
+} from "../../../conversation-ui/index.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
+import { CachedToolRow } from "../../../tool-display/index.ts";
 import type { CompletionNotification } from "../runs/background/notify.ts";
 import { reportAgentDiagnostic } from "../shared/diagnostics.ts";
 import { sessionArtifactMatches } from "../shared/session-identity.ts";

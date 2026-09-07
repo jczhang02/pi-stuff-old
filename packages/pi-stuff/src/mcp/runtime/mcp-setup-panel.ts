@@ -1,7 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { Key, matchesKey } from "@earendil-works/pi-tui";
-import { matchesCommandDialogCancel } from "../../conversation-ui/index.js";
-import { isRuntimeNumber } from "../../shared/runtime-type.js";
+import { matchesCommandDialogCancel } from "../../conversation-ui/index.ts";
+import { isRuntimeNumber } from "../../shared/runtime-type.ts";
 import { KNOWN_SERVER_PRESETS, type KnownServerPreset, type McpDiscoverySummary } from "./config.ts";
 import {
 	type Action,

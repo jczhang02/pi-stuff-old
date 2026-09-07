@@ -16,8 +16,16 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 
 ## Benchmarks and acceptance
 
+- [Matched Package resources and a retained input failure](suite-comparable-resources-2026-09-06.md)
+- [Paired Suite lifecycle resource measurements](suite-lifecycle-comparison-2026-09-06.md)
+- [GC observations and retained owner costs](gc-and-owner-cost-2026-09-06.md)
+- [Naming and Goal history-selection cost](history-selection-cost-2026-09-06.md)
+- [Agents cold loading and projector cost](agents-loading-and-projector-cost-2026-09-06.md)
+- [Suite resource source inventory](suite-resource-inventory-2026-09-05.md)
+- [Continuous responsiveness observer and cold Ledger reproduction](suite-responsiveness-observer-2026-09-05.md)
+- [Pi 0.85.0 Suite resource baseline](suite-resource-baseline-2026-09-05.md)
+- [Capability Contract Acceptance and Bounded Terminal-Bench Observation](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
 - [ps-8ew reliability repair acceptance](ps-8ew-reliability-acceptance-20260906.md)
-- [Capability Contract Acceptance](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
 - [Magic Context under Effect optimization and recertification](magic-context-effect-optimization-2026-09-02.md)
 - [ps-qer Agent completion acceptance](ps-qer-agent-completion-acceptance-20260902.md)
 - [Effect v4 versus main decision](effect-v4-mainline-decision-2026-09-01.md)

@@ -6,29 +6,29 @@ import {
 	summarizeToolActivityAggregate,
 	type ToolActivityMetadata,
 	type ToolArguments,
-} from "./activity.js";
-import { type ActivityClockWakes, ToolActivityClock } from "./activity-clock.js";
+} from "./activity.ts";
+import { type ActivityClockWakes, ToolActivityClock } from "./activity-clock.ts";
 import {
 	type ResultErrorPolicy,
 	type ToolActivityQueryBinding,
 	ToolActivityQueryProjection,
-} from "./activity-query-projection.js";
-import { type ToolActivity, ToolActivityStore } from "./activity-store.js";
-import { GroupSummaryIndex } from "./activity-summary.js";
-import { presentBashOperation } from "./bash-operation-presentation.js";
+} from "./activity-query-projection.ts";
+import { type ToolActivity, ToolActivityStore } from "./activity-store.ts";
+import { GroupSummaryIndex } from "./activity-summary.ts";
+import { presentBashOperation } from "./bash-operation-presentation.ts";
 import type {
 	PresentedToolMetadata,
 	ToolActivityDetailMode,
 	ToolActivityDetailView,
 	ToolActivityView,
 	ToolDetailPresentation,
-} from "./contract.js";
-import type { ToolEnvelopeProjection } from "./envelope-projection.js";
-import type { ToolGroupProjection } from "./group-projection.js";
-import { isOperationBlockMember, operationBlockModel } from "./operation-block-presentation.js";
-import type { CachedToolRow, RetrievalGroupRowModel, ToolRowModel } from "./render.js";
-import type { ToolUiSettingsStore } from "./settings.js";
-import { formatElapsed } from "./tool-text.js";
+} from "./contract.ts";
+import type { ToolEnvelopeProjection } from "./envelope-projection.ts";
+import type { ToolGroupProjection } from "./group-projection.ts";
+import { isOperationBlockMember, operationBlockModel } from "./operation-block-presentation.ts";
+import type { CachedToolRow, RetrievalGroupRowModel, ToolRowModel } from "./render.ts";
+import type { ToolUiSettingsStore } from "./settings.ts";
+import { formatElapsed } from "./tool-text.ts";
 
 const ACTIVITY_HINT_HOLD_MS = 700;
 const BINDING_LIMIT = 768;

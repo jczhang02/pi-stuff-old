@@ -10,7 +10,7 @@ import * as FiberMap from "effect/FiberMap";
 import * as Option from "effect/Option";
 import * as Scope from "effect/Scope";
 import * as Semaphore from "effect/Semaphore";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { logger } from "./logger.ts";
 import type { AuthStorageOptions } from "./mcp-auth.ts";
 import { supportsOAuth } from "./mcp-auth-config.ts";

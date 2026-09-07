@@ -7,9 +7,9 @@ import {
 	type CommandDialogCoordinatorHost,
 	type CommandDialogView,
 	getCommandDialogCoordinator,
-} from "../conversation-ui/index.js";
-import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.js";
-import { BTW_COMMAND_NAME, type BtwExecResult, executeBtw } from "./btw.js";
+} from "../conversation-ui/index.ts";
+import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { BTW_COMMAND_NAME, type BtwExecResult, executeBtw } from "./btw.ts";
 import {
 	type BtwExchange,
 	btwSessionKey,
@@ -19,8 +19,8 @@ import {
 	hydrateBtwHistory,
 	readBtwHistory,
 	recordBtwExchange,
-} from "./btw-history.js";
-import { BtwDialogController, type BtwDialogOptions } from "./btw-ui.js";
+} from "./btw-history.ts";
+import { BtwDialogController, type BtwDialogOptions } from "./btw-ui.ts";
 
 const ZERO_USAGE = {
 	input: 0,

@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect";
-import { isJsonInputObject, type JsonInputValue, requireJsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue, requireJsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	hostMatchesProviderDomain as domainMatches,
 	type ProviderDomainFilters,

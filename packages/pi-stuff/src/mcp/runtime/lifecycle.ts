@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { isRuntimeNumber } from "../../shared/runtime-type.js";
+import { isRuntimeNumber } from "../../shared/runtime-type.ts";
 import { logger } from "./logger.ts";
 import { hasPendingAuth } from "./mcp-auth-flow.ts";
 import type { McpServerManager } from "./server-manager.ts";

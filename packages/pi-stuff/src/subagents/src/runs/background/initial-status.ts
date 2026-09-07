@@ -32,6 +32,8 @@ export function createInitialStatus(
 		runId: config.id,
 		mode: config.work.mode,
 		state: "running",
+		turnCount: 0,
+		toolCount: 0,
 		startedAt,
 		lastUpdate: startedAt,
 		pid: runnerPid,

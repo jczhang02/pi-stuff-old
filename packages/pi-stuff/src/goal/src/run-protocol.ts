@@ -2,10 +2,10 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { validateObjective } from "./command.js";
-import type { GoalCommandController } from "./commands.js";
-import { formatError, type GoalRuntime, type GoalStateSnapshot, isTerminalGoalStatus } from "./runtime.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { validateObjective } from "./command.ts";
+import type { GoalCommandController } from "./commands.ts";
+import { formatError, type GoalRuntime, type GoalStateSnapshot, isTerminalGoalStatus } from "./runtime.ts";
 
 const GOAL_RUN_START_CHANNEL = "pi-goal:start";
 const GOAL_RUN_CANCEL_CHANNEL = "pi-goal:cancel";

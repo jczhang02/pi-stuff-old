@@ -6,8 +6,8 @@
  */
 
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
-import { isJsonInputObject } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 
 export const DEFAULT_OAUTH_CALLBACK_PORT = 19876;
 export const DEFAULT_OAUTH_CALLBACK_PATH = "/callback";

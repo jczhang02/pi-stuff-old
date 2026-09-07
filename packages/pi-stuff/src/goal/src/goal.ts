@@ -10,21 +10,21 @@ import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
-import { hasDirectUserActivation } from "../../conversation-ui/agent-run-origin.js";
-import { listenForGoalCoordinationQueries } from "../../conversation-ui/goal-coordination.js";
+import { hasDirectUserActivation } from "../../conversation-ui/agent-run-origin.ts";
+import { listenForGoalCoordinationQueries } from "../../conversation-ui/goal-coordination.ts";
 import {
 	type EffectFoundation,
 	type EffectScopeOwner,
 	installEffectFoundation,
-} from "../../shared/effect-foundation.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import { currentTokenTotal } from "./accounting.js";
-import { registerGoalCommand } from "./command-registration.js";
-import { GoalCommandController } from "./commands.js";
-import { GoalCompactionCoordinator } from "./compaction.js";
-import type { ActiveGoal } from "./persistence.js";
-import { buildGoalSystemPrompt } from "./prompts.js";
-import { GoalRunController } from "./run-protocol.js";
+} from "../../shared/effect-foundation.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import { currentTokenTotal } from "./accounting.ts";
+import { registerGoalCommand } from "./command-registration.ts";
+import { GoalCommandController } from "./commands.ts";
+import { GoalCompactionCoordinator } from "./compaction.ts";
+import type { ActiveGoal } from "./persistence.ts";
+import { buildGoalSystemPrompt } from "./prompts.ts";
+import { GoalRunController } from "./run-protocol.ts";
 import {
 	type AssistantMessageLike,
 	abortCurrentTurn,
@@ -44,11 +44,11 @@ import {
 	type StatusContext,
 	transitionGoal,
 	truncateNotification,
-} from "./runtime.js";
-import { hasAssistantToolCall } from "./safety.js";
-import { type GoalSessionLifecycle, shutdownGoalSession, startGoalSession } from "./session.js";
-import type { GoalSettingsStore } from "./settings.js";
-import { registerGoalTerminalTools } from "./terminal-tools.js";
+} from "./runtime.ts";
+import { hasAssistantToolCall } from "./safety.ts";
+import { type GoalSessionLifecycle, shutdownGoalSession, startGoalSession } from "./session.ts";
+import type { GoalSettingsStore } from "./settings.ts";
+import { registerGoalTerminalTools } from "./terminal-tools.ts";
 
 // goal.ts remains the Pi-facing composition root because lifecycle-event registration is
 // order-sensitive. Terminal Tool execution, per-session mechanisms, and command transitions
@@ -676,16 +676,16 @@ export {
 	cumulativeAssistantTokens,
 	formatDuration,
 	formatTokenCount,
-} from "./accounting.js";
+} from "./accounting.ts";
 
 export {
 	completeGoalArguments,
 	parseCommand,
 	parseTokenBudget,
 	validateObjective,
-} from "./command.js";
+} from "./command.ts";
 
-export { buildGoalSystemPrompt } from "./prompts.js";
+export { buildGoalSystemPrompt } from "./prompts.ts";
 
 export {
 	EMERGENCY_AUTOMATIC_TURN_LIMIT,
@@ -696,7 +696,7 @@ export {
 	isContradictoryCompletionSummary,
 	isRetryableGoalInterruption,
 	isUsageLimitedGoalInterruption,
-} from "./runtime.js";
+} from "./runtime.ts";
 
 function isGoalContextMessage(message: GoalMessage) {
 	return (

@@ -1,9 +1,9 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { PlannedToolActivityMember } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { BASH_OUTPUT_COLLAPSED_SOURCE_LIMIT, BASH_OUTPUT_SOURCE_LIMIT } from "./limits.js";
-import type { BashOperationRowModel, CachedToolRow } from "./render.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { PlannedToolActivityMember } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { BASH_OUTPUT_COLLAPSED_SOURCE_LIMIT, BASH_OUTPUT_SOURCE_LIMIT } from "./limits.ts";
+import type { BashOperationRowModel, CachedToolRow } from "./render.ts";
 
 export interface BashOperationBinding {
 	bashOutput?: string;

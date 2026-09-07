@@ -12,8 +12,8 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, isAbsolute, join, resolve } from "node:path";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	captureProcessIdentity,
 	identityMatches,
@@ -21,7 +21,7 @@ import {
 	processExists,
 	processStartIdentity,
 	terminateVerifiedProcessGroup,
-} from "./process.js";
+} from "./process.ts";
 
 const SCHEMA_VERSION = 2;
 const OWNED_DIRECTORY_PREFIX = "pi-stuff-";

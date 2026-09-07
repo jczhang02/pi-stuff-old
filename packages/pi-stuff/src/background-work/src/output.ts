@@ -4,8 +4,8 @@ import {
 	formatSize,
 	type TruncationResult,
 } from "@earendil-works/pi-coding-agent";
-import { sanitizeTerminalWhitespace as sanitizeTerminalText } from "../../shared/terminal-text.js";
-import { readRollingOutput, utf8SafeTail, visibleOmissionMarker } from "./rolling-output.js";
+import { sanitizeTerminalWhitespace as sanitizeTerminalText } from "../../shared/terminal-text.ts";
+import { readRollingOutput, utf8SafeTail, visibleOmissionMarker } from "./rolling-output.ts";
 
 export {
 	BoundedOutputFile,
@@ -14,7 +14,7 @@ export {
 	tryReadBoundedTail,
 	utf8SafePrefix,
 	utf8SafeTail,
-} from "./rolling-output.js";
+} from "./rolling-output.ts";
 export { sanitizeTerminalText };
 
 interface BufferTruncation {

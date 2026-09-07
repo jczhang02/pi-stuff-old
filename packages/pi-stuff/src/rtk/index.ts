@@ -2,13 +2,13 @@ import { type ExtensionAPI, isToolCallEventType } from "@earendil-works/pi-codin
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { getCommandDialogCoordinator } from "../conversation-ui/index.js";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.js";
-import { createRtkProjectionAdapter } from "./projection.js";
-import { createRtkDialogView } from "./rtk-dialog.js";
-import { RtkRuntime } from "./runtime.js";
-import { RtkSettingsStore } from "./settings.js";
+import { getCommandDialogCoordinator } from "../conversation-ui/index.ts";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { createRtkProjectionAdapter } from "./projection.ts";
+import { createRtkDialogView } from "./rtk-dialog.ts";
+import { RtkRuntime } from "./runtime.ts";
+import { RtkSettingsStore } from "./settings.ts";
 
 export {
 	type ContextProjectionAdapter,
@@ -16,15 +16,15 @@ export {
 	RtkProjectionAdapter,
 	type RtkProjectionOptions,
 	type RtkProjectionStatsSnapshot,
-} from "./projection.js";
+} from "./projection.ts";
 export {
 	CERTIFIED_RTK_VERSION,
 	RtkRuntime,
 	type RtkRuntimeOptions,
 	type RtkRuntimeSnapshot,
 	type RtkRuntimeState,
-} from "./runtime.js";
-export { type RtkSettings, RtkSettingsStore } from "./settings.js";
+} from "./runtime.ts";
+export { type RtkSettings, RtkSettingsStore } from "./settings.ts";
 
 async function runRtkOperation<Value, ErrorType>(
 	foundation: EffectFoundation,

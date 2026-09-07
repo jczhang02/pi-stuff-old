@@ -1,6 +1,6 @@
-import type { JsonSourceObject, JsonSourceValue } from "../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { boundTerminalLine } from "../tool-display/index.js";
+import type { JsonSourceObject, JsonSourceValue } from "../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { boundTerminalLine } from "../tool-display/index.ts";
 import type { McpServerRuntimeStatus, McpServerStatusSnapshot, McpStatusSnapshot } from "./runtime/index.js";
 
 type Listener = (snapshot: McpStatusSnapshot | undefined) => void;

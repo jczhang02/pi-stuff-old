@@ -2,9 +2,9 @@ import { createHash } from "node:crypto";
 import { lstat, readdir, readlink, realpath } from "node:fs/promises";
 import { join, relative } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { markLifecyclePhase } from "./lifecycle-performance.js";
-import { isRuntimeObject } from "./shared/runtime-type.js";
-import { piStuffCachePath } from "./xdg/index.js";
+import { markLifecyclePhase } from "./lifecycle-performance.ts";
+import { isRuntimeObject } from "./shared/runtime-type.ts";
+import { piStuffCachePath } from "./xdg/index.ts";
 
 const SUITE_RUNTIME_CACHE_KEY = Symbol.for("@jczhang02/pi-stuff/suite-runtime-cache/v2");
 

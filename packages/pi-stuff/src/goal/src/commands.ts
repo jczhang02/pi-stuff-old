@@ -1,10 +1,10 @@
 import * as Effect from "effect/Effect";
-import { TRANSCRIPT_MARKER } from "../../conversation-ui/transcript.js";
-import { checkpointGoalActiveTime, currentTokenTotal } from "./accounting.js";
-import { validateObjective } from "./command.js";
-import { safeGoalMenuText } from "./menu.js";
-import { type ActiveGoal, MAX_QUEUED_GOALS, type PendingQueueAction } from "./persistence.js";
-import { buildGoalPrompt, buildObjectiveUpdatedPrompt, buildResumePrompt } from "./prompts.js";
+import { TRANSCRIPT_MARKER } from "../../conversation-ui/transcript.ts";
+import { checkpointGoalActiveTime, currentTokenTotal } from "./accounting.ts";
+import { validateObjective } from "./command.ts";
+import { safeGoalMenuText } from "./menu.ts";
+import { type ActiveGoal, MAX_QUEUED_GOALS, type PendingQueueAction } from "./persistence.ts";
+import { buildGoalPrompt, buildObjectiveUpdatedPrompt, buildResumePrompt } from "./prompts.ts";
 import {
 	activateQueuedGoal,
 	appendGoal,
@@ -13,7 +13,7 @@ import {
 	goalQueueIdentity,
 	prioritizeGoal as prioritizeQueuedGoal,
 	skipGoal as skipQueuedGoal,
-} from "./queue.js";
+} from "./queue.ts";
 import {
 	abortCurrentTurn,
 	blocksStaleGoalToolCalls,
@@ -30,8 +30,8 @@ import {
 	type StatusContext,
 	stoppedStatusLabel,
 	transitionGoal,
-} from "./runtime.js";
-import { menuWait } from "./suite-menu.js";
+} from "./runtime.ts";
+import { menuWait } from "./suite-menu.ts";
 
 type GoalLifecycleAction = "replaced" | "resumed" | "started" | "updated";
 

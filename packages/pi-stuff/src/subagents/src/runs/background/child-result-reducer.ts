@@ -1,5 +1,5 @@
-import { getFinalOutput } from "../../shared/utils.js";
-import type { ChildProtocolMessage } from "../shared/child-protocol.js";
+import { getFinalOutput } from "../../shared/utils.ts";
+import type { ChildProtocolMessage } from "../shared/child-protocol.ts";
 
 interface IndexedMessage {
 	readonly index: number;

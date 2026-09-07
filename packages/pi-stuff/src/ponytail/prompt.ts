@@ -1,6 +1,6 @@
 import { type BeforeAgentStartEvent, formatSkillsForPrompt, type Skill } from "@earendil-works/pi-coding-agent";
-import { getPonytailInstructions } from "./instructions.js";
-import type { PonytailMode } from "./types.js";
+import { getPonytailInstructions } from "./instructions.ts";
+import type { PonytailMode } from "./types.ts";
 
 export const PONYTAIL_SKILL_NAMES = [
 	"ponytail",

@@ -1,6 +1,6 @@
 // biome-ignore-all lint/complexity/useLiteralKeys: TypeScript enforces bracket access for untrusted index-signature data.
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 
 const DEFAULT_CODEX_BASE_URL = "https://chatgpt.com/backend-api";
 const JWT_AUTH_CLAIM = "https://api.openai.com/auth";

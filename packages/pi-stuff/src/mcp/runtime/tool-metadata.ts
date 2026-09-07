@@ -1,5 +1,5 @@
-import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import { resourceNameToToolName } from "./resource-tools.ts";
 import type { McpExtensionState } from "./state.ts";
 import type { McpResource, McpTool, ServerEntry, ToolMetadata, ToolPrefix } from "./types.ts";

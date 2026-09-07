@@ -1,12 +1,12 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { withAgentWorkOrigin } from "../../conversation-ui/agent-run-origin.js";
-import { readGoalCoordination, sendSuiteAgentMessage } from "../../conversation-ui/index.js";
-import { type GoalStatusSnapshot, getGoalStatusChannel } from "../../conversation-ui/statusline.js";
-import { isJsonInputObject } from "../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { formatTokenCount, updateGoalUsage } from "./accounting.js";
-import { formatError, truncateNotification } from "./errors.js";
+import { withAgentWorkOrigin } from "../../conversation-ui/agent-run-origin.ts";
+import { readGoalCoordination, sendSuiteAgentMessage } from "../../conversation-ui/index.ts";
+import { type GoalStatusSnapshot, getGoalStatusChannel } from "../../conversation-ui/statusline.ts";
+import { isJsonInputObject } from "../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { formatTokenCount, updateGoalUsage } from "./accounting.ts";
+import { formatError, truncateNotification } from "./errors.ts";
 import {
 	type ActiveGoal,
 	clearLegacyPersistedGoal,
@@ -14,7 +14,7 @@ import {
 	type PendingQueueAction,
 	type SafetyPauseCause,
 	serializeGoalState,
-} from "./persistence.js";
+} from "./persistence.ts";
 import {
 	abortCurrentTurn,
 	buildGoalStateSnapshot,
@@ -24,18 +24,18 @@ import {
 	isTerminalGoalStatus,
 	type StatusContext,
 	transitionGoal,
-} from "./policy.js";
+} from "./policy.ts";
 import {
 	type GoalPromptDeliveryOptions,
 	GoalPromptOwnership,
 	type GoalPromptOwnershipSnapshot,
 	type GoalRunOrigin,
 	sendHiddenGoalPrompt,
-} from "./prompt-ownership.js";
-import { nextToolFreeRepeatState, resetGoalSafetyEpoch } from "./safety.js";
-import { GoalToolPolicy, type GoalToolVisibilitySnapshot } from "./tool-policy.js";
+} from "./prompt-ownership.ts";
+import { nextToolFreeRepeatState, resetGoalSafetyEpoch } from "./safety.ts";
+import { GoalToolPolicy, type GoalToolVisibilitySnapshot } from "./tool-policy.ts";
 
-export type { StatusContext } from "./policy.js";
+export type { StatusContext } from "./policy.ts";
 export {
 	abortCurrentTurn,
 	blocksStaleGoalToolCalls,
@@ -55,21 +55,21 @@ export {
 	nextGoalInstance,
 	stoppedStatusLabel,
 	transitionGoal,
-} from "./policy.js";
+} from "./policy.ts";
 export {
 	type ContinuationTicket,
 	GOAL_PROMPT_MESSAGE_TYPE,
 	type GoalPromptDeliveryOptions,
 	type GoalRunOrigin,
-} from "./prompt-ownership.js";
-export { queueGoalSafetyReset, resetGoalSafetyEpoch } from "./safety.js";
+} from "./prompt-ownership.ts";
+export { queueGoalSafetyReset, resetGoalSafetyEpoch } from "./safety.ts";
 export {
 	GOAL_BLOCKED_TOOL,
 	GOAL_COMPLETE_TOOL,
 	type GoalToolVisibilitySnapshot,
-} from "./tool-policy.js";
+} from "./tool-policy.ts";
 
-import { DEFAULT_GOAL_SETTINGS, type GoalSettings, type GoalSettingsLoadIssue } from "./settings.js";
+import { DEFAULT_GOAL_SETTINGS, type GoalSettings, type GoalSettingsLoadIssue } from "./settings.ts";
 
 export interface BudgetWrapUp {
 	goalId: string;
@@ -721,7 +721,7 @@ export class GoalRuntime extends GoalToolPolicy {
 	}
 }
 
-export type { AssistantMessageLike } from "./errors.js";
+export type { AssistantMessageLike } from "./errors.ts";
 export {
 	findFinalAssistantMessage,
 	formatError,
@@ -730,4 +730,4 @@ export {
 	isRetryableGoalInterruption,
 	isUsageLimitedGoalInterruption,
 	truncateNotification,
-} from "./errors.js";
+} from "./errors.ts";

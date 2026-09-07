@@ -1,0 +1,639 @@
+{
+  "date": "2026-09-05",
+  "certification": false,
+  "sourceCommit": "6d0507c165acc5056b7e4bf4aedddef326ab915b",
+  "piVersion": "0.85.0",
+  "piBinarySha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072",
+  "lifecycle": {
+    "longSessionTurns": 240,
+    "longSessionTools": 1000,
+    "longSessionToolBytes": 4096,
+    "promptRepetitions": 2,
+    "samples": [
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 0,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 85.85,
+        "startupMs": 890.69,
+        "variant": "host",
+        "warmup": true,
+        "acknowledgementMs": 3.18,
+        "providerStartMs": 16.26,
+        "responseMs": 31.58,
+        "steadyAcknowledgementMs": 2.84,
+        "steadyProviderStartMs": 3.65,
+        "steadyResponseMs": 6.09,
+        "resource": {
+          "elapsedSeconds": 1.11975107,
+          "userSeconds": 1.228028,
+          "systemSeconds": 0.115316,
+          "maxRssKiB": 168716,
+          "contextSwitches": {
+            "voluntary": 4285,
+            "involuntary": 805
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 0,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 148.92,
+        "startupMs": 10436.79,
+        "variant": "suite",
+        "warmup": true,
+        "acknowledgementMs": 29.32,
+        "providerStartMs": 897.52,
+        "responseMs": 917.88,
+        "steadyAcknowledgementMs": 2.85,
+        "steadyProviderStartMs": 687.89,
+        "steadyResponseMs": 690.84,
+        "resource": {
+          "elapsedSeconds": 13.040528717,
+          "userSeconds": 19.101327,
+          "systemSeconds": 2.050832,
+          "maxRssKiB": 1035168,
+          "contextSwitches": {
+            "voluntary": 30924,
+            "involuntary": 11483
+          },
+          "ioOperations": {
+            "in": 6668,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 1,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 143.29,
+        "startupMs": 5636.38,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 70.52,
+        "providerStartMs": 897.05,
+        "responseMs": 910.41,
+        "steadyAcknowledgementMs": 2.22,
+        "steadyProviderStartMs": 697.06,
+        "steadyResponseMs": 699.85,
+        "resource": {
+          "elapsedSeconds": 8.2145461,
+          "userSeconds": 9.651816,
+          "systemSeconds": 1.53007,
+          "maxRssKiB": 1008428,
+          "contextSwitches": {
+            "voluntary": 23544,
+            "involuntary": 6098
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 1,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 84.09,
+        "startupMs": 740.47,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 4.83,
+        "providerStartMs": 11.58,
+        "responseMs": 19.89,
+        "steadyAcknowledgementMs": 2.15,
+        "steadyProviderStartMs": 3.46,
+        "steadyResponseMs": 5.48,
+        "resource": {
+          "elapsedSeconds": 0.952296809,
+          "userSeconds": 0.832881,
+          "systemSeconds": 0.113781,
+          "maxRssKiB": 163320,
+          "contextSwitches": {
+            "voluntary": 2777,
+            "involuntary": 696
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 2,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 85.89,
+        "startupMs": 708.04,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 2.54,
+        "providerStartMs": 10.07,
+        "responseMs": 18.72,
+        "steadyAcknowledgementMs": 1.5,
+        "steadyProviderStartMs": 2.49,
+        "steadyResponseMs": 4.45,
+        "resource": {
+          "elapsedSeconds": 0.921360322,
+          "userSeconds": 0.81556,
+          "systemSeconds": 0.117858,
+          "maxRssKiB": 161888,
+          "contextSwitches": {
+            "voluntary": 3969,
+            "involuntary": 501
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 2,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 144.79,
+        "startupMs": 5259.95,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 3.33,
+        "providerStartMs": 718.97,
+        "responseMs": 734.75,
+        "steadyAcknowledgementMs": 3.1,
+        "steadyProviderStartMs": 703.37,
+        "steadyResponseMs": 708.88,
+        "resource": {
+          "elapsedSeconds": 7.713057427,
+          "userSeconds": 8.949433,
+          "systemSeconds": 1.544845,
+          "maxRssKiB": 845844,
+          "contextSwitches": {
+            "voluntary": 22714,
+            "involuntary": 5600
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 3,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 161.6,
+        "startupMs": 5353.12,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 3.98,
+        "providerStartMs": 722.6,
+        "responseMs": 736.36,
+        "steadyAcknowledgementMs": 2.45,
+        "steadyProviderStartMs": 663.1,
+        "steadyResponseMs": 666.57,
+        "resource": {
+          "elapsedSeconds": 7.684236396999999,
+          "userSeconds": 8.895609,
+          "systemSeconds": 1.476403,
+          "maxRssKiB": 1025956,
+          "contextSwitches": {
+            "voluntary": 21547,
+            "involuntary": 5924
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 3,
+        "rows": 40,
+        "scenario": "fresh",
+        "shutdownMs": 86.48,
+        "startupMs": 717.5,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 2.41,
+        "providerStartMs": 9.58,
+        "responseMs": 19.62,
+        "steadyAcknowledgementMs": 1.67,
+        "steadyProviderStartMs": 2.6,
+        "steadyResponseMs": 5.58,
+        "resource": {
+          "elapsedSeconds": 0.930759946,
+          "userSeconds": 0.836853,
+          "systemSeconds": 0.113325,
+          "maxRssKiB": 160088,
+          "contextSwitches": {
+            "voluntary": 2784,
+            "involuntary": 499
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 0,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 133.72,
+        "startupMs": 2483.26,
+        "variant": "host",
+        "warmup": true,
+        "acknowledgementMs": 31.43,
+        "providerStartMs": 108.08,
+        "responseMs": 125.17,
+        "steadyAcknowledgementMs": 7.9,
+        "steadyProviderStartMs": 9.89,
+        "steadyResponseMs": 13.07,
+        "resource": {
+          "elapsedSeconds": 2.921229961,
+          "userSeconds": 3.604495,
+          "systemSeconds": 0.572142,
+          "maxRssKiB": 472408,
+          "contextSwitches": {
+            "voluntary": 7712,
+            "involuntary": 2445
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 0,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 157.63,
+        "startupMs": 7101.98,
+        "variant": "suite",
+        "warmup": true,
+        "acknowledgementMs": 9.42,
+        "providerStartMs": 1696.87,
+        "responseMs": 1716.93,
+        "steadyAcknowledgementMs": 1.67,
+        "steadyProviderStartMs": 697.26,
+        "steadyResponseMs": 700.75,
+        "resource": {
+          "elapsedSeconds": 10.542058218,
+          "userSeconds": 12.89975,
+          "systemSeconds": 2.255859,
+          "maxRssKiB": 948300,
+          "contextSwitches": {
+            "voluntary": 27392,
+            "involuntary": 8006
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 1,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 145.67,
+        "startupMs": 6924.57,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 6.74,
+        "providerStartMs": 1473.6,
+        "responseMs": 1491.46,
+        "steadyAcknowledgementMs": 1.81,
+        "steadyProviderStartMs": 634.51,
+        "steadyResponseMs": 637.37,
+        "resource": {
+          "elapsedSeconds": 9.987104326,
+          "userSeconds": 12.123173,
+          "systemSeconds": 2.097037,
+          "maxRssKiB": 952476,
+          "contextSwitches": {
+            "voluntary": 26148,
+            "involuntary": 7352
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 1,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 115.89,
+        "startupMs": 2379.13,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 29.97,
+        "providerStartMs": 81.35,
+        "responseMs": 88.93,
+        "steadyAcknowledgementMs": 2.82,
+        "steadyProviderStartMs": 4.41,
+        "steadyResponseMs": 8.46,
+        "resource": {
+          "elapsedSeconds": 2.7247561379999996,
+          "userSeconds": 3.276543,
+          "systemSeconds": 0.571555,
+          "maxRssKiB": 475140,
+          "contextSwitches": {
+            "voluntary": 7149,
+            "involuntary": 1857
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 2,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 111.26,
+        "startupMs": 2376.36,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 12.62,
+        "providerStartMs": 50.66,
+        "responseMs": 60.12,
+        "steadyAcknowledgementMs": 1.96,
+        "steadyProviderStartMs": 3.44,
+        "steadyResponseMs": 8.07,
+        "resource": {
+          "elapsedSeconds": 2.678035852,
+          "userSeconds": 3.206369,
+          "systemSeconds": 0.565609,
+          "maxRssKiB": 475016,
+          "contextSwitches": {
+            "voluntary": 7329,
+            "involuntary": 1860
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 2,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 149.4,
+        "startupMs": 6630.29,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 11.12,
+        "providerStartMs": 1500.12,
+        "responseMs": 1519.06,
+        "steadyAcknowledgementMs": 2.61,
+        "steadyProviderStartMs": 677.09,
+        "steadyResponseMs": 680.48,
+        "resource": {
+          "elapsedSeconds": 9.755317108000002,
+          "userSeconds": 11.854057,
+          "systemSeconds": 2.132677,
+          "maxRssKiB": 986940,
+          "contextSwitches": {
+            "voluntary": 25187,
+            "involuntary": 7552
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 3,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 145.84,
+        "startupMs": 7584.78,
+        "variant": "suite",
+        "warmup": false,
+        "acknowledgementMs": 10.48,
+        "providerStartMs": 1662.36,
+        "responseMs": 1686.14,
+        "steadyAcknowledgementMs": 3.01,
+        "steadyProviderStartMs": 741.65,
+        "steadyResponseMs": 745.97,
+        "resource": {
+          "elapsedSeconds": 11.096518592,
+          "userSeconds": 13.264032,
+          "systemSeconds": 2.384243,
+          "maxRssKiB": 922288,
+          "contextSwitches": {
+            "voluntary": 26372,
+            "involuntary": 8529
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      },
+      {
+        "action": "prompt",
+        "columns": 120,
+        "iteration": 3,
+        "rows": 40,
+        "scenario": "resume-long",
+        "shutdownMs": 158.1,
+        "startupMs": 2657.78,
+        "variant": "host",
+        "warmup": false,
+        "acknowledgementMs": 18.15,
+        "providerStartMs": 62.78,
+        "responseMs": 73.86,
+        "steadyAcknowledgementMs": 1.61,
+        "steadyProviderStartMs": 3.08,
+        "steadyResponseMs": 6.32,
+        "resource": {
+          "elapsedSeconds": 3.0415295849999997,
+          "userSeconds": 3.582151,
+          "systemSeconds": 0.659975,
+          "maxRssKiB": 474348,
+          "contextSwitches": {
+            "voluntary": 7329,
+            "involuntary": 2469
+          },
+          "ioOperations": {
+            "in": 0,
+            "out": 0
+          }
+        }
+      }
+    ]
+  },
+  "probes": [
+    {
+      "variant": "host",
+      "certification": false,
+      "visible": 423,
+      "spinnerFrames": 149,
+      "spinnerMs": {
+        "min": 55.465783999999985,
+        "median": 84.13637000000017,
+        "max": 92.86868200000026
+      },
+      "captureMs": {
+        "min": 1.9091520000001765,
+        "median": 2.8686200000011013,
+        "max": 5.169117000001279
+      },
+      "sampleGapMs": {
+        "min": 2.4246689999999944,
+        "median": 28.044261999999435,
+        "max": 64.48922800000037
+      },
+      "interactions": [
+        {
+          "kind": "input",
+          "observedMs": 30.39823400000023
+        },
+        {
+          "kind": "selection",
+          "observedMs": 30.955243000000337
+        },
+        {
+          "kind": "input",
+          "observedMs": 30.89804600000025
+        },
+        {
+          "kind": "selection",
+          "observedMs": 31.020166999998764
+        },
+        {
+          "kind": "input",
+          "observedMs": 30.050052000000505
+        },
+        {
+          "kind": "selection",
+          "observedMs": 30.981893000000127
+        }
+      ],
+      "idle": {
+        "durationMs": 5000.877957,
+        "cpuMs": 20,
+        "startRssKiB": 132804,
+        "endRssKiB": 132796,
+        "mainThreadVoluntarySwitches": 47,
+        "mainThreadInvoluntarySwitches": 9,
+        "childrenAtEndpoints": false
+      },
+      "active": {
+        "durationMs": 12026.361326000002,
+        "cpuMs": 910,
+        "startRssKiB": 135532,
+        "endRssKiB": 128376,
+        "childrenAtEndpoints": false
+      }
+    },
+    {
+      "variant": "suite",
+      "certification": false,
+      "visible": 424,
+      "spinnerFrames": 148,
+      "spinnerMs": {
+        "min": 54.25225900000078,
+        "median": 83.88596999999572,
+        "max": 122.1335689999978
+      },
+      "captureMs": {
+        "min": 1.7671150000023772,
+        "median": 2.8023079999984475,
+        "max": 5.946159999999509
+      },
+      "sampleGapMs": {
+        "min": 3.2834689999945113,
+        "median": 27.971936999994796,
+        "max": 65.19552600000316
+      },
+      "interactions": [
+        {
+          "kind": "input",
+          "observedMs": 29.546444000006886
+        },
+        {
+          "kind": "selection",
+          "observedMs": 29.857627000004868
+        },
+        {
+          "kind": "input",
+          "observedMs": 30.299394000001485
+        },
+        {
+          "kind": "selection",
+          "observedMs": 30.397398000000976
+        },
+        {
+          "kind": "input",
+          "observedMs": 29.671371999997064
+        },
+        {
+          "kind": "selection",
+          "observedMs": 31.38503199999832
+        }
+      ],
+      "idle": {
+        "durationMs": 5001.157741999999,
+        "cpuMs": 30,
+        "startRssKiB": 534420,
+        "endRssKiB": 534408,
+        "mainThreadVoluntarySwitches": 58,
+        "mainThreadInvoluntarySwitches": 8,
+        "childrenAtEndpoints": false
+      },
+      "active": {
+        "durationMs": 12023.407918999997,
+        "cpuMs": 1610,
+        "startRssKiB": 689092,
+        "endRssKiB": 431744,
+        "childrenAtEndpoints": false
+      }
+    }
+  ]
+}

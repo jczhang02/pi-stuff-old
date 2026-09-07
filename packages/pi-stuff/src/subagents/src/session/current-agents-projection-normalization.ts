@@ -1,7 +1,7 @@
 import { visibleWidth } from "@earendil-works/pi-tui";
-import type { JsonValue } from "../../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
-import { boundTerminalLine, boundTerminalText } from "../../../tool-display/index.js";
+import type { JsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
+import { boundTerminalLine, boundTerminalText } from "../../../tool-display/index.ts";
 import { resolveNestedAsyncDir } from "../runs/shared/nested-events.ts";
 import { sanitizeSummary } from "../runs/shared/nested-summary.ts";
 import type { AgentWorkUsage } from "../runtime/session-governor.ts";

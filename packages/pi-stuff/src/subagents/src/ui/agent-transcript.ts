@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import { isTaskOnlyAgentText } from "../shared/display-description.ts";
 import { readStatusAsync } from "../shared/utils.ts";
 import type {

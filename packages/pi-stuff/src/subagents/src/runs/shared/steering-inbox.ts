@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { resolveWatchPath } from "../../shared/utils.ts";
 import {

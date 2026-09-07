@@ -1,5 +1,5 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
-import type { NativeCompactionSettings } from "./magic-runtime.js";
+import type { NativeCompactionSettings } from "./magic-runtime.ts";
 
 export type ContextActivationTrigger = "startup" | "input" | "automatic-turn" | "projection";
 export type ContextCapabilityState = "dormant" | "loading" | "active" | "native" | "degraded";

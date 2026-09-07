@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect";
-import { isJsonInputObject } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	hostMatchesProviderDomain as hostMatchesDomain,
 	normalizeProviderDomain as normalizeDomain,

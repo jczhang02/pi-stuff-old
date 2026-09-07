@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import type { EntryRenderer, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
-import { isJsonInputObject, isJsonInputValue, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { boundTerminalLine, boundTerminalText } from "../tool-display/terminal.js";
-import type { MagicStatusMessage } from "./dialog.js";
+import { isJsonInputObject, isJsonInputValue, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { boundTerminalLine, boundTerminalText } from "../tool-display/terminal.ts";
+import type { MagicStatusMessage } from "./dialog.ts";
 
 export const CONTEXT_ACTIVITY_ENTRY_TYPE = "pi-stuff-context-activity";
 

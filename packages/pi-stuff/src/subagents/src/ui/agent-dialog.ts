@@ -13,7 +13,7 @@ import type {
 	CommandDialogCoordinator,
 	CommandDialogView,
 	CommandDialogViewContext,
-} from "../../../conversation-ui/index.js";
+} from "../../../conversation-ui/index.ts";
 import {
 	commandDialogExitKeyHelp,
 	commandDialogListIndex,
@@ -26,9 +26,9 @@ import {
 	matchesCommandDialogConfirm,
 	matchesCommandDialogHelp,
 	renderCommandDialogKeyHelp,
-} from "../../../conversation-ui/index.js";
-import { isRuntimeString } from "../../../shared/runtime-type.js";
-import { sanitizeTerminalInput as stripTerminalControls } from "../../../shared/terminal-text.js";
+} from "../../../conversation-ui/index.ts";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
+import { sanitizeTerminalInput as stripTerminalControls } from "../../../shared/terminal-text.ts";
 import type {
 	AgentControlAction,
 	AgentControlResult,
@@ -37,8 +37,8 @@ import type {
 	AgentSessionSnapshot,
 	AgentTranscriptTarget,
 	CurrentAgentsView,
-} from "../session/current-agents.js";
-import { isTaskOnlyAgentText } from "../shared/display-description.js";
+} from "../session/current-agents.ts";
+import { isTaskOnlyAgentText } from "../shared/display-description.ts";
 import {
 	AGENT_LIST_ROWS,
 	type AgentDialogRenderMetrics,

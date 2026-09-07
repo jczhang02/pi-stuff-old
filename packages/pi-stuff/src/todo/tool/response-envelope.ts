@@ -1,7 +1,7 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import type { TaskState } from "../state/state.js";
-import type { Op } from "../state/state-reducer.js";
-import { deriveBlocks } from "../state/task-graph.js";
+import type { TaskState } from "../state/state.ts";
+import type { Op } from "../state/state-reducer.ts";
+import { deriveBlocks } from "../state/task-graph.ts";
 import {
 	TASK_SNAPSHOT_CAPABILITY,
 	TASK_SNAPSHOT_SCHEMA_VERSION,
@@ -9,7 +9,7 @@ import {
 	type TaskAction,
 	type TaskDetails,
 	type TaskMutationParams,
-} from "./types.js";
+} from "./types.ts";
 
 function cloneTask(task: Task): Task {
 	const clone: Task = { ...task };

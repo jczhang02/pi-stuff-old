@@ -1,12 +1,12 @@
-import type { CodemodeValue } from "../cloudflare/codec.js";
+import type { CodemodeValue } from "../cloudflare/codec.ts";
 import type {
 	ExecutorContext,
 	RuntimeResponse,
 	RuntimeToolCallPlan,
 	RuntimeToolTrace,
 	RuntimeTraceUpdate,
-} from "../protocol.js";
-import { MAX_RETAINED_CODE_MODE_TRACES } from "../protocol.js";
+} from "../protocol.ts";
+import { MAX_RETAINED_CODE_MODE_TRACES } from "../protocol.ts";
 
 interface TraceState {
 	readonly active: Map<string, RuntimeToolTrace>;

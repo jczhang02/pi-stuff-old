@@ -1,6 +1,6 @@
 import * as path from "node:path";
 import type { AgentToolResult as CoreAgentToolResult } from "@earendil-works/pi-agent-core";
-import { isRuntimeNumber } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import type { ArtifactPaths, AsyncStatus, Details, NestedRunSummary, SingleResult, Usage } from "../../shared/types.ts";
 import type { BackgroundRunnerConfig, BackgroundTaskResult, RunnerAgentTask } from "../shared/parallel-utils.ts";
 

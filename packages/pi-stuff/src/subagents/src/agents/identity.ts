@@ -1,4 +1,4 @@
-import { isRuntimeString } from "../../../shared/runtime-type.js";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { AgentConfig } from "./agents.ts";
 
 const IDENTIFIER_PATTERN = /^[a-z0-9][a-z0-9-]*(?:\.[a-z0-9][a-z0-9-]*)*$/;

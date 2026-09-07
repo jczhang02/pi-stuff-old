@@ -2,16 +2,16 @@ import { dirname, join } from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { type JsonInputObject, parseJsonValue } from "../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeObject } from "../shared/runtime-type.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { type JsonInputObject, parseJsonValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeObject } from "../shared/runtime-type.ts";
 import {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceStoreOptions,
 	type EffectNamespaceWriter,
 	mergedSettingsPath,
 	readTextFileEffect,
-} from "../shared/settings-io/index.js";
+} from "../shared/settings-io/index.ts";
 
 const SETTINGS_FILE_NAME = "pi-stuff-tools.json";
 const TOOLS_NAMESPACE = "tools";
@@ -114,7 +114,7 @@ function normalizeError(cause: unknown): Error {
 function acquireToolSettingsLock(lockPath: string, _owner: string): Effect.Effect<void, Error, Scope.Scope> {
 	return Effect.flatMap(
 		Effect.tryPromise({
-			try: () => import("../shared/settings-io/lock.js"),
+			try: () => import("../shared/settings-io/lock.ts"),
 			catch: normalizeError,
 		}),
 		({ acquireSettingsLockEffect }) => acquireSettingsLockEffect(lockPath, "Tools"),

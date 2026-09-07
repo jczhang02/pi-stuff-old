@@ -22,8 +22,8 @@ credential. Explicit request-auth overrides do take precedence. These observatio
 ## Decision
 
 Codex owns named OAuth accounts and explicit, idle-only account switching. Keep `openai-codex` and the selected model
-unchanged. Preserve Pi native login as a separate selectable source. Named accounts complete independent OAuth logins;
-do not import native token snapshots or overwrite Pi's authentication file.
+unchanged. Preserve Pi native login as an independently selectable credential source, not a fixed extra account entry.
+Named accounts complete independent OAuth logins; do not import native token snapshots or overwrite Pi's authentication file.
 
 The maintainer explicitly accepted one narrow exception to the public-API boundary in [ADR 0001](0001-keep-pi-as-the-host.md):
 a Codex-owned, version-bound adapter may access the existing Session runtime authentication operations in the certified
@@ -40,7 +40,8 @@ A future adequate public Host seam is the trigger to remove this exception. A ve
 
 | State | Owner and scope |
 | --- | --- |
-| Saved Codex Account | Codex-owned shared identity and refreshable credential record, addressed by a stable non-secret reference |
+| Codex Account Identity | Stable provider account/workspace identity used to group display entries, not credential records |
+| Saved Codex Account | Codex-owned independent credential record for an identity, addressed by a stable non-secret reference |
 | Codex Account Selection | The account source selected by one Session, separate from model choice and startup default |
 | Codex Startup Default | A user-wide starting choice for new Sessions, initially Pi native login |
 | Account display | Conversation UI projects the Codex-owned selection and allowance; it does not own authentication |
@@ -81,15 +82,29 @@ Use the existing `/codex` surface for switching, adding or reauthenticating acco
 List available five-hour and weekly allowance on demand when opening account management; add no periodic poller and
 preserve existing selected-account usage behavior. Usage failure remains visible without disabling management actions.
 
+Group verified equal account identities into one entry. If native login authenticates the same account as work, show one
+work entry with native/saved credential sources inside it. A verified different native identity gets its own account entry;
+an unresolved native source stays visible and selectable outside verified account entries, explicitly marked unresolved.
+It must pass the normal identity-validation transaction before activation; failure retains the prior selection.
+Never match by nickname, email or token bytes. Preserve provider account/workspace
+scope, and do not sum allowance across sources for the same account.
+
+Grouping only changes presentation. Keep credential records, refresh ownership, Session/default references and deletion
+guards unchanged. Expose the selected source in account details and require an explicit, validated source choice to change
+it. Never merge/copy credentials or recover a failing selected source by silently using another source.
+
 Extend the existing weekly Statusline group to `󰊚 work 82%`: short account name, then remaining weekly allowance.
-Use `Pi login` for the native source, not `Default`. Keep the existing row count and Host semantic theme colors; do not
+Use the matched account name even when native credentials are selected. `Pi login` is only the native-source fallback
+when no matched saved name is available, never `Default`. Keep the existing row count and Host semantic theme colors; do not
 show email by default. Missing allowance must not erase account identity. The dialog owns full names and detailed usage.
 The [preview evidence](../reports/codex-account-selection-preview.md) is a mock-only design artifact, not proof of authentication.
 
 Reauthentication must preserve the real identity of a saved account; a different identity gets a new record. Deletion
-requires selecting another account in the current Session and removing any startup-default reference first. Confirm
-shared impact, remove only local stored credentials, and do not remotely revoke authorization. Other Sessions retain their
-references and fail explicitly on their next credential-dependent operation instead of automatically switching accounts.
+targets one saved credential record, not the grouped identity. First move current-Session and startup-default references
+away from that exact source; explicitly selecting native login for the same identity can satisfy this guard, but grouping
+alone cannot. Confirm shared impact and remove only that saved login, without remote revocation. Native credentials and
+other saved sources remain intact. Sessions referencing the deleted record fail on their next credential-dependent
+operation instead of automatically switching sources.
 
 ## Acceptance
 
@@ -102,6 +117,12 @@ including named-auth precedence beside native login, native restoration, refresh
 Host handling, child inheritance and continuation, fork/clone/new defaults, resume/reload, cross-account Codex replay,
 Tool/image authentication and stale usage rejection. If a supported shared-runtime configuration cannot preserve isolation,
 block it explicitly rather than weakening the Session contract.
+
+Cover native=work, verified distinct native identity, equal email with different account/workspace identities, unresolved
+identity and token rotation. Grouping must preserve source selection/default references and credentials, expose per-source
+failures, and show one account allowance. Unresolved native sources remain selectable but require validation to activate.
+Verify source-specific deletion guards and preservation of native/other sources for the same identity. Explicit source
+changes retain all switch guards.
 
 Verify wide, narrow and low-height TUI behavior in light and dark themes with long/CJK labels, cancellation, focus and
 editor restoration. Real PTY fixtures use isolated tmux sockets with CSI-u extended keys; concurrent native-supervisor

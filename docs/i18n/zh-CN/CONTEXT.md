@@ -1,4 +1,4 @@
-<!-- translation-source: CONTEXT.md; translation-source-sha256: fc29edb396b1c0704c2765092e3215640e078c86ca0a1d4d34c1dfd66bced690 -->
+<!-- translation-source: CONTEXT.md; translation-source-sha256: abfeb17317a9d0cc703fb3b706c34c126f8eac1d73ea454fe389b43c6fef411c -->
 
 # Pi Stuff
 
@@ -87,18 +87,28 @@ _避免使用_：Embedded RTK、Pi Stuff command parser
 settled 后提议并持久化它，但它不取代 Session、task、Goal 或 Agent 名称。
 _避免使用_：chat title、task name、autoname state
 
+**Codex Account Identity**：
+真实 Codex 账户由 provider 提供的稳定身份，包含其 account/workspace 作用域。不同凭据来源可以对应同一
+身份；昵称、邮箱、保存记录引用或轮换 token 都不能证明身份相同。
+_避免使用_：credential slot、display name、provider alias
+
+**Codex Credential Source**：
+用来认证 Codex 账户、独立管理的原生或已保存登录。多个来源可以属于同一账户身份，但不会因此成为一份
+凭据记录。这是 ADR 0035 中已接受的设计。
+_避免使用_：additional account、merged credentials
+
 **Saved Codex Account**：
-由 Codex 拥有的共享 OAuth 身份及可刷新凭据记录，通过稳定、非秘密的引用访问。显示名称和轮换凭据不等于
-记录身份。这是 ADR 0035 中已接受、待实现的设计。
+由 Codex 拥有的共享、独立刷新的 OAuth 凭据记录，对应一个 Codex Account Identity，通过稳定、非秘密的引用
+访问。记录引用不等于 provider 身份。这是 ADR 0035 中已接受的设计。
 _避免使用_：provider alias、token snapshot、global current account
 
 **Codex Account Selection**：
-一个 Session 选择的账户来源：Pi 原生登录或 Saved Codex Account 引用。它独立于 provider/model 选择和
+一个 Session 选择的 Codex Credential Source：Pi 原生登录或 Saved Codex Account 引用。它独立于 provider/model 选择和
 启动默认值，tree 导航不会改变它。这是 ADR 0035 中已接受的设计。
 _避免使用_：active global account、selected provider、startup default
 
 **Codex Startup Default**：
-新 Session 快照的起始账户来源，初始为 Pi 原生登录。修改它不会改变现有 Session；fork、clone 和新子 Agent
+新 Session 快照的起始凭据来源，初始为 Pi 原生登录。修改它不会改变现有 Session；fork、clone 和新子 Agent
 改为继承来源 Session 的选择。这是 ADR 0035 中已接受的设计。
 _避免使用_：current account、inherited live account、native login
 

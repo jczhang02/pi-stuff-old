@@ -2,11 +2,44 @@
 
 Captured on 2026-09-07.
 
-This preview illustrates the accepted design in [ADR 0035](../adr/0035-own-codex-account-selection.md) and Beads
-`ps-4o1`. It is not an implemented account manager. All accounts, percentages, switches, defaults, deletions and failures
-are simulated in memory. The OAuth page is descriptive only: it opens no browser and reads or saves no credentials.
+This report combines the updated identity-grouped wireframe with earlier Host captures for the design in
+[ADR 0035](../adr/0035-own-codex-account-selection.md) and Beads ps-4o1. It is not an implemented account manager.
+The wireframe uses illustrative data; the earlier Host mock simulates accounts and operations in memory. Its OAuth page
+opens no browser and reads or saves no credentials.
 
-## How to read the preview
+## Current identity-grouped wireframe
+
+This text wireframe updates the accepted design; it is not a new Host capture. Native login and work authenticate the
+same verified account, so only work and personal appear. The current source and startup default can both remain native
+while the account label is work. Grouping does not change either reference or any credential.
+
+```text
+Codex / Accounts
+  work [current]        5h 91% · Week 82%
+    Sources: Pi native login · Saved login: work
+  personal              5h 55% · Week 26%
+    Source: Saved login: personal
+```
+
+Source choice stays explicit inside work rather than becoming a second account row:
+
+```text
+Codex / work / Credential source
+  Pi native login [current] [new Session default]
+  Saved login: work
+```
+
+Only a verified distinct native identity gets another account entry. An unresolved native source stays visibly selectable
+outside verified account entries, labelled Identity unresolved; it must validate before activation. Equal emails or labels
+do not prove a match. The Statusline uses work in this example, with source information in account details.
+
+## Earlier source-based Host preview
+
+The following captures and temporary interactive fixture predate identity grouping. They retain the original mock's
+three source rows and are historical evidence, not the current account-list contract. No new PTY or authentication
+acceptance is claimed for the wireframe above.
+
+### How to read the earlier preview
 
 A temporary Extension mounts the mock view inside the real Pi 0.85.1 Host through the existing full-width Command Dialog
 coordinator and native SelectList. The Footer reuses the Suite Statusline renderer with a preview-only substitution for
@@ -22,13 +55,13 @@ The retained ANSI frames come from that real Host; only right padding and empty 
 JetBrains Mono Nerd Font Mono, not native GUI screenshots or visual-acceptance evidence. No new dependency is installed.
 Wide frames use 104 columns by 34 rows; narrow frames use 48 columns by 22 rows. Dialog images crop unrelated empty screen space; Statusline examples are cropped from captured frames. Private paths and credential-shaped values are excluded from the retained evidence.
 
-## Main controls
+### Main controls
 
 The current account and new-Session default are separate rows. Account actions stay beside Fast mode, usage and Tools.
 
 ![Codex controls](../assets/previews/codex-accounts/overview.png)
 
-## Account picker
+### Account picker
 
 Selecting an account affects only the current Session. Available five-hour and weekly allowance help inform the choice;
 viewing those values does not change the selection. Pi native login stays available.
@@ -39,7 +72,7 @@ The same picker in a narrow terminal:
 
 ![Narrow account picker](../assets/previews/codex-accounts/accounts-narrow.png)
 
-## Startup default and login
+### Startup default and login
 
 Changing the new-Session default is a separate action. Existing Sessions, forks and running children do not follow it.
 
@@ -49,7 +82,7 @@ The login preview describes the independent OAuth step without implementing it.
 
 ![Add-account explanation](../assets/previews/codex-accounts/add-account.png)
 
-## Failure and deletion
+### Failure and deletion
 
 The failed-switch frame keeps personal selected and names the account that remains effective. Production must verify
 that identity before making the same claim; this frame simulates the outcome only.
@@ -61,16 +94,16 @@ must be removed first. Remote authorization is not revoked.
 
 ![Local deletion confirmation](../assets/previews/codex-accounts/delete-confirmation.png)
 
-## Persistent status
+### Persistent status
 
 The existing Codex group shows the account before weekly allowance. Switching changes both values; missing allowance
 keeps the account name. These are mock Footer crops, not extra Statusline rows.
 
 ![Account and allowance Statusline states](../assets/previews/codex-accounts/statusline-states.png)
 
-## Evidence limits
+### Evidence limits
 
-The local check passed 13 wide/narrow capture checkpoints covering keyboard navigation, simulated switching, the startup-default
+The earlier mock passed 13 wide/narrow capture checkpoints covering keyboard navigation, simulated switching, the startup-default
 picker, deletion confirmation, failure presentation, unavailable usage, Escape restoration and narrow rendering. It does not prove OAuth, refresh locking,
 private-adapter compatibility, real Session isolation, child inheritance, persistence, actual allowance or cross-account
 Codex continuation. Those remain feature acceptance requirements in the specification. Light-theme and authenticated

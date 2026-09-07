@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0035-own-codex-account-selection.md; translation-source-sha256: ad83ac08295c2391b0db8275e58b3d5331a648f1093c924a0ffdd01c76317155 -->
+<!-- translation-source: docs/adr/0035-own-codex-account-selection.md; translation-source-sha256: 547c6f7fddd2c4cc50f8f319aa4455bfd6557b29c1640cbfa764ddd04b3ffb54 -->
 
 ---
 status: accepted
@@ -22,7 +22,7 @@ OAuth handler 也不能绕过已保存凭据。显式请求认证覆盖具有更
 ## 决策
 
 Codex 拥有命名 OAuth 账户及仅在空闲时允许的显式账户切换。保持 `openai-codex` 和所选模型不变。
-将 Pi 原生登录保留为单独可选来源。命名账户分别完成 OAuth 登录，不导入原生 token 快照，也不覆盖 Pi
+将 Pi 原生登录保留为独立可选的凭据来源，而非固定的额外账户项。命名账户分别完成 OAuth 登录，不导入原生 token 快照，也不覆盖 Pi
 的认证文件。
 
 维护者明确接受 [ADR 0001](0001-keep-pi-as-the-host.md) 公共 API 边界的一个狭窄例外：由 Codex 拥有、
@@ -38,7 +38,8 @@ transport 实现或别名 provider；不修改或分发 Pi Host。
 
 | 状态 | 所有者与作用域 |
 | --- | --- |
-| Saved Codex Account | Codex 拥有的共享身份与可刷新凭据记录，通过稳定、非秘密的引用访问 |
+| Codex Account Identity | provider 提供的稳定 account/workspace 身份，用于合并展示项，不合并凭据记录 |
+| Saved Codex Account | Codex 拥有、对应某身份的独立凭据记录，通过稳定、非秘密的引用访问 |
 | Codex Account Selection | 一个 Session 选择的账户来源，独立于模型选择和启动默认值 |
 | Codex Startup Default | 新 Session 的用户级起始选择，初始为 Pi 原生登录 |
 | 账户展示 | Conversation UI 投影 Codex 拥有的选择和额度，不拥有认证 |
@@ -75,14 +76,23 @@ Session 边界。解析目标账户，必要时刷新凭据；暂存其运行时
 可用的五小时和每周额度，不增加定时轮询，也不移除已有的当前账户额度行为。额度失败明确显示，但不
 禁用管理操作。
 
-现有每周额度 Statusline 组扩展为 `󰊚 work 82%`：先显示短账户名，再显示本周剩余额度。原生来源使用
-`Pi login`，不用 `Default`。保留现有行数和 Host 语义主题色，默认不显示邮箱。额度缺失不能隐藏账户
+已验证为相同身份的账户合并为一个展示项。原生登录与 work 对应同一账户时，只显示一个 work，原生/已保存
+登录作为其内部凭据来源。已验证为另一身份的原生账户单独显示；无法确认身份的原生来源在已验证账户项之外
+保持可见、可选，并明确标为未解析。激活前仍须完成正常身份验证事务，失败时保留原选择。不得按昵称、邮箱或
+token 字节匹配，保留 provider 的 account/workspace 区分，不叠加同一账户不同来源的额度。
+
+分组只改变展示。凭据记录、刷新归属、Session/默认值引用和删除保护不变。在账户详情中明确选中的来源，
+改变来源须显式选择并完成验证。不得合并或复制凭据，也不得用另一来源静默恢复失败的选中来源。
+
+现有每周额度 Statusline 组扩展为 `󰊚 work 82%`：先显示短账户名，再显示本周剩余额度。选中原生凭据时也使用
+匹配的账户名称；没有匹配的已保存名称时，才以 `Pi login` 作为原生来源回退标签，绝不表示 `Default`。保留现有行数和 Host 语义主题色，默认不显示邮箱。额度缺失不能隐藏账户
 身份；完整名称和详细额度由对话框展示。[预览证据](../reports/codex-account-selection-preview.md) 只是模拟
 设计产物，不是认证功能证明。
 
-重新登录必须保持保存账户的真实身份，不同身份使用新记录。删除前必须让当前 Session 切到其他账户，
-并先移除启动默认引用。确认共享影响后，只删除本地保存的凭据，不远端撤销授权。其他 Session 保留引用，
-在下一次依赖凭据的操作中明确失败，而不是自动切换账户。
+重新登录必须保持保存账户的真实身份，不同身份使用新记录。删除针对一份已保存凭据记录，而非合并展示的
+账户身份。先移除当前 Session 和启动默认值对该具体来源的引用；显式选择同一身份的原生登录可以满足此保护，
+仅合并展示则不行。确认共享影响后只删除该已保存登录，不远端撤销授权。原生凭据和其他已保存来源保持不变。
+引用被删记录的 Session 在下一次依赖凭据的操作中明确失败，不自动切换来源。
 
 ## 验收
 
@@ -94,6 +104,11 @@ usage/settings、原生 Tool 和图像生成测试，以及共享 dialog/Statusl
 并存时的优先级、原生恢复、刷新竞争、回滚失败、不兼容 Host 处理、子 Agent 继承和续接、fork/clone/new
 默认值、resume/reload、跨账户 Codex 回放、Tool/图像认证和过时额度拒绝。若某个受支持的共享 runtime
 配置不能保持隔离，应明确阻止该配置，不能削弱 Session 契约。
+
+覆盖 native=work、原生为另一已验证身份、相同邮箱但 account/workspace 身份不同、无法确认身份和 token
+轮换。分组须保持来源选择/默认引用与凭据不变，保留每个来源的失败状态，并只显示一份账户额度。显式来源
+切换仍遵守全部切换保护。未解析的原生来源保持可选，但须验证后才能激活。验证按具体来源引用执行删除保护，
+并保留同一身份的原生及其他来源。
 
 在宽、窄、低高度终端和明暗主题中验证长名称、CJK、取消、焦点及编辑器恢复。真实 PTY fixture 使用
 启用 CSI-u extended keys 的隔离 tmux socket；并发 native-supervisor fixture 使用隔离 runtime 目录，

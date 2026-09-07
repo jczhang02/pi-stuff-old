@@ -92,18 +92,28 @@ Pi-owned Session metadata that gives one coding conversation a concise semantic 
 and persist this value after settled direct-user work, but it does not replace the Session, task, Goal, or Agent name.
 _Avoid_: chat title, task name, autoname state
 
+**Codex Account Identity**:
+The stable provider identity of a real Codex account, including its account/workspace scope. Different credential sources
+can represent this same identity; a nickname, email, saved-record reference or rotating token is not proof of equality.
+_Avoid_: credential slot, display name, provider alias
+
+**Codex Credential Source**:
+The independently managed native or saved login used to authenticate a Codex account. Several sources can belong to one
+account identity without becoming one credential record. Accepted design under ADR 0035.
+_Avoid_: additional account, merged credentials
+
 **Saved Codex Account**:
-A Codex-owned shared OAuth identity and refreshable credential record with a stable non-secret reference. Its label and
-rotating credentials are not its identity. Accepted design; implementation is pending under ADR 0035.
+A Codex-owned shared, independently refreshable OAuth credential record for one Codex Account Identity, addressed by a stable
+non-secret reference. Its record reference is not the provider identity. Accepted design under ADR 0035.
 _Avoid_: provider alias, token snapshot, global current account
 
 **Codex Account Selection**:
-The account source chosen by one Session: Pi native login or a Saved Codex Account reference. It is independent of
+The Codex Credential Source chosen by one Session: Pi native login or a Saved Codex Account reference. It is independent of
 provider/model choice and the startup default; tree navigation does not change it. Accepted design under ADR 0035.
 _Avoid_: active global account, selected provider, startup default
 
 **Codex Startup Default**:
-The starting account source snapshotted by a new Session, initially Pi native login. Changing it never changes an
+The starting credential source snapshotted by a new Session, initially Pi native login. Changing it never changes an
 existing Session; forks, clones and new children inherit their source selection instead. Accepted design under ADR 0035.
 _Avoid_: current account, inherited live account, native login
 

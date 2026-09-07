@@ -1,4 +1,4 @@
-<!-- translation-source: DESIGN.md; translation-source-sha256: 376bbe32f4f9230a764c288a3cec2bb57952176239c5cf1c5c5d5f31f7d27312 -->
+<!-- translation-source: DESIGN.md; translation-source-sha256: b1a4e72dfd0575b26672c0af1a18f40dd63e5a6f129d039e12ba860e7dd83911 -->
 
 ---
 version: alpha
@@ -173,9 +173,11 @@ Statusline 只使用 Nerd Font。固定语法依次为：`󱙺` model、`` Th
 Tool 渲染。
 
 已接受、待实现的 Codex 账户设计将每周额度组扩展为 `󰊚 work 82%`：先显示短账户名，再显示本周剩余额度。
-`Pi login` 表示原生来源，不表示启动默认值。不新增状态行、按钮、徽章、默认邮箱展示或后台账户轮询。
+原生来源匹配 work 时也显示 work；没有匹配的已保存名称时才回退显示 `Pi login`，不表示启动默认值。不新增状态行、按钮、徽章、默认邮箱展示或后台账户轮询。
 额度缺失不能隐藏账户身份。现有全宽 `/codex` Command Dialog 拥有完整名称、按需五小时/每周额度和账户
-控制。详见 [ADR 0035](docs/adr/0035-own-codex-account-selection.md)；这里不宣称 Capability 已交付。
+控制。已验证为相同 provider 身份的账户只展示一项，不按凭据来源重复列出。匹配账户内的原生登录仅作来源
+说明；已验证为不同账户时保留独立项。不根据名称/邮箱猜身份，分组不静默改写来源引用或凭据。无法确认的
+原生来源在已验证账户项之外保持可见、可选，激活前仍须验证；账户详情保留当前来源。详见 [ADR 0035](docs/adr/0035-own-codex-account-selection.md)；这里不宣称 Capability 已交付。
 
 User Message 保留原生全宽 `userMessageBg` 卡片、横向内边距和上下留白。单个 `` 位于 Tool 标记列；
 在认证的 `outputPad=1` 配置下，正文和折行续行与 Tool 正文对齐。标记表示 Provider Prompt，包括自动提交的

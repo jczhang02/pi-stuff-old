@@ -184,10 +184,16 @@ Capability identity icon, such as Ponytail's `󱖿`, in its owning Dialog instea
 A Dialog redesign does not silently change transcript markers or Tool rendering.
 
 The accepted, not-yet-implemented Codex account design extends the weekly group to `󰊚 work 82%`: short account name
-followed by remaining weekly allowance. `Pi login` identifies the native source; it does not mean startup default. Do not
+followed by remaining weekly allowance. A native source matching work uses the same work label; `Pi login` is only a
+fallback when no matched saved name is available, never a startup-default label. Do not
 add a row, button, badge, email-by-default display, or background account poller. Missing allowance must not erase the
 account identity. The existing full-width `/codex` Command Dialog owns full names, on-demand five-hour/weekly usage and
-account controls. See [ADR 0035](docs/adr/0035-own-codex-account-selection.md); this is not a shipped Capability claim.
+account controls. Group verified equal provider account identities into one account entry, not one entry per credential
+source. Native login is source information within a matched account; a verified different account remains separate.
+Do not infer identity from labels/email or silently change source references/credentials when grouping. Unresolved
+native sources stay visibly selectable outside verified account entries and require validation before activation.
+The selected source remains visible in account details. See
+[ADR 0035](docs/adr/0035-own-codex-account-selection.md); this is not a shipped Capability claim.
 
 User Messages retain the native full-width `userMessageBg` card, horizontal padding, and vertical whitespace. A single
 `` occupies the Tool marker column; text and wrapped continuation lines align with Tool text at the certified

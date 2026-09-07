@@ -111,7 +111,7 @@ test("publishes one discoverable Agent call contract and rejects repair-prone le
 	expect(tool.description).toContain("Choose exactly one shape per call");
 	expect(tool.description).toContain("independent single calls in one assistant response");
 	expect(tool.description).toContain("Do not invent or pass a background field");
-	expect(tool.description).toContain("Background completion never starts another main turn");
+	expect(tool.description).toContain("Background results return automatically for integration into the original task");
 	expect(tool.description).toContain('action="status", "steer", "stop", or "resume"');
 	expect(tool.description).toContain(
 		"Omit timeoutMs and toolBudget for ordinary tasks; set them only when the task explicitly needs a tighter bound",
@@ -255,7 +255,7 @@ test("keeps session and Agent submission free of full artifact discovery", async
 	expect(result?.content).toEqual([
 		{
 			type: "text",
-			text: "Agent researcher started in the background (run-1). Continue independent work; completion will not start another main turn. Inspect it with /agents.",
+			text: "Agent researcher started in the background (run-1). Continue independent work; results return automatically so you can finish the original task. Inspect progress with /agents.",
 		},
 	]);
 	expect(JSON.stringify(result?.content)).not.toContain("/private");

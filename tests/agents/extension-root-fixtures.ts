@@ -48,6 +48,7 @@ import { captureExtensionHandlers, createExtensionApi } from "../fixtures/extens
 import { createExtensionCommandContext } from "../fixtures/extension-context.js";
 
 interface HarnessEvent {
+	readonly message?: { readonly role: string; readonly customType?: string; readonly details?: unknown };
 	readonly reason?: string;
 	readonly toolName?: string;
 	readonly type: string;
@@ -112,6 +113,7 @@ class EventBusHarness {
 }
 
 class ApiHarness {
+	autoDeliverMessages = true;
 	readonly commands = new Map<string, RegisteredCommand>();
 	readonly entries: Array<{ customType: string; data: AppendEntryData }> = [];
 	readonly entryRenderers = new Map<string, EntryRenderer>();
@@ -142,6 +144,11 @@ class ApiHarness {
 		appendEntry: (customType: string, data: AppendEntryData) => this.entries.push({ customType, data }),
 		sendMessage: (message, options) => {
 			this.messages.push({ message, options });
+			if (this.autoDeliverMessages) {
+				void this.fire("message_end", { type: "message_end", message: { ...message, role: "custom" } }).then(() =>
+					this.fire("before_provider_request", { type: "before_provider_request" }),
+				);
+			}
 		},
 	});
 

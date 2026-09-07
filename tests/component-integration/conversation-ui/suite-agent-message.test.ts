@@ -171,6 +171,35 @@ test("Suite Agent message delivery cannot accept into a session replaced during 
 	expect(accepted).toBe(0);
 });
 
+test("automatic delivery rechecks idle after preparation without rejecting the run it starts", async () => {
+	const preparation = Promise.withResolvers<void>();
+	let idle = true;
+	let deliveries = 0;
+	const [owner, sender] = hostApis(() => {
+		deliveries++;
+		idle = false;
+	});
+	const unregister = registerSuiteAgentMessagePreparation(owner, { prepare: () => preparation.promise });
+	const send = () =>
+		sendSuiteAgentMessage(
+			sender,
+			{ customType: "result", content: "retained evidence", display: false },
+			{ triggerTurn: true },
+			() => true,
+			undefined,
+			() => idle,
+		);
+	const pending = send();
+	idle = false;
+	preparation.resolve();
+	expect(await pending).toBe(false);
+	expect(deliveries).toBe(0);
+	idle = true;
+	expect(await send()).toBe(true);
+	expect(deliveries).toBe(1);
+	unregister();
+});
+
 test("Suite Agent messages fail open through a partial standalone API without an event bus", async () => {
 	let delivered = false;
 	const api = {

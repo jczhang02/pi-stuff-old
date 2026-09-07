@@ -49,6 +49,7 @@ export interface PublicAgentExecutionRuntime {
 	readonly startRunRuntime: (options: { createDirectories: boolean; primeExisting: boolean }) => void;
 	readonly scheduleMaintenance: () => void;
 	readonly refresh: () => void;
+	readonly endRun?: (runId: string) => void;
 }
 
 export interface PublicAgentRequest {
@@ -195,7 +196,16 @@ async function dispatchPreparedAgent(
 				);
 			}
 		}
-		return projectEngineResult(params, result);
+		const projected = projectEngineResult(params, result);
+		if (
+			params.action === "stop" &&
+			targetParams.index === undefined &&
+			projected.isError !== true &&
+			targetParams.id
+		) {
+			runtime.endRun?.(targetParams.id);
+		}
+		return projected;
 	} catch (error) {
 		if (invocation) {
 			try {

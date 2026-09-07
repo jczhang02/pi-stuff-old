@@ -7,7 +7,7 @@ import { verifyAgentsPty } from "../../../scripts/verify-agents-pty.ts";
 const PI_BIN = resolvePiBinary();
 const AGGREGATE_PACKAGE = resolve(import.meta.dir, "../../../packages/pi-stuff");
 
-test("real Pi keeps background reports inspectable across cold resume without another main turn or workspace artifacts", async () => {
+test("real Pi keeps background reports inspectable across cold resume with automatic main-Agent integration and no workspace artifacts", async () => {
 	for (const [columns, rows] of selectAcceptanceMatrix(
 		[
 			[100, 32],

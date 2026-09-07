@@ -120,8 +120,11 @@ function toolCallStream(
 
 function fixtureStream(context: Context, options?: SimpleStreamOptions) {
 	const child = process.env["PI_SUBAGENT_CHILD"] === "1";
+	// Pi projects Suite custom messages into a model-visible user message before
+	// invoking the Provider. Assert that projected payload rather than Host-only
+	// custom-entry metadata.
 	const serialized = JSON.stringify(context.messages);
-	const completion = serialized.includes("CHILD_FINAL_SUMMARY");
+	const completion = serialized.includes("Delegated Agent result (") && serialized.includes("CHILD_FINAL_SUMMARY");
 	const toolResult = context.messages.some((entry) => entry.role === "toolResult" && entry.toolName === "subagent");
 	const childReadResult = context.messages.some((entry) => entry.role === "toolResult" && entry.toolName === "read");
 	const phase = child ? "child" : completion ? "completion" : toolResult ? "continued" : "launch";
@@ -148,7 +151,7 @@ function fixtureStream(context: Context, options?: SimpleStreamOptions) {
 		options?.signal?.addEventListener("abort", result.abort, { once: true });
 		return result.stream;
 	}
-	if (completion) return textStream("UNSOLICITED_MAIN_TURN").stream;
+	if (completion) return textStream("FINAL_DELIVERABLE_FROM_BACKGROUND_RESULT").stream;
 	if (toolResult) return textStream("MAIN_NOT_BLOCKED").stream;
 	return launchStream();
 }

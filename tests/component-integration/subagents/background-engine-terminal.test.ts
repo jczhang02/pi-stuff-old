@@ -57,6 +57,93 @@ setInterval(() => {}, 1_000);
 	}
 }, 12_000);
 
+test("applies a run-wide pause to a child registered during writer startup", async () => {
+	if (process.platform === "win32") return;
+	const root = fixtureRoot();
+	const ranMarker = path.join(root, "late-pause-ran");
+	const writer = path.join(root, "late-pause-writer.ts");
+	fs.writeFileSync(
+		writer,
+		`#!/usr/bin/env bun
+import * as fs from "node:fs";
+fs.writeFileSync(${JSON.stringify(ranMarker)}, "ran");
+process.stdout.write(JSON.stringify({ type: "message_end", message: { role: "assistant", content: [{ type: "text", text: "LATE_PAUSE_RAN" }], stopReason: "stop" } }) + "\\n");
+`,
+		{ mode: 0o700 },
+	);
+	process.env["PI_SUBAGENT_PI_BINARY"] = writer;
+	const asyncDir = path.join(root, "async-late-pause");
+	const resultPath = path.join(asyncDir, "result.json");
+	const interruptSignal: NodeJS.Signals = "SIGUSR2";
+	await runConfiguredBackground(singleRunnerConfig(root, "late-pause", { asyncDir, resultPath }), {
+		afterWriterProcessUpdate: (_index, state) => {
+			if (state.state === "spawning") process.emit(interruptSignal);
+		},
+	});
+	expect(readBackgroundCompletion(resultPath)).toMatchObject({
+		state: "paused",
+		results: [{ interrupted: true, success: false }],
+	});
+	expect(fs.existsSync(ranMarker)).toBe(false);
+}, 8_000);
+
+test("applies a stop requested during writer startup before useful child work", async () => {
+	if (process.platform === "win32") return;
+	const root = fixtureRoot();
+	const ranMarker = path.join(root, "late-stop-ran");
+	const writer = path.join(root, "late-stop-writer.ts");
+	fs.writeFileSync(
+		writer,
+		`#!/usr/bin/env bun
+import * as fs from "node:fs";
+await Bun.sleep(200);
+fs.writeFileSync(${JSON.stringify(ranMarker)}, "ran");
+`,
+		{ mode: 0o700 },
+	);
+	process.env["PI_SUBAGENT_PI_BINARY"] = writer;
+	const asyncDir = path.join(root, "async-late-stop");
+	const resultPath = path.join(asyncDir, "result.json");
+	await runConfiguredBackground(singleRunnerConfig(root, "late-stop", { asyncDir, resultPath }), {
+		afterWriterProcessUpdate: (_index, state) => {
+			if (state.state === "spawning") requestAsyncStop(asyncDir, { source: "startup-test" });
+		},
+	});
+	expect(readBackgroundCompletion(resultPath)).toMatchObject({
+		state: "stopped",
+		results: [{ stopped: true, success: false }],
+	});
+	expect(fs.existsSync(ranMarker)).toBe(false);
+}, 8_000);
+
+test("applies an explicit deadline during writer startup before useful child work", async () => {
+	if (process.platform === "win32") return;
+	const root = fixtureRoot();
+	const ranMarker = path.join(root, "late-deadline-ran");
+	const writer = path.join(root, "late-deadline-writer.ts");
+	fs.writeFileSync(
+		writer,
+		`#!/usr/bin/env bun
+import * as fs from "node:fs";
+await Bun.sleep(200);
+fs.writeFileSync(${JSON.stringify(ranMarker)}, "ran");
+`,
+		{ mode: 0o700 },
+	);
+	process.env["PI_SUBAGENT_PI_BINARY"] = writer;
+	const asyncDir = path.join(root, "async-late-deadline");
+	const resultPath = path.join(asyncDir, "result.json");
+	await runConfiguredBackground(
+		singleRunnerConfig(root, "late-deadline", { asyncDir, resultPath, deadlineAt: Date.now() + 20 }),
+	);
+	expect(readBackgroundCompletion(resultPath)).toMatchObject({
+		state: "failed",
+		timedOut: true,
+		results: [{ timedOut: true, success: false }],
+	});
+	expect(fs.existsSync(ranMarker)).toBe(false);
+}, 8_000);
+
 test("bounds writer output drain when an escaped descendant inherits its pipes", async () => {
 	if (process.platform === "win32") return;
 	const root = fixtureRoot();

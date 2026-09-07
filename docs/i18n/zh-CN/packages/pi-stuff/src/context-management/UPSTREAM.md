@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: e487da1fbb781c0c79faae9051fbbc3a2941fb51a7e7a933a9d323f1af185d45 -->
+<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: 03de2fbf2183a29244c842377b171f1778738576f253602907faabdf9712b1cc -->
 
 # 捆绑上下文引擎来源
 
@@ -97,3 +97,7 @@ Pi 适配器现在每次投影都使用 Magic 已有的对象引用与唯一指�
 Pi Historian 的三个分块前 no-op 返回现记为 `noop`，与原有日志及分块过滤/额度不足时的 no-op 契约一致。
 此前这些返回保留默认 `failed` 统计状态，使真实验收拒绝本已成功的运行。变更只修正结果记账，不增加压缩或重试行为。
 真实 Provider 门槛继续检查没有真正的 Historian 失败。
+
+### 2026-09-06 child pressure differential
+
+`bun test test/agents/child-context-pressure-host.test.ts test/context/magic-recovery-host.test.ts` 在认证 Pi 0.85.1 上通过 14 个测试、116 个 assertions，耗时 73.21 秒（日志：`.artifacts/ps-8ew-acceptance/context-host.log`）。测试使用生产 `buildPiArgs`、真实 Magic Worker/Historian、新建及分支 child history、两次真实超限恢复、八次 Tool 调用、最新 steering，以及检查既有 findings、completed-check ID 和最终报告。首次运行发现 Magic 的 `clearOldReasoning` 在回放时删除 signed reasoning；补丁现已在两个现有 clear 路径保留签名块。随后发现压缩摘要成功后 retry 仍使用旧缓存投影；在公开 `recoverPiCompaction` hook 前清除 Pi cache 修正了顺序。该修复复用既有 cache seam，没有新增 child projector。确定性 Provider fixture 证明生产控制流和 protocol 完整性，不证明远程实时容量；background teardown/stale-result 仍是独立验收证据。

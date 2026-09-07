@@ -1,12 +1,82 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+	listenForPendingGoalResultQueries,
+	readGoalCoordination,
+} from "../../../packages/pi-stuff/src/conversation-ui/goal-coordination.js";
+import {
 	LOW_LIMITS_SETTINGS_PATH,
 	lastGoalStatus,
+	registerSuiteAgentMessagePreparation,
 	requireLastGoal,
 	runtimeByPi,
 	startGoalForTest,
 } from "../../goal-upstream/goal-test-support.js";
+
+test("a completion-triggered run settling after shutdown never reads the retired Host context", async () => {
+	const active = await startGoalForTest({}, "finish", LOW_LIMITS_SETTINGS_PATH);
+	await active.mock.callEvent("session_shutdown", { reason: "quit" }, active.ctx);
+	Object.defineProperty(active.ctx, "sessionManager", {
+		get: () => {
+			throw new Error("This extension ctx is stale after session replacement or reload.");
+		},
+	});
+	await active.mock.callEvent("agent_settled", {}, active.ctx);
+});
+
+test("Goal coordination exposes active identity and defers while a result is pending", async () => {
+	const active = await startGoalForTest({}, "finish", LOW_LIMITS_SETTINGS_PATH);
+	const goalId = requireLastGoal(active.mock).id;
+	assert.deepEqual(readGoalCoordination(active.mock.pi), {
+		goalId,
+		continuationPermitted: true,
+		pendingResultDelivery: false,
+	});
+	const stopReading = listenForPendingGoalResultQueries(active.mock.pi, () => true);
+	assert.equal(readGoalCoordination(active.mock.pi).pendingResultDelivery, true);
+	await active.mock.callEvent(
+		"agent_end",
+		{ messages: [{ role: "assistant", stopReason: "stop", content: [] }] },
+		active.ctx,
+	);
+	const beforeSettle = active.mock.sentUserMessages.length;
+	await active.mock.callEvent("agent_settled", {}, active.ctx);
+	assert.equal(active.mock.sentUserMessages.length, beforeSettle);
+	stopReading();
+	await active.mock.callEvent("agent_settled", {}, active.ctx);
+	assert.equal(active.mock.sentUserMessages.length, beforeSettle + 1);
+	const runtime = runtimeByPi.get(active.mock.pi);
+	assert.ok(runtime);
+	const currentGoal = runtime.activeGoal;
+	assert.ok(currentGoal);
+	runtime.activeGoal = { ...currentGoal, status: "paused" };
+	assert.equal(readGoalCoordination(active.mock.pi).continuationPermitted, false);
+	runtime.activeGoal = undefined;
+	assert.deepEqual(readGoalCoordination(active.mock.pi), {
+		goalId: undefined,
+		continuationPermitted: false,
+		pendingResultDelivery: false,
+	});
+});
+
+test("continuation preparation rechecks idle state before submitting", async () => {
+	let idle = true;
+	const active = await startGoalForTest({ isIdle: () => idle }, "finish", LOW_LIMITS_SETTINGS_PATH);
+	const preparation = Promise.withResolvers<void>();
+	const unregister = registerSuiteAgentMessagePreparation(active.mock.pi, { prepare: () => preparation.promise });
+	await active.mock.callEvent(
+		"agent_end",
+		{ messages: [{ role: "assistant", stopReason: "stop", content: [] }] },
+		active.ctx,
+	);
+	const settling = active.mock.callEvent("agent_settled", {}, active.ctx);
+	await Promise.resolve();
+	idle = false;
+	preparation.resolve();
+	await settling;
+	assert.equal(active.mock.sentUserMessages.length, 1);
+	unregister();
+});
 
 test("owned goal lifecycle boundaries do not consume a transformed follow-up", async (t) => {
 	for (const order of ["message-before-agent", "agent-before-message"] as const) {

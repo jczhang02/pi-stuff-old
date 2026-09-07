@@ -1,5 +1,9 @@
 import { afterEach, expect, test } from "bun:test";
 import {
+	requestAsyncStop,
+	requestAsyncTimeout,
+} from "../../../packages/pi-stuff/src/subagents/src/runs/background/control-channel.js";
+import {
 	DEFAULT_AGENT_WORK_COST_POLICY,
 	SessionAgentGovernor,
 } from "../../../packages/pi-stuff/src/subagents/src/runtime/session-governor.js";
@@ -702,3 +706,61 @@ process.stdout.write(JSON.stringify(event) + "\\n", () => process.exit(0));
 	expect(candidate.expectedWriters?.["0"]).toBe(1);
 	expect(candidate.writers?.["0"]).toHaveLength(1);
 }, 5_000);
+
+for (const cause of ["pause", "stop", "timeout"] as const) {
+	test(`prevents useful fallback work after a run-wide ${cause} between attempts`, async () => {
+		const root = fixtureRoot();
+		const fallbackMarker = path.join(root, "fallback-ran");
+		const writer = path.join(root, "between-fallback-attempts.ts");
+		fs.writeFileSync(
+			writer,
+			`#!/usr/bin/env bun
+import * as fs from "node:fs";
+const model = Bun.argv[Bun.argv.indexOf("--model") + 1] ?? "";
+const fallback = model.endsWith("model-b");
+if (fallback) {
+  await Bun.sleep(1000);
+  fs.writeFileSync(${JSON.stringify(fallbackMarker)}, "ran");
+}
+process.stdout.write(JSON.stringify({ type: "message_end", message: {
+  role: "assistant", content: [{ type: "text", text: fallback ? "UNEXPECTED_FALLBACK" : "FIRST_ATTEMPT" }],
+  errorMessage: fallback ? undefined : "503 Service Unavailable", stopReason: fallback ? "stop" : "error"
+} }) + "\\n");
+`,
+			{ mode: 0o700 },
+		);
+		process.env["PI_SUBAGENT_PI_BINARY"] = writer;
+		const asyncDir = path.join(root, "async-between-fallback");
+		const resultPath = path.join(asyncDir, "result.json");
+		let firstAttemptClosed = false;
+		await runConfiguredBackground(
+			singleRunnerConfig(root, "between-fallback", {
+				asyncDir,
+				resultPath,
+				work: {
+					mode: "single",
+					task: { ...task(0), cwd: root, modelCandidates: ["test/model-a", "test/model-b"] },
+				},
+			}),
+			{
+				afterWriterProcessUpdate: (_index, state) => {
+					if (state.state !== "none" || firstAttemptClosed) return;
+					firstAttemptClosed = true;
+					if (cause === "pause") process.emit("SIGUSR2");
+					else if (cause === "stop") requestAsyncStop(asyncDir, { source: "fallback-test" });
+					else requestAsyncTimeout(asyncDir, { source: "fallback-test" });
+				},
+			},
+		);
+		const completion = readBackgroundCompletion(resultPath);
+		expect(firstAttemptClosed).toBe(true);
+		expect(completion).toMatchObject({
+			state: cause === "pause" ? "paused" : cause === "stop" ? "stopped" : "failed",
+			results: [
+				{ success: false, [cause === "pause" ? "interrupted" : cause === "stop" ? "stopped" : "timedOut"]: true },
+			],
+		});
+		if (cause === "pause") expect(completion.results[0]?.writerAttemptCount).toBe(1);
+		expect(fs.existsSync(fallbackMarker)).toBe(false);
+	}, 5000);
+}

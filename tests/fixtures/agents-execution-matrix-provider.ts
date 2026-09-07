@@ -309,7 +309,7 @@ function childStream(pi: ExtensionAPI, context: Context, options?: SimpleStreamO
 	}
 	if (scenario.startsWith("long-")) {
 		const round = toolResultCount(context, "matrix_blob");
-		const sawProjection = serialized.includes("compacted for child continuation safety");
+		const sawEvidence = serialized.includes("MATRIX_COMPLETED_CHECK_1");
 		const sawSteering = serialized.includes(LONG_STEERING_AUTHORITY);
 		record({
 			kind: "child-long-turn",
@@ -317,7 +317,7 @@ function childStream(pi: ExtensionAPI, context: Context, options?: SimpleStreamO
 			round,
 			messageCount: context.messages.length,
 			payloadBytes: Buffer.byteLength(serialized, "utf8"),
-			sawProjection,
+			sawEvidence,
 			sawSteering,
 		});
 		if (round === 0) {
@@ -335,7 +335,7 @@ function childStream(pi: ExtensionAPI, context: Context, options?: SimpleStreamO
 			});
 		}
 		if (round < LONG_TOOL_ROUNDS) return longToolCallStream(round + 1);
-		const text = `MATRIX_LONG_CHILD_RESULT:rounds=${round}:projection=${sawProjection}:steering=${sawSteering}`;
+		const text = `MATRIX_LONG_CHILD_RESULT:rounds=${round}:evidence=${sawEvidence}:steering=${sawSteering}`;
 		record({ kind: "child-finish", scenario, task, text });
 		return textStream(text);
 	}
@@ -412,7 +412,9 @@ export default function agentsExecutionMatrixProvider(pi: ExtensionAPI): void {
 				}
 			}
 			return {
-				content: [{ type: "text" as const, text: `${LONG_TOOL_RESULT}\nround=${round}` }],
+				content: [
+					{ type: "text" as const, text: `${LONG_TOOL_RESULT}\nMATRIX_COMPLETED_CHECK_${round}\nround=${round}` },
+				],
 				details: { round },
 			};
 		},

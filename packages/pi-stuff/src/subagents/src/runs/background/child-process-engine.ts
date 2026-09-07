@@ -83,6 +83,7 @@ export interface ChildProcessEngineInput {
 	status: RunnerStatus;
 	activeControls: Map<number, ChildRuntimeControl>;
 	consumeScheduledStop: () => boolean;
+	preStartTerminalCause?: () => "pause" | "timeout" | "stop" | undefined;
 	onWriterProcess?: ((writer: WriterRuntimeState) => void) | undefined;
 }
 
@@ -374,7 +375,8 @@ export class ChildProcessEngine {
 			const queued = this.sendSupervisorControl("cancel-finalize", (delivered) => {
 				if (!delivered || this.settled) return;
 				this.finalDrainHardKillAt = undefined;
-				if (!preserveSemanticEvidence) this.clearFinalDrainEvidence();
+				if (!preserveSemanticEvidence)
+					this.finalDrainEvidence = this.finalDrainSignalSent = this.finalDrainHardKillSignalSent = false;
 				this.wakeLifecycle();
 			});
 			if (queued) {
@@ -387,14 +389,8 @@ export class ChildProcessEngine {
 			return;
 		}
 		this.finalDrainHardKillAt = undefined;
-		this.clearFinalDrainEvidence();
+		this.finalDrainEvidence = this.finalDrainSignalSent = this.finalDrainHardKillSignalSent = false;
 		this.wakeLifecycle();
-	}
-
-	private clearFinalDrainEvidence(): void {
-		this.finalDrainEvidence = false;
-		this.finalDrainSignalSent = false;
-		this.finalDrainHardKillSignalSent = false;
 	}
 
 	private armTerminationHardKill(): void {
@@ -474,7 +470,9 @@ export class ChildProcessEngine {
 			revokeFinalization: () => this.cancelFinalDrain(true),
 		};
 		this.input.activeControls.set(this.input.index, this.runtimeControl);
-		if (this.input.consumeScheduledStop()) this.terminate("stop");
+		const terminalCause = this.input.preStartTerminalCause?.();
+		if (terminalCause) this.terminate(terminalCause);
+		else if (this.input.consumeScheduledStop()) this.terminate("stop");
 		this.protocol = new ChildProtocolRuntime({
 			config: this.input.config,
 			task: this.input.task,
@@ -608,6 +606,7 @@ export class ChildProcessEngine {
 	}
 
 	private releaseStartupGate(): void {
+		if (this.terminalCause) return;
 		if (this.writerProcessBindingError && this.claimTerminalCause("setup")) {
 			this.forcedError = `Failed to bind Agent writer process identity: ${
 				this.writerProcessBindingError instanceof Error

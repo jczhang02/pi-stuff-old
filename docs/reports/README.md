@@ -16,6 +16,7 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 
 ## Benchmarks and acceptance
 
+- [ps-8ew reliability repair acceptance](ps-8ew-reliability-acceptance-20260906.md)
 - [Capability Contract Acceptance](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
 - [Magic Context under Effect optimization and recertification](magic-context-effect-optimization-2026-09-02.md)
 - [ps-qer Agent completion acceptance](ps-qer-agent-completion-acceptance-20260902.md)

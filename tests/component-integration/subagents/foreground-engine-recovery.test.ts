@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
+import { projectForegroundStatus } from "../../../packages/pi-stuff/src/subagents/src/runs/foreground/result-projection.js";
 import {
 	type BackgroundRunnerConfig,
 	cleanupForegroundEngineFixtures,
@@ -21,13 +22,47 @@ import {
 beforeEach(setupForegroundEngineFixtures);
 afterEach(cleanupForegroundEngineFixtures);
 
+test("foreground recovery keeps the canonical report ahead of later activity", () => {
+	const root = fs.mkdtempSync(path.join(os.tmpdir(), "pi-stuff-foreground-report-"));
+	temporaryDirectories.push(root);
+	const config: BackgroundRunnerConfig = {
+		version: 2,
+		id: "canonical-report",
+		work: {
+			mode: "single",
+			task: {
+				agent: "general-purpose",
+				task: "report",
+				cwd: root,
+				inheritProjectContext: false,
+				inheritSkills: false,
+			},
+		},
+		resultPath: path.join(root, "result.json"),
+		cwd: root,
+		asyncDir: path.join(root, "async"),
+	};
+	const status = createInitialStatus(config, 1);
+	status.state = "complete";
+	const step = status.steps[0];
+	if (!step) throw new Error("Expected one foreground step");
+	step.status = "complete";
+	step.finalOutput = "CANONICAL_REPORT";
+	step.recentOutput = ["later progress"];
+	const projected = projectForegroundStatus(config, status);
+	expect(projected.details.results[0]?.finalOutput).toBe("CANONICAL_REPORT");
+	expect(projected.content[0]).toMatchObject({ text: expect.stringContaining("CANONICAL_REPORT") });
+});
+
 test("runtime-only foreground replay revives the exact child contract after its source agent is removed", async () => {
 	const parentCwd = fs.mkdtempSync(path.join(os.tmpdir(), "pi-stuff-foreground-runtime-contract-"));
 	temporaryDirectories.push(parentCwd);
 	const firstCwd = path.join(parentCwd, "first");
 	const secondCwd = path.join(parentCwd, "second");
+	const retainedCwd = path.join(secondCwd, "nested");
 	fs.mkdirSync(firstCwd);
 	fs.mkdirSync(secondCwd);
+	fs.mkdirSync(retainedCwd);
 	fs.writeFileSync(path.join(parentCwd, "parent.jsonl"), "");
 	let foregroundConfig: BackgroundRunnerConfig | undefined;
 	await executor(parentCwd, state(), undefined, {
@@ -73,6 +108,7 @@ test("runtime-only foreground replay revives the exact child contract after its 
 	const descriptors = JSON.parse(fs.readFileSync(descriptorPath, "utf8"));
 	descriptors.children[1] = {
 		...descriptors.children[1],
+		cwd: retainedCwd,
 		launchContractDigest: "digest-1",
 		systemPrompt: "Persisted source contract",
 		tools: ["read"],
@@ -115,7 +151,7 @@ test("runtime-only foreground replay revives the exact child contract after its 
 
 	expect(result.isError).not.toBeTrue();
 	expect(revived).toMatchObject({
-		cwd: secondCwd,
+		cwd: retainedCwd,
 		agentConfig: { systemPrompt: "Persisted source contract", tools: ["read"] },
 		capabilityCeiling: narrowCeiling,
 	});

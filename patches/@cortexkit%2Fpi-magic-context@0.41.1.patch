@@ -125,7 +125,27 @@ diff --git a/dist/index.js b/dist/index.js
        let published = false;
        db.exec("BEGIN IMMEDIATE");
        try {
-@@ -24412,47 +24416,6 @@
+@@ -22721,7 +22725,8 @@
+     for (const part of msg.content) {
+       if (part && typeof part === "object" && part.type === "thinking") {
+         const tp = part;
+-        if (tp.redacted)
++        // Signed reasoning is Provider replay state, not disposable prose.
++        if (tp.redacted || tp.thinkingSignature !== undefined)
+           continue;
+         if (tp.thinking !== CLEARED || tp.thinkingSignature !== undefined) {
+           tp.thinking = CLEARED;
+@@ -22803,7 +22808,8 @@
+     for (const part of msg.content) {
+       if (part && typeof part === "object" && part.type === "thinking") {
+         const tp = part;
+-        if (tp.redacted)
++        // Signed reasoning is Provider replay state, not disposable prose.
++        if (tp.redacted || tp.thinkingSignature !== undefined)
+           continue;
+         if (tp.thinking !== CLEARED || tp.thinkingSignature !== undefined) {
+           tp.thinking = CLEARED;
+@@ -24412,47 +24418,6 @@
    else
      lookup.entryIdsByFingerprint.set(fingerprint, [row.id]);
  }
@@ -173,7 +193,7 @@ diff --git a/dist/index.js b/dist/index.js
  function stripMcOwnedPiCompactionSummary(messages, entryIds, branchEntries) {
    const summaryMessage = messages[0];
    if (summaryMessage?.role !== "compactionSummary")
-@@ -24483,8 +24446,7 @@
+@@ -24483,8 +24448,7 @@
      return cached;
    const lookup = {
      entryIdByMessageRef: new Map,
@@ -183,7 +203,7 @@ diff --git a/dist/index.js b/dist/index.js
    };
    for (const entry of entries)
      addPiBranchEntryToLookup(lookup, entry);
-@@ -24568,9 +24530,6 @@
+@@ -24568,9 +24532,6 @@
          const id = entry.id;
          cached.indexById.set(id, cached.entries.length + index);
          addPiBranchEntryToLookup(cached.lookup, entry);
@@ -193,7 +213,7 @@ diff --git a/dist/index.js b/dist/index.js
        }
        const projection = {
          leafId,
-@@ -24834,9 +24793,9 @@
+@@ -24834,9 +24795,9 @@
        const unregisterRaw = setRawMessageProvider(sessionId, rawMessageProvider);
        rawMessageProviderUnregistersBySession.set(sessionId, unregisterRaw);
        scheduleReconciliation(options.db, sessionId, readRawSessionMessages);
@@ -206,7 +226,7 @@ diff --git a/dist/index.js b/dist/index.js
        const strictEntryIds = resolvedEntryIds ? [...resolvedEntryIds] : null;
        if (strictEntryIds && branchEntries && options.injection && !options.compactionOff && stripMcOwnedPiCompactionSummary(event.messages, strictEntryIds, branchEntries)) {
          logTransformTiming(sessionId, "mcCompactionSummarySuppression", tEntryBranch);
-@@ -30347,6 +30306,96 @@
+@@ -30347,6 +30308,96 @@
    signalPiDeferredHistoryRefresh(sessionId);
    signalPiDeferredMaterialization(sessionId);
  }
@@ -303,7 +323,7 @@ diff --git a/dist/index.js b/dist/index.js
  async function handlePiSessionBeforeCompact(args) {
    try {
      const sessionId = args.ctx.sessionManager?.getSessionId?.();
-@@ -30623,6 +30672,7 @@
+@@ -30623,6 +30674,7 @@
      log(`${PREFIX2} in-process subagent child detected; skipping full extension registration`);
      return;
    }
@@ -311,13 +331,15 @@ diff --git a/dist/index.js b/dist/index.js
    const unregisterPiSubagentInitContext = registerPiSubagentInitContext(pi);
    registerPiSubagentInitContextCleanup(pi, unregisterPiSubagentInitContext);
    beginBootQuietPeriod();
-@@ -31322,7 +31372,12 @@
+@@ -31322,7 +31374,14 @@
        log(`tool_result hook failed (continuing): ${err instanceof Error ? err.message : String(err)}`);
      }
    });
 -  pi.on("session_before_compact", async (_event, ctx) => handlePiSessionBeforeCompact({ db, compactionOff, ctx }));
 +  pi.on("session_before_compact", async (event, ctx) => {
 +    if (!compactionOff && (event.reason === "overflow" || event.reason === "manual")) {
++      // Invalidate before publication: Pi's retry must render the newly compacted evidence.
++      clearPiM0Cache(db, ctx.sessionManager.getSessionId(), "session_before_compact");
 +      return recoverPiCompaction({ db, ctx, event, historian: resolveCurrentProjectDeps(ctx).historianConfig });
 +    }
 +    return handlePiSessionBeforeCompact({ db, compactionOff, ctx });

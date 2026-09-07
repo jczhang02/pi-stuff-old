@@ -1,4 +1,4 @@
-<!-- translation-source: CONTEXT.md; translation-source-sha256: 00c112fc08092a431e525a01c684eca88143475ee50407fd97caf7748ef17b9c -->
+<!-- translation-source: CONTEXT.md; translation-source-sha256: 2044c728bca869fdac4d91b0514f714881b5a80b949ad4bf02336a86f5cab845 -->
 
 # Pi Stuff
 
@@ -175,7 +175,7 @@ _避免使用_：Tool recommendation、Tool activation
 一个 Child Agent 当前 Provider payload 的 token 估计值，以所选 Child Host model 报告的 Context window 为
 基准。权威 Assistant usage 会替代估计值；之后的 Tool result 与其他尾部 message 增加有界 Host-equivalent
 估计。Parent Host 的 model metadata 只在 launch 时临时备用，直到 Child Host 报告真实选择。它不是累计 run
-usage；当 compaction 或 model fallback 使当前 payload 不确定时也不可用。
+usage。Context Management/Magic 拥有 child pressure 处理；Agents 不会依据本地估算终止 child 或替换 Provider request。
 _避免使用_：Agent tokens、total Agent usage、Context budget
 
 **Agent Target**：
@@ -185,7 +185,7 @@ _避免使用_：Agent key、child address
 
 **Agent Lifecycle Row**：
 一次 Agent Tool lifecycle event 的仅显示 Transcript projection。Background launch 与 completion 保持为分开的
-chronological event；live Agent state 与完整 child evidence 仍由 Agents 负责。
+chronological event。Agents 拥有 lifecycle 和 protocol evidence；Context Management/Magic 拥有 child pressure 投影，delivery 将有界结果返回来源 main Agent。
 _避免使用_：Agent Operation Block、Subagent Row、Agent roster row
 **Context Activity**：
 一次由用户发起的 Context maintenance operation 所对应的、模型不可见且持久化的 Session record。一条可见

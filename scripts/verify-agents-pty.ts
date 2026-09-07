@@ -118,11 +118,13 @@ function verifyRequests(records: readonly LogRecord[]): void {
 	if (!launch || !continued || !child || !childFinished) {
 		fail("provider did not observe launch, non-blocking continuation, child, and finish phases");
 	}
-	if (completion || mainRequests.some((record) => record.completion === true)) {
-		fail("background completion triggered an unsolicited main-model turn");
+	if (completion?.completion !== true) {
+		fail("background completion did not reach the main model as a completion request");
 	}
-	if (mainRequests.length !== 2) {
-		fail(`expected exactly two main-model requests; received ${String(mainRequests.length)}`);
+	if (mainRequests.length !== 3) {
+		fail(
+			`expected launch, independent continuation, and completion requests; received ${String(mainRequests.length)}`,
+		);
 	}
 	if (childRequests.length < 2) fail("the child did not complete its Tool call and final report turns");
 	if (launch.lastUser !== "launch one background general-purpose Agent") {
@@ -444,6 +446,9 @@ async function verifyFleetviewNavigation(
 	session.sendKey("Escape");
 	screen = await session.waitForFleetviewFrame("idle");
 	verifyFleetviewFrame(screen, options.columns, "idle");
+	await session.waitForText("FINAL_DELIVERABLE_FROM_BACKGROUND_RESULT");
+	screen = await session.waitForFleetviewFrame("idle");
+	verifyFleetviewFrame(screen, options.columns, "idle");
 	if (
 		!screen
 			.split("\n")
@@ -598,17 +603,15 @@ async function verifyPersistedAgentState(
 	const topLevelSessions = (await readdir(sessionDirectory)).filter((entry) => entry.endsWith(".jsonl"));
 	if (topLevelSessions.length !== 1 || !topLevelSessions[0]) fail("expected exactly one isolated main session");
 	const transcript = await readFile(join(sessionDirectory, topLevelSessions[0]), "utf8");
-	for (const required of ["subagent", "MAIN_NOT_BLOCKED", "pi-stuff-agent-outcome"]) {
+	for (const required of [
+		"subagent",
+		"MAIN_NOT_BLOCKED",
+		"FINAL_DELIVERABLE_FROM_BACKGROUND_RESULT",
+		"pi-stuff-agent-outcome",
+	]) {
 		if (!transcript.includes(required)) fail(`main session transcript is missing ${required}`);
 	}
-	for (const forbidden of [
-		"Fleet",
-		"statusline",
-		"CHILD_FINAL_SUMMARY",
-		"AGENT_TOOL_RESULT",
-		"pi-stuff-agent-complete",
-		"UNSOLICITED_MAIN_TURN",
-	]) {
+	for (const forbidden of ["Fleet", "statusline", "AGENT_TOOL_RESULT", "UNSOLICITED_MAIN_TURN"]) {
 		if (transcript.includes(forbidden)) fail(`ephemeral or removed UI leaked into the session: ${forbidden}`);
 	}
 	const sessionEntries = transcript
@@ -632,8 +635,8 @@ async function verifyPersistedAgentState(
 	if (outcome.version !== 1 || outcome.count !== 1 || outcome.status !== "completed") {
 		fail("durable completion outcome has the wrong public state projection");
 	}
-	if (!isRuntimeString(outcome.key) || !/^[a-f0-9]{24}$/.test(outcome.key)) {
-		fail("durable completion outcome does not use a safe digest key");
+	if (!isRuntimeString(outcome.key) || !/^pi-stuff-result-[a-f0-9]{32}$/.test(outcome.key)) {
+		fail(`durable completion outcome does not use a safe digest key: ${JSON.stringify(outcome.key)}`);
 	}
 	for (const forbiddenKey of ["agent", "task", "report", "summary", "path", "error", "output"]) {
 		if (forbiddenKey in outcome) fail(`durable completion outcome exposed ${forbiddenKey}`);

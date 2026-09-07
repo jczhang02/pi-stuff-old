@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/README.md; translation-source-sha256: e9a3c77e9def97ae49a0ed5e0a9b117fa867943271c78d1968ce3853a7dc6779 -->
+<!-- translation-source: docs/reports/README.md; translation-source-sha256: 64aea7208cabe2bb898996000d3485697c872e85977da1a19967a68bcdd3f804 -->
 
 # 报告
 
@@ -17,6 +17,7 @@
 
 ## 基准与验收
 
+- [ps-8ew 可靠性修复验收](ps-8ew-reliability-acceptance-20260906.md)
 - [Capability Contract 验收](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
 - [Effect 下的 Magic Context 优化与重新认证](magic-context-effect-optimization-2026-09-02.md)
 - [ps-qer Agent 完成验收](ps-qer-agent-completion-acceptance-20260902.md)

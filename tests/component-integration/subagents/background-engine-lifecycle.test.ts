@@ -1,4 +1,5 @@
 import { afterEach, expect, test } from "bun:test";
+import { persistRecoveries } from "../../../packages/pi-stuff/src/subagents/src/runs/background/async-execution.js";
 import {
 	Check,
 	cleanupBackgroundEngineFixtures,
@@ -346,8 +347,22 @@ process.stdout.write(JSON.stringify(event) + "\\n", () => process.exit(0));
 	}
 	process.env["PI_SUBAGENT_PI_BINARY"] = writer;
 	const resultRoot = fixtureRoot();
+	process.env["TMPDIR"] = resultRoot;
 	const asyncDir = path.join(resultRoot, "async-worktree-evidence");
 	const resultPath = path.join(asyncDir, "result.json");
+	persistRecoveries(asyncDir, [
+		{
+			version: 2,
+			sourceRunId: "worktree-evidence",
+			childIndex: 0,
+			agent: "agent-0",
+			cwd: root,
+			systemPromptMode: "append",
+			inheritProjectContext: true,
+			inheritSkills: false,
+			maxSubagentDepth: 1,
+		},
+	]);
 	await runConfiguredBackground(
 		singleRunnerConfig(resultRoot, "worktree-evidence", {
 			cwd: root,

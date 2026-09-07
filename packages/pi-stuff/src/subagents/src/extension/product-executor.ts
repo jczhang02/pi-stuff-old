@@ -312,7 +312,7 @@ export function projectEngineResult(params: PublicAgentParams, result: AgentEngi
 			content: [
 				{
 					type: "text",
-					text: `${subject} started in the background${id ? ` (${id})` : ""}. Continue independent work; completion will not start another main turn. Inspect it with /agents.`,
+					text: `${subject} started in the background${id ? ` (${id})` : ""}. Continue independent work; results return automatically so you can finish the original task. Inspect progress with /agents.`,
 				},
 			],
 		};

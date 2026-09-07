@@ -63,7 +63,6 @@ import registerSubagentPromptRuntime, {
 	registerToolBudget,
 	rewriteSubagentPrompt,
 	stripParentOnlySubagentMessages,
-	validateFinalProviderPayload,
 } from "../../packages/pi-stuff/src/subagents/src/runs/shared/subagent-prompt-runtime.js";
 import {
 	CHILD_TOOL_DIAGNOSTIC_PATH_ENV,
@@ -311,7 +310,6 @@ export {
 	temporaryDirectories,
 	tmpdir,
 	toolInfo,
-	validateFinalProviderPayload,
 	visibleWidth,
 	writeFileSync,
 	writeSteerAckAt,

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import * as fs from "node:fs";
 import * as path from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
@@ -195,7 +196,7 @@ function foregroundResumeTarget(
 		state: child.status === "completed" ? "complete" : child.status === "detached" ? "running" : child.status,
 		agent: child.agent,
 		index,
-		cwd: child.cwd ?? run.cwd,
+		cwd: recoveryDescriptor?.cwd ?? child.cwd ?? run.cwd,
 		sessionFile,
 		model: child.model,
 		thinking: child.thinking,
@@ -281,6 +282,13 @@ async function prepareResumeRun(input: ResumeRunInput) {
 	const depth = checkSubagentDepth();
 	if (depth.blocked) throw new Error(`Agent resume blocked at maximum nesting depth ${depth.maxDepth}.`);
 	const effectiveCwd = target.cwd ?? input.ctx.cwd;
+	try {
+		if (!fs.statSync(effectiveCwd).isDirectory()) throw new Error("path is not a directory");
+	} catch (error) {
+		throw new Error(`Agent '${target.runId}' retained working directory is unavailable: ${effectiveCwd}`, {
+			cause: error instanceof Error ? error : undefined,
+		});
+	}
 	const discovered = await input.deps.discoverAgents(input.ctx.cwd, "both");
 	const descriptor = "recoveryDescriptor" in target ? target.recoveryDescriptor : undefined;
 	const discoveredAgent = discovered.agents.find((agent) => agent.name === target.agent);

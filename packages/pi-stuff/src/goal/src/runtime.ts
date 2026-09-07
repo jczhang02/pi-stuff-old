@@ -1,7 +1,7 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import { withAgentWorkOrigin } from "../../conversation-ui/agent-run-origin.js";
-import { sendSuiteAgentMessage } from "../../conversation-ui/index.js";
+import { readGoalCoordination, sendSuiteAgentMessage } from "../../conversation-ui/index.js";
 import { type GoalStatusSnapshot, getGoalStatusChannel } from "../../conversation-ui/statusline.js";
 import { isJsonInputObject } from "../../shared/json-value.js";
 import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
@@ -258,6 +258,14 @@ export class GoalRuntime extends GoalToolPolicy {
 		return this.agentRunGoalId === goalId && this.agentRunOrigin === "automatic";
 	}
 
+	coordinationState() {
+		const goal = this.activeGoal;
+		return {
+			goalId: goal?.id,
+			continuationPermitted: goal?.status === "active" && !this.queueFrozen && this.pendingQueueAction === undefined,
+		};
+	}
+
 	recordGoalUsage(goal: ActiveGoal, ctx: StatusContext, checkpointActiveTime = goal.status === "active") {
 		if (goal.status === "complete" || goal.status === "blocked" || !this.canRecordGoalUsage(goal.id)) return false;
 		updateGoalUsage(goal, ctx, checkpointActiveTime);
@@ -279,11 +287,21 @@ export class GoalRuntime extends GoalToolPolicy {
 			if (this.enforceAutomaticTurnLimit(ctx, false) || this.enforceNoProgressLimit(ctx)) {
 				return Effect.succeed(false);
 			}
-			if (ctx.isIdle?.() !== true || hasPendingMessages(ctx)) return Effect.succeed(false);
+			if (ctx.isIdle?.() !== true || hasPendingMessages(ctx) || readGoalCoordination(this.pi).pendingResultDelivery)
+				return Effect.succeed(false);
 
 			this.prompts.continuationIntent = undefined;
 			this.prompts.continuationDelivery = intent;
-			return sendHiddenGoalPrompt(this.pi, intent.prompt).pipe(
+			return sendHiddenGoalPrompt(
+				this.pi,
+				intent.prompt,
+				false,
+				() => this.activeGoal?.id === intent.goalId && this.activeGoal.status === "active",
+				() =>
+					ctx.isIdle?.() === true &&
+					!hasPendingMessages(ctx) &&
+					!readGoalCoordination(this.pi).pendingResultDelivery,
+			).pipe(
 				Effect.map((delivered) => {
 					if (delivered) return true;
 					if (this.prompts.continuationDelivery?.marker === intent.marker) {

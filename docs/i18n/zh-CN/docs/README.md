@@ -1,4 +1,4 @@
-<!-- translation-source: docs/README.md; translation-source-sha256: a88a5c682dc0d3a96d9d423e39323a6f4630ca9615b07f942eca9ae74aa96ca2 -->
+<!-- translation-source: docs/README.md; translation-source-sha256: 783c274fc77af85c774b8c0ec18bca2e3bf569d93db36bc77428b077e35ebc4b -->
 
 # 文档
 
@@ -95,6 +95,7 @@ Web 与 MCP runtime 另有源码就近 README：
 | [0030](adr/0030-unify-user-message-presentation.md) | 在原生 Host 内统一 User Message 呈现 |
 | [0031](adr/0031-preserve-magic-context-behavior-through-suite-integration.md) | 在 Suite 集成中保留 Magic Context 行为 |
 | [0032](adr/0032-organize-quality-assurance-by-verification-purpose.md) | 按验证目的组织质量保证 |
+| [0033](adr/0033-continue-open-work-after-background-agent-results.md) | 后台 Agent 结果返回后继续尚未完成的工作（候选实现；验收待完成） |
 
 ## 证据与历史
 

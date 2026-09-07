@@ -8,6 +8,10 @@ export {
 } from "../../packages/pi-stuff/src/conversation-ui/agent-run-origin.js";
 export { reportDiagnostic } from "../../packages/pi-stuff/src/conversation-ui/diagnostics.js";
 export { commandDialogRows, fitCommandDialogRows } from "../../packages/pi-stuff/src/conversation-ui/dialog-layout.js";
+export {
+	listenForGoalCoordinationQueries,
+	readGoalCoordination,
+} from "../../packages/pi-stuff/src/conversation-ui/goal-coordination.js";
 export { getGoalStatusChannel } from "../../packages/pi-stuff/src/conversation-ui/statusline.js";
 export {
 	isSuiteNativeCompactionPreflight,

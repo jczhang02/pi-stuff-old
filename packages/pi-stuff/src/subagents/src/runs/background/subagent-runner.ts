@@ -24,7 +24,7 @@ import {
 	type RunnerAgentTask,
 } from "../shared/parallel-utils.ts";
 import { acquireSessionLease } from "../shared/session-lease.ts";
-import { createWorktrees, type WorktreeSetup } from "../shared/worktree.ts";
+import { createWorktrees, resolveWorktreeTaskCwd, type WorktreeSetup } from "../shared/worktree.ts";
 import { runResolvedTask } from "./child-task-runner.ts";
 import { createInitialStatus, type BackgroundRunnerStatus as RunnerStatus } from "./initial-status.ts";
 import { markProcessTerminalCandidateLeaseRelease } from "./process-terminal.ts";
@@ -47,6 +47,40 @@ import {
 	updateWriterProcessRegistry,
 	type WriterRuntimeState,
 } from "./writer-process-registry.ts";
+
+function persistWorktreeRecoveryCwd(config: BackgroundRunnerConfig, setup: WorktreeSetup): void {
+	if (config.work.mode !== "parallel") return;
+	const descriptorPath = fs.existsSync(path.join(config.asyncDir, "recovery-descriptors.json"))
+		? path.join(config.asyncDir, "recovery-descriptors.json")
+		: path.join(config.asyncDir, "recovery-descriptor.json");
+	const parsed = parseJsonValue(fs.readFileSync(descriptorPath, "utf8"));
+	if (
+		config.work.group.tasks.length === 1 &&
+		isRuntimeObject(parsed) &&
+		parsed !== null &&
+		!Array.isArray(parsed) &&
+		!Array.isArray(parsed["children"])
+	) {
+		const task = config.work.group.tasks[0];
+		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' has no task.`);
+		parsed["cwd"] = resolveWorktreeTaskCwd(setup.worktrees[0], setup.cwd, task.cwd);
+		writePrivateAtomicJson(descriptorPath, parsed);
+		return;
+	}
+	if (!isRuntimeObject(parsed) || parsed === null || Array.isArray(parsed) || !Array.isArray(parsed["children"])) {
+		throw new Error(`Async recovery descriptor '${descriptorPath}' is missing its children.`);
+	}
+	const children = parsed["children"];
+	for (const [index, child] of children.entries()) {
+		if (!isRuntimeObject(child) || child === null || Array.isArray(child)) {
+			throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} is invalid.`);
+		}
+		const task = config.work.group.tasks[index];
+		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} has no task.`);
+		child["cwd"] = resolveWorktreeTaskCwd(setup.worktrees[index], setup.cwd, task.cwd);
+	}
+	writePrivateAtomicJson(descriptorPath, parsed);
+}
 
 export { createInitialStatus } from "./initial-status.ts";
 export { createBackgroundCompletion, runBackgroundWork } from "./runner-state.ts";
@@ -92,11 +126,16 @@ function runConfiguredWork(
 				const results = yield* Effect.gen(function* () {
 					if (config.work.mode === "parallel" && config.work.group.worktree) {
 						const group = config.work.group;
-						worktreeSetup = yield* Effect.try({
+						const createdWorktrees = yield* Effect.try({
 							try: () =>
 								createWorktrees(config.cwd, config.id, group.tasks.length, {
 									agents: group.tasks.map((task) => task.agent),
 								}),
+							catch: (error) => error,
+						});
+						worktreeSetup = createdWorktrees;
+						yield* Effect.try({
+							try: () => persistWorktreeRecoveryCwd(config, createdWorktrees),
 							catch: (error) => error,
 						});
 					}
@@ -109,12 +148,15 @@ function runConfiguredWork(
 										config,
 										task,
 										index,
-										taskCwd: worktreeSetup?.worktrees[index]?.agentCwd ?? task.cwd,
+										taskCwd: worktreeSetup
+											? resolveWorktreeTaskCwd(worktreeSetup.worktrees[index], worktreeSetup.cwd, task.cwd)
+											: task.cwd,
 										status,
 										statusPath,
 										eventsPath,
 										activeControls: control.activeControls,
 										consumeScheduledStop: (index) => control.consumeScheduledStop(index),
+										preStartTerminalCause: () => control.preStartTerminalCause(),
 										onWriterProcess: onWriterProcess ? (writer) => onWriterProcess(index, writer) : undefined,
 									}),
 								catch: (error) => error,

@@ -27,7 +27,6 @@ import {
 	temporaryDirectories,
 	tmpdir,
 	toolInfo,
-	validateFinalProviderPayload,
 } from "../../agents/tool-presentation-fixtures.js";
 
 afterEach(cleanupToolPresentationFixtures);
@@ -196,7 +195,7 @@ test("a rejected advisory tool-budget nudge cannot escape the child runtime", as
 	});
 });
 
-test("aborts an oversized final child provider payload with a durable diagnostic", async () => {
+test("does not abort an oversized child payload from a local estimate", async () => {
 	const root = mkdtempSync(join(tmpdir(), "pi-stuff-child-payload-guard-"));
 	temporaryDirectories.push(root);
 	const diagnosticPath = join(root, "child-diagnostic.json");
@@ -223,11 +222,8 @@ test("aborts an oversized final child provider payload with a durable diagnostic
 		);
 	}
 
-	expect(aborts).toBe(1);
-	expect(readChildToolDiagnosticError(diagnosticPath)).toContain("final child payload");
-	expect(validateFinalProviderPayload({ input: "small" }, { contextWindow: 8_000, maxTokens: 2_000 })).toEqual({
-		ok: true,
-	});
+	expect(aborts).toBe(0);
+	expect(readChildToolDiagnosticError(diagnosticPath)).toBeUndefined();
 });
 
 test("aborts before the first provider request when a required child Tool is unavailable", async () => {
@@ -262,7 +258,7 @@ test("aborts before the first provider request when a required child Tool is una
 	expect(readChildToolDiagnosticError(diagnosticPath)).toContain("project_search");
 });
 
-test("projects long child Tool history before a continuation request while preserving task and steering authority", async () => {
+test("preserves child history and Tool pairing for Context Management pressure handling", async () => {
 	const handlers = new Map<string, LifecycleHandler[]>();
 	const activeTool = {
 		name: "read",
@@ -348,10 +344,10 @@ test("projects long child Tool history before a continuation request while prese
 	});
 	expect(projectedTexts.some((text) => text.includes(delegatedTask))).toBeTrue();
 	expect(projectedTexts).toContain(latestSteering);
-	expect(projectedTexts.some((text) => text.includes("compacted for child continuation safety"))).toBeTrue();
+	expect(projected).toEqual(messages);
 	expect(JSON.stringify(projected)).toContain('"id":"call-2"');
 	expect(JSON.stringify(projected)).toContain('"toolCallId":"call-2"');
-	expect(JSON.stringify(projected)).not.toContain('"id":"call-0"');
+	expect(JSON.stringify(projected)).toContain('"id":"call-0"');
 	const recentAssistantIndex = projected.findIndex(
 		(message) =>
 			Array.isArray(message.content) &&
@@ -364,8 +360,6 @@ test("projects long child Tool history before a continuation request while prese
 		tools: [activeTool],
 		input: projected,
 	};
-	expect(validateFinalProviderPayload(providerPayload, model)).toEqual({ ok: true });
-
 	let aborts = 0;
 	for (const handler of handlers.get("before_provider_request") ?? []) {
 		await handler({ payload: providerPayload }, { model, abort: () => (aborts += 1) });
@@ -373,7 +367,7 @@ test("projects long child Tool history before a continuation request while prese
 	expect(aborts).toBe(0);
 });
 
-test("falls back to a bounded authority-and-recent-Tool continuation when old outputs are extreme", async () => {
+test("preserves findings and completed-check identity in forked child history", async () => {
 	const handlers = new Map<string, LifecycleHandler[]>();
 	const activeTool = {
 		name: "bash",
@@ -400,7 +394,7 @@ test("falls back to a bounded authority-and-recent-Tool continuation when old ou
 		},
 		{
 			role: "assistant",
-			content: [{ type: "text", text: "Earlier parent answer." }],
+			content: [{ type: "text", text: "COMPLETED_CHECK_IDENTITY: context-check-42 passed." }],
 			stopReason: "stop",
 			timestamp: 0,
 		},
@@ -449,9 +443,8 @@ test("falls back to a bounded authority-and-recent-Tool continuation when old ou
 	expect(messages).toEqual(original);
 	expect(serialized).toContain(task);
 	expect(serialized).toContain(steering);
-	expect(serialized).not.toContain("PARENT_FORK_HISTORY");
-	expect(serialized).toContain("omitted");
-	expect(serialized).toContain("Do not rerun completed verification solely because older evidence was omitted.");
+	expect(serialized).toContain("COMPLETED_CHECK_IDENTITY: context-check-42 passed.");
+	expect(serialized).toContain("PARENT_FORK_HISTORY");
 	expect(serialized).toContain('"id":"extreme-11"');
 	expect(serialized).toContain('"toolCallId":"extreme-11"');
 	const projectedLatestAssistant = projected.find(
@@ -465,15 +458,10 @@ test("falls back to a bounded authority-and-recent-Tool continuation when old ou
 	const latestResultIndex = projected.findIndex((message) => message.toolCallId === "extreme-11");
 	expect(latestAssistantIndex).toBeGreaterThanOrEqual(0);
 	expect(latestResultIndex).toBe(latestAssistantIndex + 1);
-	expect(
-		validateFinalProviderPayload(
-			{ instructions: "Child prompt. ".repeat(200), tools: [activeTool], input: projected },
-			model,
-		),
-	).toEqual({ ok: true });
+	expect(projected).toBe(messages);
 });
 
-test("projects oversized non-text Tool evidence without breaking the signed recent Tool exchange", async () => {
+test("preserves signed non-text Tool evidence for Context Management projection", async () => {
 	const handlers = new Map<string, LifecycleHandler[]>();
 	const activeTool = {
 		name: "screenshot",
@@ -521,16 +509,14 @@ test("projects oversized non-text Tool evidence without breaking the signed rece
 		);
 	}
 
-	expect(projected).not.toBe(messages);
+	expect(projected).toBe(messages);
 	expect(projected[1]).toEqual(signedAssistant);
-	expect(JSON.stringify(projected[2])).toContain("image Tool content omitted");
+	expect(JSON.stringify(projected[2])).toContain('"type":"image"');
 	expect(projected[2]?.toolCallId).toBe("screenshot-call");
-	expect(
-		validateFinalProviderPayload({ instructions: "Child prompt.", tools: [activeTool], input: projected }, model),
-	).toEqual({ ok: true });
+	expect(projected[2]?.content).toEqual(messages[2]?.content);
 });
 
-test("labels an irreducible oversized request as a continuation after a resumed child session", async () => {
+test("does not abort an oversized resumed child request from a local estimate", async () => {
 	const root = mkdtempSync(join(tmpdir(), "pi-stuff-child-continuation-guard-"));
 	temporaryDirectories.push(root);
 	const diagnosticPath = join(root, "child-diagnostic.json");
@@ -559,62 +545,6 @@ test("labels an irreducible oversized request as a continuation after a resumed 
 		);
 	}
 
-	expect(aborts).toBe(1);
-	const diagnostic = readChildToolDiagnosticError(diagnosticPath) ?? "";
-	expect(diagnostic).toContain("Agent continuation stopped");
-	expect(diagnostic).not.toContain("Agent launch stopped");
-});
-
-test("measures final OpenAI child payloads in tokens instead of UTF-8 bytes", () => {
-	const model = {
-		provider: "openai-codex",
-		id: "gpt-5.6-sol",
-		contextWindow: 272_000,
-		maxTokens: 128_000,
-	};
-	const payload = (input: string) => ({
-		input,
-		tools: [
-			{
-				name: "read",
-				description: "Read a file safely. ".repeat(100),
-				parameters: { type: "object", properties: { path: { type: "string" } } },
-			},
-		],
-		skills: [{ name: "review", instructions: "Inspect the complete change." }],
-		extensions: ["child-runtime"],
-	});
-
-	for (const input of [
-		"Bounded child prompt. ".repeat(4_100),
-		"上下文".repeat(10_000),
-		"AP6Zz9+/0f3cD7aQ".repeat(5_200),
-	]) {
-		const request = payload(input);
-		expect(Buffer.byteLength(JSON.stringify(request), "utf8")).toBeGreaterThan(76_000);
-		expect(validateFinalProviderPayload(request, model)).toEqual({ ok: true });
-	}
-
-	const nearLimit = payload("AP6Zz9+/0f3cD7aQ".repeat(5_200));
-	expect(
-		validateFinalProviderPayload(nearLimit, {
-			...model,
-			contextWindow: 160_000,
-			maxTokens: 80_000,
-		}).ok,
-	).toBe(false);
-	expect(validateFinalProviderPayload(nearLimit, model)).toEqual({ ok: true });
-
-	const oversized = validateFinalProviderPayload(payload("AP6Zz9+/0f3cD7aQ".repeat(6_000)), model);
-	expect(oversized.ok).toBe(false);
-	if (!oversized.ok) {
-		expect(oversized.message).toContain("input tokens");
-		expect(oversized.message).not.toContain("byte input bound");
-	}
-
-	const unknownEncoding = validateFinalProviderPayload(
-		{ input: "A".repeat(30_000) },
-		{ provider: "openai", id: "unknown-deployment", contextWindow: 80_000, maxTokens: 32_000 },
-	);
-	expect(unknownEncoding.ok).toBeFalse();
+	expect(aborts).toBe(0);
+	expect(readChildToolDiagnosticError(diagnosticPath)).toBeUndefined();
 });

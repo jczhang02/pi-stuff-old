@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/subagents/README.md; translation-source-sha256: 2d0bed5310779ca058d12cec3dbcbe4cdd161f470911e7d6f4517962e860f278 -->
+<!-- translation-source: packages/pi-stuff/src/subagents/README.md; translation-source-sha256: 5d930171b5ab202c8f463e8312c7b63136aaca11700f6fd942c2faa3264975a3 -->
 
 # Agents
 
@@ -34,16 +34,16 @@
 - 支持逐 Agent Tool allowlist 与 exclusion，不改变 parent Host。
 - 支持单个 Agent、并行 grouped task，以及 status 或生命周期 control call；`agent` 选择 launch definition，
   `id` 标识已有 Agent Target。
-- 默认后台运行；前台模式会等待结果。
-- 送达紧凑 completion，不主动启动另一轮主 Agent。
+- 默认后台运行；前台模式等待结果。
+- 成功、失败和 partial 结果会有界地送达来源 main Agent，空闲时继续整合、忙碌时排队；保留的规范输出优先于后续进展文本。
+- 显式查询终态详情会返回保留的输出引用，并以 transcript 或 Session 作为回退；分组完成文案描述整组的汇总状态和成员数。
+- 取消或显式结束任务会抑制迟到结果重新启动，但保留结果、规范引用、Session/run 身份和去重信息供检查。
 - 保留并发与嵌套边界，同时不为生产性工作设置累计 launch、默认运行时间或隐式 Tool timeout。
 - 把 attempts 与 resumes 聚合成一个持久 usage 总量；后续自动扩展会在文档规定的成本 guard 处暂停，但不会停止
   正在运行的 child。
 - 返回稳定的异常 outcome class、有界 partial 证据，以及支持 continuation 时可恢复的 Agent Target。
 - 隔离无 owner 的无版本 legacy run，不让它们永远显示为 active，也不 reclaim 未知进程。
 - 保存 Session-owned artifact，并保留已修改的隔离 worktree 供检查。
-
-保留结果遵循验收报告优先规则，不会被后续普通 assistant 文本替换。
 
 ## 文档
 

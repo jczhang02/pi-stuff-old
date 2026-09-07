@@ -20,7 +20,7 @@ binary; it does not alter upstream source or persist a derived artifact.
 ## Temporary tokenizer compatibility patch
 
 - Patch: [`patches/@cortexkit%2Fpi-magic-context@0.41.1.patch`](../../../../patches/@cortexkit%252Fpi-magic-context@0.41.1.patch)
-- Patch SHA-256: `9c8361ee3bea8f4667f5aa298a85dc55cbfc0c0ba241eddcaff3f1b4ee120a9a`
+- Patch SHA-256: `0c75ef8e484250b614d1650dfc772d3e66f3d83f9fc4478d863de9bd7d4044d2`
 - Scope:
   - add the published module's `import.meta.url` ancestry and Bun isolated-linker `node_modules` root to the existing
     `ai-tokenizer` fallback search;
@@ -109,6 +109,20 @@ Historian failure, uncertain acknowledgement, no progress, repeated overflow, an
 These fixture Provider errors establish control flow, not live remote capacity. Remove this patch component only when
 an exact official artifact passes the same durable-completion and real-Host differential cases. Re-audit handler signal
 consumption, lease/publication atomicity, and summary boundaries on every upstream upgrade.
+
+### 2026-09-06 child pressure differential
+
+`bun test test/agents/child-context-pressure-host.test.ts test/context/magic-recovery-host.test.ts` passes 14 tests, 0
+failures, and 116 assertions in 73.21s on certified Pi 0.85.1 (log: `.artifacts/ps-8ew-acceptance/context-host.log`). It
+exercises the production `buildPiArgs` path with the actual Magic Worker/Historian, fresh and branched seeded child
+histories, two real overflow recoveries, eight intervening Tool calls, latest steering, and final-report checks for prior
+findings and completed-check IDs. The first
+run failed because Magic's `clearOldReasoning` erased signed reasoning during replay. The patch now preserves signed
+reasoning blocks in both existing clear paths. The next failure showed that a successful compaction summary was followed
+by a retry with stale cached projection; invalidating the Pi cache before the public `recoverPiCompaction` hook fixes that
+ordering. This reuses the existing cache seam and adds no child projector. The combined command passes 14 tests with 116
+assertions in 73.21s; the fixture proves production control flow and protocol preservation, not live remote capacity.
+A separate live background run confirmed clean teardown; live pressure compaction remains unclaimed.
 
 
 The Pi Historian also records its three pre-chunk no-op exits as `noop`, matching their existing log messages and the

@@ -28,7 +28,7 @@ import {
 	updateSteeringTarget,
 } from "./steering.ts";
 
-type TerminalKind = "pause" | "timeout" | "stop";
+export type TerminalKind = "pause" | "timeout" | "stop";
 const ASYNC_INTERRUPT_SIGNAL: NodeJS.Signals = process.platform === "win32" ? "SIGBREAK" : "SIGUSR2";
 
 function interruptDescendants(config: BackgroundRunnerConfig, kind: TerminalKind): void {

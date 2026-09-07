@@ -315,6 +315,7 @@ export function sendHiddenGoalPrompt(
 	prompt: string,
 	userDriven = false,
 	isCurrent: () => boolean = () => true,
+	canSubmit: () => boolean = () => true,
 ) {
 	const message = withAgentWorkOrigin(
 		{
@@ -331,6 +332,8 @@ export function sendHiddenGoalPrompt(
 				userDriven ? withDirectUserActivation(message) : message,
 				{ deliverAs: "followUp", triggerTurn: true },
 				isCurrent,
+				undefined,
+				canSubmit,
 			),
 		catch: (error) => error,
 	});

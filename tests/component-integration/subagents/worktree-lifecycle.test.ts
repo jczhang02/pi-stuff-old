@@ -3,10 +3,13 @@ import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { persistRecoveries } from "../../../packages/pi-stuff/src/subagents/src/runs/background/async-execution.js";
+import { runConfiguredBackground } from "../../../packages/pi-stuff/src/subagents/src/runs/background/subagent-runner.js";
 import {
 	cleanupWorktrees,
 	createWorktrees,
 	diffWorktrees,
+	resolveWorktreeTaskCwd,
 } from "../../../packages/pi-stuff/src/subagents/src/runs/shared/worktree.js";
 
 interface TestRepository {
@@ -58,10 +61,138 @@ function createRepository(): TestRepository {
 	git(repo, ["config", "commit.gpgSign", "false"]);
 	fs.writeFileSync(path.join(repo, ".gitignore"), "ignored-output.txt\n", "utf-8");
 	fs.writeFileSync(path.join(repo, "tracked.txt"), "base\n", "utf-8");
-	git(repo, ["add", ".gitignore", "tracked.txt"]);
+	fs.mkdirSync(path.join(repo, "sub"));
+	fs.writeFileSync(path.join(repo, "sub", ".keep"), "base\n", "utf-8");
+	fs.mkdirSync(path.join(repo, "sibling"));
+	fs.writeFileSync(path.join(repo, "sibling", ".keep"), "base\n", "utf-8");
+	git(repo, ["add", ".gitignore", "tracked.txt", "sub/.keep", "sibling/.keep"]);
 	git(repo, ["commit", "--quiet", "-m", "base"]);
 	return { root, repo, worktreesDir };
 }
+
+test("maps nested task directories into the matching retained worktree", () => {
+	const fixture = createRepository();
+	const setup = createWorktrees(fixture.repo, "nested", 1, { baseDir: fixture.worktreesDir });
+	const worktree = onlyItem(setup.worktrees);
+
+	expect(resolveWorktreeTaskCwd(worktree, fixture.repo, path.join(fixture.repo, "sub"))).toBe(
+		path.join(worktree.path, "sub"),
+	);
+	expect(resolveWorktreeTaskCwd(worktree, fixture.repo, path.join(fixture.repo, "sibling"))).toBe(
+		path.join(worktree.path, "sibling"),
+	);
+	expect(() => resolveWorktreeTaskCwd(worktree, fixture.repo, fixture.root)).toThrow("outside the launch directory");
+
+	cleanupWorktrees(setup);
+});
+
+test("production runner executes file effects in the retained nested worktree", async () => {
+	const fixture = createRepository();
+	const writer = path.join(fixture.repo, "writer.ts");
+	fs.writeFileSync(
+		writer,
+		'#!/usr/bin/env bun\nconst fs = await import("node:fs");\nconst name = process.env["RUNNER_PHASE"] === "resume" ? "resume-cwd.txt" : "runner-cwd.txt";\nfs.writeFileSync(name, process.cwd());\nprocess.stdout.write(JSON.stringify({type:"message_end",message:{role:"assistant",content:[{type:"text",text:"RUNNER_CWD_RETAINED"}],stopReason:"stop",timestamp:Date.now()}})+"\\n", () => process.exit(0));\n',
+		{ mode: 0o700 },
+	);
+	git(fixture.repo, ["add", "writer.ts"]);
+	git(fixture.repo, ["commit", "--quiet", "-m", "writer"]);
+	const asyncDir = path.join(fixture.root, "runner-async");
+	const resultPath = path.join(asyncDir, "result.json");
+	const taskCwd = path.join(fixture.repo, "sub");
+	const task = {
+		agent: "worker",
+		task: "write cwd",
+		cwd: taskCwd,
+		inheritProjectContext: true,
+		inheritSkills: false,
+		systemPromptMode: "append" as const,
+	};
+	const descriptor = {
+		version: 2 as const,
+		sourceRunId: "runner-cwd",
+		childIndex: 0,
+		agent: "worker",
+		cwd: taskCwd,
+		systemPromptMode: "append" as const,
+		inheritProjectContext: true,
+		inheritSkills: false,
+		maxSubagentDepth: 1,
+	};
+	fs.mkdirSync(asyncDir);
+	persistRecoveries(asyncDir, [descriptor]);
+	const previousBinary = process.env["PI_SUBAGENT_PI_BINARY"];
+	const previousWorktreeDir = process.env["PI_SUBAGENTS_WORKTREE_DIR"];
+	process.env["PI_SUBAGENT_PI_BINARY"] = writer;
+	process.env["PI_SUBAGENTS_WORKTREE_DIR"] = fixture.worktreesDir;
+	try {
+		await runConfiguredBackground({
+			version: 2,
+			id: "runner-cwd",
+			cwd: path.join(fixture.repo, "sub"),
+			asyncDir,
+			resultPath,
+			work: { mode: "parallel", group: { tasks: [task], concurrency: 1, worktree: true } },
+		});
+	} finally {
+		if (previousBinary === undefined) delete process.env["PI_SUBAGENT_PI_BINARY"];
+		else process.env["PI_SUBAGENT_PI_BINARY"] = previousBinary;
+		if (previousWorktreeDir === undefined) delete process.env["PI_SUBAGENTS_WORKTREE_DIR"];
+		else process.env["PI_SUBAGENTS_WORKTREE_DIR"] = previousWorktreeDir;
+	}
+	const completion = JSON.parse(fs.readFileSync(resultPath, "utf8"));
+	expect(completion.results[0]?.output).toContain("RUNNER_CWD_RETAINED");
+	const persistedCwd = JSON.parse(fs.readFileSync(path.join(asyncDir, "recovery-descriptor.json"), "utf8")).cwd;
+	const firstEffect = path.join(persistedCwd, "runner-cwd.txt");
+	const resumed = Bun.spawnSync([writer], { cwd: persistedCwd, env: { ...process.env, RUNNER_PHASE: "resume" } });
+	expect(resumed.exitCode).toBe(0);
+	const retained = path.join(persistedCwd, "runner-cwd.txt");
+	expect(fs.readFileSync(retained, "utf8")).toContain("pi-worktree-runner-cwd-0/sub");
+	expect(fs.readFileSync(path.join(persistedCwd, "resume-cwd.txt"), "utf8")).toBe(
+		fs.readFileSync(firstEffect, "utf8"),
+	);
+	expect(persistedCwd).toBe(path.join(fixture.worktreesDir, "pi-worktree-runner-cwd-0", "sub"));
+});
+
+test("turns a missing recovery descriptor into a failed result and cleans the created worktree", async () => {
+	const fixture = createRepository();
+	const asyncDir = path.join(fixture.root, "missing-descriptor-async");
+	const resultPath = path.join(asyncDir, "result.json");
+	fs.mkdirSync(asyncDir);
+	const previousWorktreeDir = process.env["PI_SUBAGENTS_WORKTREE_DIR"];
+	process.env["PI_SUBAGENTS_WORKTREE_DIR"] = fixture.worktreesDir;
+	try {
+		await runConfiguredBackground({
+			version: 2,
+			id: "missing-descriptor",
+			cwd: fixture.repo,
+			asyncDir,
+			resultPath,
+			work: {
+				mode: "parallel",
+				group: {
+					tasks: [
+						{
+							agent: "worker",
+							task: "must not execute",
+							cwd: fixture.repo,
+							inheritProjectContext: false,
+							inheritSkills: false,
+						},
+					],
+					concurrency: 1,
+					worktree: true,
+				},
+			},
+		});
+	} finally {
+		if (previousWorktreeDir === undefined) delete process.env["PI_SUBAGENTS_WORKTREE_DIR"];
+		else process.env["PI_SUBAGENTS_WORKTREE_DIR"] = previousWorktreeDir;
+	}
+	const completion = JSON.parse(fs.readFileSync(resultPath, "utf8"));
+	expect(completion.results[0]?.success).toBe(false);
+	expect(completion.results[0]?.output).toContain("recovery-descriptor.json");
+	expect(fs.readdirSync(fixture.worktreesDir)).toEqual([]);
+});
 
 test("removes only a verified clean worktree at the base commit", () => {
 	const fixture = createRepository();

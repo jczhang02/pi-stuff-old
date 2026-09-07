@@ -124,7 +124,7 @@ test("reduces background startup to a compact stable receipt", () => {
 	expect(result.content).toEqual([
 		{
 			type: "text",
-			text: "Agent researcher started in the background (run-1). Continue independent work; completion will not start another main turn. Inspect it with /agents.",
+			text: "Agent researcher started in the background (run-1). Continue independent work; results return automatically so you can finish the original task. Inspect progress with /agents.",
 		},
 	]);
 	expect(JSON.stringify(result.content)).not.toContain("/private");

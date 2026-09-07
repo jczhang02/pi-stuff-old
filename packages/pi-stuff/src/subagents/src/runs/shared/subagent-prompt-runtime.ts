@@ -7,19 +7,12 @@ import { type JsonInputValue, parseJsonValue } from "../../../../shared/json-val
 import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.js";
 import { activityKey, registerSuiteOwnedTool, singleActivity } from "../../../../tool-display/index.js";
 import { registerNativeSupervisorClient } from "../../intercom/native-supervisor-channel.ts";
-import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import type { ResolvedToolBudget } from "../../shared/types.ts";
 import {
 	CHILD_MODEL_CONTEXT_ENTRY_TYPE,
 	CHILD_TOOL_BUDGET_ENTRY_TYPE,
 	type ChildModelContext,
 } from "./child-protocol.ts";
-import {
-	childContextHasOwnContinuation,
-	type ProviderPayloadModel,
-	projectChildContinuationContext,
-	validateChildProviderPayload,
-} from "./continuation-context.ts";
 import { SUBAGENT_CHILD_AGENT_ENV, SUBAGENT_FANOUT_CHILD_ENV } from "./pi-args.ts";
 import { formatSteerMessage, registerSteeringInbox } from "./steering-inbox.ts";
 import {
@@ -34,7 +27,6 @@ import {
 	type ChildToolDiagnostic,
 	MCP_DIRECT_CHILD_TOOLS_ENV,
 	REQUIRED_CHILD_TOOLS_ENV,
-	writeChildLaunchDiagnostic,
 	writeChildToolDiagnostic,
 } from "./tool-availability.ts";
 import {
@@ -86,13 +78,6 @@ const PARENT_ONLY_CUSTOM_MESSAGE_TYPES = new Set([
 ]);
 
 type SubagentContextMessage = ContextEvent["messages"][number];
-
-export function validateFinalProviderPayload(
-	payload: Parameters<typeof validateChildProviderPayload>[0],
-	model: ProviderPayloadModel | undefined,
-): { ok: true } | { ok: false; message: string } {
-	return validateChildProviderPayload(payload, model);
-}
 
 function readBooleanEnv(name: string): boolean | undefined {
 	const value = process.env[name];
@@ -319,9 +304,6 @@ export default function registerSubagentPromptRuntime(pi: ExtensionAPI): void {
 	);
 	let nativeSupervisorClientRegistered = false;
 	let nativeSupervisorFallbackRegistered = false;
-	let completedTurns = 0;
-	let resumedSession = false;
-	let continuationHistoryObserved = false;
 	let reportedModelContextKey: string | undefined;
 	const registerNativeSupervisorClientOnce = (): void => {
 		if (nativeSupervisorClientRegistered) return;
@@ -334,46 +316,27 @@ export default function registerSubagentPromptRuntime(pi: ExtensionAPI): void {
 		nativeSupervisorFallbackRegistered = true;
 		registerNativeSupervisorClient(pi);
 	};
-	pi.on("session_start", (event) => {
-		resumedSession = event.reason === "resume" || event.reason === "reload";
+	pi.on("session_start", () => {
 		registerNativeSupervisorClientOnce();
 	});
 	pi.on("agent_start", () => {
 		refreshChildToolDiagnostic(pi);
 	});
-	pi.on("turn_end", () => {
-		completedTurns += 1;
-	});
-	pi.on("before_provider_request", (event, ctx) => {
+	pi.on("before_provider_request", (_event, ctx) => {
 		if (refreshChildToolDiagnostic(pi)) {
 			ctx.abort();
 			return;
 		}
-		const result = validateChildProviderPayload(
-			event.payload,
-			ctx.model,
-			completedTurns > 0 || resumedSession || continuationHistoryObserved ? "continuation" : "launch",
-		);
-		if (result.ok) return;
-		const diagnosticPath = process.env[CHILD_TOOL_DIAGNOSTIC_PATH_ENV]?.trim();
-		if (diagnosticPath) {
-			try {
-				writeChildLaunchDiagnostic(diagnosticPath, result.message);
-			} catch (error) {
-				reportAgentDiagnostic("Failed to persist the child launch budget diagnostic:", error);
-			}
-		}
-		ctx.abort();
+		// Context Management/Magic owns projection and actual Provider overflow recovery.
+		// A local serialization estimate cannot establish that this valid request must stop.
 	});
 	registerStructuredOutputTool(pi);
 	pi.on("context", (event, ctx) => {
 		const messages = stripParentOnlySubagentMessages(event.messages, {
 			sanitizeToolIds: !COMPOSITE_TOOL_ID_APIS.has(ctx.model?.api ?? ""),
 		});
-		continuationHistoryObserved ||= childContextHasOwnContinuation(messages);
-		const projected = projectChildContinuationContext(messages, pi, ctx);
-		if (messages === event.messages && !projected.changed) return undefined;
-		return { messages: projected.messages };
+		if (messages === event.messages) return undefined;
+		return { messages };
 	});
 
 	pi.on("before_agent_start", async (event, ctx) => {

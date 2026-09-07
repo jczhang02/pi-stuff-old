@@ -11,6 +11,7 @@ import * as Exit from "effect/Exit";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
 import { hasDirectUserActivation } from "../../conversation-ui/agent-run-origin.js";
+import { listenForGoalCoordinationQueries } from "../../conversation-ui/goal-coordination.js";
 import {
 	type EffectFoundation,
 	type EffectScopeOwner,
@@ -66,6 +67,7 @@ interface GoalLifecycle extends GoalSessionLifecycle {
 	readonly pi: ExtensionAPI;
 	readonly runController: GoalRunController;
 	readonly runtime: GoalRuntime;
+	coordinationCleanup: () => void;
 	settingsStore: GoalSettingsStore | undefined;
 	readonly tasks: Partial<Record<GoalTask, EffectScopeOwner>>;
 	turnActive: boolean;
@@ -176,6 +178,8 @@ function scheduleGoalEffect(
 function registerGoalSessionHandlers(lifecycle: GoalLifecycle): void {
 	const { compaction, pi } = lifecycle;
 	pi.on("session_start", async (event, ctx) => {
+		lifecycle.coordinationCleanup();
+		lifecycle.coordinationCleanup = listenForGoalCoordinationQueries(pi, () => lifecycle.runtime.coordinationState());
 		cancelGoalTasks(lifecycle);
 		compaction.clear();
 		const startup = await runGoalEffect(lifecycle, ctx, startGoalSession(lifecycle, event, ctx));
@@ -186,6 +190,8 @@ function registerGoalSessionHandlers(lifecycle: GoalLifecycle): void {
 		}
 	});
 	pi.on("session_shutdown", (_event, ctx) => {
+		lifecycle.coordinationCleanup();
+		lifecycle.coordinationCleanup = () => undefined;
 		cancelGoalTasks(lifecycle);
 		compaction.clear();
 		shutdownGoalSession(lifecycle, ctx);
@@ -581,6 +587,8 @@ function registerGoalAgentHandlers(lifecycle: GoalLifecycle): void {
 	pi.on("agent_end", (event, ctx) => handleGoalAgentEnd(lifecycle, event, ctx));
 	pi.on("agent_settled", (_event, ctx) => {
 		lifecycle.turnActive = false;
+		// A custom-message turn may settle after the Host has already shut down its Session.
+		if (!lifecycle.effects.currentSession()) return;
 		return runGoalEffect(
 			lifecycle,
 			ctx,
@@ -619,6 +627,7 @@ function registerGoalRuntime(pi: ExtensionAPI, options: GoalOptions = {}) {
 		pi,
 		runController,
 		runtime,
+		coordinationCleanup: listenForGoalCoordinationQueries(pi, () => runtime.coordinationState()),
 		settingsStore: undefined,
 		tasks: {},
 		turnActive: false,

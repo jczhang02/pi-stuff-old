@@ -28,6 +28,7 @@ import { terminalOutcome } from "../shared/terminal-outcome.ts";
 import { toolBudgetState } from "../shared/tool-budget.ts";
 import {
 	ChildProcessEngine,
+	type ChildProcessEngineInput,
 	type ChildProcessResult,
 	type ChildRuntimeControl,
 	type WriterProcess,
@@ -105,6 +106,7 @@ interface ResolvedTaskInput {
 	eventsPath: string;
 	activeControls: Map<number, ChildRuntimeControl>;
 	consumeScheduledStop: (index: number) => boolean;
+	preStartTerminalCause?: () => "pause" | "timeout" | "stop" | undefined;
 	onWriterProcess?: ((writer: WriterRuntimeState) => void) | undefined;
 }
 
@@ -116,6 +118,23 @@ interface AttemptSummary {
 	writerProcesses: WriterProcess[];
 	final: ChildProcessResult | undefined;
 	workUnit?: AgentWorkUnitSnapshot;
+}
+
+function stoppedChildResult(
+	task: RunnerAgentTask,
+	cause: NonNullable<BackgroundTaskResult["preStartTerminalCause"]>,
+	runId: string,
+	index: number,
+): ChildProcessResult {
+	return {
+		...stoppedResult(task, cause, runId, index),
+		signal: null,
+		stderr: "",
+		messages: [],
+		usage: emptyUsage(),
+		toolCount: 0,
+		durationMs: 0,
+	};
 }
 
 function workUsageGovernor(task: RunnerAgentTask): SessionAgentGovernor | undefined {
@@ -319,31 +338,36 @@ async function runAttempts(
 	try {
 		for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
 			const candidate = candidates[candidateIndex];
+			const terminalCause = input.preStartTerminalCause?.();
+			if (terminalCause) {
+				summary.final = stoppedChildResult(input.task, terminalCause, input.config.id, input.index);
+				break;
+			}
 			clearStaleContextUsage(input, statusStep);
 			let run: ChildProcessResult;
 			try {
-				run = await Effect.runPromise(
-					new ChildProcessEngine({
-						config: input.config,
-						task: input.task,
-						index: input.index,
-						model: candidate,
-						taskCwd: input.taskCwd,
-						sessionDir: childSessionDir,
-						outputFile,
-						transcript: transcript.writer,
-						artifactJsonlPath:
-							transcript.artifactPaths && input.config.artifactConfig?.includeJsonl !== false
-								? transcript.artifactPaths.jsonlPath
-								: undefined,
-						statusStep,
-						statusPath: input.statusPath,
-						status: input.status,
-						activeControls: input.activeControls,
-						consumeScheduledStop: () => input.consumeScheduledStop(input.index),
-						onWriterProcess: input.onWriterProcess,
-					}).run(),
-				);
+				const engineInput: ChildProcessEngineInput = {
+					config: input.config,
+					task: input.task,
+					index: input.index,
+					model: candidate,
+					taskCwd: input.taskCwd,
+					sessionDir: childSessionDir,
+					outputFile,
+					transcript: transcript.writer,
+					artifactJsonlPath:
+						transcript.artifactPaths && input.config.artifactConfig?.includeJsonl !== false
+							? transcript.artifactPaths.jsonlPath
+							: undefined,
+					statusStep,
+					statusPath: input.statusPath,
+					status: input.status,
+					activeControls: input.activeControls,
+					consumeScheduledStop: () => input.consumeScheduledStop(input.index),
+					onWriterProcess: input.onWriterProcess,
+				};
+				if (input.preStartTerminalCause) engineInput.preStartTerminalCause = input.preStartTerminalCause;
+				run = await Effect.runPromise(new ChildProcessEngine(engineInput).run());
 			} catch (error) {
 				const failed = failedLaunch(error instanceof Error ? error.message : String(error), candidate);
 				summary.attempts.push(failed.attempt);

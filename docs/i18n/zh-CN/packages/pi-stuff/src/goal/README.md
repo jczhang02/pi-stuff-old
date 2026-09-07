@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: 578eba0d0219f4fc772195f8f9d1492b6ccdcd9619cafc211059587ff7616ed8 -->
+<!-- translation-source: packages/pi-stuff/src/goal/README.md; translation-source-sha256: 4da0432846b37bda4eef3f870e07160a87d6a9fdcaccc2de32e5e7e3f7767253 -->
 
 # Goal
 
@@ -31,6 +31,8 @@
 - 先持久化已接受的终止状态，再在预算边界内请求正常的 Goal Final Response。
 - 在当前 Session 中保存目标、状态、budget 和可选队列。
 - 跨 Pi 原生 compaction 生命周期保持 Goal identity。
+- 向有界的后台结果投递暴露当前 Goal identity 与 continuation 权限，并在投递期间延后 continuation。
+- Session teardown 后忽略 settlement notification，避免陈旧 Goal context 在已关闭 Session 中启动 continuation。
 - 在共享 Statusline 中显示当前状态、用量、budget 和经过时间。
 
 ## 压缩后的继续执行

@@ -30,6 +30,8 @@ longer remain active.
 - Persists an accepted terminal state before requesting the normal Goal Final Response, within budget boundaries.
 - Persists objective, status, budget, and optional queue in the current Session.
 - Preserves Goal identity across Pi's native compaction lifecycle.
+- Exposes the active Goal identity and continuation permission to bounded background-result delivery, while deferring continuation during delivery.
+- Ignores settlement notifications after Session teardown, so stale Goal context cannot start a continuation in a closed Session.
 - Shows current status, usage, budget, and elapsed time in the shared Statusline.
 
 ## Compaction continuation

@@ -90,6 +90,12 @@ export {
 	renderCommandDialogSplit,
 	WIDE_COMMAND_DIALOG_MIN_WIDTH,
 } from "./dialog-layout.js";
+export {
+	type GoalCoordinationSnapshot,
+	listenForGoalCoordinationQueries,
+	listenForPendingGoalResultQueries,
+	readGoalCoordination,
+} from "./goal-coordination.js";
 export { createMarkdownRenderer } from "./markdown.js";
 export {
 	createPonytailDialogView,

@@ -220,7 +220,10 @@ function projectForegroundControl(
 				rememberedChild["transcriptPath"],
 				asRecord(rememberedChild["artifactPaths"])["transcriptPath"],
 			),
-			savedOutputPath: firstLocator(rememberedChild["savedOutputPath"]),
+			savedOutputPath: firstLocator(
+				rememberedChild["savedOutputPath"],
+				asRecord(rememberedChild["artifactPaths"])["outputPath"],
+			),
 		};
 	});
 }
@@ -258,7 +261,7 @@ function projectForegroundRun(run: ForegroundRun, sessionId: string): RowDraft[]
 				nestedAgents: projectNestedAgents(nested),
 				sessionFile: firstLocator(child.sessionFile),
 				transcriptPath: firstLocator(child.transcriptPath, asRecord(child.artifactPaths)["transcriptPath"]),
-				savedOutputPath: firstLocator(child.savedOutputPath),
+				savedOutputPath: firstLocator(child.savedOutputPath, asRecord(child.artifactPaths)["outputPath"]),
 			} satisfies RowDraft,
 		];
 	});

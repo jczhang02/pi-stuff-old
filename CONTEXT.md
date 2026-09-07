@@ -186,8 +186,8 @@ _Avoid_: Tool recommendation, Tool activation
 The current Provider payload token estimate for one child Agent, measured against the selected child Host model's
 reported Context window. Authoritative Assistant usage replaces the estimate; later Tool results and other trailing
 messages add bounded Host-equivalent estimates. Parent-Host model metadata is only a launch-time fallback until the
-child Host reports its actual selection. It is not cumulative run usage and is unavailable while compaction or model
-fallback makes the current payload uncertain.
+child Host reports its actual selection. It is not cumulative run usage. Context Management/Magic owns child pressure
+handling; Agents does not terminate a child or replace its Provider request from a local estimate.
 _Avoid_: Agent tokens, total Agent usage, Context budget
 
 **Agent Target**:
@@ -197,7 +197,8 @@ _Avoid_: Agent key, child address
 
 **Agent Lifecycle Row**:
 A display-only Transcript projection of one Agent Tool lifecycle event. Background launch and completion remain
-separate chronological events, while live Agent state and full child evidence remain owned by Agents.
+separate chronological events. Agents owns lifecycle and protocol evidence; Context Management/Magic owns child pressure
+projection, while delivery returns bounded outcomes to the originating main Agent.
 _Avoid_: Agent Operation Block, Subagent Row, Agent roster row
 
 **Context Activity**:

@@ -97,6 +97,13 @@ function currentSessionSnapshot() {
 					finalOutput: "partial implementation",
 					sessionFile: "/sessions/worker.jsonl",
 					transcriptPath: "/transcripts/worker.md",
+					artifactPaths: {
+						inputPath: "/artifacts/worker.input",
+						outputPath: "/artifacts/worker.output.md",
+						jsonlPath: "/artifacts/worker.jsonl",
+						transcriptPath: "/artifacts/worker.transcript.md",
+						metadataPath: "/artifacts/worker.metadata.json",
+					},
 					updatedAt: 4_000,
 				},
 			],
@@ -164,6 +171,7 @@ test("projects only direct children from the current root session", () => {
 		nestedCount: 2,
 		sessionFile: "/sessions/worker.jsonl",
 		transcriptPath: "/transcripts/worker.md",
+		savedOutputPath: "/artifacts/worker.output.md",
 	});
 	expect(row(snapshot, "foreground:1").status).toBe("waiting_supervisor");
 });

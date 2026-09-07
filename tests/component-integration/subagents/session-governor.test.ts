@@ -783,16 +783,16 @@ test("fails closed when the stable governor lock path is replaced by a directory
 	await expect(new SessionAgentGovernor({ rootDir, sessionId }).snapshot()).rejects.toThrow("regular file");
 });
 
-test("ignores stale diagnostic bytes because kernel ownership is the only lock authority", async () => {
+test("leaves non-authoritative lock bytes unchanged across snapshots", async () => {
 	const rootDir = await storageRoot("stale-diagnostic-lock");
 	const sessionId = "stale-diagnostic-lock-session";
 	await new SessionAgentGovernor({ rootDir, sessionId }).snapshot();
 	const [sessionDirectory] = await readdir(rootDir);
 	if (!sessionDirectory) throw new Error("Expected a session governor directory");
 	const lockPath = join(rootDir, sessionDirectory, "ledger.lock");
-	await writeFile(lockPath, JSON.stringify({ token: "abandoned", pid: 44_001, acquiredAtMs: 0 }), {
-		mode: 0o600,
-	});
+	const diagnostic = JSON.stringify({ token: "abandoned", pid: 44_001, acquiredAtMs: 0 });
+	await writeFile(lockPath, diagnostic, { mode: 0o600 });
 	expect(await new SessionAgentGovernor({ rootDir, sessionId }).snapshot()).toMatchObject({ total: 0, running: 0 });
+	expect(await readFile(lockPath, "utf8")).toBe(diagnostic);
 	expect((await readdir(join(rootDir, sessionDirectory))).sort()).toEqual(["ledger.json", "ledger.lock"]);
 });

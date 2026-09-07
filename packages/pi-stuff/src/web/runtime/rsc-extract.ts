@@ -1,5 +1,5 @@
-import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 
 export function extractHeadingTitle(text: string): string | null {
 	const match = text.match(/^#{1,2}\s+(.+)/m);

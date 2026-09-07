@@ -1,5 +1,5 @@
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 
 type Schema = JsonInputObject;
 

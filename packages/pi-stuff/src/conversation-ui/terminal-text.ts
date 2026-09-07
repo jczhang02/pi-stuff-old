@@ -1,4 +1,4 @@
-import { sanitizeTerminalText } from "../shared/terminal-text.js";
+import { sanitizeTerminalText } from "../shared/terminal-text.ts";
 
 const MAX_DYNAMIC_TEXT_CODE_UNITS = 16 * 1024;
 

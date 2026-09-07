@@ -4,10 +4,10 @@ import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
 import * as Queue from "effect/Queue";
 import type * as Scope from "effect/Scope";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { SuiteToolInvocation, SuiteToolInvocationResult } from "./contract.js";
-import { isRecordValue, isToolArguments } from "./tool-value.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { SuiteToolInvocation, SuiteToolInvocationResult } from "./contract.ts";
+import { isRecordValue, isToolArguments } from "./tool-value.ts";
 
 interface CapturedToolHandlerResult {
 	readonly block?: boolean;

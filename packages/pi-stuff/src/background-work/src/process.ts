@@ -5,8 +5,8 @@ import { Readable } from "node:stream";
 import { finished } from "node:stream/promises";
 import { fileURLToPath } from "node:url";
 import { formatSize } from "@earendil-works/pi-coding-agent";
-import { parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeObject } from "../../shared/runtime-type.js";
+import { parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeObject } from "../../shared/runtime-type.ts";
 
 const MAX_COMMAND_AUTHORIZATION_BYTES = 4 * 1024 * 1024;
 const SUPERVISOR_POST_EXIT_DRAIN_MS = 500;

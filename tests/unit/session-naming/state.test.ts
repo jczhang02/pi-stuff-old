@@ -138,3 +138,52 @@ describe("Session Naming state projection", () => {
 		]);
 	});
 });
+test("selects recent dialogue without projecting discarded history", () => {
+	let discardedReads = 0;
+	const discarded = message("user", "old request");
+	Object.defineProperty(discarded, "message", {
+		get: () => {
+			discardedReads += 1;
+			return { role: "user", content: "old request" };
+		},
+	});
+	const recent = Array.from({ length: 6 }, (_, index) =>
+		message(index % 2 === 0 ? "user" : "assistant", `recent-${String(index)}`),
+	);
+	const entries = [
+		...Array.from({ length: 1_000 }, () => discarded),
+		...recent.flatMap((entry) => [entry, custom("ignored", {})]),
+	];
+	for (const initial of [true, false]) {
+		expect(namingMessages(entries, initial).map(text)).toEqual([
+			"recent-0",
+			"recent-1",
+			"recent-2",
+			"recent-3",
+			"recent-4",
+			"recent-5",
+		]);
+	}
+	expect(discardedReads).toBe(0);
+	expect(entries.length).toBe(1_012);
+});
+
+test("initial naming preserves the short-exchange boundary", () => {
+	for (const roles of [
+		[],
+		["assistant"],
+		["user", "user"],
+		["assistant", "user"],
+		["assistant", "assistant"],
+	] as const) {
+		expect(
+			namingMessages(
+				roles.map((role) => message(role, role)),
+				true,
+			),
+		).toEqual([]);
+	}
+	expect(
+		namingMessages([message("user", "one"), message("user", "two"), message("user", "three")], true).map(text),
+	).toEqual(["one", "two", "three"]);
+});

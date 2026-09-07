@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
-import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 
 export const SUBAGENT_CAPABILITY_CEILING_VERSION = 1 as const;
 export const SUBAGENT_CAPABILITY_CEILING_ENV = "PI_SUBAGENT_CAPABILITY_CEILING_V1";

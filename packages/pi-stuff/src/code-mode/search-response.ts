@@ -1,5 +1,5 @@
-import type { DescribeOutput, SearchOutput, SearchResult } from "./cloudflare/connector-types.js";
-import { sanitizeToolName, toolPath, toPascalCase } from "./cloudflare/utils.js";
+import type { DescribeOutput, SearchOutput, SearchResult } from "./cloudflare/connector-types.ts";
+import { sanitizeToolName, toolPath, toPascalCase } from "./cloudflare/utils.ts";
 
 const RESULT_LIMIT = 5;
 const RESPONSE_CHARS = 4_000;

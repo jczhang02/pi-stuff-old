@@ -24,9 +24,9 @@ import {
 	matchesCommandDialogCancel,
 	matchesCommandDialogHelp,
 	renderCommandDialogKeyHelp,
-} from "../conversation-ui/index.js";
-import { sanitizeTerminalProse as stripTerminalControls } from "../shared/terminal-text.js";
-import { BTW_VISIBLE_HISTORY_LIMIT, type BtwExchange } from "./btw-history.js";
+} from "../conversation-ui/index.ts";
+import { sanitizeTerminalProse as stripTerminalControls } from "../shared/terminal-text.ts";
+import { BTW_VISIBLE_HISTORY_LIMIT, type BtwExchange } from "./btw-history.ts";
 
 const GUTTER = "  ";
 const COPY_FEEDBACK_MS = 2_000;

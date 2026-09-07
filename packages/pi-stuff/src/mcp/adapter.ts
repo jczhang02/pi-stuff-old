@@ -7,26 +7,26 @@ import type {
 	ToolDefinition,
 } from "@earendil-works/pi-coding-agent";
 import { type Static, type TSchema, Type } from "typebox";
-import { type DiagnosticReport, reportDiagnostic } from "../conversation-ui/diagnostics.js";
+import { type DiagnosticReport, reportDiagnostic } from "../conversation-ui/diagnostics.ts";
 import {
 	type CommandDialogKeybindings,
 	type CommandDialogView,
 	getCommandDialogCoordinator,
-} from "../conversation-ui/index.js";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { isJsonSourceValue } from "../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.js";
-import { registerSuiteOwnedTool, type SuiteToolRegistrationHost } from "../tool-display/index.js";
-import { createMcpControlView } from "./mcp-dialog.js";
-import { MCP_PRESENTATION } from "./presentation.js";
+} from "../conversation-ui/index.ts";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { isJsonSourceValue } from "../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.ts";
+import { registerSuiteOwnedTool, type SuiteToolRegistrationHost } from "../tool-display/index.ts";
+import { createMcpControlView } from "./mcp-dialog.ts";
+import { MCP_PRESENTATION } from "./presentation.ts";
 import {
 	createMcpAdapter,
 	MCP_STATUS_EVENT,
 	type McpAdapterCommandSpec,
 	type McpAdapterExtensionAPI,
 } from "./runtime/index.js";
-import { logger } from "./runtime/logger.js";
-import { McpStatusStore } from "./status-store.js";
+import { logger } from "./runtime/logger.ts";
+import { McpStatusStore } from "./status-store.ts";
 
 type CapturedTool = ToolDefinition<TSchema, unknown, unknown>;
 export type McpAdapterHost = SuiteToolRegistrationHost & Pick<ExtensionAPI, "registerCommand">;

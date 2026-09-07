@@ -3,9 +3,9 @@ import * as path from "node:path";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import type { ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { type TSchema, Type } from "typebox";
-import { isRuntimeString } from "../../../shared/runtime-type.js";
-import type { ToolArguments } from "../../../tool-display/activity.js";
-import { activityKey, getToolUiRuntime, registerSuiteOwnedTool, singleActivity } from "../../../tool-display/index.js";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
+import type { ToolArguments } from "../../../tool-display/activity.ts";
+import { activityKey, getToolUiRuntime, registerSuiteOwnedTool, singleActivity } from "../../../tool-display/index.ts";
 import {
 	SUBAGENT_CHILD_AGENT_ENV,
 	SUBAGENT_CHILD_INDEX_ENV,

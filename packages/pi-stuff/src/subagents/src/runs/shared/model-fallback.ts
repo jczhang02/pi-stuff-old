@@ -1,4 +1,4 @@
-import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { reportAgentWarning } from "../../shared/diagnostics.ts";
 import { type ModelInfo as AvailableModelInfo, splitKnownThinkingSuffix } from "../../shared/model-info.ts";
 import type { Usage } from "../../shared/types.ts";

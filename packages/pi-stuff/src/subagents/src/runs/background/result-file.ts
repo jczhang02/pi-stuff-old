@@ -1,7 +1,7 @@
 import { type Static, type TSchema, Type } from "typebox";
 import { Value } from "typebox/value";
-import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isFiniteRuntimeNumber as isFiniteNumber } from "../../../../shared/runtime-type.js";
+import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isFiniteRuntimeNumber as isFiniteNumber } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { resolveEffectiveThinking } from "../../shared/model-info.ts";
 import { readBoundedOwnedFile } from "../../shared/private-directory.ts";

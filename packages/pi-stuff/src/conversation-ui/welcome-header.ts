@@ -1,8 +1,8 @@
 import { homedir } from "node:os";
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { type Component, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { isRuntimeNumber } from "../shared/runtime-type.js";
-import { sanitizeOneLine } from "./terminal-text.js";
+import { isRuntimeNumber } from "../shared/runtime-type.ts";
+import { sanitizeOneLine } from "./terminal-text.ts";
 
 const MIN_BOX_WIDTH = 13;
 const WIDE_LEFT_COLUMN_WIDTH = 52;

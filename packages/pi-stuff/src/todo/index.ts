@@ -1,8 +1,8 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Key } from "@earendil-works/pi-tui";
-import { getCommandDialogCoordinator } from "../conversation-ui/index.js";
-import { getToolUiRuntime } from "../tool-display/contract.js";
-import { replayFromBranch } from "./state/replay.js";
+import { getCommandDialogCoordinator } from "../conversation-ui/index.ts";
+import { getToolUiRuntime } from "../tool-display/contract.ts";
+import { replayFromBranch } from "./state/replay.ts";
 import {
 	clearActiveRenderSession,
 	evictSession,
@@ -11,12 +11,12 @@ import {
 	replaceState,
 	setActiveRenderSession,
 	sid,
-} from "./state/store.js";
-import { registerTaskTools } from "./todo.js";
-import { TodoOverlay } from "./todo-overlay.js";
+} from "./state/store.ts";
+import { registerTaskTools } from "./todo.ts";
+import { TodoOverlay } from "./todo-overlay.ts";
 
 export const TODO_TOGGLE_KEY = Key.ctrlShift("t");
-export type TodoHost = import("../tool-display/contract.js").SuiteToolRegistrationHost &
+export type TodoHost = import("../tool-display/contract.ts").SuiteToolRegistrationHost &
 	Pick<ExtensionAPI, "registerShortcut">;
 
 function isStaleContext(cause: unknown): boolean {

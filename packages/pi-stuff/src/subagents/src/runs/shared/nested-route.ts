@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import {

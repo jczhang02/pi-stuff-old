@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { type JsonValue, parseJsonValue } from "../shared/json-value.js";
+import { type JsonValue, parseJsonValue } from "../shared/json-value.ts";
 
 export type NativeToolName = "apply_patch" | "imagegen" | "view_image";
 

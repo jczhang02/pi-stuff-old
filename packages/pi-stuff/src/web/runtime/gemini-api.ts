@@ -5,8 +5,8 @@ import {
 	type JsonInputValue,
 	parseJsonObject,
 	requireJsonInputValue,
-} from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import { activityMonitor } from "./activity.ts";
 import { readWebConfig } from "./config.ts";
 import { hasCredentialSource, redactCredential, resolveCredential } from "./credential-source.ts";

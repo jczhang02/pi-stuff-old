@@ -4,17 +4,17 @@ import {
 	SELF_RENDERED_TRANSCRIPT_PADDING,
 	TRANSCRIPT_CONTINUATION,
 	TRANSCRIPT_MARKER,
-} from "../conversation-ui/transcript.js";
-import type { ToolActivityOutcome } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { DETAIL_LINE_LIMIT, ROW_PREVIEW_CODE_UNIT_LIMIT } from "./limits.js";
+} from "../conversation-ui/transcript.ts";
+import type { ToolActivityOutcome } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { DETAIL_LINE_LIMIT, ROW_PREVIEW_CODE_UNIT_LIMIT } from "./limits.ts";
 import {
 	type OperationBlockRowModel,
 	renderOperationBlockRow,
 	sameOperationBlock,
-} from "./operation-block-renderer.js";
-import { boundTerminalText, graphemePrefix, sanitizeTerminalText } from "./terminal.js";
-import { oneLine } from "./tool-text.js";
+} from "./operation-block-renderer.ts";
+import { boundTerminalText, graphemePrefix, sanitizeTerminalText } from "./terminal.ts";
+import { oneLine } from "./tool-text.ts";
 
 const MAX_ROW_CACHE_WIDTHS = 6;
 const MAX_TRUNCATED_SUMMARY_WIDTH = 12;

@@ -646,6 +646,8 @@ function supervise() {
 							}),
 						),
 					),
+					// Attach readers before Bun can drain an already-exited child's unobserved pipes.
+					{ startImmediately: true },
 				),
 			);
 		}

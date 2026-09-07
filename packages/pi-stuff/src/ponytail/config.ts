@@ -1,22 +1,22 @@
 import * as os from "node:os";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { isJsonInputObject, type JsonInputObject, parseJsonValue } from "../shared/json-value.js";
-import { isRuntimeBoolean } from "../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputObject, parseJsonValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean } from "../shared/runtime-type.ts";
 import {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceStoreOptions,
 	mergedSettingsPath,
 	readTextFileEffect,
 	SettingsFormatError,
-} from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
+} from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
 import {
 	normalizePonytailMode,
 	PONYTAIL_DEFAULT_MODE,
 	type PonytailEffectiveSettings,
 	type PonytailSavedSettings,
-} from "./types.js";
+} from "./types.ts";
 
 const PONYTAIL_NAMESPACE = "ponytail";
 const INVALID_NAMESPACE_MESSAGE = "Invalid ponytail namespace in pi-stuff.json; Ponytail is using safe defaults.";

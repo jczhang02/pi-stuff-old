@@ -1,4 +1,4 @@
-import type { TaskStatus } from "../tool/types.js";
+import type { TaskStatus } from "../tool/types.ts";
 
 /** Claude-compatible live-state transitions. Only the deleted tombstone is terminal. */
 interface TaskTransitionTable {

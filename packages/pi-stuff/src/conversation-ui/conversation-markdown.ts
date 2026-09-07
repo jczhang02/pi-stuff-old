@@ -1,9 +1,9 @@
 import { createRequire } from "node:module";
 import type { ExtensionAPI, Theme } from "@earendil-works/pi-coding-agent";
 import { visibleWidth } from "@earendil-works/pi-tui";
-import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.js";
-import { isBidiControl, terminalControlEnd } from "../shared/terminal-text.js";
-import { TRANSCRIPT_MARKER } from "./transcript.js";
+import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.ts";
+import { isBidiControl, terminalControlEnd } from "../shared/terminal-text.ts";
+import { TRANSCRIPT_MARKER } from "./transcript.ts";
 
 export interface ConversationMarkdownTransformContext {
 	readonly availableWidth: number;

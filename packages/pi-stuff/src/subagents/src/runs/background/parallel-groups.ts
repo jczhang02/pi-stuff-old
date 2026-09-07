@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.ts";
 import type { AsyncParallelGroupStatus } from "../../shared/types.ts";
 
 function isValidParallelGroup<Value>(group: Value, stepCount: number): group is Value & AsyncParallelGroupStatus {

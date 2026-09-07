@@ -1,4 +1,4 @@
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 
 export const PONYTAIL_MODES = ["off", "lite", "full", "ultra"] as const;
 export const PONYTAIL_SPECIALIZED_SKILLS = [

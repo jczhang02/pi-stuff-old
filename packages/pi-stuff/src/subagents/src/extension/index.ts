@@ -4,15 +4,15 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { projectCurrentContext } from "../../../context-management/index.js";
+import { projectCurrentContext } from "../../../context-management/index.ts";
 import {
 	type CommandDialogCoordinator,
 	getCommandDialogCoordinator,
 	readCurrentAgentWorkOrigin,
-} from "../../../conversation-ui/index.js";
-import { installEffectFoundation } from "../../../shared/effect-foundation.js";
-import { isRuntimeFunction } from "../../../shared/runtime-type.js";
-import { registerSuiteOwnedTool } from "../../../tool-display/index.js";
+} from "../../../conversation-ui/index.ts";
+import { installEffectFoundation } from "../../../shared/effect-foundation.ts";
+import { isRuntimeFunction } from "../../../shared/runtime-type.ts";
+import { registerSuiteOwnedTool } from "../../../tool-display/index.ts";
 import { type AgentConfig, type AgentDiscoveryResult, type AgentScope, discoverAgents } from "../agents/agents.ts";
 import { createNativeSupervisorChannel } from "../intercom/native-supervisor-channel.ts";
 import { createAsyncJobTracker } from "../runs/background/async-job-tracker.ts";

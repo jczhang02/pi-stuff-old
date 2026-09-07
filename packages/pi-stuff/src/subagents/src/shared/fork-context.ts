@@ -7,8 +7,8 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	parseJsonValue,
-} from "../../../shared/json-value.js";
-import { isRuntimeString } from "../../../shared/runtime-type.js";
+} from "../../../shared/json-value.ts";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { ContextMode } from "../runs/shared/context-mode.ts";
 import { findModelInfo, type ModelInfo } from "./model-info.ts";
 

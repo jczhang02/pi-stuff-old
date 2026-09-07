@@ -1,7 +1,7 @@
 import type { AgentToolResult, ContextEvent } from "@earendil-works/pi-coding-agent";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "../tool-display/limits.js";
-import { sanitizeCodeModeContent } from "./image-content.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "../tool-display/limits.ts";
+import { sanitizeCodeModeContent } from "./image-content.ts";
 
 type ToolContent = AgentToolResult<unknown>["content"];
 type ToolContentItem = ToolContent[number];

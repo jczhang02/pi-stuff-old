@@ -10,7 +10,7 @@ import type { RequestOptions } from "@modelcontextprotocol/sdk/shared/protocol.j
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { isRuntimeFunction } from "../../shared/runtime-type.js";
+import { isRuntimeFunction } from "../../shared/runtime-type.ts";
 import { logger } from "./logger.ts";
 import type { AuthStorageOptions } from "./mcp-auth.ts";
 import { extractOAuthConfig, supportsOAuth } from "./mcp-auth-flow.ts";

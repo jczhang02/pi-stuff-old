@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect";
-import { isJsonInputObject, type JsonInputValue, requireJsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue, requireJsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import { activityMonitor } from "./activity.ts";
 import { CredentialResolutionError } from "./credential-source.ts";
 import type { ExtractedContent } from "./extract.ts";

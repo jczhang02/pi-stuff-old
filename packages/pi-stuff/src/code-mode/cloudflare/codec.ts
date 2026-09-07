@@ -5,7 +5,7 @@ import {
 	isRuntimeObject,
 	isRuntimeString,
 	isRuntimeUndefined,
-} from "../../shared/runtime-type.js";
+} from "../../shared/runtime-type.ts";
 /**
  * Host-side value codec.
  *

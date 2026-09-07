@@ -1,9 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { reportDiagnostic } from "../conversation-ui/index.js";
-import type { ContextStatusChannel } from "../conversation-ui/statusline-channels.js";
-import { estimateProviderPayloadTokens } from "../shared/provider-payload.js";
-import { applyContextPromptContributionsToProvider } from "./prompt-contributions.js";
-import type { ContextCapabilityRuntime } from "./runtime.js";
+import { reportDiagnostic } from "../conversation-ui/index.ts";
+import type { ContextStatusChannel } from "../conversation-ui/statusline-channels.ts";
+import { estimateProviderPayloadTokens } from "../shared/provider-payload.ts";
+import { applyContextPromptContributionsToProvider } from "./prompt-contributions.ts";
+import type { ContextCapabilityRuntime } from "./runtime.ts";
 
 export function registerContextProviderBoundary(
 	pi: ExtensionAPI,

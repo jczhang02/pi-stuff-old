@@ -2,7 +2,7 @@ import { dlopen, FFIType, ptr } from "bun:ffi";
 import { createHash, randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import { assertPrivateDirectory } from "./private-directory.ts";
 import { readProcessStartIdentity } from "./process-identity.ts";
 

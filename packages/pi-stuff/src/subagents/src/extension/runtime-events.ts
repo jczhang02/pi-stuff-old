@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { requestStatuslineGitRefreshAfterUserWork } from "../../../conversation-ui/index.js";
-import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { requestStatuslineGitRefreshAfterUserWork } from "../../../conversation-ui/index.ts";
+import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { AgentExecutionCoordinatorPort } from "../runtime/agent-execution-coordinator.ts";
 import { reportAgentDiagnostic } from "../shared/diagnostics.ts";
 import { sessionArtifactMatches } from "../shared/session-identity.ts";

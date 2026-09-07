@@ -1,7 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { sanitizeTerminalText } from "../../shared/terminal-text.js";
-import type { TaskStatus } from "../tool/types.js";
+import { sanitizeTerminalText } from "../../shared/terminal-text.ts";
+import type { TaskStatus } from "../tool/types.ts";
 
 export type OverlayTaskId = string;
 

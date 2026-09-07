@@ -12,16 +12,16 @@ import type {
 	ContextStatusSource,
 	GoalStatusSnapshot,
 	GoalStatusSource,
-} from "./statusline-channels.js";
-import type { GitChangeCountsSource } from "./statusline-git.js";
-import { renderStatusline, type StatuslineDensity } from "./statusline-render.js";
-import { readSkillAliases, SessionStatusSource, type StatuslineSessionManager } from "./statusline-session.js";
-import { sanitizeOneLine } from "./terminal-text.js";
+} from "./statusline-channels.ts";
+import type { GitChangeCountsSource } from "./statusline-git.ts";
+import { renderStatusline, type StatuslineDensity } from "./statusline-render.ts";
+import { readSkillAliases, SessionStatusSource, type StatuslineSessionManager } from "./statusline-session.ts";
+import { sanitizeOneLine } from "./terminal-text.ts";
 
-export * from "./statusline-channels.js";
-export type { GitChangeCounts } from "./statusline-git.js";
-export { GitStatusSource, parseGitStatusPorcelain } from "./statusline-git.js";
-export type { StatuslineDensity } from "./statusline-render.js";
+export * from "./statusline-channels.ts";
+export type { GitChangeCounts } from "./statusline-git.ts";
+export { GitStatusSource, parseGitStatusPorcelain } from "./statusline-git.ts";
+export type { StatuslineDensity } from "./statusline-render.ts";
 
 const DEFAULT_EXTENSION_STATUS_KEYS: readonly string[] = [];
 const GOAL_CLOCK_REFRESH_MS = 1_000;

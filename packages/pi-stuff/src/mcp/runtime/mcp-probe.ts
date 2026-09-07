@@ -1,5 +1,5 @@
 import * as Effect from "effect/Effect";
-import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
+import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
 
 const PROBE_TIMEOUT_MS = 5_000;
 const PROBE_BODY_LIMIT_BYTES = 64 * 1024;

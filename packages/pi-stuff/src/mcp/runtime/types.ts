@@ -2,8 +2,8 @@
 
 import type { ImageContent, TextContent } from "@earendil-works/pi-ai";
 import type { Transport as McpTransport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 
 export type Transport = McpTransport;
 

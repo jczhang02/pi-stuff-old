@@ -53,10 +53,10 @@ export type AsyncSingleRunnerWorkBuildResult = AsyncRunnerWorkBuildResult<
 	Extract<BackgroundRunnerWork, { mode: "single" }>
 >;
 
-export function buildAsyncParallelRunnerWork(
+export async function buildAsyncParallelRunnerWork(
 	id: string,
 	params: AsyncParallelRunnerWorkBuildParams,
-): AsyncRunnerWorkBuildResult {
+): Promise<AsyncRunnerWorkBuildResult> {
 	if (params.tasks.length === 0) return { error: "Parallel background work requires at least one task." };
 	if (params.tasks.length > MAX_BACKGROUND_TASKS) {
 		return { error: `Parallel background work supports at most ${MAX_BACKGROUND_TASKS} tasks per launch.` };
@@ -68,7 +68,7 @@ export function buildAsyncParallelRunnerWork(
 		if (!taskInput) return { error: `Parallel task ${index} is missing.` };
 		const agent = params.agents.find((candidate) => candidate.name === taskInput.agent);
 		if (!agent) return { error: `Unknown agent: ${taskInput.agent}` };
-		const built = buildResolvedTask({
+		const built = await buildResolvedTask({
 			runId: id,
 			index,
 			taskInput,
@@ -103,12 +103,12 @@ export function buildAsyncParallelRunnerWork(
 	};
 }
 
-export function buildAsyncSingleRunnerWork(
+export async function buildAsyncSingleRunnerWork(
 	id: string,
 	params: AsyncSingleRunnerWorkBuildParams,
-): AsyncSingleRunnerWorkBuildResult {
+): Promise<AsyncSingleRunnerWorkBuildResult> {
 	const runnerCwd = resolveChildCwd(params.ctx.cwd, params.cwd);
-	const built = buildResolvedTask({
+	const built = await buildResolvedTask({
 		runId: id,
 		index: 0,
 		taskInput: {

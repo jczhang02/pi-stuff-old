@@ -1,5 +1,5 @@
 import { StringDecoder } from "node:string_decoder";
-import { TerminalTextStream } from "../../shared/terminal-text.js";
+import { TerminalTextStream } from "../../shared/terminal-text.ts";
 
 /** Command conditions are lifetime evidence, independent of the retained output tail. */
 export class CommandMonitorEvidence {

@@ -1,4 +1,4 @@
-import { boundTerminalLine } from "../tool-display/index.js";
+import { boundTerminalLine } from "../tool-display/index.ts";
 
 export type TerminalDeliveryMode = "auto" | "kitty" | "osc9" | "osc777" | "bell";
 

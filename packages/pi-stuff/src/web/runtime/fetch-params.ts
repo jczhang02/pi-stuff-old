@@ -1,5 +1,5 @@
-import type { JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 export interface FetchContentParams {
 	url?: JsonInputValue;
 	urls?: JsonInputValue;

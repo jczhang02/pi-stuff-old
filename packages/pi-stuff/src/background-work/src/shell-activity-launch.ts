@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { getShellConfig } from "@earendil-works/pi-coding-agent";
-import type { BoundedOutputFile } from "./output.js";
+import type { BoundedOutputFile } from "./output.ts";
 import {
 	abandonSupervisorAndWait,
 	captureProcessIdentity,
@@ -10,9 +10,9 @@ import {
 	type SignalVerifiedSupervisor,
 	type SupervisorProcess,
 	type spawnSupervisor,
-} from "./process.js";
-import type { BackgroundWorkKind, BackgroundWorkOutcome } from "./runtime.js";
-import type { WorkRunStorage } from "./storage.js";
+} from "./process.ts";
+import type { BackgroundWorkKind, BackgroundWorkOutcome } from "./runtime.ts";
+import type { WorkRunStorage } from "./storage.ts";
 
 export interface ShellActivityDependencies {
 	readonly captureSupervisorIdentity: typeof captureProcessIdentityWithRetry;

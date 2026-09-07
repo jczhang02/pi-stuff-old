@@ -4,15 +4,15 @@ import { isDeepStrictEqual } from "node:util";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
 import * as Semaphore from "effect/Semaphore";
-import { isRuntimeString } from "../runtime-type.js";
+import { isRuntimeString } from "../runtime-type.ts";
 import {
 	mergeNamespaceRecordEffect,
 	readNamespaceEffect,
 	SettingsFormatError,
 	SettingsNamespaceError,
 	type SettingsRecord,
-} from "./file.js";
-import { mergedSettingsPath, resolveSettingsLockPath } from "./paths.js";
+} from "./file.ts";
+import { mergedSettingsPath, resolveSettingsLockPath } from "./paths.ts";
 
 export type NamespaceRecord = SettingsRecord;
 export type NamespaceNormalizer<T extends NamespaceRecord> = <Value>(value: Value) => T;

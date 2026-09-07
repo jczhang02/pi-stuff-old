@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { CompletionNotification } from "../runs/background/notify.ts";
 import { scanAgentReport } from "../runtime/final-report-scanner.ts";
 

@@ -44,12 +44,12 @@ test("writes one ordered Extension from internal Capability Modules", async () =
 
 	expect(result.changedFiles).toEqual(["packages/pi-stuff/index.ts", "packages/pi-stuff/src/suite-runtime.ts"]);
 	expect(generatedIndex).toContain(
-		'import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.js";',
+		'import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.ts";',
 	);
-	expect(generatedRuntime).toContain('import conversationUi from "./conversation-ui/index.js";');
-	expect(generatedRuntime).toContain('import goal from "./goal/index.js";');
-	expect(generatedRuntime).toContain('import subagents from "./subagents/index.js";');
-	expect(generatedRuntime).toContain('import btw from "./btw/index.js";');
+	expect(generatedRuntime).toContain('import conversationUi from "./conversation-ui/index.ts";');
+	expect(generatedRuntime).toContain('import goal from "./goal/index.ts";');
+	expect(generatedRuntime).toContain('import subagents from "./subagents/index.ts";');
+	expect(generatedRuntime).toContain('import btw from "./btw/index.ts";');
 	expect(generatedRuntime).toContain(
 		"return subagents(pi, { childBaseExtensionPath: options.childBaseExtensionPath });",
 	);
@@ -105,7 +105,7 @@ test("makes subagent conditionally absent only for a non-fanout child Suite", as
 	await generateSuite(root, "write");
 	const generated = await readFile(join(root, "packages", "pi-stuff", "src", "suite-runtime.ts"), "utf8");
 	expect(generated).toContain(
-		'import { SUBAGENT_CHILD_ENV, SUBAGENT_FANOUT_CHILD_ENV } from "./subagents/src/runs/shared/pi-args.js";',
+		'import { SUBAGENT_CHILD_ENV, SUBAGENT_FANOUT_CHILD_ENV } from "./subagents/src/runs/shared/pi-args.ts";',
 	);
 	expect(generated).toContain('process.env[SUBAGENT_CHILD_ENV] === "1"');
 	expect(generated).toContain('process.env[SUBAGENT_FANOUT_CHILD_ENV] !== "1"');
@@ -160,7 +160,7 @@ test("wires Code Mode after ordinary capabilities with the shared Tool registry"
 	await generateSuite(root, "write");
 	const generated = await readFile(join(root, "packages", "pi-stuff", "src", "suite-runtime.ts"), "utf8");
 	expect(generated).toContain(
-		'import codeMode, { CODE_MODE_PROVIDER_TOOL_NAMES, registerCodeModeContextProjection } from "./code-mode/index.js";',
+		'import codeMode, { CODE_MODE_PROVIDER_TOOL_NAMES, registerCodeModeContextProjection } from "./code-mode/index.ts";',
 	);
 	expect(generated).toContain('{ id: "tool-display", install: toolDisplay },');
 	expect(generated).toContain("\tregisterCodeModeContextProjection(suiteApi);");

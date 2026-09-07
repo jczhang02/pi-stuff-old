@@ -20,11 +20,11 @@ import {
 	matchesCommandDialogCancel,
 	matchesCommandDialogHelp,
 	renderCommandDialogKeyHelp,
-} from "../conversation-ui/index.js";
-import { boundTerminalLine, compactTerminalPath } from "../tool-display/index.js";
-import type { RtkProjectionAdapter } from "./projection.js";
-import type { RtkRuntime } from "./runtime.js";
-import type { RtkSettingsStore } from "./settings.js";
+} from "../conversation-ui/index.ts";
+import { boundTerminalLine, compactTerminalPath } from "../tool-display/index.ts";
+import type { RtkProjectionAdapter } from "./projection.ts";
+import type { RtkRuntime } from "./runtime.ts";
+import type { RtkSettingsStore } from "./settings.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 24;

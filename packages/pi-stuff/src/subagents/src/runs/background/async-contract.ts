@@ -1,7 +1,7 @@
 /** Durable background launch and status contracts. */
 
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
-import type { JsonInputValue } from "../../../../shared/json-value.js";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
+import type { JsonInputValue } from "../../../../shared/json-value.ts";
 import type { AgentWorkUsage } from "../../runtime/session-governor.ts";
 import type {
 	AgentContextUsage,

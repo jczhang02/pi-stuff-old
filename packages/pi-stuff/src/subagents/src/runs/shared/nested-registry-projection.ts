@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
-import { type DurableClaim, tryAcquireDurableClaim } from "../../shared/durable-claim.ts";
+import { type DurableClaim, tryAcquireKernelClaim } from "../../shared/durable-claim.ts";
 import { assertPrivateDirectoryWithin, readBoundedOwnedFile } from "../../shared/private-directory.ts";
 import { tryAcquireStatusMutationClaim } from "../../shared/status-mutation.ts";
 import { type AsyncStatus, TEMP_ROOT_DIR } from "../../shared/types.ts";
@@ -142,7 +142,7 @@ function projectNestedEventsWithClaim(
  */
 export function projectNestedEvents(route: NestedRoute): NestedRegistry {
 	nestedRoute.validateRouteStorage(route);
-	const claim = tryAcquireDurableClaim(nestedRoute.commonRouteRoot(route), REGISTRY_LOCK);
+	const claim = tryAcquireKernelClaim(nestedRoute.commonRouteRoot(route), REGISTRY_LOCK);
 	return claim ? projectNestedEventsWithClaim(route, claim) : readNestedRegistry(route);
 }
 
@@ -205,7 +205,7 @@ export async function retireUnusedNestedRoute(
 	const routeRoot = nestedRoute.commonRouteRoot(route);
 	for (;;) {
 		if (options.signal?.aborted) throw abortReason(options.signal);
-		const claim = tryAcquireDurableClaim(routeRoot, REGISTRY_LOCK);
+		const claim = tryAcquireKernelClaim(routeRoot, REGISTRY_LOCK);
 		if (claim) {
 			let retiredRoot: string | undefined;
 			try {
@@ -342,7 +342,7 @@ async function settleTerminalNestedRoute(
 	const routeRoot = nestedRoute.commonRouteRoot(route);
 	for (;;) {
 		if (options.signal?.aborted) throw abortReason(options.signal);
-		const claim = tryAcquireDurableClaim(routeRoot, REGISTRY_LOCK);
+		const claim = tryAcquireKernelClaim(routeRoot, REGISTRY_LOCK);
 		if (claim) {
 			let retiredRoot: string | undefined;
 			try {
@@ -422,7 +422,7 @@ export async function projectNestedEventsAuthoritatively(
 	const routeRoot = nestedRoute.commonRouteRoot(route);
 	for (;;) {
 		if (options.signal?.aborted) throw abortReason(options.signal);
-		const claim = tryAcquireDurableClaim(routeRoot, REGISTRY_LOCK);
+		const claim = tryAcquireKernelClaim(routeRoot, REGISTRY_LOCK);
 		if (claim) return projectNestedEventsWithClaim(route, claim, { drain: true, deadline });
 		const remaining = deadline - Date.now();
 		if (remaining <= 0) {

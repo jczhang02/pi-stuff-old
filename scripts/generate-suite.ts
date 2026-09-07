@@ -67,7 +67,7 @@ function renderToolNamesConstant(identifier: string, names: readonly string[]): 
 
 function renderCapabilityImport(capability: CapabilityModule): string {
 	const identifier = CAPABILITY_MODULES[capability];
-	const specifier = `./${capability}/index.js`;
+	const specifier = `./${capability}/index.ts`;
 	if (capability === "tool-display") {
 		return `import ${identifier}, {\n\tassertSuiteToolActivityCoverage,\n\tconfigureSuiteToolReplay,\n\tcreateSuiteToolRegistrationTracker,\n} from "${specifier}";`;
 	}
@@ -88,27 +88,27 @@ function renderRuntimeImports(capabilities: readonly CapabilityModule[], hasSuba
 	installSuiteSessionReadiness,
 	markSuiteSessionReady,
 	rejectSuiteSessionReadiness,
-} from "./conversation-ui/suite-lifecycle.js";`,
+} from "./conversation-ui/suite-lifecycle.ts";`,
 		},
 		{
 			id: "lifecycle-performance",
-			source: 'import { markLifecyclePhase } from "./lifecycle-performance.js";',
+			source: 'import { markLifecyclePhase } from "./lifecycle-performance.ts";',
 		},
 		{
 			id: "shared/effect-foundation",
 			source:
-				'import { completeEffectFoundationInstallation, installEffectFoundation } from "./shared/effect-foundation.js";',
+				'import { completeEffectFoundationInstallation, installEffectFoundation } from "./shared/effect-foundation.ts";',
 		},
 		{
 			id: "suite-loader",
-			source: 'import type { SuiteInstallationOptions } from "./suite-loader.js";',
+			source: 'import type { SuiteInstallationOptions } from "./suite-loader.ts";',
 		},
 		...(hasSubagents
 			? [
 					{
 						id: "subagents/pi-args",
 						source:
-							'import { SUBAGENT_CHILD_ENV, SUBAGENT_FANOUT_CHILD_ENV } from "./subagents/src/runs/shared/pi-args.js";',
+							'import { SUBAGENT_CHILD_ENV, SUBAGENT_FANOUT_CHILD_ENV } from "./subagents/src/runs/shared/pi-args.ts";',
 					},
 				]
 			: []),
@@ -263,8 +263,8 @@ function renderIndex(): string {
 		`import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { markLifecyclePhase } from "./src/lifecycle-performance.js";
-import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.js";`,
+import { markLifecyclePhase } from "./src/lifecycle-performance.ts";
+import { importFreshSuiteRuntime, loadSuiteRuntime } from "./src/suite-loader.ts";`,
 		`const ENTRY_PATH = fileURLToPath(import.meta.url);
 const SOURCE_ROOT = join(dirname(ENTRY_PATH), "src");
 const RUNTIME_PATH = join(SOURCE_ROOT, "suite-runtime.ts");`,
@@ -274,7 +274,7 @@ const RUNTIME_PATH = join(SOURCE_ROOT, "suite-runtime.ts");`,
 	const runtime = await loadSuiteRuntime({
 		sourceRoot: SOURCE_ROOT,
 		load: (_fingerprint, mode) =>
-			mode === "initial" ? import("./src/suite-runtime.js") : importFreshSuiteRuntime(RUNTIME_PATH),
+			mode === "initial" ? import("./src/suite-runtime.ts") : importFreshSuiteRuntime(RUNTIME_PATH),
 	});
 	await runtime.installPiStuff(pi, { childBaseExtensionPath: ENTRY_PATH });
 	markLifecyclePhase("suite.wrapper.factory.end");

@@ -1,5 +1,5 @@
 import { open, stat } from "node:fs/promises";
-import { sanitizeTerminalText, utf8SafePrefix, utf8SafeTail } from "./output.js";
+import { sanitizeTerminalText, utf8SafePrefix, utf8SafeTail } from "./output.ts";
 
 export interface MonitorHttpResponse {
 	readonly body: string;

@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeObject } from "../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject } from "../../shared/runtime-type.ts";
 
 export interface GoalAccountingState {
 	status: string;

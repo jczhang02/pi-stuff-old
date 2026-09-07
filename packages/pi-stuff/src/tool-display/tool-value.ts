@@ -1,5 +1,5 @@
-import { isRuntimeObject } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
+import { isRuntimeObject } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
 
 interface ToolRuntimeRecord {
 	readonly activity?: unknown;

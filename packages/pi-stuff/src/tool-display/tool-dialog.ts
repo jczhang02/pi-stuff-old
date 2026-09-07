@@ -29,15 +29,15 @@ import {
 	renderCommandDialogKeyHelp,
 	renderCommandDialogSplit,
 	WIDE_COMMAND_DIALOG_MIN_WIDTH,
-} from "../conversation-ui/index.js";
-import { type ToolActivityOutcome, toolActivityOutcome } from "./activity.js";
-import type { ToolActivity, ToolActivityState } from "./activity-store.js";
-import type { ToolActivityView, ToolFormattedImage, ToolFormattedSection, ToolUiRuntime } from "./contract.js";
-import { TOOL_DISPLAY_MEDIA_CODE_UNIT_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.js";
-import { styleOperationEvidence } from "./operation-block-renderer.js";
-import { toolStateGlyph } from "./render.js";
-import { sanitizeTerminalText } from "./terminal.js";
-import { oneLine } from "./tool-text.js";
+} from "../conversation-ui/index.ts";
+import { type ToolActivityOutcome, toolActivityOutcome } from "./activity.ts";
+import type { ToolActivity, ToolActivityState } from "./activity-store.ts";
+import type { ToolActivityView, ToolFormattedImage, ToolFormattedSection, ToolUiRuntime } from "./contract.ts";
+import { TOOL_DISPLAY_MEDIA_CODE_UNIT_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.ts";
+import { styleOperationEvidence } from "./operation-block-renderer.ts";
+import { toolStateGlyph } from "./render.ts";
+import { sanitizeTerminalText } from "./terminal.ts";
+import { oneLine } from "./tool-text.ts";
 
 type ToolDialogMode = "detail" | "list";
 type ToolDetailRepresentation = "formatted" | "raw";

@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { type JsonObject, parseJsonObject } from "../../../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { type JsonObject, parseJsonObject } from "../../../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import {
 	attachNestedChildrenToResultChildren,
 	buildSubagentResultIntercomPayload,

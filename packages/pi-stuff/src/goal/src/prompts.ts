@@ -1,4 +1,4 @@
-import { formatTokenCount } from "./accounting.js";
+import { formatTokenCount } from "./accounting.ts";
 
 export type GoalStatus = "active" | "queued" | "paused" | "blocked" | "usage_limited" | "budget_limited" | "complete";
 

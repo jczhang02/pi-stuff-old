@@ -2,7 +2,6 @@
 
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { resolveDisplayDescription } from "../../shared/display-description.ts";
 import { claimPreparedRunDirectory, ensurePrivateDirectory } from "../../shared/private-directory.ts";
@@ -25,6 +24,7 @@ import {
 	type ResolvedSubagentCapabilityCeiling,
 	resolveCurrentSubagentCapabilityCeiling,
 } from "../shared/capability-ceiling.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import {
 	nestedResultsPath,
 	resolveInheritedNestedRouteFromEnv,
@@ -34,10 +34,13 @@ import {
 import type { BackgroundRunnerConfig, BackgroundRunnerWork } from "../shared/parallel-utils.ts";
 import { resolvePiPackageRoot, resolveStandalonePiHostExecutable } from "../shared/pi-spawn.ts";
 import type { SessionLeaseIntent } from "../shared/session-lease.ts";
+import { persistRecoveries } from "./recovery-writer.ts";
 import type { AsyncExecutionContext, BackgroundRecoveryDescriptor } from "./resolved-task.ts";
-import { type SpawnedRunnerLifecycle, spawnRunner } from "./runner-process.ts";
+import type { SpawnedRunnerLifecycle } from "./runner-process.ts";
 import type { AsyncParallelRunnerWorkBuildParams, AsyncSingleRunnerWorkBuildParams } from "./runner-work.ts";
 import { buildAsyncParallelRunnerWork, buildAsyncSingleRunnerWork } from "./runner-work.ts";
+
+export { persistRecoveries } from "./recovery-writer.ts";
 
 export type {
 	AsyncExecutionContext,
@@ -47,17 +50,6 @@ export type {
 	CommonBuildParams,
 	ResolvedTaskBuildInput,
 } from "./resolved-task.ts";
-export { buildResolvedTask } from "./resolved-task.ts";
-export {
-	acquireRunnerProcessStartIdentity,
-	finalizeSpawnedRunnerClose,
-	initializePreIdentityWriterAbsenceProof,
-	isAsyncAvailable,
-	removeRunnerStartupMarkerBestEffort,
-	resolveAsyncRunnerBunCommand,
-	resolveAsyncRunnerLogPaths,
-	terminateRunnerBeforeProceed,
-} from "./runner-process.ts";
 export type {
 	AsyncParallelRunnerWorkBuildParams,
 	AsyncRunnerWorkBuildResult,
@@ -65,7 +57,8 @@ export type {
 	AsyncSingleRunnerWorkBuildResult,
 } from "./runner-work.ts";
 export { buildAsyncParallelRunnerWork, buildAsyncSingleRunnerWork } from "./runner-work.ts";
-export { buildNestedTerminalFallbackStatus, resolveNestedTerminalStatus } from "./terminal-status.ts";
+
+const loadRunner = deferredModule(() => import("./runner-process.ts"));
 
 const START_EVENT_TASK_PREVIEW_CODE_UNITS = 500;
 
@@ -346,19 +339,6 @@ function emitStarted(input: {
 	}
 }
 
-export function persistRecoveries(asyncDir: string, recoveries: BackgroundRecoveryDescriptor[]): void {
-	if (recoveries.length === 1) {
-		const recovery = recoveries[0];
-		if (!recovery) throw new Error("Background recovery descriptor is missing.");
-		writePrivateAtomicJson(path.join(asyncDir, "recovery-descriptor.json"), recovery);
-		return;
-	}
-	writePrivateAtomicJson(path.join(asyncDir, "recovery-descriptors.json"), {
-		version: 2,
-		children: recoveries,
-	});
-}
-
 function persistRecoveriesOrError(
 	mode: "single" | "parallel",
 	id: string,
@@ -460,6 +440,10 @@ function emitPreparedStarted(
 
 async function executePreparedAsync(input: PreparedAsyncLaunch): Promise<AsyncExecutionResult> {
 	const { id, params, location, work } = input;
+	const { spawnRunner } = await loadRunner().catch((error) => {
+		location.cleanup();
+		throw error;
+	});
 	const mode = work.mode;
 	const subject = mode === "single" ? "Background Agent" : "Background Agents";
 	const config = createAsyncRunnerConfig(input);
@@ -549,11 +533,14 @@ export async function executeAsyncParallel(id: string, params: AsyncParallelPara
 		params.capabilityCeiling ?? resolveCurrentSubagentCapabilityCeiling(params.ctx.currentSessionId);
 	const deadlineAt = params.timeoutMs !== undefined ? Date.now() + params.timeoutMs : undefined;
 	const sessionDir = params.sessionRoot ? path.join(params.sessionRoot, `async-${id}`) : undefined;
-	const built = buildAsyncParallelRunnerWork(id, {
+	const built = await buildAsyncParallelRunnerWork(id, {
 		...params,
 		capabilityCeiling,
 		absoluteDeadlineAt: deadlineAt,
 		sessionDir,
+	}).catch((error) => {
+		location.cleanup();
+		throw error;
 	});
 	if ("error" in built) {
 		location.cleanup();
@@ -596,11 +583,14 @@ export async function executeAsyncSingle(id: string, params: AsyncSingleParams):
 	}
 	const sessionDir =
 		params.sessionDir ?? (params.sessionRoot ? path.join(params.sessionRoot, `async-${id}`) : undefined);
-	const built = buildAsyncSingleRunnerWork(id, {
+	const built = await buildAsyncSingleRunnerWork(id, {
 		...params,
 		capabilityCeiling,
 		absoluteDeadlineAt: deadlineAt,
 		sessionDir,
+	}).catch((error) => {
+		location.cleanup();
+		throw error;
 	});
 	if ("error" in built) {
 		location.cleanup();

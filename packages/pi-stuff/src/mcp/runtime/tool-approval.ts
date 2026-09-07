@@ -1,6 +1,6 @@
 import * as Effect from "effect/Effect";
-import type { JsonInputObject } from "../../shared/json-value.js";
-import { boundTerminalLine, boundTerminalText } from "../../tool-display/index.js";
+import type { JsonInputObject } from "../../shared/json-value.ts";
+import { boundTerminalLine, boundTerminalText } from "../../tool-display/index.ts";
 import { mcpNativePromise } from "./mcp-effect-runner.ts";
 import { combineAbortSignals } from "./runtime-owner.ts";
 import type { McpExtensionState } from "./state.ts";

@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { isJsonInputObject, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isJsonInputObject, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 
 const MAX_NESTED_ID_LENGTH = 128;
 export const MAX_NESTED_PATH_ENTRIES = 4;

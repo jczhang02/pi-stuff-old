@@ -8,15 +8,15 @@
 
 import type { ExtensionUIContext, Theme } from "@earendil-works/pi-coding-agent";
 import { type TUI, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { SELF_RENDERED_TRANSCRIPT_PADDING } from "../conversation-ui/transcript.js";
-import { getRenderState } from "./state/store.js";
-import type { TaskStatus } from "./tool/types.js";
+import { SELF_RENDERED_TRANSCRIPT_PADDING } from "../conversation-ui/transcript.ts";
+import { getRenderState } from "./state/store.ts";
+import type { TaskStatus } from "./tool/types.ts";
 import {
 	formatCollapsedNextLine,
 	formatOverlayOverflowLine,
 	formatOverlayTaskLine,
 	selectOverlayLayout,
-} from "./view/format.js";
+} from "./view/format.ts";
 
 const WIDGET_KEY = "rpiv-todos";
 const SUMMARY_GUTTER = " ".repeat(SELF_RENDERED_TRANSCRIPT_PADDING);

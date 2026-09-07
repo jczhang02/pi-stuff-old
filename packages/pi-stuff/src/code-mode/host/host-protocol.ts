@@ -1,6 +1,6 @@
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import type { RuntimeContentItem, RuntimeResponse, SuiteSandboxTool } from "../protocol.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import type { RuntimeContentItem, RuntimeResponse, SuiteSandboxTool } from "../protocol.ts";
 
 export const DEFAULT_EXEC_YIELD_MS = 60_000;
 export const MAX_OUTPUT_TOKENS = 100_000;

@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { dirname } from "node:path";
 import { formatSize } from "@earendil-works/pi-coding-agent";
-import { sanitizeTerminalWhitespace as sanitizeTerminalText } from "../../shared/terminal-text.js";
+import { sanitizeTerminalWhitespace as sanitizeTerminalText } from "../../shared/terminal-text.ts";
 
 const DEFAULT_ACTIVITY_OUTPUT_LIMIT = 20 * 1024 * 1024;
 export const DEFAULT_MODEL_OUTPUT_LIMIT = 50 * 1024;

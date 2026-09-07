@@ -1,10 +1,10 @@
 import { join } from "node:path";
 import { type ExtensionCommandContext, getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { checkpointGoalActiveTime } from "./accounting.js";
-import { abortCurrentTurn, EMERGENCY_AUTOMATIC_TURN_LIMIT, type GoalRuntime } from "./runtime.js";
-import { GOAL_SETTINGS_FILE, type GoalSettings, type GoalSettingsStore } from "./settings.js";
-import { defineMenu, type MenuDefinition, menuWait, runMenu } from "./suite-menu.js";
+import { checkpointGoalActiveTime } from "./accounting.ts";
+import { abortCurrentTurn, EMERGENCY_AUTOMATIC_TURN_LIMIT, type GoalRuntime } from "./runtime.ts";
+import { GOAL_SETTINGS_FILE, type GoalSettings, type GoalSettingsStore } from "./settings.ts";
+import { defineMenu, type MenuDefinition, menuWait, runMenu } from "./suite-menu.ts";
 
 interface GoalSettingsUiOptions {
 	settingsPath?: string | undefined;

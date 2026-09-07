@@ -4,8 +4,8 @@ import * as path from "node:path";
 import * as Effect from "effect/Effect";
 import * as Queue from "effect/Queue";
 import type * as Scope from "effect/Scope";
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
-import { isRuntimeFunction } from "../../../../shared/runtime-type.js";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
+import { isRuntimeFunction } from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { type NestedRunSummary, SUBAGENT_ASYNC_STATUS_EVENT } from "../../shared/types.ts";
@@ -408,6 +408,7 @@ function sendPublishedStatus(): void {
 }
 
 function publishStatus(statusPath: string, status: RunnerStatus): void {
+	if (!isRuntimeFunction(process.send) || process.connected === false) return;
 	pendingPublishedStatus = { statusPath, status };
 	if (
 		status.state === "complete" ||
@@ -425,6 +426,7 @@ function publishStatus(statusPath: string, status: RunnerStatus): void {
 
 export function installStatusPublisher(): Effect.Effect<void, never, Scope.Scope> {
 	return Effect.gen(function* () {
+		if (!isRuntimeFunction(process.send) || process.connected === false) return;
 		const wake = yield* Queue.sliding<void>(1);
 		const offer = () => Queue.offerUnsafe(wake, undefined);
 		yield* Effect.acquireRelease(
@@ -452,6 +454,10 @@ export function installStatusPublisher(): Effect.Effect<void, never, Scope.Scope
 export function writeStatus(statusPath: string, status: RunnerStatus): void {
 	updateRunProjection(status);
 	writePrivateAtomicJson(statusPath, status);
+	notifyStatusUpdate(statusPath, status);
+}
+
+export function notifyStatusUpdate(statusPath: string, status: RunnerStatus): void {
 	publishStatus(statusPath, status);
 	try {
 		statusUpdateObservers.get(statusPath)?.(status);

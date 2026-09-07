@@ -3,11 +3,11 @@
  * connector descriptors on demand. Also renders snippet source.
  */
 
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import type { ConnectorDescription, DescribeOutput } from "./connector-types.js";
-import { generateTypesFromJsonSchema, type JsonSchemaToolDescriptors } from "./json-schema-types.js";
-import type { Snippet } from "./snippet.js";
-import { sanitizeToolName, toolOwnerPath, toolPath } from "./utils.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import type { ConnectorDescription, DescribeOutput } from "./connector-types.ts";
+import { generateTypesFromJsonSchema, type JsonSchemaToolDescriptors } from "./json-schema-types.ts";
+import type { Snippet } from "./snippet.ts";
+import { sanitizeToolName, toolOwnerPath, toolPath } from "./utils.ts";
 
 function parseStringLiteral(literal: string | undefined): string | undefined {
 	if (!literal) return undefined;

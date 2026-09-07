@@ -1,17 +1,17 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
 import type {
 	SuiteToolEnvelopeArgumentPreparer,
 	SuiteToolEnvelopeDecoder,
 	SuiteToolEnvelopeDetails,
 	SuiteToolEnvelopeFallbackVisibility,
 	SuiteToolEnvelopeOperation,
-} from "./contract.js";
-import { decodeEnvelopeOperations, envelopeFallbackVisible, envelopeOperationResult } from "./envelope-renderer.js";
-import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT } from "./limits.js";
-import { isRecordValue, isToolArguments } from "./tool-value.js";
+} from "./contract.ts";
+import { decodeEnvelopeOperations, envelopeFallbackVisible, envelopeOperationResult } from "./envelope-renderer.ts";
+import { TOOL_DISPLAY_TRANSCRIPT_BLOCK_LIMIT } from "./limits.ts";
+import { isRecordValue, isToolArguments } from "./tool-value.ts";
 
 /** Projects execution envelopes into the ordinary Tool protocol owned by Tool UI. */
 export class ToolEnvelopeProjection {

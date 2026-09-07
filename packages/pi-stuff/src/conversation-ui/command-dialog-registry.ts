@@ -1,7 +1,7 @@
-import { getHostSharedResource } from "../shared/host-resource.js";
-import { CommandDialogCoordinatorImplementation } from "./command-dialog.js";
-import type { CommandDialogCoordinator, CommandDialogCoordinatorHost } from "./command-dialog-types.js";
-import { globalWeakMap } from "./global-registry.js";
+import { getHostSharedResource } from "../shared/host-resource.ts";
+import { CommandDialogCoordinatorImplementation } from "./command-dialog.ts";
+import type { CommandDialogCoordinator, CommandDialogCoordinatorHost } from "./command-dialog-types.ts";
+import { globalWeakMap } from "./global-registry.ts";
 
 const COORDINATOR_REGISTRY = Symbol.for("@jczhang02/pi-stuff-ui/coordinators/v1");
 const COORDINATOR_DISCOVERY_EVENT = "@jczhang02/pi-stuff-ui/coordinator-discovery/v1";

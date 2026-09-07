@@ -1,9 +1,9 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import type { CommandDialogCoordinatorImplementation } from "./command-dialog.js";
-import { DiagnosticNoticeController } from "./diagnostic-notice.js";
-import type { DiagnosticChannel } from "./diagnostics.js";
-import { type InputEnhancementController, installInputEnhancementEditor } from "./input-enhancement.js";
-import type { UiSettingsStore } from "./settings.js";
+import type { CommandDialogCoordinatorImplementation } from "./command-dialog.ts";
+import { DiagnosticNoticeController } from "./diagnostic-notice.ts";
+import type { DiagnosticChannel } from "./diagnostics.ts";
+import { type InputEnhancementController, installInputEnhancementEditor } from "./input-enhancement.ts";
+import type { UiSettingsStore } from "./settings.ts";
 import {
 	type BooleanValueSource,
 	GitStatusSource,
@@ -14,10 +14,10 @@ import {
 	StatuslineController,
 	type StatuslinePreferences,
 	type StatuslinePreferencesSource,
-} from "./statusline.js";
-import { HIDDEN_THINKING_LABEL, installThinkingLineDisplay } from "./thinking-line.js";
-import { installUserMessageDisplay } from "./user-message-display.js";
-import { WelcomeHeaderController, WelcomeRegistrySource } from "./welcome-header.js";
+} from "./statusline.ts";
+import { HIDDEN_THINKING_LABEL, installThinkingLineDisplay } from "./thinking-line.ts";
+import { installUserMessageDisplay } from "./user-message-display.ts";
+import { WelcomeHeaderController, WelcomeRegistrySource } from "./welcome-header.ts";
 
 /** Session-local presentation adapters installed by the Pi Stuff UI Capability. */
 export interface UiSessionPresentation {

@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import type { AgentRuntimeCompletionEvent } from "./agent-execution-governor.ts";
 
 interface AgentRuntimeEventRecord {

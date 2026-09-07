@@ -1,9 +1,9 @@
 import type { Usage } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { parseSkillBlock } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { StatuslineContextUsage } from "./statusline-render.js";
-import { sanitizeOneLine } from "./terminal-text.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { StatuslineContextUsage } from "./statusline-render.ts";
+import { sanitizeOneLine } from "./terminal-text.ts";
 
 export interface UsageTotals {
 	cacheRead: number;

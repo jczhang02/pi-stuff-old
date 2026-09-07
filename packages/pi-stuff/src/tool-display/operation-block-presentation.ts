@@ -1,10 +1,10 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import type { PlannedToolActivityMember, ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { backgroundOperationBlockModel } from "./background-operation-presentation.js";
-import { fileOperationBlockModel, isFileOperationBlock } from "./file-operation-presentation.js";
-import { operationArgument } from "./operation-block-evidence.js";
-import type { OperationBlockRowModel } from "./operation-block-renderer.js";
+import type { PlannedToolActivityMember, ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { backgroundOperationBlockModel } from "./background-operation-presentation.ts";
+import { fileOperationBlockModel, isFileOperationBlock } from "./file-operation-presentation.ts";
+import { operationArgument } from "./operation-block-evidence.ts";
+import type { OperationBlockRowModel } from "./operation-block-renderer.ts";
 
 function isBackgroundOutput(name: string, args: ToolArguments): boolean {
 	return name === "background" && operationArgument(args, "action") === "output";

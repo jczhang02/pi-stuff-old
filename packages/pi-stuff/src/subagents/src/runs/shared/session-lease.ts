@@ -3,8 +3,8 @@ import { createHash, randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { createAtomicJsonWriter } from "../../shared/atomic-json.ts";
 import { TEMP_ROOT_DIR } from "../../shared/types.ts";
 

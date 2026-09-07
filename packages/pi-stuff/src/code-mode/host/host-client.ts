@@ -4,16 +4,16 @@ import * as Cause from "effect/Cause";
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { type JsonInputValue, parseJsonValue } from "../../shared/json-value.js";
+import { type JsonInputValue, parseJsonValue } from "../../shared/json-value.ts";
 import type {
 	CodeModeExecuteOptions,
 	CodeModeWaitOptions,
 	ExecutorContext,
 	RuntimeResponse,
 	SuiteSandboxTool,
-} from "../protocol.js";
-import { CodeModeDelegateRuntime } from "./delegate-runtime.js";
-import type { CodeModeEffectOwner } from "./effect-owner.js";
+} from "../protocol.ts";
+import { CodeModeDelegateRuntime } from "./delegate-runtime.ts";
+import type { CodeModeEffectOwner } from "./effect-owner.ts";
 import {
 	DEFAULT_EXEC_YIELD_MS,
 	type DelegateResponseMessage,
@@ -24,7 +24,7 @@ import {
 	parseRuntimeResponse,
 	runtimeOutcome,
 	toWireToolDefinition,
-} from "./host-protocol.js";
+} from "./host-protocol.ts";
 
 const MAX_FRAME_BYTES = 64 * 1024 * 1024;
 const MAX_QUEUED_WRITE_BYTES = 128 * 1024 * 1024;

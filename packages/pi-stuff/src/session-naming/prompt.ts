@@ -1,5 +1,5 @@
 import type { AssistantMessage, UserMessage } from "@earendil-works/pi-ai";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 
 const MAX_NAME_LENGTH = 30;
 const MAX_MESSAGE_LENGTH = 700;

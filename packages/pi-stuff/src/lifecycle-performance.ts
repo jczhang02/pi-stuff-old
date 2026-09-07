@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "./shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "./shared/runtime-type.ts";
 
 const LIFECYCLE_TRACE_KEY = "@jczhang02/pi-stuff/lifecycle-performance";
 

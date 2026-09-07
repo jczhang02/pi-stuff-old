@@ -1,14 +1,14 @@
 import type { ExtensionAPI, ExtensionContext, SessionStartEvent } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { whenSuiteSessionReady } from "../../conversation-ui/index.js";
-import { currentTokenTotal } from "./accounting.js";
-import type { GoalCommandController } from "./commands.js";
-import { loadGoalStateFromSession } from "./persistence.js";
-import { buildGoalPrompt } from "./prompts.js";
-import { activateQueuedGoal } from "./queue.js";
-import type { GoalRunController } from "./run-protocol.js";
-import { formatError, type GoalRuntime, resetGoalSafetyEpoch, transitionGoal } from "./runtime.js";
-import { GoalSettingsStore } from "./settings.js";
+import { whenSuiteSessionReady } from "../../conversation-ui/index.ts";
+import { currentTokenTotal } from "./accounting.ts";
+import type { GoalCommandController } from "./commands.ts";
+import { loadGoalStateFromSession } from "./persistence.ts";
+import { buildGoalPrompt } from "./prompts.ts";
+import { activateQueuedGoal } from "./queue.ts";
+import type { GoalRunController } from "./run-protocol.ts";
+import { formatError, type GoalRuntime, resetGoalSafetyEpoch, transitionGoal } from "./runtime.ts";
+import { GoalSettingsStore } from "./settings.ts";
 
 export interface GoalSessionLifecycle {
 	readonly commands: GoalCommandController;

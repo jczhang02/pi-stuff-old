@@ -1,4 +1,4 @@
-import type { JsonInputValue } from "../../shared/json-value.js";
+import type { JsonInputValue } from "../../shared/json-value.ts";
 /**
  * Centralized logging for MCP UI operations.
  * Provides structured, contextual logs with levels.

@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { SessionEntry, SessionManager } from "@earendil-works/pi-coding-agent";
-import type { MagicContextExtensionContext } from "./magic-context-types.js";
+import type { MagicContextExtensionContext } from "./magic-context-types.ts";
 import {
 	MAGIC_WORKER_SYNC_BUFFER_BYTES,
 	type MagicWorkerContextSnapshot,
@@ -10,7 +10,7 @@ import {
 	type MagicWorkerSessionEntryRequest,
 	type MagicWorkerSessionSnapshotRequest,
 	type MagicWorkerSyncEffectMessage,
-} from "./magic-worker-protocol.js";
+} from "./magic-worker-protocol.ts";
 
 interface MirroredSession {
 	readonly entries: SessionEntry[];

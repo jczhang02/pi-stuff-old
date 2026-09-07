@@ -1,14 +1,14 @@
 import { createHash, randomUUID } from "node:crypto";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { withAgentWorkOrigin } from "../../conversation-ui/agent-run-origin.js";
-import { sendSuiteAgentMessage, withDirectUserActivation } from "../../conversation-ui/index.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import { formatError } from "./errors.js";
-import { appendGoalPromptMarker, extractContinuationMarker, extractGoalPromptMarker } from "./markers.js";
-import type { ActiveGoal } from "./persistence.js";
-import type { StatusContext } from "./policy.js";
-import { buildContinuePrompt } from "./prompts.js";
+import { withAgentWorkOrigin } from "../../conversation-ui/agent-run-origin.ts";
+import { sendSuiteAgentMessage, withDirectUserActivation } from "../../conversation-ui/index.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import { formatError } from "./errors.ts";
+import { appendGoalPromptMarker, extractContinuationMarker, extractGoalPromptMarker } from "./markers.ts";
+import type { ActiveGoal } from "./persistence.ts";
+import type { StatusContext } from "./policy.ts";
+import { buildContinuePrompt } from "./prompts.ts";
 
 export interface ContinuationTicket {
 	goalId: string;

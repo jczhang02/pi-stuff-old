@@ -126,6 +126,37 @@ test("canonical entries take precedence over older plural state, including expli
 	assert.deepEqual(loaded.queue, []);
 });
 
+test("latest canonical selection stops before superseded history and never falls back to newer legacy state", () => {
+	for (const data of [{ goal: null }, { goal: { invalid: true } }]) {
+		let supersededReads = 0;
+		const entries = [
+			...Array.from({ length: 1_000 }, () => ({
+				get type() {
+					supersededReads += 1;
+					return "custom";
+				},
+				customType: "goal-state",
+				data: { goal: active },
+			})),
+			{ type: "custom", customType: "goal-state", data },
+			{ type: "custom", customType: "goals-state", data: { goals: [active] } },
+		];
+		const loaded = loadGoalStateFromSession({ sessionManager: { getBranch: () => entries } });
+		assert.equal(loaded.source, "canonical");
+		assert.equal(loaded.goal, undefined);
+		assert.deepEqual(loaded.queue, []);
+		assert.equal(supersededReads, 0);
+	}
+});
+
+test("Goal selection ignores sparse branch slots", () => {
+	const entries = branch({ customType: "goal-state", data: { goal: null } }).sessionManager.getBranch();
+	entries.length = 3;
+	const loaded = loadGoalStateFromSession({ sessionManager: { getBranch: () => entries } });
+	assert.equal(loaded.source, "canonical");
+	assert.equal(loaded.goal, undefined);
+});
+
 test("legacy plural state migrates only without canonical history", () => {
 	const pendingUnshift = { objective: "urgent", tokenBudget: 3_000 };
 	const loaded = loadGoalStateFromSession(

@@ -1,8 +1,8 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
-import { beginSuiteNativeCompactionPreflight, reportDiagnostic } from "../conversation-ui/index.js";
-import type { NativeCompactionSettings } from "./magic-runtime.js";
+import { beginSuiteNativeCompactionPreflight, reportDiagnostic } from "../conversation-ui/index.ts";
+import type { NativeCompactionSettings } from "./magic-runtime.ts";
 
 /** Native-only preparation for Suite custom turns while Magic is explicitly inactive. */
 export class NativeContextPreflight {

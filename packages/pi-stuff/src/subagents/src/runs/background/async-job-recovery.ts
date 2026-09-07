@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { errnoCode, readOwnedFileTailAsync } from "../../shared/private-directory.ts";
 import { probeProcessLiveness, readProcessStartIdentity } from "../../shared/process-identity.ts";

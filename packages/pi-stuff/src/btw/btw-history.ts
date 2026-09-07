@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type { AssistantMessage, StopReason, Usage } from "@earendil-works/pi-ai";
 import type { ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
-import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.ts";
 
 /** A session would have to accumulate roughly three BTW exchanges a day for a year to reach this guard. */
 export const BTW_HISTORY_LIMIT = 1_000;

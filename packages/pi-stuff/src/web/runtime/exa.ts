@@ -1,7 +1,7 @@
 import * as Effect from "effect/Effect";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isJsonInputObject, parseJsonObject } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isJsonInputObject, parseJsonObject } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { activityMonitor } from "./activity.ts";
 import { readWebConfig } from "./config.ts";
 import { redactCredential, resolveCredential } from "./credential-source.ts";

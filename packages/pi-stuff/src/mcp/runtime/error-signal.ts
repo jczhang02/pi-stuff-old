@@ -1,4 +1,4 @@
-import { isJsonInputObject } from "../../shared/json-value.js";
+import { isJsonInputObject } from "../../shared/json-value.ts";
 /**
  * Decide the `isError` override for a finished tool result in the `tool_result` hook.
  *

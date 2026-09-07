@@ -1,7 +1,7 @@
 import * as Effect from "effect/Effect";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { parseJsonObject } from "../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { parseJsonObject } from "../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import { normalizeProviderDomain as normalizeDomain } from "../provider-domain-filter.ts";
 import { type ActivityEntry, activityMonitor, throwRedactedActivityError } from "./activity.ts";
 import { readWebConfig } from "./config.ts";

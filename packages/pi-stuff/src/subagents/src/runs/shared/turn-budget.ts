@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject } from "../../../../shared/runtime-type.ts";
 
 export const DEFAULT_TURN_BUDGET_GRACE_TURNS = 1;
 

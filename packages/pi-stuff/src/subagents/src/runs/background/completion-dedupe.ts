@@ -2,13 +2,13 @@ import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
 import {
 	isFiniteRuntimeNumber as asFiniteNumber,
 	isRuntimeBoolean,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJsonAsync } from "../../shared/atomic-json.ts";
 import { shardedDurableClaimName } from "../../shared/durable-claim.ts";
 import { readBoundedOwnedFileSnapshotAsync } from "../../shared/private-directory.ts";

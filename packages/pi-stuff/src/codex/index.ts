@@ -6,14 +6,14 @@ import {
 	getCodexStatusChannel,
 	getCommandDialogCoordinator,
 	listenForUserAgentRunSettled,
-} from "../conversation-ui/index.js";
-import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.js";
-import { isRuntimeObject } from "../shared/runtime-type.js";
-import { isOpenAICodexResponsesModel } from "./account.js";
-import { type CodexControls, createCodexDialogView } from "./dialog.js";
-import { CodexSettingsStore } from "./settings.js";
-import { registerCodexTools } from "./tools.js";
-import { type CodexUsageSnapshot, fetchCodexUsage, formatCodexUsage, weeklyRemainingPercent } from "./usage.js";
+} from "../conversation-ui/index.ts";
+import { type EffectFoundation, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { isRuntimeObject } from "../shared/runtime-type.ts";
+import { isOpenAICodexResponsesModel } from "./account.ts";
+import { type CodexControls, createCodexDialogView } from "./dialog.ts";
+import { CodexSettingsStore } from "./settings.ts";
+import { registerCodexTools } from "./tools.ts";
+import { type CodexUsageSnapshot, fetchCodexUsage, formatCodexUsage, weeklyRemainingPercent } from "./usage.ts";
 
 function requestPayloadWithFast<Payload>(payload: Payload) {
 	if (!isRuntimeObject(payload) || payload === null || Array.isArray(payload)) return undefined;

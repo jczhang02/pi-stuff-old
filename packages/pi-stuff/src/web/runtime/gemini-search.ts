@@ -1,7 +1,7 @@
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { isAnySearchAvailable, searchWithAnySearch } from "./anysearch.ts";
 import { isBraveAvailable, searchWithBrave } from "./brave.ts";
 import { isBrightDataAvailable, searchWithBrightData } from "./brightdata.ts";

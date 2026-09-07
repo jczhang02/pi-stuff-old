@@ -1,8 +1,8 @@
 import type { ContextEvent, ExtensionContext, InputEvent } from "@earendil-works/pi-coding-agent";
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
-import { isRuntimeSymbol } from "../shared/runtime-type.js";
-import { addCompactMagicContextMessage } from "./magic-runtime.js";
+import { isRuntimeSymbol } from "../shared/runtime-type.ts";
+import { addCompactMagicContextMessage } from "./magic-runtime.ts";
 import {
 	type AgentMessage,
 	type ContextProjection,
@@ -15,7 +15,7 @@ import {
 	nativeProjection,
 	projectionKey,
 	projectMemoryOnly,
-} from "./projection-format.js";
+} from "./projection-format.ts";
 
 export type { ContextProjection, ContextProjectionAudience, ContextProjectionOptions };
 export { estimateProjectionTokens, extractMagicProjection, formatProjection, nativeProjection };

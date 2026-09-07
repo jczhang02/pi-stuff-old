@@ -161,6 +161,17 @@ jobs:
           ln --symbolic "$(command -v fdfind)" "$SYSTEM_TOOL_BIN/fd"
           test -x "$SYSTEM_TOOL_BIN/fd"
           command -v rg >/dev/null
+      - name: Allow observer namespaces on the ephemeral runner
+        run: |
+          set -euo pipefail
+          install --mode=0755 /usr/bin/unshare "$SYSTEM_TOOL_BIN/unshare"
+          sudo apparmor_parser --replace <<PROFILE
+          abi <abi/4.0>,
+          profile pi-stuff-ci-unshare "$SYSTEM_TOOL_BIN/unshare" flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          "$SYSTEM_TOOL_BIN/unshare" --user --map-root-user --net --pid --fork --kill-child --mount-proc true
       - name: Install certified RTK runtime
         run: |
           set -euo pipefail

@@ -1,17 +1,17 @@
 import { dirname, join } from "node:path";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { isJsonInputValue, type JsonInputObject, type JsonInputValue, parseJsonValue } from "../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { isJsonInputValue, type JsonInputObject, type JsonInputValue, parseJsonValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceStoreOptions,
 	mergedSettingsPath,
 	readTextFileEffect,
-} from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
-import type { TerminalDeliveryMode } from "./transport.js";
+} from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
+import type { TerminalDeliveryMode } from "./transport.ts";
 
 const SETTINGS_FILE_NAME = "pi-stuff-notification.json";
 const NOTIFICATION_NAMESPACE = "notification";

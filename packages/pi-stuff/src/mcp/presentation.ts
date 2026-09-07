@@ -1,7 +1,7 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isJsonInputObject, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.js";
-import { type SuiteToolPresentation, singleActivity } from "../tool-display/index.js";
+import { isJsonInputObject, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeString } from "../shared/runtime-type.ts";
+import { type SuiteToolPresentation, singleActivity } from "../tool-display/index.ts";
 
 export interface McpPresentationArguments {
 	action?: string;

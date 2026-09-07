@@ -5,9 +5,9 @@
 import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import type { JsonInputObject } from "../../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../../../shared/runtime-type.js";
-import { xdgRuntimeHome, xdgStateHome } from "../../../xdg/index.js";
+import type { JsonInputObject } from "../../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeNumber, isRuntimeString } from "../../../shared/runtime-type.ts";
+import { xdgRuntimeHome, xdgStateHome } from "../../../xdg/index.ts";
 
 export type * from "../runs/background/async-contract.ts";
 export type * from "../runs/background/process-terminal.ts";

@@ -1,4 +1,4 @@
-import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import type { McpOAuthConfig } from "./mcp-oauth-provider.ts";
 import type { ServerEntry } from "./types.ts";
 import { interpolateEnvVars } from "./utils.ts";

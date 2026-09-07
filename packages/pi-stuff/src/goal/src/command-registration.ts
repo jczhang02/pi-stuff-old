@@ -1,12 +1,12 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import { completeGoalArguments, parseCommand } from "./command.js";
-import type { GoalCommandController } from "./commands.js";
-import { showGoalManager } from "./menu.js";
-import type { GoalRuntime } from "./runtime.js";
-import type { GoalSettingsStore } from "./settings.js";
-import { showGoalSettings } from "./settings-ui.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import { completeGoalArguments, parseCommand } from "./command.ts";
+import type { GoalCommandController } from "./commands.ts";
+import { showGoalManager } from "./menu.ts";
+import type { GoalRuntime } from "./runtime.ts";
+import type { GoalSettingsStore } from "./settings.ts";
+import { showGoalSettings } from "./settings-ui.ts";
 
 interface GoalCommandRegistrationOptions {
 	readonly onProjectionNeeded: () => void;

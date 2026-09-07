@@ -23,7 +23,7 @@ import type {
 	ToolInfo,
 	ToolResultEvent,
 } from "@earendil-works/pi-coding-agent";
-import type { JsonInputValue, JsonObject } from "../shared/json-value.js";
+import type { JsonInputValue, JsonObject } from "../shared/json-value.ts";
 
 export type MagicContextCommandName =
 	| "ctx-aug"

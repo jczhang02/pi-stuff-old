@@ -4,8 +4,8 @@ import * as Exit from "effect/Exit";
 import * as Fiber from "effect/Fiber";
 import * as Option from "effect/Option";
 import * as Scope from "effect/Scope";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { getHostSharedResource } from "./host-resource.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { getHostSharedResource } from "./host-resource.ts";
 
 const EFFECT_FOUNDATION_DISCOVERY_EVENT = "@jczhang02/pi-stuff/effect-foundation-discovery/v1";
 const FOUNDATIONS = new WeakMap<object, EffectFoundation>();

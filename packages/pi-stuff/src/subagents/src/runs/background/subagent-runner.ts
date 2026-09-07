@@ -3,18 +3,19 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { normalizePonytailMode } from "../../../../ponytail/types.js";
-import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
+import { normalizePonytailMode } from "../../../../ponytail/types.ts";
+import { type JsonObject, type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
 	runtimeErrorCode,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { readBoundedOwnedFile } from "../../shared/private-directory.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import { assertModelCandidateLimit } from "../shared/model-fallback.ts";
 import { finalizeNestedRouteRoot } from "../shared/nested-events.ts";
 import {
@@ -24,23 +25,20 @@ import {
 	type RunnerAgentTask,
 } from "../shared/parallel-utils.ts";
 import { acquireSessionLease } from "../shared/session-lease.ts";
-import { createWorktrees, resolveWorktreeTaskCwd, type WorktreeSetup } from "../shared/worktree.ts";
-import { runResolvedTask } from "./child-task-runner.ts";
 import { createInitialStatus, type BackgroundRunnerStatus as RunnerStatus } from "./initial-status.ts";
 import { markProcessTerminalCandidateLeaseRelease } from "./process-terminal.ts";
-import { BackgroundRunControl } from "./runner-control.ts";
-import { finalizeConfiguredRun } from "./runner-finalization.ts";
+import type { PreparedWorktrees } from "./runner-finalization.ts";
 import { appendDiagnosticEvent, boundRunResultOutputs } from "./runner-output.ts";
 import {
 	failedResult,
 	installStatusPublisher,
+	notifyStatusUpdate,
 	runBackgroundWork,
 	setStatusUpdateObserver,
 	taskList,
 	terminalizeRejectedStep,
 	writeStatus,
 } from "./runner-state.ts";
-import { BACKGROUND_RUNNER_CONFIG_ENV, BACKGROUND_RUNNER_SENTINEL_ENV } from "./writer-process-lifecycle.ts";
 import {
 	initializeWriterProcessRegistry,
 	inspectWriterProcessLiveness,
@@ -48,12 +46,20 @@ import {
 	type WriterRuntimeState,
 } from "./writer-process-registry.ts";
 
-function persistWorktreeRecoveryCwd(config: BackgroundRunnerConfig, setup: WorktreeSetup): void {
+export { createInitialStatus } from "./initial-status.ts";
+export { createBackgroundCompletion, runBackgroundWork } from "./runner-state.ts";
+
+const loadTaskRunner = deferredModule(() => import("./child-task-runner.ts"));
+const loadFinalization = deferredModule(() => import("./runner-finalization.ts"));
+const loadControl = deferredModule(() => import("./runner-control.ts"));
+
+function persistWorktreeRecoveryCwd(config: BackgroundRunnerConfig, setup: PreparedWorktrees): void {
 	if (config.work.mode !== "parallel") return;
 	const descriptorPath = fs.existsSync(path.join(config.asyncDir, "recovery-descriptors.json"))
 		? path.join(config.asyncDir, "recovery-descriptors.json")
 		: path.join(config.asyncDir, "recovery-descriptor.json");
 	const parsed = parseJsonValue(fs.readFileSync(descriptorPath, "utf8"));
+	const resolve = setup.operations.resolveWorktreeTaskCwd;
 	if (
 		config.work.group.tasks.length === 1 &&
 		isRuntimeObject(parsed) &&
@@ -63,54 +69,49 @@ function persistWorktreeRecoveryCwd(config: BackgroundRunnerConfig, setup: Workt
 	) {
 		const task = config.work.group.tasks[0];
 		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' has no task.`);
-		parsed["cwd"] = resolveWorktreeTaskCwd(setup.worktrees[0], setup.cwd, task.cwd);
+		parsed["cwd"] = resolve(setup.setup.worktrees[0], setup.setup.cwd, task.cwd);
 		writePrivateAtomicJson(descriptorPath, parsed);
 		return;
 	}
 	if (!isRuntimeObject(parsed) || parsed === null || Array.isArray(parsed) || !Array.isArray(parsed["children"])) {
 		throw new Error(`Async recovery descriptor '${descriptorPath}' is missing its children.`);
 	}
-	const children = parsed["children"];
-	for (const [index, child] of children.entries()) {
-		if (!isRuntimeObject(child) || child === null || Array.isArray(child)) {
+	for (const [index, child] of parsed["children"].entries()) {
+		if (!isRuntimeObject(child) || child === null || Array.isArray(child))
 			throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} is invalid.`);
-		}
 		const task = config.work.group.tasks[index];
 		if (!task) throw new Error(`Async recovery descriptor '${descriptorPath}' child ${index} has no task.`);
-		child["cwd"] = resolveWorktreeTaskCwd(setup.worktrees[index], setup.cwd, task.cwd);
+		child["cwd"] = resolve(setup.setup.worktrees[index], setup.setup.cwd, task.cwd);
 	}
 	writePrivateAtomicJson(descriptorPath, parsed);
 }
 
-export { createInitialStatus } from "./initial-status.ts";
-export { createBackgroundCompletion, runBackgroundWork } from "./runner-state.ts";
-export {
-	buildWriterProcessEnv,
-	buildWriterSpawnCommand,
-	captureWriterProcessStartIdentity,
-	ponytailWriterEnvironmentOverrides,
-} from "./writer-process-lifecycle.ts";
-
 function runConfiguredWork(
 	config: BackgroundRunnerConfig,
+	committedStatus: RunnerStatus | undefined,
 	onWriterProcess?: (index: number, writer: WriterRuntimeState) => void,
 	beforeFinalPersistence?: () => void | Promise<void>,
 	beforeWorktreeEvidence?: () => void,
 	beforeResultPersistence?: () => void,
 ): Promise<{ nestedProjectionCommitted: boolean }> {
-	const startedAt = config.startedAt ?? Date.now();
 	const statusPath = path.join(config.asyncDir, "status.json");
 	const eventsPath = path.join(config.asyncDir, "events.jsonl");
-	const status = createInitialStatus(config, startedAt);
-	const control = new BackgroundRunControl(config, status, statusPath, eventsPath);
+	const status = committedStatus ?? createInitialStatus(config, config.startedAt ?? Date.now());
+	const startedAt = status.startedAt;
 	return Effect.runPromise(
 		Effect.scoped(
 			Effect.gen(function* () {
+				const { BackgroundRunControl } = yield* Effect.tryPromise({ try: loadControl, catch: (error) => error });
+				const control = new BackgroundRunControl(config, status, statusPath, eventsPath);
+				const { finalizeConfiguredRun } = yield* Effect.tryPromise({
+					try: loadFinalization,
+					catch: (error) => error,
+				});
 				yield* installStatusPublisher();
 				yield* Effect.try({
 					try: () => {
-						fs.mkdirSync(config.asyncDir, { recursive: true });
-						writeStatus(statusPath, status);
+						if (committedStatus) notifyStatusUpdate(statusPath, status);
+						else writeStatus(statusPath, status);
 						appendDiagnosticEvent(eventsPath, {
 							type: "subagent.run.started",
 							ts: startedAt,
@@ -122,20 +123,25 @@ function runConfiguredWork(
 					catch: (error) => error,
 				});
 				yield* control.install();
-				let worktreeSetup: WorktreeSetup | undefined;
+				let worktreeSetup: PreparedWorktrees | undefined;
 				const results = yield* Effect.gen(function* () {
 					if (config.work.mode === "parallel" && config.work.group.worktree) {
 						const group = config.work.group;
-						const createdWorktrees = yield* Effect.try({
+						const operations = yield* Effect.tryPromise({
+							try: () => import("../shared/worktree.ts"),
+							catch: (error) => error,
+						});
+						const setup = yield* Effect.try({
 							try: () =>
-								createWorktrees(config.cwd, config.id, group.tasks.length, {
+								operations.createWorktrees(config.cwd, config.id, group.tasks.length, {
 									agents: group.tasks.map((task) => task.agent),
 								}),
 							catch: (error) => error,
 						});
-						worktreeSetup = createdWorktrees;
+						const preparedWorktrees = { setup, operations };
+						worktreeSetup = preparedWorktrees;
 						yield* Effect.try({
-							try: () => persistWorktreeRecoveryCwd(config, createdWorktrees),
+							try: () => persistWorktreeRecoveryCwd(config, preparedWorktrees),
 							catch: (error) => error,
 						});
 					}
@@ -143,13 +149,18 @@ function runConfiguredWork(
 						config.work,
 						(task, index) =>
 							Effect.tryPromise({
-								try: () =>
-									runResolvedTask({
+								try: async () => {
+									const { runResolvedTask } = await loadTaskRunner();
+									return runResolvedTask({
 										config,
 										task,
 										index,
 										taskCwd: worktreeSetup
-											? resolveWorktreeTaskCwd(worktreeSetup.worktrees[index], worktreeSetup.cwd, task.cwd)
+											? worktreeSetup.operations.resolveWorktreeTaskCwd(
+													worktreeSetup.setup.worktrees[index],
+													worktreeSetup.setup.cwd,
+													task.cwd,
+												)
 											: task.cwd,
 										status,
 										statusPath,
@@ -158,7 +169,8 @@ function runConfiguredWork(
 										consumeScheduledStop: (index) => control.consumeScheduledStop(index),
 										preStartTerminalCause: () => control.preStartTerminalCause(),
 										onWriterProcess: onWriterProcess ? (writer) => onWriterProcess(index, writer) : undefined,
-									}),
+									});
+								},
 								catch: (error) => error,
 							}).pipe(
 								Effect.tapError((error) =>
@@ -265,6 +277,7 @@ async function completeRevivalHandshake(
 	fs.rmSync(proceedPath, { force: true });
 }
 
+/** Only the foreground lifecycle supplies already-committed state, never a serialized runner config. */
 export async function runConfiguredBackground(
 	config: BackgroundRunnerConfig,
 	hooks: {
@@ -274,6 +287,7 @@ export async function runConfiguredBackground(
 		beforeWorktreeEvidence?: () => void;
 		beforeResultPersistence?: () => void;
 	} = {},
+	committedStatus?: RunnerStatus,
 ): Promise<void> {
 	if (config.version !== 2) throw new Error("Background runner config version must be 2.");
 	if (taskList(config.work).length > MAX_BACKGROUND_TASKS) {
@@ -301,7 +315,9 @@ export async function runConfiguredBackground(
 			startupCommitted = true;
 			fs.rmSync(gatePath, { force: true });
 		}
-		initializeWriterProcessRegistry(config.asyncDir, config.id, process.pid, taskList(config.work).length);
+		if (!committedStatus) {
+			initializeWriterProcessRegistry(config.asyncDir, config.id, process.pid, taskList(config.work).length);
+		}
 		if (config.revivalLease) {
 			lease = acquireSessionLease(config.revivalLease, { inspectWriterLiveness: inspectWriterProcessLiveness });
 			await completeRevivalHandshake(config, startupPath, lease);
@@ -309,6 +325,7 @@ export async function runConfiguredBackground(
 		}
 		await runConfiguredWork(
 			config,
+			committedStatus,
 			(index, writer) => {
 				updateWriterProcessRegistry(config.asyncDir, index, writer);
 				if (lease && index === 0) lease.updateWriter(writer);
@@ -448,9 +465,9 @@ function startFromConfigPath(configPath: string): void {
 	startConfiguredBackground(config);
 }
 
-const runnerConfigPath = process.env[BACKGROUND_RUNNER_CONFIG_ENV];
+const runnerConfigPath = process.env["PI_STUFF_BACKGROUND_RUNNER_CONFIG"];
 if (
-	process.env[BACKGROUND_RUNNER_SENTINEL_ENV] === "1" &&
+	process.env["PI_STUFF_BACKGROUND_RUNNER"] === "1" &&
 	runnerConfigPath !== undefined &&
 	process.argv[2] === runnerConfigPath
 ) {

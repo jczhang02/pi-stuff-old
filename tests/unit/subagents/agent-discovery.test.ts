@@ -1,8 +1,14 @@
-import { afterEach, expect, test } from "bun:test";
+import { afterEach, expect, spyOn, test } from "bun:test";
+import * as fs from "node:fs";
 import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { discoverAgents, EXTRA_AGENT_DIRS_ENV } from "../../../packages/pi-stuff/src/subagents/src/agents/agents.ts";
+import { CONFIG_DIR_NAME } from "@earendil-works/pi-coding-agent";
+import {
+	discoverAgents,
+	EXTRA_AGENT_DIRS_ENV,
+	findNearestProjectRoot,
+} from "../../../packages/pi-stuff/src/subagents/src/agents/agents.ts";
 
 const roots: string[] = [];
 const originalAgentDir = process.env["PI_CODING_AGENT_DIR"];
@@ -29,6 +35,32 @@ async function writeAgent(directory: string, name: string, description: string, 
 		`---\nname: ${name}\ndescription: ${description}\n${extraFrontmatter}---\n\nPrompt for ${description}.\n`,
 	);
 }
+
+test("uses the Host config directory without synchronous metadata discovery at each ancestor", async () => {
+	const root = await temporaryRoot();
+	const project = join(root, "project");
+	const nested = join(project, "src", "feature");
+	await Promise.all([
+		mkdir(nested, { recursive: true }),
+		mkdir(join(project, CONFIG_DIR_NAME, "agents"), { recursive: true }),
+	]);
+	const originalArgv = process.argv;
+	process.argv = [process.execPath, import.meta.path];
+	const realpath = spyOn(fs, "realpathSync");
+	const readFile = spyOn(fs, "readFileSync");
+	try {
+		expect(await findNearestProjectRoot(nested)).toBe(project);
+		expect(await findNearestProjectRoot(project)).toBe(project);
+		expect({ realpaths: realpath.mock.calls.length, metadataReads: readFile.mock.calls.length }).toEqual({
+			realpaths: 0,
+			metadataReads: 0,
+		});
+	} finally {
+		realpath.mockRestore();
+		readFile.mockRestore();
+		process.argv = originalArgv;
+	}
+});
 
 test("uses package < user < project precedence without a settings override layer", async () => {
 	const root = await temporaryRoot();

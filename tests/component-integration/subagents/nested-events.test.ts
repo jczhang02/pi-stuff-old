@@ -236,6 +236,29 @@ test("authoritative projection waits for a competing projector instead of return
 	expect((await projected).children.map((child) => child.id)).toEqual(["nested-child"]);
 });
 
+test("nested projection preserves existing lock metadata while committing new events", async () => {
+	const routeInfo = route("nested-kernel-projection");
+	const claim = tryAcquireDurableClaim(path.dirname(routeInfo.eventSink), "registry-project.lock");
+	if (!claim) throw new Error("Expected the initial projector claim.");
+	const lockPath = claim.directory;
+	const owner = fs.readFileSync(lockPath, "utf8");
+	const inode = fs.statSync(lockPath).ino;
+	claim.release();
+
+	writeRunningChild(routeInfo, "first-child");
+	expect(projectNestedEvents(routeInfo).children.map((child) => child.id)).toEqual(["first-child"]);
+	expect(fs.readFileSync(lockPath, "utf8")).toBe(owner);
+	writeRunningChild(routeInfo, "second-child");
+	expect((await projectNestedEventsAuthoritatively(routeInfo)).children.map((child) => child.id).sort()).toEqual([
+		"first-child",
+		"second-child",
+	]);
+	expect(await retireUnusedNestedRoute(routeInfo)).toBe(false);
+	expect(await finalizeNestedRouteRoot(routeInfo, terminalRootRuntime(routeInfo))).toBe(false);
+	expect(fs.readFileSync(lockPath, "utf8")).toBe(owner);
+	expect(fs.statSync(lockPath).ino).toBe(inode);
+});
+
 test("authoritative projection drains more than one event batch before returning terminal state", async () => {
 	const routeInfo = route("nested-drain");
 	const childId = "nested-drain-child";

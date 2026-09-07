@@ -86,12 +86,26 @@ previews do not use credentials. Historical reports remain dated evidence; newly
 The retired Effect/mainline, Code Mode image, and Skill Discovery experiments remain available in Git history;
 their dated reports and locked inputs are retained as historical evidence.
 
+The resource-efficiency observer (`scripts/benchmark-responsiveness.ts`) uses the currently supported Pi Host.
+Its optional `--gates` input must match the observed Host binary's SHA-256; the retained Pi 0.85.0 limits cannot certify
+Pi 0.85.1. Recalibration needs a new matching input and measurements. The historical limits and reports remain unchanged;
+the observer's offline Acceptance tests check its observation contract, not current-Host performance certification.
+Background observation retains the initial parent-idle window, then verifies exactly-once child-result delivery and
+the main Agent's integration turn. Each settled user-work run retains the Codex usage refresh contract.
+The ephemeral Ubuntu CI runner stages its own `unshare` executable with an executable-scoped AppArmor `userns`
+permission and checks namespace creation before Tests. This preparation supports the observer's nested user/network/PID
+isolation without changing local machine policy or the shared disconnected test runner.
+
 Completed experiments may report poor scores or performance regressions without failing the command. Setup failures and
 incomplete experiments remain failures. Tool Activity's former 250 ms and relative 25 ms benchmark values are retained
 as diagnostic report values rather than verification gates. The explicit PTY requirements remain 150 ms to first Tool
 UI/input/selection feedback and no unchanged Vibe Line Spinner frame beyond 200 ms; ADR 0025's 500 ms severe-stall
 assertion is a separate backstop. The Tools PTY verifier reports the measured values for each terminal geometry and
 fails when a required target is unmet.
+
+The Context input-frame verifier retains its 150 ms first-frame limit. It samples every 10 ms until the submitted
+prompt appears, then every 50 ms for Working animation. Deterministic clock tests guard against coarse-polling false
+failures while retaining rejection of slow frames; failures include the last absent capture and capture overhead.
 
 The Suite Outcome Evaluation branch evaluates the complete Suite on public tasks. The concrete entry is
 `benchmark:suite:terminal-bench`; the generic `benchmark:suite` alias remains unregistered.

@@ -1,5 +1,6 @@
 /** Own live stop, timeout, interrupt, and steering control for one background run. */
 
+import { isMainThread } from "node:worker_threads";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
@@ -12,6 +13,7 @@ import {
 	deliverStopRequest,
 	deliverTimeoutRequest,
 	enqueueStepSteer,
+	INTERRUPT_SIGNAL,
 	type SteerAck,
 	type SteerRequest,
 	watchAsyncControlInbox,
@@ -29,7 +31,6 @@ import {
 } from "./steering.ts";
 
 export type TerminalKind = "pause" | "timeout" | "stop";
-const ASYNC_INTERRUPT_SIGNAL: NodeJS.Signals = process.platform === "win32" ? "SIGBREAK" : "SIGUSR2";
 
 function interruptDescendants(config: BackgroundRunnerConfig, kind: TerminalKind): void {
 	if (!config.nestedRoute) return;
@@ -83,10 +84,12 @@ export class BackgroundRunControl {
 				onSteer: (request) => this.onSteer(request),
 				onSteerAck: (ack) => this.onSteerAck(ack),
 			});
-			yield* Effect.acquireRelease(
-				Effect.sync(() => process.on(ASYNC_INTERRUPT_SIGNAL, this.signalInterrupt)),
-				() => Effect.sync(() => process.off(ASYNC_INTERRUPT_SIGNAL, this.signalInterrupt)),
-			);
+			if (isMainThread) {
+				yield* Effect.acquireRelease(
+					Effect.sync(() => process.on(INTERRUPT_SIGNAL, this.signalInterrupt)),
+					() => Effect.sync(() => process.off(INTERRUPT_SIGNAL, this.signalInterrupt)),
+				);
+			}
 			if (this.config.deadlineAt !== undefined) {
 				yield* Effect.forkScoped(
 					Effect.sleep(Math.max(0, this.config.deadlineAt - Date.now())).pipe(

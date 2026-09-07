@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { checkpointGoalActiveTime } from "./accounting.js";
-import { type ActiveGoal, MAX_QUEUED_GOALS, type PendingQueueAction } from "./persistence.js";
-import { resetGoalSafetyEpoch } from "./safety.js";
+import { checkpointGoalActiveTime } from "./accounting.ts";
+import { type ActiveGoal, MAX_QUEUED_GOALS, type PendingQueueAction } from "./persistence.ts";
+import { resetGoalSafetyEpoch } from "./safety.ts";
 
 export interface GoalQueueResult {
 	goal: ActiveGoal | undefined;

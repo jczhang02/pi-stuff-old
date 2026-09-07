@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeBoolean, isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 
 const GOAL_COORDINATION_QUERY_EVENT = "@jczhang02/pi-stuff-goal/coordination-query/v1";
 

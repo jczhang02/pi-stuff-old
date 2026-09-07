@@ -1,4 +1,4 @@
-import { isRuntimeObject, isRuntimeString, isRuntimeUndefined } from "../../../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString, isRuntimeUndefined } from "../../../shared/runtime-type.ts";
 
 const WAIT_BUFFER = isRuntimeUndefined(globalThis.SharedArrayBuffer) ? undefined : new globalThis.SharedArrayBuffer(4);
 const WAIT_VIEW = WAIT_BUFFER ? new Int32Array(WAIT_BUFFER) : undefined;

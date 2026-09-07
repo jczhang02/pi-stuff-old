@@ -4,7 +4,7 @@
 
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { isJsonInputValue, type JsonInputValue } from "../../shared/json-value.js";
+import { isJsonInputValue, type JsonInputValue } from "../../shared/json-value.ts";
 import type { ContentBlock } from "./types.ts";
 
 export type McpCallToolResponse = Awaited<ReturnType<Client["callTool"]>>;

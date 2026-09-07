@@ -1,10 +1,10 @@
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
-import { reportDiagnostic } from "../conversation-ui/diagnostics.js";
-import { isJsonInputValue, type JsonInputObject, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { EffectNamespacedSettingsStore, mergedSettingsPath } from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
+import { reportDiagnostic } from "../conversation-ui/diagnostics.ts";
+import { isJsonInputValue, type JsonInputObject, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { EffectNamespacedSettingsStore, mergedSettingsPath } from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
 
 export const SESSION_NAMING_NAMESPACE = "sessionNaming";
 const MAX_COOLDOWN_MINUTES = 24 * 60;

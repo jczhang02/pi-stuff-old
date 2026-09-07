@@ -2,16 +2,14 @@ import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import type * as Scope from "effect/Scope";
-import { getPonytailMode } from "../../../../ponytail/state.js";
+import { getPonytailMode } from "../../../../ponytail/state.ts";
 import type { AgentConfig } from "../../agents/agents.ts";
-import { normalizeSkillInput } from "../../agents/skills.ts";
+import { normalizeSkillInput } from "../../agents/skill-input.ts";
 import { type Details, resolveChildMaxSubagentDepth, wrapForkTask } from "../../shared/types.ts";
-import {
-	type AsyncParallelTaskInput,
-	buildAsyncParallelRunnerWork,
-	buildAsyncSingleRunnerWork,
-	isAsyncAvailable,
-} from "../background/async-execution.ts";
+import type { AsyncParallelTaskInput } from "../background/resolved-task.ts";
+import { buildAsyncParallelRunnerWork, buildAsyncSingleRunnerWork } from "../background/runner-work.ts";
+import { resolveBunRuntimeCommand } from "../shared/bun-runtime.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import type { BackgroundRunnerConfig } from "../shared/parallel-utils.ts";
 import {
 	type AgentToolResult,
@@ -19,12 +17,17 @@ import {
 	type ExecutorEngines,
 	errorResult,
 	type PreparedLaunch,
+	resolvedTaskInput,
 	type SubagentExecutionHooks,
 	type TaskParam,
+	taskInputs,
 } from "./executor-contract.ts";
-import { executeForegroundLifecycle, type PreparedForegroundConfig } from "./foreground-lifecycle.ts";
+import type { PreparedForegroundConfig } from "./foreground-lifecycle.ts";
 import { claimForegroundRunDirectory } from "./foreground-run-claim.ts";
-import { resolvedTaskInput, taskInputs } from "./launch-model-planning.ts";
+
+const loadForegroundLifecycle = deferredModule(() => import("./foreground-lifecycle.ts"));
+const loadForegroundProjection = deferredModule(() => import("./foreground-projection.ts"));
+const loadControlChannel = deferredModule(() => import("../background/control-channel.ts"));
 
 function childTask(data: PreparedLaunch, task: TaskParam, index: number): string {
 	const taskText = data.context === "fork" ? wrapForkTask(task.task) : task.task;
@@ -131,7 +134,7 @@ export async function launchBackground(
 	engines: ExecutorEngines,
 	hooks?: SubagentExecutionHooks,
 ): Promise<AgentToolResult<Details>> {
-	if (!isAsyncAvailable()) {
+	if (resolveBunRuntimeCommand() === undefined) {
 		return errorResult(
 			data.mode,
 			"Background Agents are unavailable because the bundled TypeScript runner was not found.",
@@ -164,9 +167,9 @@ export async function launchBackground(
 function buildForegroundConfig(
 	data: PreparedLaunch,
 	deps: ExecutorDeps,
+	common: ReturnType<typeof commonBuild>,
+	built: Awaited<ReturnType<typeof buildRunnerWork>>,
 ): PreparedForegroundConfig | AgentToolResult<Details> {
-	const common = commonBuild(data, deps);
-	const built = buildRunnerWork(data, deps, common);
 	if ("error" in built) return errorResult(data.mode, built.error);
 
 	const directoryClaim = claimForegroundRunDirectory(data.runId, data.inheritedNestedRoute);
@@ -221,19 +224,38 @@ export function launchForeground(
 	hooks?: SubagentExecutionHooks,
 	onLifecycleCommitted?: () => void,
 ): Effect.Effect<AgentToolResult<Details>, unknown, Scope.Scope> {
-	return Effect.suspend(() => {
+	return Effect.gen(function* () {
+		const { executeForegroundLifecycle } = yield* Effect.tryPromise({
+			try: async () => {
+				// Load the lifecycle's required dependencies in separate turns before acquiring the run directory.
+				await loadControlChannel();
+				await loadForegroundProjection();
+				return loadForegroundLifecycle();
+			},
+			catch: (error) => error,
+		});
 		if (signal.aborted) {
-			return Effect.succeed(
-				errorResult(data.mode, "Foreground Agent cancelled before launch.", {
-					runId: data.runId,
-					cwd: data.effectiveCwd,
-					stopped: true,
-				}),
-			);
+			return errorResult(data.mode, "Foreground Agent cancelled before launch.", {
+				runId: data.runId,
+				cwd: data.effectiveCwd,
+				stopped: true,
+			});
 		}
-		const preparedConfig = buildForegroundConfig(data, deps);
-		if ("content" in preparedConfig) return Effect.succeed(preparedConfig);
-		return executeForegroundLifecycle(
+		const common = commonBuild(data, deps);
+		const built = yield* Effect.tryPromise({
+			try: async () => buildRunnerWork(data, deps, common),
+			catch: (error) => error,
+		});
+		if (signal.aborted) {
+			return errorResult(data.mode, "Foreground Agent cancelled before launch.", {
+				runId: data.runId,
+				cwd: data.effectiveCwd,
+				stopped: true,
+			});
+		}
+		const preparedConfig = buildForegroundConfig(data, deps, common, built);
+		if ("content" in preparedConfig) return preparedConfig;
+		return yield* executeForegroundLifecycle(
 			data,
 			taskInputs(data.params),
 			preparedConfig,

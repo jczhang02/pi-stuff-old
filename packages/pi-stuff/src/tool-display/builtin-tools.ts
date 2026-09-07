@@ -10,10 +10,10 @@ import {
 	getAgentDir,
 	SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import { classifyBashActivity, singleActivity, skillReadName } from "./activity.js";
-import type { SuiteToolRegistrationHost } from "./contract.js";
-import { registerSuiteOwnedTool } from "./registration.js";
-import { describeBuiltinTarget, formatElapsed, summarizeBuiltin } from "./tool-text.js";
+import { classifyBashActivity, singleActivity, skillReadName } from "./activity.ts";
+import type { SuiteToolRegistrationHost } from "./contract.ts";
+import { registerSuiteOwnedTool } from "./registration.ts";
+import { describeBuiltinTarget, formatElapsed, summarizeBuiltin } from "./tool-text.ts";
 
 const PROGRAMMATIC_READ = { replay: "record" } as const;
 export const BASH_CODE_MODE_CONTRACT = { replay: "never" } as const;

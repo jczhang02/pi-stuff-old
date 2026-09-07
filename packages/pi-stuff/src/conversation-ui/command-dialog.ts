@@ -1,8 +1,8 @@
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import type { KeybindingsManager, TUI } from "@earendil-works/pi-tui";
-import { HOST_SHUTDOWN_GRACE_MS, settleWithin } from "../lifecycle-deadline.js";
-import { composeFooter, disposeComponent, EmptyComponent } from "./command-dialog-footer.js";
-import { CommandDialogHost } from "./command-dialog-host.js";
+import { HOST_SHUTDOWN_GRACE_MS, settleWithin } from "../lifecycle-deadline.ts";
+import { composeFooter, disposeComponent, EmptyComponent } from "./command-dialog-footer.ts";
+import { CommandDialogHost } from "./command-dialog-host.ts";
 import type {
 	CommandDialogChrome,
 	CommandDialogComponent,
@@ -13,7 +13,7 @@ import type {
 	CommandDialogView,
 	FooterFactory,
 	FooterTailFactory,
-} from "./command-dialog-types.js";
+} from "./command-dialog-types.ts";
 
 type DialogRequestState = "mounted" | "mounting" | "queued" | "settled";
 type HostRunState = "closed" | "closing" | "open" | "opening";

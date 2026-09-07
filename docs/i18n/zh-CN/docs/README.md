@@ -1,4 +1,4 @@
-<!-- translation-source: docs/README.md; translation-source-sha256: 783c274fc77af85c774b8c0ec18bca2e3bf569d93db36bc77428b077e35ebc4b -->
+<!-- translation-source: docs/README.md; translation-source-sha256: 1763935be1a3ceba07c127083bd775b3900d74c7cf57cb01f5b40c1f3075af52 -->
 
 # 文档
 
@@ -96,6 +96,7 @@ Web 与 MCP runtime 另有源码就近 README：
 | [0031](adr/0031-preserve-magic-context-behavior-through-suite-integration.md) | 在 Suite 集成中保留 Magic Context 行为 |
 | [0032](adr/0032-organize-quality-assurance-by-verification-purpose.md) | 按验证目的组织质量保证 |
 | [0033](adr/0033-continue-open-work-after-background-agent-results.md) | 后台 Agent 结果返回后继续尚未完成的工作（候选实现；验收待完成） |
+| [0034](adr/0034-remove-redundant-suite-work-without-feature-cuts.md) | 消除 Suite 重复工作，不删减功能 |
 
 ## 证据与历史
 

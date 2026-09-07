@@ -19,12 +19,12 @@ export {
 	SettingsFormatError,
 	SettingsNamespaceError,
 	type SettingsRecord,
-} from "./file.js";
+} from "./file.ts";
 // `acquireSettingsLockNative` (lock.js) is NOT re-exported here. It imports `bun:ffi`
 // and must not be pulled into Node-only module graphs (e.g. compiled Goal
 // upstream tests). Consumers that need the lock import it directly from
 // `./lock.js`.
-export { MERGED_SETTINGS_FILE, mergedSettingsPath, resolveSettingsLockPath } from "./paths.js";
+export { MERGED_SETTINGS_FILE, mergedSettingsPath, resolveSettingsLockPath } from "./paths.ts";
 export {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceLegacyReader,
@@ -32,4 +32,4 @@ export {
 	type EffectNamespaceStoreOptions,
 	type EffectNamespaceWriter,
 	type NamespaceRecord,
-} from "./store.js";
+} from "./store.ts";

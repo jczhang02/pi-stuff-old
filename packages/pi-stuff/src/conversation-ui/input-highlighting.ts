@@ -1,11 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import { sanitizeTerminalText as sanitizeUntrustedTerminalText, terminalControlEnd } from "../shared/terminal-text.js";
+import { sanitizeTerminalText as sanitizeUntrustedTerminalText, terminalControlEnd } from "../shared/terminal-text.ts";
 
 const MAX_DESCRIPTION_CODE_UNITS = 320;
-
-function escapeRegExp(value: string): string {
-	return value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
-}
 
 type TerminalToken = { readonly control: boolean; readonly value: string };
 
@@ -34,14 +30,11 @@ function terminalTokens(value: string): TerminalToken[] {
 }
 
 function invocationRanges(plain: string, names: ReadonlySet<string>): HighlightRange[] {
-	const alternatives = [...names].sort((left, right) => right.length - left.length).map(escapeRegExp);
-	if (alternatives.length === 0) return [];
-	const pattern = new RegExp(`(^|[^A-Za-z0-9_./:@-])/(${alternatives.join("|")})(?![A-Za-z0-9:._/-])`, "gu");
 	const ranges: HighlightRange[] = [];
-	for (const match of plain.matchAll(pattern)) {
+	for (const match of plain.matchAll(/(^|[^A-Za-z0-9_./:@-])\/([A-Za-z0-9][A-Za-z0-9:._-]*)(?![A-Za-z0-9:._/-])/gu)) {
 		const boundary = match[1] ?? "";
 		const name = match[2];
-		if (!name || match.index === undefined) continue;
+		if (!name || match.index === undefined || !names.has(name)) continue;
 		const start = match.index + boundary.length;
 		ranges.push({ start, end: start + name.length + 1 });
 	}

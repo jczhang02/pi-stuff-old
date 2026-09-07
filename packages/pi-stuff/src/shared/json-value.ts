@@ -96,4 +96,4 @@ import {
 	isRuntimeObject,
 	isRuntimeString,
 	isRuntimeUndefined,
-} from "./runtime-type.js";
+} from "./runtime-type.ts";

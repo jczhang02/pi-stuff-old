@@ -3,18 +3,18 @@ import { type ExtensionAPI, getAgentDir } from "@earendil-works/pi-coding-agent"
 import * as Effect from "effect/Effect";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
-import { getHostSharedResource } from "../shared/host-resource.js";
-import { parseJsonValue } from "../shared/json-value.js";
+import { getHostSharedResource } from "../shared/host-resource.ts";
+import { parseJsonValue } from "../shared/json-value.ts";
 import {
 	EffectNamespacedSettingsStore,
 	type EffectNamespaceStoreOptions,
 	type EffectNamespaceWriter,
 	mergedSettingsPath,
 	readTextFileEffect,
-} from "../shared/settings-io/index.js";
-import { acquireSettingsLockEffect } from "../shared/settings-io/lock.js";
-import { reportDiagnostic } from "./diagnostics.js";
-import type { StatuslineDensity } from "./statusline.js";
+} from "../shared/settings-io/index.ts";
+import { acquireSettingsLockEffect } from "../shared/settings-io/lock.ts";
+import { reportDiagnostic } from "./diagnostics.ts";
+import type { StatuslineDensity } from "./statusline.ts";
 
 const SETTINGS_FILE_NAME = "pi-stuff-ui.json";
 const UI_NAMESPACE = "ui";

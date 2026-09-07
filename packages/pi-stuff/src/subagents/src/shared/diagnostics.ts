@@ -1,5 +1,5 @@
-import { reportDiagnostic, sanitizeDiagnosticLine } from "../../../conversation-ui/diagnostics.js";
-import { isRuntimeString } from "../../../shared/runtime-type.js";
+import { reportDiagnostic, sanitizeDiagnosticLine } from "../../../conversation-ui/diagnostics.ts";
+import { isRuntimeString } from "../../../shared/runtime-type.ts";
 import { writeDetachedRunnerDiagnostic } from "./detached-runner-diagnostics.ts";
 
 const AGENT_PREFIX = /^\[(?:pi-stuff-agents(?::[^\]]+)?|pi-subagents)\]\s*/i;

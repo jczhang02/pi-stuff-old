@@ -1,6 +1,6 @@
-import { activityTarget, type ToolActivityCategory, type ToolActivityItem } from "./activity-model.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { oneLine } from "./tool-text.js";
+import { activityTarget, type ToolActivityCategory, type ToolActivityItem } from "./activity-model.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { oneLine } from "./tool-text.ts";
 
 export interface ActivitySummaryMember {
 	/** Stable semantic subject used by an issue-only group summary. */

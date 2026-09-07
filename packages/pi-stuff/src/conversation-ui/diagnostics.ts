@@ -1,7 +1,7 @@
 import { stripVTControlCharacters } from "node:util";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { getHostSharedResource } from "../shared/host-resource.js";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { getHostSharedResource } from "../shared/host-resource.ts";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 
 export type DiagnosticSeverity = "error" | "info" | "warning";
 export type DiagnosticVisibility = "notice" | "silent";

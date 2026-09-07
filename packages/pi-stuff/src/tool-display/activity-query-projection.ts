@@ -1,5 +1,5 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	type ActivitySummaryMember,
 	type PlannedRetrievalGroup,
@@ -11,15 +11,15 @@ import {
 	type ToolActivitySummary,
 	type ToolArguments,
 	toolActivityOutcome,
-} from "./activity.js";
-import type { ToolActivity, ToolActivityState, ToolActivityStore } from "./activity-store.js";
+} from "./activity.ts";
+import type { ToolActivity, ToolActivityState, ToolActivityStore } from "./activity-store.ts";
 import {
 	canonicalCountKey,
 	type GroupSummaryIndex,
 	isIssueState,
 	terminalStateFromResult,
 	visibleActivityItems,
-} from "./activity-summary.js";
+} from "./activity-summary.ts";
 import type {
 	OperationEvidenceLine,
 	PresentedToolMetadata,
@@ -28,14 +28,14 @@ import type {
 	ToolActivityView,
 	ToolDetailPresentation,
 	ToolFormattedSection,
-} from "./contract.js";
-import type { ToolEnvelopeProjection } from "./envelope-projection.js";
-import { formattedToolSections } from "./formatted-detail.js";
-import type { ToolGroupProjection } from "./group-projection.js";
-import { DETAIL_BYTE_LIMIT, DETAIL_LINE_LIMIT, TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.js";
-import { formattedResultLines } from "./registered-tool-renderer.js";
-import type { ToolRowModel } from "./render.js";
-import { sanitizeTerminalText } from "./terminal.js";
+} from "./contract.ts";
+import type { ToolEnvelopeProjection } from "./envelope-projection.ts";
+import { formattedToolSections } from "./formatted-detail.ts";
+import type { ToolGroupProjection } from "./group-projection.ts";
+import { DETAIL_BYTE_LIMIT, DETAIL_LINE_LIMIT, TOOL_DISPLAY_ITEM_LIMIT, TOOL_DISPLAY_MEDIA_LIMIT } from "./limits.ts";
+import { formattedResultLines } from "./registered-tool-renderer.ts";
+import type { ToolRowModel } from "./render.ts";
+import { sanitizeTerminalText } from "./terminal.ts";
 import {
 	boundedToolArguments,
 	boundedToolResult,
@@ -43,7 +43,7 @@ import {
 	capDetailLines,
 	oneLine,
 	summarizeBuiltin,
-} from "./tool-text.js";
+} from "./tool-text.ts";
 
 const GROUP_LIST_LIMIT = 768;
 

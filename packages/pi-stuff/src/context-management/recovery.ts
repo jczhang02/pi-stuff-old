@@ -1,6 +1,6 @@
 import * as Clock from "effect/Clock";
 import * as Effect from "effect/Effect";
-import type { ContextStatusChannel, ContextStatusSnapshot } from "../conversation-ui/statusline-channels.js";
+import type { ContextStatusChannel, ContextStatusSnapshot } from "../conversation-ui/statusline-channels.ts";
 
 /** A fault-recovery allowance, never a timer for healthy Agent work. */
 export class ContextRecovery {

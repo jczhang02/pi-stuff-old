@@ -3,17 +3,17 @@ import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import * as Option from "effect/Option";
-import { isRuntimeObject } from "../../shared/runtime-type.js";
-import { boundTerminalLine } from "../../tool-display/index.js";
-import type { BackgroundWorkEffectTask } from "./effect-owner.js";
-import { readMonitorHttp, readMonitorSize, readMonitorSlice } from "./monitor-native.js";
-import { sanitizeTerminalText, utf8SafeTail } from "./output.js";
+import { isRuntimeObject } from "../../shared/runtime-type.ts";
+import { boundTerminalLine } from "../../tool-display/index.ts";
+import type { BackgroundWorkEffectTask } from "./effect-owner.ts";
+import { readMonitorHttp, readMonitorSize, readMonitorSlice } from "./monitor-native.ts";
+import { sanitizeTerminalText, utf8SafeTail } from "./output.ts";
 import type {
 	BackgroundMonitorActivity,
 	BackgroundWorkOutcome,
 	BackgroundWorkRuntime,
 	BackgroundWorkSnapshot,
-} from "./runtime.js";
+} from "./runtime.ts";
 
 const DEFAULT_INTERVAL_SECONDS = 2;
 const DEFAULT_TIMEOUT_SECONDS = 600;

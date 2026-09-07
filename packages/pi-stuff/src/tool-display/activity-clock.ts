@@ -1,4 +1,4 @@
-import type { PlannedRetrievalGroup } from "./activity.js";
+import type { PlannedRetrievalGroup } from "./activity.ts";
 
 const TIMER_STATE_LIMIT = 768;
 export const TOOL_ACTIVITY_TICK_MS = 600;

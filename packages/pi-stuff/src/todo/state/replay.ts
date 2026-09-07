@@ -1,6 +1,6 @@
 import { type SessionEntry, sessionEntryToContextMessages } from "@earendil-works/pi-coding-agent";
-import { isJsonInputValue, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
+import { isJsonInputValue, type JsonInputObject, type JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
 import {
 	TASK_SNAPSHOT_CAPABILITY,
 	TASK_SNAPSHOT_SCHEMA_VERSION,
@@ -8,9 +8,9 @@ import {
 	type Task,
 	type TaskDetails,
 	type TaskStatus,
-} from "../tool/types.js";
-import { EMPTY_STATE, type TaskState } from "./state.js";
-import { hasCycle } from "./task-graph.js";
+} from "../tool/types.ts";
+import { EMPTY_STATE, type TaskState } from "./state.ts";
+import { hasCycle } from "./task-graph.ts";
 
 const VERSIONED_TOOL_NAMES = new Set<string>(Object.values(TASK_TOOL_NAMES));
 const LEGACY_TOOL_NAME = "todo";

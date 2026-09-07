@@ -4,7 +4,7 @@ import type { ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { type JsonInputObject, requireJsonInputValue } from "../../shared/json-value.js";
+import { type JsonInputObject, requireJsonInputValue } from "../../shared/json-value.ts";
 import {
 	clearFailure,
 	getFailureAgeSeconds,

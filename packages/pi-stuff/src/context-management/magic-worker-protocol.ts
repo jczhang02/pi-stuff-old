@@ -8,14 +8,14 @@ import type {
 	ToolDefinition,
 	ToolInfo,
 } from "@earendil-works/pi-coding-agent";
-import type { JsonInputValue, JsonObject } from "../shared/json-value.js";
+import type { JsonInputValue, JsonObject } from "../shared/json-value.ts";
 import type {
 	MagicContextCommandName,
 	MagicContextEventMap,
 	MagicContextEventName,
 	MagicContextModel,
 	MagicContextToolName,
-} from "./magic-context-types.js";
+} from "./magic-context-types.ts";
 
 export const MAGIC_WORKER_PROTOCOL_VERSION = 4;
 export const MAGIC_WORKER_SYNC_BUFFER_BYTES = 64 * 1024;

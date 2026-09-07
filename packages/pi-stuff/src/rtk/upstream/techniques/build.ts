@@ -1,4 +1,4 @@
-import { matchesCommandPatterns } from "./command-detection.js";
+import { matchesCommandPatterns } from "./command-detection.ts";
 
 interface BuildStats {
 	compiled: number;

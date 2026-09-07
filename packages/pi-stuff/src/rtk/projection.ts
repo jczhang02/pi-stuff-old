@@ -9,7 +9,7 @@ import {
 	groupSearchResults,
 	stripAnsiFast,
 	truncate,
-} from "./upstream/techniques/index.js";
+} from "./upstream/techniques/index.ts";
 
 const DEFAULT_MAX_CHARS = 12_000;
 const MAX_CACHE_BYTES = 64 * 1024 * 1024;

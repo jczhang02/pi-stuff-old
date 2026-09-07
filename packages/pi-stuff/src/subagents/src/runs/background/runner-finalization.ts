@@ -2,7 +2,7 @@
 
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { runtimeErrorCode } from "../../../../shared/runtime-type.js";
+import { runtimeErrorCode } from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import type { NestedRunSummary } from "../../shared/types.ts";
@@ -14,7 +14,7 @@ import {
 	writeNestedEvent,
 } from "../shared/nested-events.ts";
 import type { BackgroundRunnerConfig, BackgroundTaskResult } from "../shared/parallel-utils.ts";
-import { cleanupWorktrees, diffWorktrees, formatWorktreeDiffSummary, type WorktreeSetup } from "../shared/worktree.ts";
+import type { WorktreeSetup } from "../shared/worktree.ts";
 import type { WriterProcess } from "./child-process-engine.ts";
 import { closeSteerInbox, processSteerAcks, processSteerRequestsFromDir, steerRequestsDir } from "./control-channel.ts";
 import type { BackgroundRunnerStatus as RunnerStatus } from "./initial-status.ts";
@@ -36,6 +36,14 @@ export interface RunFinalizationHooks {
 	beforeResultPersistence?: (() => void) | undefined;
 }
 
+export interface PreparedWorktrees {
+	setup: WorktreeSetup;
+	operations: Pick<
+		typeof import("../shared/worktree.ts"),
+		"cleanupWorktrees" | "diffWorktrees" | "formatWorktreeDiffSummary" | "resolveWorktreeTaskCwd"
+	>;
+}
+
 interface FinalizationInput {
 	config: BackgroundRunnerConfig;
 	status: RunnerStatus;
@@ -43,19 +51,23 @@ interface FinalizationInput {
 	eventsPath: string;
 	startedAt: number;
 	results: BackgroundTaskResult[];
-	worktreeSetup: WorktreeSetup | undefined;
+	worktreeSetup: PreparedWorktrees | undefined;
 	control: BackgroundRunControl;
 	hooks: RunFinalizationHooks;
 }
 
 function collectWorktreeEvidence(input: FinalizationInput): BackgroundCompletion["worktree"] {
 	if (!input.worktreeSetup) return undefined;
+	const {
+		setup,
+		operations: { cleanupWorktrees, diffWorktrees, formatWorktreeDiffSummary },
+	} = input.worktreeSetup;
 	const errors: string[] = [];
 	let diffs: ReturnType<typeof diffWorktrees> = [];
 	try {
 		input.hooks.beforeWorktreeEvidence?.();
 		diffs = diffWorktrees(
-			input.worktreeSetup,
+			setup,
 			input.config.work.mode === "parallel" ? input.config.work.group.tasks.map((task) => task.agent) : [],
 			path.join(input.config.asyncDir, "worktree-diffs"),
 		);
@@ -64,7 +76,7 @@ function collectWorktreeEvidence(input: FinalizationInput): BackgroundCompletion
 	}
 	let cleanup: ReturnType<typeof cleanupWorktrees> = { state: "partial", tasks: [], pruned: false };
 	try {
-		cleanup = cleanupWorktrees(input.worktreeSetup);
+		cleanup = cleanupWorktrees(setup);
 	} catch (error) {
 		errors.push(`Worktree cleanup failed: ${error instanceof Error ? error.message : String(error)}`);
 	}

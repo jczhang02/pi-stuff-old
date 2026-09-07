@@ -1,8 +1,8 @@
 import type { AgentToolResult, ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
 import * as Effect from "effect/Effect";
 import { type Static, type TSchema, Type } from "typebox";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolActivityMetadata, ToolArguments } from "./activity.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolActivityMetadata, ToolArguments } from "./activity.ts";
 import {
 	getToolUiRuntime,
 	type SuiteToolCodeModeContract,
@@ -15,9 +15,9 @@ import {
 	type ToolRenderContext,
 	type ToolResultRenderOptions,
 	type ToolUiRuntimeHost,
-} from "./contract.js";
-import { prepareEnvelopeRenderArguments, renderEnvelopeOperations } from "./envelope-renderer.js";
-import { attachRenderer, terminalSummary } from "./registered-tool-renderer.js";
+} from "./contract.ts";
+import { prepareEnvelopeRenderArguments, renderEnvelopeOperations } from "./envelope-renderer.ts";
+import { attachRenderer, terminalSummary } from "./registered-tool-renderer.ts";
 import {
 	createSuiteToolRegistrationTrackerWithRuntime,
 	SUITE_TOOL_CODE_MODE,
@@ -26,10 +26,10 @@ import {
 	SUITE_TOOL_REPLAY,
 	type SuiteToolEnvelopeCompanionMarker,
 	type SuiteToolEnvelopeMarker,
-} from "./registration-tracker.js";
-import { EmptyToolComponent } from "./render.js";
-import { sanitizeTerminalText } from "./terminal.js";
-import { buildToolResultLines } from "./tool-text.js";
+} from "./registration-tracker.ts";
+import { EmptyToolComponent } from "./render.ts";
+import { sanitizeTerminalText } from "./terminal.ts";
+import { buildToolResultLines } from "./tool-text.ts";
 
 /** Predeclare Activity metadata for a conditionally registered owned Tool. */
 export function registerSuiteToolActivityMetadata<TArgs extends ToolArguments, TDetails>(

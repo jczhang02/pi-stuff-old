@@ -3,32 +3,32 @@ import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import * as Option from "effect/Option";
-import { type JsonValue, parseJsonValue } from "../../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.js";
-import { CommandMonitorEvidence } from "./command-monitor-evidence.js";
-import { reportWorkDiagnostic } from "./diagnostics.js";
-import type { BackgroundWorkEffectOwner } from "./effect-owner.js";
-import { DEFAULT_MODEL_OUTPUT_LIMIT, tryReadBoundedTail } from "./output.js";
+import { type JsonValue, parseJsonValue } from "../../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../../shared/runtime-type.ts";
+import { CommandMonitorEvidence } from "./command-monitor-evidence.ts";
+import { reportWorkDiagnostic } from "./diagnostics.ts";
+import type { BackgroundWorkEffectOwner } from "./effect-owner.ts";
+import { DEFAULT_MODEL_OUTPUT_LIMIT, tryReadBoundedTail } from "./output.ts";
 import {
 	consumeCommandAcknowledgement,
 	identityMatches,
 	type ProcessIdentity,
 	publishCommandAuthorization,
 	reapOwnedProcessGroup,
-} from "./process.js";
+} from "./process.ts";
 import type {
 	BackgroundWorkBashDetails,
 	BackgroundWorkKind,
 	BackgroundWorkOutcome,
 	BackgroundWorkSnapshot,
 	BashExecutionInput,
-} from "./runtime.js";
+} from "./runtime.ts";
 import {
 	prepareShellLaunch,
 	type ShellActivityDependencies,
 	type ShellLaunchInput,
 	type ShellLaunchState,
-} from "./shell-activity-launch.js";
+} from "./shell-activity-launch.ts";
 import {
 	durableShellOutputPath,
 	executeShellTool,
@@ -37,8 +37,8 @@ import {
 	shellActivityTitle,
 	shellOutcomeSummary,
 	shellTerminalStatus,
-} from "./shell-activity-presentation.js";
-import type { StoredProcessTask } from "./storage.js";
+} from "./shell-activity-presentation.ts";
+import type { StoredProcessTask } from "./storage.ts";
 
 export type { ShellActivityDependencies, ShellLaunchInput };
 

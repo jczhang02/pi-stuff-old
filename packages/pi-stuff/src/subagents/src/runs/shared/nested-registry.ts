@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeObject } from "../../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeObject } from "../../../../shared/runtime-type.ts";
 import { assertPrivateDirectory, readBoundedOwnedFile } from "../../shared/private-directory.ts";
 import { type NestedRunSummary, TEMP_ROOT_DIR } from "../../shared/types.ts";
 import type * as nestedEventModel from "./nested-events-model.ts";

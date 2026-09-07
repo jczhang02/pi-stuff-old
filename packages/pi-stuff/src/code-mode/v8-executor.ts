@@ -3,13 +3,13 @@ import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import type * as Scope from "effect/Scope";
 import * as Semaphore from "effect/Semaphore";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import type { EffectFoundation, EffectScopeOwner } from "../shared/effect-foundation.js";
-import { ensureCodeModeHostBinary } from "./host/binary.js";
-import { CodeModeEffectOwner } from "./host/effect-owner.js";
-import { CodeModeHostClient, codeModeAbortError } from "./host/host-client.js";
-import type { CodeModeExecuteOptions, CodeModeWaitOptions, RuntimeResponse } from "./protocol.js";
-import type { CodeModeExecutor } from "./runtime.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import type { EffectFoundation, EffectScopeOwner } from "../shared/effect-foundation.ts";
+import { ensureCodeModeHostBinary } from "./host/binary.ts";
+import { CodeModeEffectOwner } from "./host/effect-owner.ts";
+import { CodeModeHostClient, codeModeAbortError } from "./host/host-client.ts";
+import type { CodeModeExecuteOptions, CodeModeWaitOptions, RuntimeResponse } from "./protocol.ts";
+import type { CodeModeExecutor } from "./runtime.ts";
 
 export class V8CodeModeExecutor implements CodeModeExecutor {
 	private capability: EffectScopeOwner | undefined;

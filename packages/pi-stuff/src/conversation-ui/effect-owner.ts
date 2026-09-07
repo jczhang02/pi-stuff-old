@@ -2,9 +2,9 @@ import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import type { EffectFoundation, EffectScopeOwner } from "../shared/effect-foundation.js";
-import type { StatuslineClock } from "./statusline.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import type { EffectFoundation, EffectScopeOwner } from "../shared/effect-foundation.ts";
+import type { StatuslineClock } from "./statusline.ts";
 
 /** Owns Conversation UI Effect work beneath the current Host Session. */
 export class UiEffectOwner {

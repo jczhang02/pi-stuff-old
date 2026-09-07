@@ -1,8 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { getCommandDialogCoordinator, requestUiRender } from "../conversation-ui/index.js";
-import { isJsonInputObject, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import { boundTerminalLine } from "../tool-display/terminal.js";
+import { getCommandDialogCoordinator, requestUiRender } from "../conversation-ui/index.ts";
+import { isJsonInputObject, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import { boundTerminalLine } from "../tool-display/terminal.ts";
 import {
 	CONTEXT_ACTIVITY_ENTRY_TYPE,
 	type ContextActivityData,
@@ -13,14 +13,14 @@ import {
 	isContextActivityRunning,
 	isContextActivitySettled,
 	isContextOperation,
-} from "./activity.js";
+} from "./activity.ts";
 import {
 	type ContextDialogCommand,
 	type ContextDialogSnapshot,
 	createContextDialogView,
 	type MagicStatusMessage,
 	statusSnapshotFromMagic,
-} from "./dialog.js";
+} from "./dialog.ts";
 
 const CONTEXT_COMMAND_USAGE = "/ctx [status|flush|wrapup [N]|recomp [start-end]|upgrade]";
 

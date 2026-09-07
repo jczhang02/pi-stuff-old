@@ -18,8 +18,8 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	parseJsonValue,
-} from "../../shared/json-value.js";
-import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeBoolean, isRuntimeNumber, isRuntimeString } from "../../shared/runtime-type.ts";
 import { getAgentPath } from "./agent-dir.ts";
 import { resolveConfiguredOAuthDir } from "./config.ts";
 import {

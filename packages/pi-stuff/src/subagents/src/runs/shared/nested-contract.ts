@@ -1,6 +1,6 @@
 /** Nested Agent graph and route contracts. */
 
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
 import type {
 	ActivityState,
 	CostSummary,

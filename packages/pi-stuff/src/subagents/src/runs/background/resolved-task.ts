@@ -2,10 +2,10 @@
 
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
-import type { PonytailMode } from "../../../../ponytail/types.js";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
+import type { PonytailMode } from "../../../../ponytail/types.ts";
 import type { AgentConfig } from "../../agents/agents.ts";
-import { buildSkillInjection, normalizeSkillInput, resolveSkillsWithFallback } from "../../agents/skills.ts";
+import { normalizeSkillInput } from "../../agents/skill-input.ts";
 import { resolveDisplayDescription } from "../../shared/display-description.ts";
 import { agentDefinitionDigest, type LaunchBindingInput, launchBindingDigest } from "../../shared/launch-contract.ts";
 import { findModelInfo, resolveEffectiveThinking } from "../../shared/model-info.ts";
@@ -155,14 +155,10 @@ export interface ResolvedTaskBuildInput {
 	thinkingOverride?: AgentConfig["thinking"] | undefined;
 }
 
-interface ResolvedTaskProjection {
+export interface ResolvedTaskProjection {
 	capabilityCeiling?: ResolvedSubagentCapabilityCeiling;
-	definitionDigest: string;
-	launchContractDigest: string;
 	maxSubagentDepth: number;
 	modelCandidates: string[];
-	modelContextWindows: Array<{ model: string; contextWindow: number }>;
-	modelVerificationRegistry: Array<{ provider: string; id: string; fullId: string }>;
 	modelOrigin: ModelOrigin;
 	primaryModel?: string;
 	skillNames: string[];
@@ -170,6 +166,7 @@ interface ResolvedTaskProjection {
 	taskCwd: string;
 	thinking?: string;
 	toolBudget?: ResolvedToolBudget;
+	toolPlan: ReturnType<typeof resolvePiLaunchToolPlan>;
 	toolTimeoutMs?: number;
 }
 
@@ -192,6 +189,8 @@ function resolveTaskToolBudget(
 
 function projectBuiltTask(input: ResolvedTaskBuildInput, resolved: ResolvedTaskProjection): BuiltTask {
 	const { agent, params, taskInput } = input;
+	const definitionDigest = agentDefinitionDigest(agent);
+	const launchContractDigest = resolvedLaunchContractDigest(input, resolved, definitionDigest);
 	const task: RunnerAgentTask = {
 		governorSessionId: params.ctx.governorSessionId ?? params.ctx.currentSessionId,
 		physicalSessionId: params.ctx.physicalSessionId ?? params.ctx.currentSessionId,
@@ -211,19 +210,13 @@ function projectBuiltTask(input: ResolvedTaskBuildInput, resolved: ResolvedTaskP
 		inheritSkills: agent.inheritSkills,
 		skills: [...resolved.skillNames],
 		maxSubagentDepth: resolved.maxSubagentDepth,
-		definitionDigest: resolved.definitionDigest,
+		definitionDigest,
 		launchBindingTask: taskInput.task,
-		launchContractDigest: resolved.launchContractDigest,
+		launchContractDigest,
 	};
 	if (input.context) task.context = input.context;
 	if (resolved.primaryModel) task.model = resolved.primaryModel;
 	if (resolved.thinking) task.thinking = resolved.thinking;
-	if (resolved.modelContextWindows.length > 0) {
-		task.modelContextWindows = resolved.modelContextWindows.map((entry) => ({ ...entry }));
-	}
-	if (resolved.modelVerificationRegistry.length > 0) {
-		task.modelVerificationRegistry = resolved.modelVerificationRegistry.map((entry) => ({ ...entry }));
-	}
 	if (agent.tools) task.tools = [...agent.tools];
 	if (agent.excludeTools) task.excludeTools = [...agent.excludeTools];
 	if (agent.extensions) task.extensions = [...agent.extensions];
@@ -238,7 +231,7 @@ function projectBuiltTask(input: ResolvedTaskBuildInput, resolved: ResolvedTaskP
 		version: 2,
 		sourceRunId: params.logicalSourceRunId ?? input.runId,
 		childIndex: params.logicalChildIndex ?? input.index,
-		launchContractDigest: resolved.launchContractDigest,
+		launchContractDigest,
 		agent: agent.name,
 		cwd: resolved.taskCwd,
 		systemPromptMode: agent.systemPromptMode,
@@ -270,6 +263,35 @@ function projectBuiltTask(input: ResolvedTaskBuildInput, resolved: ResolvedTaskP
 	if (params.artifactsDir) recovery.artifactsDir = params.artifactsDir;
 	if (params.artifactConfig) recovery.artifactConfig = params.artifactConfig;
 	return { task, recovery };
+}
+
+function resolvedLaunchContractDigest(
+	input: ResolvedTaskBuildInput,
+	resolved: ResolvedTaskProjection,
+	definitionDigest: string,
+): string {
+	const { agent, taskInput } = input;
+	const { toolPlan } = resolved;
+	const launchBinding: LaunchBindingInput = {
+		definitionDigest,
+		task: taskInput.task,
+		modelCandidates: resolved.modelCandidates,
+		systemPrompt: resolved.systemPrompt,
+		systemPromptMode: agent.systemPromptMode,
+		inheritProjectContext: agent.inheritProjectContext,
+		inheritSkills: agent.inheritSkills,
+		skills: resolved.skillNames,
+		maxSubagentDepth: resolved.maxSubagentDepth,
+	};
+	if (resolved.thinking) launchBinding.thinking = resolved.thinking;
+	if (toolPlan.effectiveToolAllowlist) launchBinding.tools = toolPlan.effectiveToolAllowlist;
+	if (toolPlan.excludeTools.length > 0) launchBinding.excludeTools = toolPlan.excludeTools;
+	if (toolPlan.extensionArgs) launchBinding.extensions = toolPlan.extensionArgs;
+	if (toolPlan.effectiveMcpTools) launchBinding.mcpDirectTools = toolPlan.effectiveMcpTools;
+	if (resolved.toolBudget) launchBinding.toolBudget = resolved.toolBudget;
+	if (resolved.toolTimeoutMs !== undefined) launchBinding.toolTimeoutMs = resolved.toolTimeoutMs;
+	if (resolved.capabilityCeiling) launchBinding.capabilityCeiling = resolved.capabilityCeiling;
+	return launchBindingDigest(launchBinding);
 }
 
 function mcpContractError(
@@ -337,25 +359,32 @@ function resolveTaskModels(input: ResolvedTaskBuildInput) {
 	};
 }
 
-export function buildResolvedTask(input: ResolvedTaskBuildInput): BuiltTask | { error: string } {
+/** Validate planning inputs without materializing execution or recovery records. */
+export async function resolveTaskProjection(
+	input: ResolvedTaskBuildInput,
+): Promise<ResolvedTaskProjection | { error: string }> {
 	const { taskInput, agent, params } = input;
 	const taskCwd = resolveChildCwd(input.runnerCwd, taskInput.cwd);
 	const normalizedTaskSkills = normalizeSkillInput(taskInput.skill);
 	const requestedSkills =
 		input.skills ?? (normalizedTaskSkills === false ? [] : normalizedTaskSkills) ?? agent.skills ?? [];
-	const { resolved: resolvedSkills, missing } = resolveSkillsWithFallback(
-		requestedSkills,
-		taskCwd,
-		params.ctx.cwd,
-		agent.skillPath,
-		agent.filePath ? path.dirname(agent.filePath) : taskCwd,
-	);
-	if (missing.length > 0) return { error: `Skills not found: ${missing.join(", ")}` };
-
 	let systemPrompt = agent.systemPrompt?.trim() ?? "";
-	if (resolvedSkills.length > 0) {
-		const injection = buildSkillInjection(resolvedSkills);
-		systemPrompt = systemPrompt ? `${systemPrompt}\n\n${injection}` : injection;
+	let skillNames: string[] = [];
+	if (requestedSkills.length > 0) {
+		const { buildSkillInjection, resolveSkillsWithFallback } = await import("../../agents/skills.ts");
+		const { resolved: resolvedSkills, missing } = resolveSkillsWithFallback(
+			requestedSkills,
+			taskCwd,
+			params.ctx.cwd,
+			agent.skillPath,
+			agent.filePath ? path.dirname(agent.filePath) : taskCwd,
+		);
+		if (missing.length > 0) return { error: `Skills not found: ${missing.join(", ")}` };
+		skillNames = resolvedSkills.map((skill) => skill.name);
+		if (resolvedSkills.length > 0) {
+			const injection = buildSkillInjection(resolvedSkills);
+			systemPrompt = systemPrompt ? `${systemPrompt}\n\n${injection}` : injection;
+		}
 	}
 
 	const { modelCandidates, modelOrigin, primaryModel, thinking } = resolveTaskModels(input);
@@ -370,7 +399,6 @@ export function buildResolvedTask(input: ResolvedTaskBuildInput): BuiltTask | { 
 
 	const maxSubagentDepth = resolveChildMaxSubagentDepth(params.maxSubagentDepth, agent.maxSubagentDepth);
 	const capabilityCeiling = params.capabilityCeiling;
-	const definitionDigest = agentDefinitionDigest(agent);
 	const toolPlan = resolvePiLaunchToolPlan({
 		tools: agent.tools,
 		excludeTools: agent.excludeTools,
@@ -379,61 +407,45 @@ export function buildResolvedTask(input: ResolvedTaskBuildInput): BuiltTask | { 
 		mcpDirectTools: agent.mcpDirectTools,
 		cwd: taskCwd,
 		childBaseExtensionPath: params.childBaseExtensionPath,
-		requireReadTool: agent.inheritSkills || resolvedSkills.length > 0,
+		requireReadTool: agent.inheritSkills || skillNames.length > 0,
 		capabilityCeiling,
 		inheritedCapabilityCeiling: decodeSubagentCapabilityCeiling(process.env[SUBAGENT_CAPABILITY_CEILING_ENV]),
 	});
 	const directMcpError = mcpContractError(agent, params.ctx.cwd, toolPlan);
 	if (directMcpError) return { error: directMcpError };
-	const skillNames = resolvedSkills.map((skill) => skill.name);
-	const launchBinding: LaunchBindingInput = {
-		definitionDigest,
-		task: taskInput.task,
-		modelCandidates: [...modelCandidates],
-		systemPrompt,
-		systemPromptMode: agent.systemPromptMode,
-		inheritProjectContext: agent.inheritProjectContext,
-		inheritSkills: agent.inheritSkills,
-		skills: [...skillNames],
-		maxSubagentDepth,
-	};
-	if (thinking) launchBinding.thinking = thinking;
-	if (toolPlan.effectiveToolAllowlist) launchBinding.tools = [...toolPlan.effectiveToolAllowlist];
-	if (toolPlan.excludeTools.length > 0) launchBinding.excludeTools = [...toolPlan.excludeTools];
-	if (toolPlan.extensionArgs) launchBinding.extensions = [...toolPlan.extensionArgs];
-	if (toolPlan.effectiveMcpTools) launchBinding.mcpDirectTools = [...toolPlan.effectiveMcpTools];
-	if (toolBudget.toolBudget) launchBinding.toolBudget = toolBudget.toolBudget;
-	if (toolTimeout.toolTimeoutMs !== undefined) launchBinding.toolTimeoutMs = toolTimeout.toolTimeoutMs;
-	if (capabilityCeiling) launchBinding.capabilityCeiling = capabilityCeiling;
-	const modelContextWindows = modelCandidates.flatMap((model) => {
-		const contextWindow = findModelInfo(
-			model,
-			params.availableModels,
-			params.ctx.currentModelProvider,
-		)?.contextWindow;
-		if (contextWindow === undefined || !Number.isSafeInteger(contextWindow) || contextWindow <= 0) return [];
-		return [{ model, contextWindow }];
-	});
-	const modelVerificationRegistry = modelCandidates.flatMap((model) => {
-		const info = findModelInfo(model, params.availableModels, params.ctx.currentModelProvider);
-		return info ? [{ provider: info.provider, id: info.id, fullId: info.fullId }] : [];
-	});
 	const projection: ResolvedTaskProjection = {
-		definitionDigest,
-		launchContractDigest: launchBindingDigest(launchBinding),
 		maxSubagentDepth,
 		modelCandidates,
-		modelContextWindows,
-		modelVerificationRegistry,
 		modelOrigin,
 		skillNames,
 		systemPrompt,
 		taskCwd,
+		toolPlan,
 	};
 	if (primaryModel) projection.primaryModel = primaryModel;
 	if (thinking) projection.thinking = thinking;
 	if (toolBudget.toolBudget) projection.toolBudget = toolBudget.toolBudget;
 	if (toolTimeout.toolTimeoutMs !== undefined) projection.toolTimeoutMs = toolTimeout.toolTimeoutMs;
 	if (capabilityCeiling) projection.capabilityCeiling = capabilityCeiling;
-	return projectBuiltTask(input, projection);
+	return projection;
+}
+
+export async function buildResolvedTask(input: ResolvedTaskBuildInput): Promise<BuiltTask | { error: string }> {
+	const resolved = await resolveTaskProjection(input);
+	if ("error" in resolved) return resolved;
+	const built = projectBuiltTask(input, resolved);
+	const modelContextWindows: NonNullable<RunnerAgentTask["modelContextWindows"]> = [];
+	const modelVerificationRegistry: NonNullable<RunnerAgentTask["modelVerificationRegistry"]> = [];
+	for (const model of resolved.modelCandidates) {
+		const info = findModelInfo(model, input.params.availableModels, input.params.ctx.currentModelProvider);
+		if (!info) continue;
+		const { contextWindow } = info;
+		if (contextWindow !== undefined && Number.isSafeInteger(contextWindow) && contextWindow > 0) {
+			modelContextWindows.push({ model, contextWindow });
+		}
+		modelVerificationRegistry.push({ provider: info.provider, id: info.id, fullId: info.fullId });
+	}
+	if (modelContextWindows.length > 0) built.task.modelContextWindows = modelContextWindows;
+	if (modelVerificationRegistry.length > 0) built.task.modelVerificationRegistry = modelVerificationRegistry;
+	return built;
 }

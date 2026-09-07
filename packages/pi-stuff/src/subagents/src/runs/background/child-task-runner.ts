@@ -17,6 +17,7 @@ import {
 	type ToolBudgetState,
 } from "../../shared/types.ts";
 import { detectSubagentError, findLatestSessionFile } from "../../shared/utils.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import {
 	formatModelAttemptNote,
 	formatSubagentModelVerificationError,
@@ -26,14 +27,12 @@ import type { BackgroundRunnerConfig, BackgroundTaskResult, RunnerAgentTask } fr
 import { PI_STUFF_AGENT_PATH_ENV } from "../shared/pi-args.ts";
 import { terminalOutcome } from "../shared/terminal-outcome.ts";
 import { toolBudgetState } from "../shared/tool-budget.ts";
-import {
-	ChildProcessEngine,
-	type ChildProcessEngineInput,
-	type ChildProcessResult,
-	type ChildRuntimeControl,
-	type WriterProcess,
+import type {
+	ChildProcessEngineInput,
+	ChildProcessResult,
+	ChildRuntimeControl,
+	WriterProcess,
 } from "./child-process-engine.ts";
-import { createSessionFallbackSnapshot } from "./fallback-session.ts";
 import type {
 	BackgroundRunnerStatus as RunnerStatus,
 	BackgroundRunnerStatusStep as RunnerStatusStep,
@@ -52,6 +51,8 @@ import {
 } from "./runner-output.ts";
 import { applyTerminalResultToStep, stoppedResult, taskList, writeStatus } from "./runner-state.ts";
 import type { WriterRuntimeState } from "./writer-process-registry.ts";
+
+const loadProcessEngine = deferredModule(() => import("./child-process-engine.ts"));
 
 function createTranscript(config: BackgroundRunnerConfig, task: RunnerAgentTask, index: number, count: number) {
 	let artifactPaths: ArtifactPaths | undefined;
@@ -333,7 +334,13 @@ async function runAttempts(
 ): Promise<AttemptSummary> {
 	const candidates = input.task.modelCandidates?.length ? input.task.modelCandidates : [input.task.model];
 	const summary: AttemptSummary = { attempts: [], attemptedModels: [], writerProcesses: [], final: undefined };
-	const fallbackSnapshot = createSessionFallbackSnapshot(input.task.sessionFile, candidates.length);
+	const fallbackSnapshot =
+		input.task.sessionFile && candidates.length >= 2
+			? (await import("./fallback-session.ts")).createSessionFallbackSnapshot(
+					input.task.sessionFile,
+					candidates.length,
+				)
+			: undefined;
 	const usageGovernor = workUsageGovernor(input.task);
 	try {
 		for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
@@ -346,6 +353,7 @@ async function runAttempts(
 			clearStaleContextUsage(input, statusStep);
 			let run: ChildProcessResult;
 			try {
+				const { ChildProcessEngine } = await loadProcessEngine();
 				const engineInput: ChildProcessEngineInput = {
 					config: input.config,
 					task: input.task,
@@ -572,6 +580,8 @@ function persistTaskCompletion(
 export async function runResolvedTask(input: ResolvedTaskInput): Promise<BackgroundTaskResult> {
 	const statusStep = input.status.steps[input.index];
 	if (!statusStep) throw new Error(`Missing status step for Agent index ${input.index}.`);
+	const terminalCause = input.preStartTerminalCause?.();
+	if (terminalCause) return stoppedResult(input.task, terminalCause, input.config.id, input.index);
 	if (input.consumeScheduledStop(input.index)) {
 		return stoppedResult(input.task, "stop", input.config.id, input.index);
 	}

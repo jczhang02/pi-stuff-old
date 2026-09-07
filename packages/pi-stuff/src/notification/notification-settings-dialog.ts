@@ -6,9 +6,9 @@ import {
 	type CommandDialogViewContext,
 	commandDialogRows,
 	fitCommandDialogRows,
-} from "../conversation-ui/index.js";
-import { boundTerminalLine } from "../tool-display/index.js";
-import type { NotificationSettings, NotificationSettingsChanges, NotificationSettingsStore } from "./settings.js";
+} from "../conversation-ui/index.ts";
+import { boundTerminalLine } from "../tool-display/index.ts";
+import type { NotificationSettings, NotificationSettingsChanges, NotificationSettingsStore } from "./settings.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 24;

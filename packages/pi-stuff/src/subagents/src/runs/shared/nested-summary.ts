@@ -1,10 +1,10 @@
-import type { JsonValue } from "../../../../shared/json-value.js";
+import type { JsonValue } from "../../../../shared/json-value.ts";
 import {
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import type { NestedRunState, NestedRunSummary, NestedStepSummary, TurnBudgetState } from "../../shared/types.ts";
 import { sanitizeProcessTerminal } from "../background/process-terminal.ts";
 import {

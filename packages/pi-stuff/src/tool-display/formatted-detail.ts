@@ -1,10 +1,10 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import type { ToolFormattedSection } from "./contract.js";
-import { operationDetailSections } from "./operation-block-formatted-detail.js";
-import { buildToolResultLines, oneLine } from "./tool-text.js";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import type { ToolFormattedSection } from "./contract.ts";
+import { operationDetailSections } from "./operation-block-formatted-detail.ts";
+import { buildToolResultLines, oneLine } from "./tool-text.ts";
 
 function argument(args: ToolArguments, ...keys: string[]): string {
 	for (const key of keys) {

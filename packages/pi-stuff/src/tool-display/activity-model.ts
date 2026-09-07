@@ -1,10 +1,10 @@
 import { basename, dirname, resolve } from "node:path";
 import type { ToolCall } from "@earendil-works/pi-ai";
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolActivityState } from "./activity-store.js";
-import { boundTerminalLine, compactTerminalPath } from "./terminal.js";
-import { oneLine } from "./tool-text.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import { boundTerminalLine, compactTerminalPath } from "./terminal.ts";
+import { oneLine } from "./tool-text.ts";
 
 const ACTIVITY_TARGET_MAX_WIDTH = 160;
 

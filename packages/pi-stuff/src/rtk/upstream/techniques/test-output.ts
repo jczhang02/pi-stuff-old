@@ -1,5 +1,5 @@
-import { boundTerminalLine } from "../../../tool-display/index.js";
-import { matchesCommandPatterns } from "./command-detection.js";
+import { boundTerminalLine } from "../../../tool-display/index.ts";
+import { matchesCommandPatterns } from "./command-detection.ts";
 
 interface TestSummary {
 	passed: number;

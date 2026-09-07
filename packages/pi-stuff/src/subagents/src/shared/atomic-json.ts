@@ -61,21 +61,17 @@ export function createAtomicTextWriter(
 			path.dirname(filePath),
 			`.${path.basename(filePath)}.${pid}.${now()}.${random().toString(36).slice(2)}.tmp`,
 		);
-		let writeFailure: { error: unknown } | undefined;
 		try {
 			fsImpl.writeFileSync(tempPath, content, mode === undefined ? "utf-8" : { encoding: "utf-8", mode });
 			renameWithRetry(fsImpl, tempPath, filePath, renameRetryDelaysMs, wait);
 		} catch (error) {
-			writeFailure = { error };
+			try {
+				fsImpl.rmSync(tempPath, { force: true });
+			} catch {
+				// Preserve the original write or rename failure.
+			}
+			throw error;
 		}
-		let cleanupFailure: { error: unknown } | undefined;
-		try {
-			fsImpl.rmSync(tempPath, { force: true });
-		} catch (error) {
-			cleanupFailure = { error };
-		}
-		if (writeFailure) throw writeFailure.error;
-		if (cleanupFailure) throw cleanupFailure.error;
 	};
 }
 
@@ -103,21 +99,17 @@ export async function writePrivateAtomicTextAsync(filePath: string, content: str
 		path.dirname(filePath),
 		`.${path.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2)}.tmp`,
 	);
-	let writeFailure: { error: unknown } | undefined;
 	try {
 		await fs.promises.writeFile(tempPath, content, { encoding: "utf-8", flag: "wx", mode: 0o600 });
 		await runFileSystemOperationWithRetryAsync(() => fs.promises.rename(tempPath, filePath), { retryDelaysMs });
 	} catch (error) {
-		writeFailure = { error };
+		try {
+			await fs.promises.rm(tempPath, { force: true });
+		} catch {
+			// Preserve the original write or rename failure.
+		}
+		throw error;
 	}
-	let cleanupFailure: { error: unknown } | undefined;
-	try {
-		await fs.promises.rm(tempPath, { force: true });
-	} catch (error) {
-		cleanupFailure = { error };
-	}
-	if (writeFailure) throw writeFailure.error;
-	if (cleanupFailure) throw cleanupFailure.error;
 }
 
 export async function writePrivateAtomicJsonAsync<Payload extends object>(

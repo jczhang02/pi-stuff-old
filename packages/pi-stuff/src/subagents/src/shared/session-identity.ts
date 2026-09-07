@@ -10,8 +10,8 @@ import {
 	type JsonObject,
 	type JsonValue,
 	parseJsonValue,
-} from "../../../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+} from "../../../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 
 interface SessionIdentityManager {
 	getSessionFile(): string | null | undefined;

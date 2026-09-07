@@ -4,8 +4,8 @@ import type {
 	ExtensionAPI,
 	ExtensionContext,
 } from "@earendil-works/pi-coding-agent";
-import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isJsonInputObject, type JsonInputObject, type JsonInputValue } from "../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 
 const PROMPT_CONTRIBUTION_REGISTRY = Symbol.for("@jczhang02/pi-stuff-context/prompt-contributions/v1");
 const CONTRIBUTION_ID = /^[a-z][a-z0-9-]*$/u;

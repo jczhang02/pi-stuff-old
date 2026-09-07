@@ -1,9 +1,9 @@
 // biome-ignore-all lint/complexity/useLiteralKeys: TypeScript enforces bracket access for untrusted index-signature data.
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
-import { type JsonInputObject, type JsonInputValue, parseJsonValue } from "../shared/json-value.js";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import { type CodexAccountContext, resolveCodexAccount } from "./account.js";
+import { type JsonInputObject, type JsonInputValue, parseJsonValue } from "../shared/json-value.ts";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import { type CodexAccountContext, resolveCodexAccount } from "./account.ts";
 
 const USAGE_TIMEOUT_MS = 10_000;
 const WEEKLY_WINDOW_MINUTES = 7 * 24 * 60;

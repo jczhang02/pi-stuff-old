@@ -3,15 +3,14 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@earendil-works/pi-coding-agent";
-import { projectCurrentContext } from "../../../context-management/index.js";
-import { installEffectFoundation } from "../../../shared/effect-foundation.js";
-import { isRuntimeFunction } from "../../../shared/runtime-type.js";
-import { registerSuiteOwnedTool } from "../../../tool-display/index.js";
+import { projectCurrentContext } from "../../../context-management/index.ts";
+import { installEffectFoundation } from "../../../shared/effect-foundation.ts";
+import { isRuntimeFunction } from "../../../shared/runtime-type.ts";
+import { registerSuiteOwnedTool } from "../../../tool-display/index.ts";
 import { discoverAgents } from "../agents/agents.ts";
 import {
 	createSubagentExecutor,
 	deriveLaunchRunId,
-	resolveResumeTargetRunId,
 	type SubagentExecutionHooks,
 	type SubagentParamsLike,
 } from "../runs/foreground/subagent-executor.ts";
@@ -209,14 +208,7 @@ class FanoutChildRuntime {
 		const identity = this.boundLaunchIdentity;
 		if (!identity) return { ok: false, message: "Nested Agent governor is not bound." };
 		const launchRunId = deriveLaunchRunId(id, identity);
-		let resumeTargetRunId: string | undefined;
-		try {
-			resumeTargetRunId = resolveResumeTargetRunId(params, this.state);
-		} catch (error) {
-			return { ok: false, message: error instanceof Error ? error.message : String(error) };
-		}
 		const prepareInput = { launchRunId, params } satisfies AgentPrepareInput;
-		if (resumeTargetRunId) Object.assign(prepareInput, { resumeTargetRunId });
 		const prepared = await this.executionGovernor.prepare(prepareInput);
 		if (!prepared.ok) return prepared;
 		return prepared.invocation

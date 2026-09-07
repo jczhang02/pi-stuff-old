@@ -1,6 +1,6 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import type { PlannedToolActivityMember } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
+import type { PlannedToolActivityMember } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
 import {
 	baseOperationBlockModel,
 	boundedOperationLines,
@@ -9,8 +9,8 @@ import {
 	operationIssueLine,
 	operationLineCount,
 	operationResultText,
-} from "./operation-block-evidence.js";
-import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.js";
+} from "./operation-block-evidence.ts";
+import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.ts";
 
 export function backgroundOperationBlockModel(
 	member: PlannedToolActivityMember,

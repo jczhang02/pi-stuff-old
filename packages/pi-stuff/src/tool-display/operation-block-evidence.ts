@@ -1,10 +1,10 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "./activity.js";
-import type { ToolActivityState } from "./activity-store.js";
-import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.js";
-import { oneLine } from "./tool-text.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "./activity.ts";
+import type { ToolActivityState } from "./activity-store.ts";
+import type { OperationBlockRowModel, OperationEvidenceLine } from "./operation-block-renderer.ts";
+import { oneLine } from "./tool-text.ts";
 
 export const COMPACT_OPERATION_BYTE_LIMIT = 2 * 1024;
 export const EXPANDED_OPERATION_BYTE_LIMIT = 24 * 1024;

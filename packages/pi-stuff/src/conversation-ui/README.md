@@ -29,12 +29,15 @@ completion, and Tool running timer.
 - Context shows a local percentage estimate or `unknown`; actual recovery displays `recovering` and its current phase.
   Estimate uncertainty does not interrupt an Agent run.
 - One-line latest-prompt preview and compact Skill labels.
+- Native-editor input highlighting and slash completion. Highlighting skips command-registry work when no rendered
+  line contains `/`, without caching registry contents between redraws. Otherwise it recognizes complete invocation
+  words and checks the live command set, without sorting names or rebuilding a command-specific regular expression.
 - User Messages keep their native background and align `` and body text with Tool rows. Skill invocations, including
   Skill-only input, use one card; native `Ctrl+O` expands instructions after the prompt. The version-bound adapter
   preserves canonical messages and releases on Session shutdown/reload; exceptional presentation failure keeps native
   messages, disables further projection for that Session, and reports once through `/diagnostics`.
-- Native-editor input highlighting and slash completion, with Pi's spinner and working message embedded once in the
-  top border. Pi owns thinking-level colors, clipping, animation, and cleanup; dialogs and reload preserve the editor.
+- Pi's spinner and working message remain embedded once in the top border. Pi owns thinking-level colors, clipping,
+  animation, and cleanup; dialogs and reload preserve the editor.
 - Host-owned Thinking shown as one latest native Markdown row or the hidden `• thoughts` label, preserving native
   mouse and keyboard visibility controls; plus `chart` or `tree` Markdown projections.
 - Full-width Command Dialogs that restore the editor draft on close.

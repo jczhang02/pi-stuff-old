@@ -1,6 +1,6 @@
 import type { Component } from "@earendil-works/pi-tui";
-import { isRuntimeFunction } from "../shared/runtime-type.js";
-import type { FooterFactory, FooterTailFactory } from "./command-dialog-types.js";
+import { isRuntimeFunction } from "../shared/runtime-type.ts";
+import type { FooterFactory, FooterTailFactory } from "./command-dialog-types.ts";
 
 export class EmptyComponent implements Component {
 	render(): string[] {

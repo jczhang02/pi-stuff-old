@@ -1,8 +1,8 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { isRuntimeNumber } from "../../../shared/runtime-type.js";
-import type { AgentRow } from "../session/current-agents.js";
-import { boundedTerminalLine } from "../shared/display-description.js";
+import { isRuntimeNumber } from "../../../shared/runtime-type.ts";
+import type { AgentRow } from "../session/current-agents.ts";
+import { boundedTerminalLine } from "../shared/display-description.ts";
 
 const NORMAL_CHILD_LIMIT = 5;
 const NARROW_CHILD_LIMIT = 4;

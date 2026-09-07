@@ -11,8 +11,8 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	parseJsonValue,
-} from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 import { xdgConfigHome } from "../../xdg/index.ts";
 import { logger } from "./logger.ts";
 import type { ImportKind, McpConfig, McpSettings, ServerEntry } from "./types.ts";

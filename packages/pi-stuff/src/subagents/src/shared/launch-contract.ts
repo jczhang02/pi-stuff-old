@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
-import { isRuntimeObject } from "../../../shared/runtime-type.js";
+import { isRuntimeObject } from "../../../shared/runtime-type.ts";
 import type { AgentConfig } from "../agents/agents.ts";
 
 export const AGENT_DEFINITION_PROJECTION_VERSION = 4 as const;

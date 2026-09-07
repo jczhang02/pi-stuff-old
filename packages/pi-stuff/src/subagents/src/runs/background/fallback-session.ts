@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { runtimeErrorCode as errorCode, isRuntimeNumber } from "../../../../shared/runtime-type.js";
+import { runtimeErrorCode as errorCode, isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { type DurableClaim, shardedDurableClaimName, tryAcquireKernelClaim } from "../../shared/durable-claim.ts";
 import { ensurePrivateDirectory, readBoundedOwnedFile } from "../../shared/private-directory.ts";

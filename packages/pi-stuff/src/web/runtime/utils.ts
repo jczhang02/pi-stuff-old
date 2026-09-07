@@ -1,6 +1,6 @@
 import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
-import { isRuntimeNumber } from "../../shared/runtime-type.js";
+import { isRuntimeNumber } from "../../shared/runtime-type.ts";
 import { getWebConfigPath } from "../settings.ts";
 
 export function errorMessage<ErrorValue>(error: ErrorValue): string {

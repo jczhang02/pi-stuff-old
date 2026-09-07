@@ -11,8 +11,8 @@ import { mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from "
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import * as Effect from "effect/Effect";
-import { type JsonInputObject, type JsonInputValue, type JsonValue, parseJsonValue } from "../json-value.js";
-import { isRuntimeObject } from "../runtime-type.js";
+import { type JsonInputObject, type JsonInputValue, type JsonValue, parseJsonValue } from "../json-value.ts";
+import { isRuntimeObject } from "../runtime-type.ts";
 
 export interface SettingsRecord extends JsonInputObject {}
 

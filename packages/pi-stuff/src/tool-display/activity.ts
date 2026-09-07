@@ -1,5 +1,5 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeString } from "../shared/runtime-type.ts";
 import {
 	activityTarget,
 	singleActivity,
@@ -7,8 +7,8 @@ import {
 	type ToolActivityClassifierInput,
 	type ToolActivityItem,
 	type ToolArguments,
-} from "./activity-model.js";
-import { oneLine } from "./tool-text.js";
+} from "./activity-model.ts";
+import { oneLine } from "./tool-text.ts";
 
 export {
 	activityKey,
@@ -20,7 +20,7 @@ export {
 	type ToolActivityItem,
 	type ToolActivityMetadata,
 	type ToolArguments,
-} from "./activity-model.js";
+} from "./activity-model.ts";
 export {
 	type ActivityCategoryAggregate,
 	type ActivitySummaryMember,
@@ -31,7 +31,7 @@ export {
 	type ToolActivityOutcome,
 	type ToolActivitySummary,
 	toolActivityOutcome,
-} from "./activity-summary-format.js";
+} from "./activity-summary-format.ts";
 export {
 	classifyRetrievalGroupInvocation,
 	type PlannedRetrievalGroup,
@@ -39,7 +39,7 @@ export {
 	planRetrievalGroups,
 	type RetrievalGroupClassifier,
 	type RetrievalGroupDisposition,
-} from "./retrieval-groups.js";
+} from "./retrieval-groups.ts";
 
 const BASH_EVIDENCE_TEXT_LIMIT = 64 * 1024;
 // ponytail: Background Work emits its handoff marker at a result boundary;

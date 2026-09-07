@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import { join, posix, resolve } from "node:path";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
@@ -228,15 +228,21 @@ function isUnownedInternalSource(path: string): boolean {
 
 async function auditInternalModuleImports(root: string, path: string): Promise<SafetyFinding[]> {
 	const sourceModule = internalModuleFromPath(path);
-	if (!sourceModule || !JAVASCRIPT_SOURCE_PATTERN.test(path)) return [];
+	if (!path.startsWith("packages/pi-stuff/") || !JAVASCRIPT_SOURCE_PATTERN.test(path)) return [];
 	const source = await readFile(join(root, path), "utf8");
 	const imports = ts.preProcessFile(source, true, true).importedFiles;
 	const findings: SafetyFinding[] = [];
 	for (const imported of imports) {
 		if (!imported.fileName.startsWith(".")) continue;
 		const targetPath = posix.normalize(posix.join(posix.dirname(path), imported.fileName));
+		const exists = await stat(join(root, targetPath)).then(
+			(target) => target.isFile(),
+			() => false,
+		);
+		if (!exists) findings.push({ path, rule: `relative-import-missing-target:${targetPath}` });
 		const targetModule = internalModuleFromPath(targetPath);
 		if (
+			sourceModule &&
 			targetModule &&
 			targetModule !== sourceModule &&
 			ALLOWED_INTERNAL_DEPENDENCIES[sourceModule]?.has(targetModule) !== true

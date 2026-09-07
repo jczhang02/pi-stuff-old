@@ -94,6 +94,7 @@ The Web and MCP runtimes also have source-local READMEs:
 | [0031](adr/0031-preserve-magic-context-behavior-through-suite-integration.md) | Preserve Magic Context behavior through Suite integration |
 | [0032](adr/0032-organize-quality-assurance-by-verification-purpose.md) | Organize quality assurance by verification purpose |
 | [0033](adr/0033-continue-open-work-after-background-agent-results.md) | Continue open work after background Agent results (candidate implementation; acceptance pending) |
+| [0034](adr/0034-remove-redundant-suite-work-without-feature-cuts.md) | Remove redundant Suite work without reducing functionality |
 
 ## Evidence and history
 

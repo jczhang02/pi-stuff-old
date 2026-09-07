@@ -4,9 +4,9 @@ import {
 	EXPANDED_OPERATION_BYTE_LIMIT,
 	EXPANDED_OPERATION_LINE_LIMIT,
 	operationDetailString,
-} from "./operation-block-evidence.js";
-import type { OperationEvidenceLine } from "./operation-block-renderer.js";
-import { oneLine } from "./tool-text.js";
+} from "./operation-block-evidence.ts";
+import type { OperationEvidenceLine } from "./operation-block-renderer.ts";
+import { oneLine } from "./tool-text.ts";
 
 const COMPACT_CHANGED_LINE_LIMIT = 10;
 const COMPACT_PATCH_FILE_CHANGED_LIMIT = 4;

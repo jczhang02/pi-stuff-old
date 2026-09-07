@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import { parseJsonObject } from "../../shared/json-value.js";
+import { parseJsonObject } from "../../shared/json-value.ts";
 import { piStuffStatePath } from "../../xdg/index.ts";
 import { getAgentPath } from "./agent-dir.ts";
 

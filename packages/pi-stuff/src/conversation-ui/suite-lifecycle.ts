@@ -2,7 +2,7 @@ import type { ExtensionAPI, ExtensionContext, SessionStartEvent } from "@earendi
 import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import { Guard } from "typebox/guard";
-import { readHostProxyProperty } from "../shared/host-proxy.js";
+import { readHostProxyProperty } from "../shared/host-proxy.ts";
 
 type SessionManager = ExtensionContext["sessionManager"];
 

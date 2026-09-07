@@ -3,10 +3,10 @@ import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import * as Scope from "effect/Scope";
-import { HOST_SHUTDOWN_GRACE_MS } from "../../lifecycle-deadline.js";
-import { readHostProxyProperty } from "../../shared/host-proxy.js";
-import type { JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeObject } from "../../shared/runtime-type.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../../lifecycle-deadline.ts";
+import { readHostProxyProperty } from "../../shared/host-proxy.ts";
+import type { JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeObject } from "../../shared/runtime-type.ts";
 import { logger } from "./logger.ts";
 import { formatTerminalError } from "./utils.ts";
 

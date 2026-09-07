@@ -1,0 +1,2627 @@
+{
+  "schemaVersion": 1,
+  "purpose": "paired-lifecycle-resource-comparison",
+  "comparisonLimit": "The original baseline predates Work Continuity, Goal terminal-response changes and the 0.85.0 adaptation; totals include intervening changes and do not isolate ps-yon optimization savings.",
+  "responsivenessCertification": false,
+  "host": {
+    "version": "0.85.0",
+    "embeddedBun": "1.3.14",
+    "readerBun": "1.4.0",
+    "binarySha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072"
+  },
+  "machine": {
+    "kernel": "6.19.10-jc-xanmod1",
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900H",
+    "onlineLogicalCpus": 20
+  },
+  "source": {
+    "baseline": {
+      "commit": "6d0507c165acc5056b7e4bf4aedddef326ab915b",
+      "packageTree": "10ec2919d96fd3ec01d572efe2415110113248c0",
+      "lockSha256": "deff5112ffebc992d320e90932dc616663fcc91b8f23f964434ffcd8f89ecf6f",
+      "packageManifestSha256": "b15eb958b733b36d7b5b7a9111b4065b9356ca12e7097a3f1a805fe355770ee8"
+    },
+    "candidate": {
+      "commit": "b0a637fcf2a70ffa265668fc8e9c22bdd0d1a8fb",
+      "packageTree": "3f6706f7a538b09a6ab0f7d0d801bafbb751cc22",
+      "lockSha256": "cb587f63392c23b750e7eb2c190eb4bcf30dee6429725f655e370ffb48630fc3",
+      "packageManifestSha256": "b15eb958b733b36d7b5b7a9111b4065b9356ca12e7097a3f1a805fe355770ee8"
+    }
+  },
+  "driverSha256": "04eb8ca32493bf80478619b793d6ecdcd1a449f3716e4289613c9b7daee4dd23",
+  "readerSha256": "1d4d216d0325b2d10c50f1654d6f2ce91b15d0ce303f7b462c8577d84f239588",
+  "privatePairedRecordSha256": "1312acc758d05f4f224b95ccb7eaf7d8b9db25978813d01795020c02165d6791",
+  "fixtureRestoredSha256": "6b63259cb4d78429de8311bf8d49fec01fb84d834fad1872f9f1e6c7e5799144",
+  "workload": {
+    "scenarios": [
+      "fresh",
+      "resume-long"
+    ],
+    "actions": [
+      "prompt",
+      "reload",
+      "ctrl-c"
+    ],
+    "columns": 120,
+    "rows": 40,
+    "longSessionTurns": 240,
+    "longSessionToolResults": 1000,
+    "longSessionToolResultBytes": 4096,
+    "warmupsPerCellAndVariant": 1,
+    "measuredSamplesPerCellAndVariant": 3,
+    "offline": true,
+    "contextEnabled": true,
+    "contextBackgroundServicesDisabled": [
+      "dreamer",
+      "embedding",
+      "sidekick",
+      "todowrite"
+    ],
+    "lifecycleAcceptanceRequested": false,
+    "sampleOrder": [
+      "wait2-warmup-0-baseline",
+      "wait2-warmup-0-candidate",
+      "wait2-sample-1-candidate",
+      "wait2-sample-1-baseline",
+      "wait2-sample-2-baseline",
+      "wait2-sample-2-candidate",
+      "wait2-sample-3-candidate",
+      "wait2-sample-3-baseline"
+    ]
+  },
+  "units": {
+    "cpuTime": "microseconds",
+    "maxRSS": "bytes, waited-child high-water mark; not aggregate process-tree peak",
+    "ioBlockOps": "kernel accounting operations, not bytes",
+    "contextSwitches": "context switches, not scheduler wakeups",
+    "lifetimeMs": "wall-clock milliseconds from immediately before spawn to waited Pi exit"
+  },
+  "batches": [
+    {
+      "label": "wait2-warmup-0-baseline",
+      "variant": "baseline",
+      "warmup": true,
+      "rawReportSha256": "91ee58017dd3db157e5b5e2132c9504c38ece240d2830fc05f991b6e25d3bd7a",
+      "stdoutSha256": "91ee58017dd3db157e5b5e2132c9504c38ece240d2830fc05f991b6e25d3bd7a",
+      "stderrSha256": "e207411f189e8867777a2569b6e4ff04f7bec43b3e028d0dd06cff005c9a2b02",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 124.25,
+          "startupMs": 3882.28,
+          "acknowledgementMs": 2.96,
+          "providerStartMs": 83.9,
+          "responseMs": 96.78,
+          "steadyAcknowledgementMs": 1.65,
+          "steadyProviderStartMs": 82.48,
+          "steadyResponseMs": 101.47,
+          "resource": {
+            "startedAt": 1788714456481,
+            "endedAt": 1788714460730,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3930756,
+                "system": 715829,
+                "total": 4646585
+              },
+              "maxRSS": 1011761152,
+              "contextSwitches": {
+                "voluntary": 14134,
+                "involuntary": 1487
+              },
+              "ioBlockOps": {
+                "in": 1107,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "14659a8372729bc8bdf488d72ec54d16aca23d8946c7f874d3a145a024fc2e32"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 113.77,
+          "startupMs": 3881.14,
+          "reloadMs": 566.249,
+          "resource": {
+            "startedAt": 1788714460778,
+            "endedAt": 1788714465532,
+            "exitCode": 0,
+            "pid": 106,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4530960,
+                "system": 744738,
+                "total": 5275698
+              },
+              "maxRSS": 1035161600,
+              "contextSwitches": {
+                "voluntary": 16575,
+                "involuntary": 2143
+              },
+              "ioBlockOps": {
+                "in": 32,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "d7a79aab3ff51035d787600b81c6a28c3c6b8789a570fd55589b85f7936a2d31"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 216.6,
+          "startupMs": 3882.4,
+          "resource": {
+            "startedAt": 1788714465573,
+            "endedAt": 1788714469636,
+            "exitCode": 0,
+            "pid": 168,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3615509,
+                "system": 624376,
+                "total": 4239885
+              },
+              "maxRSS": 842862592,
+              "contextSwitches": {
+                "voluntary": 11358,
+                "involuntary": 1418
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "779f6a91414517a32355b7dcef70b9b0b2e9654dcf8c4c4ba6b1061497ad0fcc"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 110.75,
+          "startupMs": 4817.94,
+          "acknowledgementMs": 2.53,
+          "providerStartMs": 248.29,
+          "responseMs": 265.46,
+          "steadyAcknowledgementMs": 1.76,
+          "steadyProviderStartMs": 45.53,
+          "steadyResponseMs": 57.12,
+          "resource": {
+            "startedAt": 1788714469681,
+            "endedAt": 1788714474973,
+            "exitCode": 0,
+            "pid": 227,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5264309,
+                "system": 1013414,
+                "total": 6277723
+              },
+              "maxRSS": 1045078016,
+              "contextSwitches": {
+                "voluntary": 15886,
+                "involuntary": 2491
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "39fd07d6c755468f357b941043551ea66594f46775cdcfb16d5f8b12f2cdb49b"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 121.19,
+          "startupMs": 4814.71,
+          "reloadMs": 1446.624,
+          "resource": {
+            "startedAt": 1788714475080,
+            "endedAt": 1788714481758,
+            "exitCode": 0,
+            "pid": 288,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 6905171,
+                "system": 1404977,
+                "total": 8310148
+              },
+              "maxRSS": 1042472960,
+              "contextSwitches": {
+                "voluntary": 21269,
+                "involuntary": 2976
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "9c898786cbec6d68ff08a1724b138712a72d49deaa92d7cc5d8bf70ccd3fbf99"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 431.72,
+          "startupMs": 4758.57,
+          "resource": {
+            "startedAt": 1788714481836,
+            "endedAt": 1788714486991,
+            "exitCode": 0,
+            "pid": 351,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5189837,
+                "system": 978926,
+                "total": 6168763
+              },
+              "maxRSS": 1009844224,
+              "contextSwitches": {
+                "voluntary": 13833,
+                "involuntary": 2096
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 42634
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "88897b45aa367995b4cc4e66ec354222a339b5b380d9fad69e7ff230d4fcb486"
+        }
+      ]
+    },
+    {
+      "label": "wait2-warmup-0-candidate",
+      "variant": "candidate",
+      "warmup": true,
+      "rawReportSha256": "970da2d5ff78664fbcbe7d3fe159962d48a0521869cbb98bb57b82a7e7c433d2",
+      "stdoutSha256": "970da2d5ff78664fbcbe7d3fe159962d48a0521869cbb98bb57b82a7e7c433d2",
+      "stderrSha256": "e836f385cf8eca0d0efb40baf3579d965b4a8750013e1c6de0a9254ddf27d9ec",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 111.48,
+          "startupMs": 2727.06,
+          "acknowledgementMs": 2.38,
+          "providerStartMs": 132.01,
+          "responseMs": 164.88,
+          "steadyAcknowledgementMs": 2.76,
+          "steadyProviderStartMs": 28.58,
+          "steadyResponseMs": 42.8,
+          "resource": {
+            "startedAt": 1788714487617,
+            "endedAt": 1788714490705,
+            "exitCode": 0,
+            "pid": 44,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2842953,
+                "system": 659639,
+                "total": 3502592
+              },
+              "maxRSS": 801980416,
+              "contextSwitches": {
+                "voluntary": 13030,
+                "involuntary": 1415
+              },
+              "ioBlockOps": {
+                "in": 30628,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "42b9b86edff5d65f995a0fa1edbba2be79b36f0187f43149ca8cce2b5beef7bf"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 108.54,
+          "startupMs": 2627.34,
+          "reloadMs": 582.473,
+          "resource": {
+            "startedAt": 1788714490756,
+            "endedAt": 1788714494244,
+            "exitCode": 0,
+            "pid": 105,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3357374,
+                "system": 692124,
+                "total": 4049498
+              },
+              "maxRSS": 839733248,
+              "contextSwitches": {
+                "voluntary": 17523,
+                "involuntary": 1624
+              },
+              "ioBlockOps": {
+                "in": 1002,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "fb13f9ee2af936df51642384b5e800df959a57bb1a6594355297f139a20593c5"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 203.22,
+          "startupMs": 2620.74,
+          "resource": {
+            "startedAt": 1788714494290,
+            "endedAt": 1788714497074,
+            "exitCode": 0,
+            "pid": 168,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2411433,
+                "system": 494531,
+                "total": 2905964
+              },
+              "maxRSS": 725311488,
+              "contextSwitches": {
+                "voluntary": 10427,
+                "involuntary": 1143
+              },
+              "ioBlockOps": {
+                "in": 41,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "24ad50434e39ebf9c9e434c47ae5c8a585b43564bbe2acab77dfe878ab1eefc4"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 112.2,
+          "startupMs": 3386.95,
+          "acknowledgementMs": 4.39,
+          "providerStartMs": 245.55,
+          "responseMs": 263.81,
+          "steadyAcknowledgementMs": 2.37,
+          "steadyProviderStartMs": 48.14,
+          "steadyResponseMs": 60.94,
+          "resource": {
+            "startedAt": 1788714497125,
+            "endedAt": 1788714500986,
+            "exitCode": 0,
+            "pid": 227,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3947080,
+                "system": 879287,
+                "total": 4826367
+              },
+              "maxRSS": 859938816,
+              "contextSwitches": {
+                "voluntary": 14221,
+                "involuntary": 1855
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "c4799da07e17159f6a8e8ec96316ddc0f8480dcd9bd9e6de5ea29fe09b4e5c35"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 121.64,
+          "startupMs": 3414.06,
+          "reloadMs": 1421.846,
+          "resource": {
+            "startedAt": 1788714501076,
+            "endedAt": 1788714506322,
+            "exitCode": 0,
+            "pid": 288,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5336365,
+                "system": 1222719,
+                "total": 6559084
+              },
+              "maxRSS": 867811328,
+              "contextSwitches": {
+                "voluntary": 19601,
+                "involuntary": 2409
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "d1c8ce57e2da893d8f196d17bc331517b748b71bbc050b058b22af24c8032376"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 390.28,
+          "startupMs": 3423.82,
+          "resource": {
+            "startedAt": 1788714506426,
+            "endedAt": 1788714510198,
+            "exitCode": 0,
+            "pid": 349,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3746539,
+                "system": 937677,
+                "total": 4684216
+              },
+              "maxRSS": 875458560,
+              "contextSwitches": {
+                "voluntary": 12213,
+                "involuntary": 1581
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "bf75664b22f8381f7039751e86f54f866f4427516daf9e3277beef57de3d8dc2"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-1-candidate",
+      "variant": "candidate",
+      "warmup": false,
+      "rawReportSha256": "b0867d49f82ad60f9cbb8532d64eee352ac8dcd99a405930799830c0c780dae8",
+      "stdoutSha256": "b0867d49f82ad60f9cbb8532d64eee352ac8dcd99a405930799830c0c780dae8",
+      "stderrSha256": "2395caf5e0f699152134ff75a76c70c8c5a931bf240f73586bc38921026d20b5",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 112.58,
+          "startupMs": 2811.61,
+          "acknowledgementMs": 4.02,
+          "providerStartMs": 105.94,
+          "responseMs": 121.74,
+          "steadyAcknowledgementMs": 2.12,
+          "steadyProviderStartMs": 31.21,
+          "steadyResponseMs": 60.12,
+          "resource": {
+            "startedAt": 1788714510832,
+            "endedAt": 1788714513978,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2973043,
+                "system": 667590,
+                "total": 3640633
+              },
+              "maxRSS": 811417600,
+              "contextSwitches": {
+                "voluntary": 13673,
+                "involuntary": 1412
+              },
+              "ioBlockOps": {
+                "in": 1066,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "d9cec577276cb501fff8258397d1725557e482bfc13037012b1552c071c0d352"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 105.98,
+          "startupMs": 2549.97,
+          "reloadMs": 580.381,
+          "resource": {
+            "startedAt": 1788714514027,
+            "endedAt": 1788714517463,
+            "exitCode": 0,
+            "pid": 106,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3284785,
+                "system": 679891,
+                "total": 3964676
+              },
+              "maxRSS": 787955712,
+              "contextSwitches": {
+                "voluntary": 16589,
+                "involuntary": 1655
+              },
+              "ioBlockOps": {
+                "in": 41,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "02afcf0e7c514a8b6ad3803e9e4b4b16b06eae048e5f22ca04a867c65352edd5"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 208,
+          "startupMs": 2566.72,
+          "resource": {
+            "startedAt": 1788714517507,
+            "endedAt": 1788714520243,
+            "exitCode": 0,
+            "pid": 168,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2344659,
+                "system": 512051,
+                "total": 2856710
+              },
+              "maxRSS": 713723904,
+              "contextSwitches": {
+                "voluntary": 10303,
+                "involuntary": 1093
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "760e1e6555f173775d51dd46161715a7006cea4d83cd8860ab10f72598f606eb"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 121.04,
+          "startupMs": 3397.56,
+          "acknowledgementMs": 4.75,
+          "providerStartMs": 244.45,
+          "responseMs": 264.52,
+          "steadyAcknowledgementMs": 1.67,
+          "steadyProviderStartMs": 48.87,
+          "steadyResponseMs": 74.06,
+          "resource": {
+            "startedAt": 1788714520287,
+            "endedAt": 1788714524186,
+            "exitCode": 0,
+            "pid": 227,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3981373,
+                "system": 896627,
+                "total": 4878000
+              },
+              "maxRSS": 889020416,
+              "contextSwitches": {
+                "voluntary": 15964,
+                "involuntary": 1957
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "44f50dbcc558066be7a543451fcb92f82fc28ace810e030bc013cdc2f71b4ec3"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 122.62,
+          "startupMs": 3451.62,
+          "reloadMs": 1408.838,
+          "resource": {
+            "startedAt": 1788714524281,
+            "endedAt": 1788714529570,
+            "exitCode": 0,
+            "pid": 288,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5269155,
+                "system": 1242435,
+                "total": 6511590
+              },
+              "maxRSS": 895569920,
+              "contextSwitches": {
+                "voluntary": 19716,
+                "involuntary": 2663
+              },
+              "ioBlockOps": {
+                "in": 32,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "ca3a42e3010cb969f0f6ab278113246101ed9dd979fb19edb4bc4dad2a8022f1"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 387.88,
+          "startupMs": 3393.14,
+          "resource": {
+            "startedAt": 1788714529645,
+            "endedAt": 1788714533389,
+            "exitCode": 0,
+            "pid": 350,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3740672,
+                "system": 960012,
+                "total": 4700684
+              },
+              "maxRSS": 822071296,
+              "contextSwitches": {
+                "voluntary": 13556,
+                "involuntary": 1920
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "545bdc0b7c3cea40b7e60e3bcf0c8c749ba89bc1737f1c2333a91a8c0bd24395"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-1-baseline",
+      "variant": "baseline",
+      "warmup": false,
+      "rawReportSha256": "8f9d999c1b6d3bd2e47b9d641e486891dc65dcfea035c4428862772d4cc273bd",
+      "stdoutSha256": "8f9d999c1b6d3bd2e47b9d641e486891dc65dcfea035c4428862772d4cc273bd",
+      "stderrSha256": "887640e2efb4cc349a3713bb750a768607f4cf5db813b5c13b1cb9fb49543c69",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 130.71,
+          "startupMs": 3956.16,
+          "acknowledgementMs": 2.34,
+          "providerStartMs": 78.92,
+          "responseMs": 95.48,
+          "steadyAcknowledgementMs": 1.03,
+          "steadyProviderStartMs": 96.89,
+          "steadyResponseMs": 112.54,
+          "resource": {
+            "startedAt": 1788714534025,
+            "endedAt": 1788714538362,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4013572,
+                "system": 785914,
+                "total": 4799486
+              },
+              "maxRSS": 994754560,
+              "contextSwitches": {
+                "voluntary": 17474,
+                "involuntary": 2476
+              },
+              "ioBlockOps": {
+                "in": 12541,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "4afce3a8c3eb58a349ffe0e6868292e4da2e8eadb55814bf274857f6964695fe"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 116.57,
+          "startupMs": 3865.09,
+          "reloadMs": 629.431,
+          "resource": {
+            "startedAt": 1788714538407,
+            "endedAt": 1788714543231,
+            "exitCode": 0,
+            "pid": 105,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4585053,
+                "system": 826930,
+                "total": 5411983
+              },
+              "maxRSS": 1034321920,
+              "contextSwitches": {
+                "voluntary": 17598,
+                "involuntary": 1977
+              },
+              "ioBlockOps": {
+                "in": 538,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "c2686700bcfbe57ba1829bc5d36ab10a9b6214fe30fc733508d322a8e7466c84"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 216.85,
+          "startupMs": 3863.37,
+          "resource": {
+            "startedAt": 1788714543277,
+            "endedAt": 1788714547316,
+            "exitCode": 0,
+            "pid": 167,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3613801,
+                "system": 636855,
+                "total": 4250656
+              },
+              "maxRSS": 840376320,
+              "contextSwitches": {
+                "voluntary": 11251,
+                "involuntary": 1310
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "20c8d9bf6f44966e3236f8e90293c0255a7e8790b9adcfc694cb071cd1f6aa32"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 113.79,
+          "startupMs": 4745.48,
+          "acknowledgementMs": 5.91,
+          "providerStartMs": 273.71,
+          "responseMs": 301.2,
+          "steadyAcknowledgementMs": 1.34,
+          "steadyProviderStartMs": 41.62,
+          "steadyResponseMs": 75.27,
+          "resource": {
+            "startedAt": 1788714547363,
+            "endedAt": 1788714552638,
+            "exitCode": 0,
+            "pid": 226,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5364892,
+                "system": 1038043,
+                "total": 6402935
+              },
+              "maxRSS": 1035513856,
+              "contextSwitches": {
+                "voluntary": 16038,
+                "involuntary": 2153
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "3cf0e679bb1dbab378ee447f94c44e4a78a3b7bce56cd8a30dec3d685d21718d"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 119.31,
+          "startupMs": 4743.09,
+          "reloadMs": 1453.792,
+          "resource": {
+            "startedAt": 1788714552732,
+            "endedAt": 1788714559350,
+            "exitCode": 0,
+            "pid": 287,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 6723619,
+                "system": 1407562,
+                "total": 8131181
+              },
+              "maxRSS": 1008840704,
+              "contextSwitches": {
+                "voluntary": 21272,
+                "involuntary": 2897
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "72c5098daa48bc7367a320c87cfe398c9821ca2e1f58047118034a4fe8b67bc5"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 422.34,
+          "startupMs": 4816.04,
+          "resource": {
+            "startedAt": 1788714559429,
+            "endedAt": 1788714564628,
+            "exitCode": 0,
+            "pid": 349,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5211480,
+                "system": 1069257,
+                "total": 6280737
+              },
+              "maxRSS": 975032320,
+              "contextSwitches": {
+                "voluntary": 14337,
+                "involuntary": 1846
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "c0027e707231a86dd918f507d0a6332f1c578d13c3741a862dce0f5f1c9fdebf"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-2-baseline",
+      "variant": "baseline",
+      "warmup": false,
+      "rawReportSha256": "4d3a14eddd11cdab3bcf024cb0061b5f0258ad3f94671bed0a0fa5be66f9c4dd",
+      "stdoutSha256": "4d3a14eddd11cdab3bcf024cb0061b5f0258ad3f94671bed0a0fa5be66f9c4dd",
+      "stderrSha256": "a571572d1c58a64f27162a8319507d3e91d38fd1770532c9d7703cdf4a191b47",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 109.64,
+          "startupMs": 3969.47,
+          "acknowledgementMs": 2.41,
+          "providerStartMs": 146.57,
+          "responseMs": 161.08,
+          "steadyAcknowledgementMs": 1.85,
+          "steadyProviderStartMs": 47.46,
+          "steadyResponseMs": 72.1,
+          "resource": {
+            "startedAt": 1788714565253,
+            "endedAt": 1788714569605,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4136558,
+                "system": 776309,
+                "total": 4912867
+              },
+              "maxRSS": 994402304,
+              "contextSwitches": {
+                "voluntary": 14347,
+                "involuntary": 1485
+              },
+              "ioBlockOps": {
+                "in": 1066,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "2c1b3027f02d2bcbdc745adf1b7430ca0f9a54d16870da18006cc0b6bd42e6d8"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 112.69,
+          "startupMs": 3971.99,
+          "reloadMs": 575.568,
+          "resource": {
+            "startedAt": 1788714569649,
+            "endedAt": 1788714574529,
+            "exitCode": 0,
+            "pid": 107,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4677911,
+                "system": 826467,
+                "total": 5504378
+              },
+              "maxRSS": 1032245248,
+              "contextSwitches": {
+                "voluntary": 17763,
+                "involuntary": 1875
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "48678bd0a6fc575ad8ca070fd9d8991975f1a2011c803d3cbc3dc79123cfa005"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 210.39,
+          "startupMs": 3980.5,
+          "resource": {
+            "startedAt": 1788714574576,
+            "endedAt": 1788714578726,
+            "exitCode": 0,
+            "pid": 169,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3698513,
+                "system": 670067,
+                "total": 4368580
+              },
+              "maxRSS": 839880704,
+              "contextSwitches": {
+                "voluntary": 11649,
+                "involuntary": 1289
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "be9a267d3d0135e64bbe562c35ecf4c99d317914d8201571d7b330e7f773b8e9"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 121.48,
+          "startupMs": 4822.91,
+          "acknowledgementMs": 3.07,
+          "providerStartMs": 246.14,
+          "responseMs": 265.36,
+          "steadyAcknowledgementMs": 1.45,
+          "steadyProviderStartMs": 41.03,
+          "steadyResponseMs": 54.13,
+          "resource": {
+            "startedAt": 1788714578771,
+            "endedAt": 1788714584078,
+            "exitCode": 0,
+            "pid": 229,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5380281,
+                "system": 969683,
+                "total": 6349964
+              },
+              "maxRSS": 1016356864,
+              "contextSwitches": {
+                "voluntary": 16159,
+                "involuntary": 2062
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "b6dadb654ec425317d23728653ae0f72d7def6436c08cf2b6e48bc22acb192d5"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 131,
+          "startupMs": 4858.88,
+          "reloadMs": 1454.566,
+          "resource": {
+            "startedAt": 1788714584180,
+            "endedAt": 1788714590916,
+            "exitCode": 0,
+            "pid": 289,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 6899887,
+                "system": 1455204,
+                "total": 8355091
+              },
+              "maxRSS": 976396288,
+              "contextSwitches": {
+                "voluntary": 21549,
+                "involuntary": 3088
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "d00694a9c860828e300db8057bb1313ddda94be8a7af8cea11101465ec753ea9"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 400.63,
+          "startupMs": 4723.09,
+          "resource": {
+            "startedAt": 1788714590993,
+            "endedAt": 1788714596075,
+            "exitCode": 0,
+            "pid": 351,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5058979,
+                "system": 1056564,
+                "total": 6115543
+              },
+              "maxRSS": 998723584,
+              "contextSwitches": {
+                "voluntary": 13275,
+                "involuntary": 2062
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "261fb81ed8cb1a7c5639494a7e4468d17f53dc85c7e93817d04c26319d2cbdf3"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-2-candidate",
+      "variant": "candidate",
+      "warmup": false,
+      "rawReportSha256": "39477b42bfecba4a25fe5273cb16d0869c0fcf8f22429dba03ea6c42cb0f254a",
+      "stdoutSha256": "39477b42bfecba4a25fe5273cb16d0869c0fcf8f22429dba03ea6c42cb0f254a",
+      "stderrSha256": "638cbe9a81891a5ffdaf0c98ad99635dbeb040ac8e2dd0658c80cbd9f7c7fee3",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 121.05,
+          "startupMs": 2718.17,
+          "acknowledgementMs": 3.1,
+          "providerStartMs": 91.04,
+          "responseMs": 103.95,
+          "steadyAcknowledgementMs": 17.46,
+          "steadyProviderStartMs": 61.74,
+          "steadyResponseMs": 78.03,
+          "resource": {
+            "startedAt": 1788714596698,
+            "endedAt": 1788714599763,
+            "exitCode": 0,
+            "pid": 46,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2833170,
+                "system": 635938,
+                "total": 3469108
+              },
+              "maxRSS": 790552576,
+              "contextSwitches": {
+                "voluntary": 13545,
+                "involuntary": 1350
+              },
+              "ioBlockOps": {
+                "in": 30621,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "84a2e7c8337f5b2c26499f152ad602cfa4a97e616bc6347dd9b9658a3c784ad0"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 108.39,
+          "startupMs": 2619.63,
+          "reloadMs": 564.148,
+          "resource": {
+            "startedAt": 1788714599815,
+            "endedAt": 1788714603282,
+            "exitCode": 0,
+            "pid": 107,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3388634,
+                "system": 684396,
+                "total": 4073030
+              },
+              "maxRSS": 863326208,
+              "contextSwitches": {
+                "voluntary": 16212,
+                "involuntary": 1615
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "87ea1336fa74e6e37d3f7c0df04bfb0079dbf1dff9fe5735893eb755fa9a624d"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 203.72,
+          "startupMs": 2536.66,
+          "resource": {
+            "startedAt": 1788714603326,
+            "endedAt": 1788714606028,
+            "exitCode": 0,
+            "pid": 170,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2401288,
+                "system": 468486,
+                "total": 2869774
+              },
+              "maxRSS": 726343680,
+              "contextSwitches": {
+                "voluntary": 11154,
+                "involuntary": 1273
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "949bc73328a9ed13b93d5e5f72f60d091dcaecc72762d64f1a40ba960d14aa03"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 113.97,
+          "startupMs": 3405.19,
+          "acknowledgementMs": 2.3,
+          "providerStartMs": 243.73,
+          "responseMs": 257.82,
+          "steadyAcknowledgementMs": 1.39,
+          "steadyProviderStartMs": 42.53,
+          "steadyResponseMs": 55.48,
+          "resource": {
+            "startedAt": 1788714606077,
+            "endedAt": 1788714609946,
+            "exitCode": 0,
+            "pid": 229,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3886757,
+                "system": 924752,
+                "total": 4811509
+              },
+              "maxRSS": 868429824,
+              "contextSwitches": {
+                "voluntary": 16220,
+                "involuntary": 1977
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "c9ec8443c40bfac84a5b30d734830306bec303b7274adba5acd7ffc17a81f210"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 122.09,
+          "startupMs": 3407.87,
+          "reloadMs": 1403.278,
+          "resource": {
+            "startedAt": 1788714610043,
+            "endedAt": 1788714615271,
+            "exitCode": 0,
+            "pid": 290,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5292392,
+                "system": 1272324,
+                "total": 6564716
+              },
+              "maxRSS": 874758144,
+              "contextSwitches": {
+                "voluntary": 20334,
+                "involuntary": 2676
+              },
+              "ioBlockOps": {
+                "in": 64,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "195dc423f75e4104fcc2e903bdb30e04d02bf99341f8bc5516d54596768e380f"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 397.02,
+          "startupMs": 3417.73,
+          "resource": {
+            "startedAt": 1788714615350,
+            "endedAt": 1788714619123,
+            "exitCode": 0,
+            "pid": 352,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3771750,
+                "system": 961077,
+                "total": 4732827
+              },
+              "maxRSS": 870940672,
+              "contextSwitches": {
+                "voluntary": 13203,
+                "involuntary": 1908
+              },
+              "ioBlockOps": {
+                "in": 32,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "31904741eefae7d1ba1eb76e6f4246d872ac7f2cf1b5b2635a45cdb5ff422284"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-3-candidate",
+      "variant": "candidate",
+      "warmup": false,
+      "rawReportSha256": "41e2202cbdd4b313ea1fe173bb673371cad5e0973e8cd57c7a06ef62e2a82f17",
+      "stdoutSha256": "41e2202cbdd4b313ea1fe173bb673371cad5e0973e8cd57c7a06ef62e2a82f17",
+      "stderrSha256": "5024ea4ee8d343e12ef8227e1ce0618db466789d08f59bb625f6aa76a9a66c37",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 113.28,
+          "startupMs": 2688.03,
+          "acknowledgementMs": 2.61,
+          "providerStartMs": 83.64,
+          "responseMs": 99.03,
+          "steadyAcknowledgementMs": 11.14,
+          "steadyProviderStartMs": 49.13,
+          "steadyResponseMs": 77.65,
+          "resource": {
+            "startedAt": 1788714619797,
+            "endedAt": 1788714622811,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2770471,
+                "system": 651171,
+                "total": 3421642
+              },
+              "maxRSS": 785788928,
+              "contextSwitches": {
+                "voluntary": 12921,
+                "involuntary": 1445
+              },
+              "ioBlockOps": {
+                "in": 1066,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "1852947c62e02123a7328aac19274ef4e65b92c76e1a141eb90fe303976a4c65"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 106.33,
+          "startupMs": 2574.85,
+          "reloadMs": 567.514,
+          "resource": {
+            "startedAt": 1788714622856,
+            "endedAt": 1788714626339,
+            "exitCode": 0,
+            "pid": 106,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3315357,
+                "system": 644011,
+                "total": 3959368
+              },
+              "maxRSS": 884715520,
+              "contextSwitches": {
+                "voluntary": 16675,
+                "involuntary": 1756
+              },
+              "ioBlockOps": {
+                "in": 25,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "a8d96a98850cbf8d3f4d833b5db9c8b950bf584d8ad127c6ab34365df5608d54"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 208.98,
+          "startupMs": 2536.19,
+          "resource": {
+            "startedAt": 1788714626381,
+            "endedAt": 1788714629089,
+            "exitCode": 0,
+            "pid": 168,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 2314887,
+                "system": 527111,
+                "total": 2841998
+              },
+              "maxRSS": 711303168,
+              "contextSwitches": {
+                "voluntary": 10517,
+                "involuntary": 1150
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "3233f7fb562428b350b024f2cb70abd24977917e91296bba586c0157943ba2f4"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 115.35,
+          "startupMs": 3411.38,
+          "acknowledgementMs": 4.3,
+          "providerStartMs": 253.96,
+          "responseMs": 267.41,
+          "steadyAcknowledgementMs": 1.69,
+          "steadyProviderStartMs": 43.27,
+          "steadyResponseMs": 56.75,
+          "resource": {
+            "startedAt": 1788714629131,
+            "endedAt": 1788714633026,
+            "exitCode": 0,
+            "pid": 227,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3957257,
+                "system": 885497,
+                "total": 4842754
+              },
+              "maxRSS": 878858240,
+              "contextSwitches": {
+                "voluntary": 15445,
+                "involuntary": 1920
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "88e5d54773b4d3ada0bfd5b07d4f5f84e61f60375a53ffa3a074e3611abb2377"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 130,
+          "startupMs": 3415.54,
+          "reloadMs": 1389.081,
+          "resource": {
+            "startedAt": 1788714633128,
+            "endedAt": 1788714638359,
+            "exitCode": 0,
+            "pid": 288,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5239756,
+                "system": 1279035,
+                "total": 6518791
+              },
+              "maxRSS": 880328704,
+              "contextSwitches": {
+                "voluntary": 19659,
+                "involuntary": 2510
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "d64bcce8ee1cf4aa5dd2b69eb04171a72f99afd885352512a851e325ab9696d9"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 394.99,
+          "startupMs": 3409.31,
+          "resource": {
+            "startedAt": 1788714638439,
+            "endedAt": 1788714642203,
+            "exitCode": 0,
+            "pid": 351,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 3732024,
+                "system": 931958,
+                "total": 4663982
+              },
+              "maxRSS": 831868928,
+              "contextSwitches": {
+                "voluntary": 13346,
+                "involuntary": 1519
+              },
+              "ioBlockOps": {
+                "in": 48,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "e58f631e81af784db76b1961333a04193551ebda0bd2351079862d80aee47d7e"
+        }
+      ]
+    },
+    {
+      "label": "wait2-sample-3-baseline",
+      "variant": "baseline",
+      "warmup": false,
+      "rawReportSha256": "cb80c30acf6a9dda72257939c3f969ece4f0b49c22c54d0dd501c64afbab1d99",
+      "stdoutSha256": "cb80c30acf6a9dda72257939c3f969ece4f0b49c22c54d0dd501c64afbab1d99",
+      "stderrSha256": "3da7c1c1b3888b887a9e155b9d7a405eff4cd0b5817f8c39918f60a96e7e7a17",
+      "samples": [
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 117.65,
+          "startupMs": 4167.23,
+          "acknowledgementMs": 2.2,
+          "providerStartMs": 125.73,
+          "responseMs": 141.51,
+          "steadyAcknowledgementMs": 1.63,
+          "steadyProviderStartMs": 31.23,
+          "steadyResponseMs": 58.04,
+          "resource": {
+            "startedAt": 1788714642844,
+            "endedAt": 1788714647373,
+            "exitCode": 0,
+            "pid": 45,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4338647,
+                "system": 796750,
+                "total": 5135397
+              },
+              "maxRSS": 902717440,
+              "contextSwitches": {
+                "voluntary": 17875,
+                "involuntary": 2089
+              },
+              "ioBlockOps": {
+                "in": 31584,
+                "out": 41297
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "18ad3b63a3d84d9953162c99f46908434464f44989df79d51bf5439642cf17df"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 114.85,
+          "startupMs": 3893.24,
+          "reloadMs": 608.594,
+          "resource": {
+            "startedAt": 1788714647421,
+            "endedAt": 1788714652214,
+            "exitCode": 0,
+            "pid": 106,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 4646271,
+                "system": 809937,
+                "total": 5456208
+              },
+              "maxRSS": 1036148736,
+              "contextSwitches": {
+                "voluntary": 17618,
+                "involuntary": 1788
+              },
+              "ioBlockOps": {
+                "in": 102,
+                "out": 43031
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "201e92f19703378287c14b12a3b4ff28efafd69afe1ee95b53381ab7cb6fda2b"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "fresh",
+          "shutdownMs": 212.42,
+          "startupMs": 3880.6,
+          "resource": {
+            "startedAt": 1788714652258,
+            "endedAt": 1788714656312,
+            "exitCode": 0,
+            "pid": 168,
+            "readerBun": "1.4.0",
+            "scenario": "fresh",
+            "usage": {
+              "cpuTime": {
+                "user": 3634575,
+                "system": 670140,
+                "total": 4304715
+              },
+              "maxRSS": 835686400,
+              "contextSwitches": {
+                "voluntary": 11453,
+                "involuntary": 1357
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "08ac2d22d8cc721a1972ca3649e7c5ab5250bb29411de336948782c043cf108a"
+        },
+        {
+          "action": "prompt",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 126.07,
+          "startupMs": 4719.77,
+          "acknowledgementMs": 4.71,
+          "providerStartMs": 251.51,
+          "responseMs": 267.72,
+          "steadyAcknowledgementMs": 1.51,
+          "steadyProviderStartMs": 54.24,
+          "steadyResponseMs": 79.7,
+          "resource": {
+            "startedAt": 1788714656358,
+            "endedAt": 1788714661592,
+            "exitCode": 0,
+            "pid": 227,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5371317,
+                "system": 1016827,
+                "total": 6388144
+              },
+              "maxRSS": 1049055232,
+              "contextSwitches": {
+                "voluntary": 17645,
+                "involuntary": 2187
+              },
+              "ioBlockOps": {
+                "in": 0,
+                "out": 44855
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "51147705828f058a7be74e61f79aeb7771eaab7477287c133abc858f032ed842"
+        },
+        {
+          "action": "reload",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 123.53,
+          "startupMs": 4723.56,
+          "reloadMs": 1503.183,
+          "resource": {
+            "startedAt": 1788714661704,
+            "endedAt": 1788714668349,
+            "exitCode": 0,
+            "pid": 287,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 6865692,
+                "system": 1429402,
+                "total": 8295094
+              },
+              "maxRSS": 962609152,
+              "contextSwitches": {
+                "voluntary": 20945,
+                "involuntary": 3017
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 44667
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "c0175778037633c00953dad89500c71e04ab6295d7e1d3d448803d7797fc69f8"
+        },
+        {
+          "action": "ctrl-c",
+          "columns": 120,
+          "rows": 40,
+          "scenario": "resume-long",
+          "shutdownMs": 422.99,
+          "startupMs": 4854.8,
+          "resource": {
+            "startedAt": 1788714668440,
+            "endedAt": 1788714673680,
+            "exitCode": 0,
+            "pid": 349,
+            "readerBun": "1.4.0",
+            "scenario": "resume-long",
+            "usage": {
+              "cpuTime": {
+                "user": 5333465,
+                "system": 1066019,
+                "total": 6399484
+              },
+              "maxRSS": 1013743616,
+              "contextSwitches": {
+                "voluntary": 15232,
+                "involuntary": 2390
+              },
+              "ioBlockOps": {
+                "in": 16,
+                "out": 40714
+              },
+              "messages": {
+                "sent": 0,
+                "received": 0
+              },
+              "signalCount": 0,
+              "swapCount": 0
+            }
+          },
+          "resourceSha256": "6ed452e30fd0c1cb60fd042e38bb2c23ac681903e5f93cdd57c81b954edc0cbe"
+        }
+      ]
+    }
+  ],
+  "summaries": [
+    {
+      "scenario": "fresh",
+      "action": "prompt",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 4799486,
+            "median": 4912867,
+            "maximum": 5135397
+          },
+          "maxRSSBytes": {
+            "minimum": 902717440,
+            "median": 994402304,
+            "maximum": 994754560
+          },
+          "lifetimeMs": {
+            "minimum": 4337,
+            "median": 4352,
+            "maximum": 4529
+          },
+          "startupMs": {
+            "minimum": 3956.16,
+            "median": 3969.47,
+            "maximum": 4167.23
+          },
+          "shutdownMs": {
+            "minimum": 109.64,
+            "median": 117.65,
+            "maximum": 130.71
+          },
+          "ioBlockOpsIn": {
+            "minimum": 1066,
+            "median": 12541,
+            "maximum": 31584
+          },
+          "ioBlockOpsOut": {
+            "minimum": 41297,
+            "median": 41297,
+            "maximum": 41297
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 3421642,
+            "median": 3469108,
+            "maximum": 3640633
+          },
+          "maxRSSBytes": {
+            "minimum": 785788928,
+            "median": 790552576,
+            "maximum": 811417600
+          },
+          "lifetimeMs": {
+            "minimum": 3014,
+            "median": 3065,
+            "maximum": 3146
+          },
+          "startupMs": {
+            "minimum": 2688.03,
+            "median": 2718.17,
+            "maximum": 2811.61
+          },
+          "shutdownMs": {
+            "minimum": 112.58,
+            "median": 113.28,
+            "maximum": 121.05
+          },
+          "ioBlockOpsIn": {
+            "minimum": 1066,
+            "median": 1066,
+            "maximum": 30621
+          },
+          "ioBlockOpsOut": {
+            "minimum": 41297,
+            "median": 41297,
+            "maximum": 41297
+          }
+        }
+      }
+    },
+    {
+      "scenario": "fresh",
+      "action": "reload",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 5411983,
+            "median": 5456208,
+            "maximum": 5504378
+          },
+          "maxRSSBytes": {
+            "minimum": 1032245248,
+            "median": 1034321920,
+            "maximum": 1036148736
+          },
+          "lifetimeMs": {
+            "minimum": 4793,
+            "median": 4824,
+            "maximum": 4880
+          },
+          "startupMs": {
+            "minimum": 3865.09,
+            "median": 3893.24,
+            "maximum": 3971.99
+          },
+          "shutdownMs": {
+            "minimum": 112.69,
+            "median": 114.85,
+            "maximum": 116.57
+          },
+          "ioBlockOpsIn": {
+            "minimum": 0,
+            "median": 102,
+            "maximum": 538
+          },
+          "ioBlockOpsOut": {
+            "minimum": 43031,
+            "median": 43031,
+            "maximum": 43031
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 3959368,
+            "median": 3964676,
+            "maximum": 4073030
+          },
+          "maxRSSBytes": {
+            "minimum": 787955712,
+            "median": 863326208,
+            "maximum": 884715520
+          },
+          "lifetimeMs": {
+            "minimum": 3436,
+            "median": 3467,
+            "maximum": 3483
+          },
+          "startupMs": {
+            "minimum": 2549.97,
+            "median": 2574.85,
+            "maximum": 2619.63
+          },
+          "shutdownMs": {
+            "minimum": 105.98,
+            "median": 106.33,
+            "maximum": 108.39
+          },
+          "ioBlockOpsIn": {
+            "minimum": 16,
+            "median": 25,
+            "maximum": 41
+          },
+          "ioBlockOpsOut": {
+            "minimum": 43031,
+            "median": 43031,
+            "maximum": 43031
+          }
+        }
+      }
+    },
+    {
+      "scenario": "fresh",
+      "action": "ctrl-c",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 4250656,
+            "median": 4304715,
+            "maximum": 4368580
+          },
+          "maxRSSBytes": {
+            "minimum": 835686400,
+            "median": 839880704,
+            "maximum": 840376320
+          },
+          "lifetimeMs": {
+            "minimum": 4039,
+            "median": 4054,
+            "maximum": 4150
+          },
+          "startupMs": {
+            "minimum": 3863.37,
+            "median": 3880.6,
+            "maximum": 3980.5
+          },
+          "shutdownMs": {
+            "minimum": 210.39,
+            "median": 212.42,
+            "maximum": 216.85
+          },
+          "ioBlockOpsIn": {
+            "minimum": 0,
+            "median": 0,
+            "maximum": 16
+          },
+          "ioBlockOpsOut": {
+            "minimum": 40714,
+            "median": 40714,
+            "maximum": 40714
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 2841998,
+            "median": 2856710,
+            "maximum": 2869774
+          },
+          "maxRSSBytes": {
+            "minimum": 711303168,
+            "median": 713723904,
+            "maximum": 726343680
+          },
+          "lifetimeMs": {
+            "minimum": 2702,
+            "median": 2708,
+            "maximum": 2736
+          },
+          "startupMs": {
+            "minimum": 2536.19,
+            "median": 2536.66,
+            "maximum": 2566.72
+          },
+          "shutdownMs": {
+            "minimum": 203.72,
+            "median": 208,
+            "maximum": 208.98
+          },
+          "ioBlockOpsIn": {
+            "minimum": 0,
+            "median": 0,
+            "maximum": 0
+          },
+          "ioBlockOpsOut": {
+            "minimum": 40714,
+            "median": 40714,
+            "maximum": 40714
+          }
+        }
+      }
+    },
+    {
+      "scenario": "resume-long",
+      "action": "prompt",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 6349964,
+            "median": 6388144,
+            "maximum": 6402935
+          },
+          "maxRSSBytes": {
+            "minimum": 1016356864,
+            "median": 1035513856,
+            "maximum": 1049055232
+          },
+          "lifetimeMs": {
+            "minimum": 5234,
+            "median": 5275,
+            "maximum": 5307
+          },
+          "startupMs": {
+            "minimum": 4719.77,
+            "median": 4745.48,
+            "maximum": 4822.91
+          },
+          "shutdownMs": {
+            "minimum": 113.79,
+            "median": 121.48,
+            "maximum": 126.07
+          },
+          "ioBlockOpsIn": {
+            "minimum": 0,
+            "median": 0,
+            "maximum": 0
+          },
+          "ioBlockOpsOut": {
+            "minimum": 44855,
+            "median": 44855,
+            "maximum": 44855
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 4811509,
+            "median": 4842754,
+            "maximum": 4878000
+          },
+          "maxRSSBytes": {
+            "minimum": 868429824,
+            "median": 878858240,
+            "maximum": 889020416
+          },
+          "lifetimeMs": {
+            "minimum": 3869,
+            "median": 3895,
+            "maximum": 3899
+          },
+          "startupMs": {
+            "minimum": 3397.56,
+            "median": 3405.19,
+            "maximum": 3411.38
+          },
+          "shutdownMs": {
+            "minimum": 113.97,
+            "median": 115.35,
+            "maximum": 121.04
+          },
+          "ioBlockOpsIn": {
+            "minimum": 0,
+            "median": 0,
+            "maximum": 16
+          },
+          "ioBlockOpsOut": {
+            "minimum": 44855,
+            "median": 44855,
+            "maximum": 44855
+          }
+        }
+      }
+    },
+    {
+      "scenario": "resume-long",
+      "action": "reload",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 8131181,
+            "median": 8295094,
+            "maximum": 8355091
+          },
+          "maxRSSBytes": {
+            "minimum": 962609152,
+            "median": 976396288,
+            "maximum": 1008840704
+          },
+          "lifetimeMs": {
+            "minimum": 6618,
+            "median": 6645,
+            "maximum": 6736
+          },
+          "startupMs": {
+            "minimum": 4723.56,
+            "median": 4743.09,
+            "maximum": 4858.88
+          },
+          "shutdownMs": {
+            "minimum": 119.31,
+            "median": 123.53,
+            "maximum": 131
+          },
+          "ioBlockOpsIn": {
+            "minimum": 16,
+            "median": 16,
+            "maximum": 16
+          },
+          "ioBlockOpsOut": {
+            "minimum": 44667,
+            "median": 44667,
+            "maximum": 44667
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 6511590,
+            "median": 6518791,
+            "maximum": 6564716
+          },
+          "maxRSSBytes": {
+            "minimum": 874758144,
+            "median": 880328704,
+            "maximum": 895569920
+          },
+          "lifetimeMs": {
+            "minimum": 5228,
+            "median": 5231,
+            "maximum": 5289
+          },
+          "startupMs": {
+            "minimum": 3407.87,
+            "median": 3415.54,
+            "maximum": 3451.62
+          },
+          "shutdownMs": {
+            "minimum": 122.09,
+            "median": 122.62,
+            "maximum": 130
+          },
+          "ioBlockOpsIn": {
+            "minimum": 16,
+            "median": 32,
+            "maximum": 64
+          },
+          "ioBlockOpsOut": {
+            "minimum": 44667,
+            "median": 44667,
+            "maximum": 44667
+          }
+        }
+      }
+    },
+    {
+      "scenario": "resume-long",
+      "action": "ctrl-c",
+      "variants": {
+        "baseline": {
+          "cpuUs": {
+            "minimum": 6115543,
+            "median": 6280737,
+            "maximum": 6399484
+          },
+          "maxRSSBytes": {
+            "minimum": 975032320,
+            "median": 998723584,
+            "maximum": 1013743616
+          },
+          "lifetimeMs": {
+            "minimum": 5082,
+            "median": 5199,
+            "maximum": 5240
+          },
+          "startupMs": {
+            "minimum": 4723.09,
+            "median": 4816.04,
+            "maximum": 4854.8
+          },
+          "shutdownMs": {
+            "minimum": 400.63,
+            "median": 422.34,
+            "maximum": 422.99
+          },
+          "ioBlockOpsIn": {
+            "minimum": 16,
+            "median": 16,
+            "maximum": 16
+          },
+          "ioBlockOpsOut": {
+            "minimum": 40714,
+            "median": 40714,
+            "maximum": 40714
+          }
+        },
+        "candidate": {
+          "cpuUs": {
+            "minimum": 4663982,
+            "median": 4700684,
+            "maximum": 4732827
+          },
+          "maxRSSBytes": {
+            "minimum": 822071296,
+            "median": 831868928,
+            "maximum": 870940672
+          },
+          "lifetimeMs": {
+            "minimum": 3744,
+            "median": 3764,
+            "maximum": 3773
+          },
+          "startupMs": {
+            "minimum": 3393.14,
+            "median": 3409.31,
+            "maximum": 3417.73
+          },
+          "shutdownMs": {
+            "minimum": 387.88,
+            "median": 394.99,
+            "maximum": 397.02
+          },
+          "ioBlockOpsIn": {
+            "minimum": 16,
+            "median": 32,
+            "maximum": 48
+          },
+          "ioBlockOpsOut": {
+            "minimum": 40714,
+            "median": 40714,
+            "maximum": 40714
+          }
+        }
+      }
+    }
+  ]
+}

@@ -8,12 +8,12 @@ import {
 	commandDialogSectionHeading,
 	fitCommandDialogRows,
 	fitFixedCommandDialogRows,
-} from "../../../conversation-ui/index.js";
-import { isRuntimeNumber } from "../../../shared/runtime-type.js";
-import { boundTerminalText as boundTerminalPreview } from "../../../tool-display/index.js";
-import type { AgentNestedDetail, AgentRow, AgentSessionSnapshot, AgentStatus } from "../session/current-agents.js";
-import { boundedTerminalLine, isTaskOnlyAgentText } from "../shared/display-description.js";
-import { fitAgentDescription } from "./agent-roster.js";
+} from "../../../conversation-ui/index.ts";
+import { isRuntimeNumber } from "../../../shared/runtime-type.ts";
+import { boundTerminalText as boundTerminalPreview } from "../../../tool-display/index.ts";
+import type { AgentNestedDetail, AgentRow, AgentSessionSnapshot, AgentStatus } from "../session/current-agents.ts";
+import { boundedTerminalLine, isTaskOnlyAgentText } from "../shared/display-description.ts";
+import { fitAgentDescription } from "./agent-roster.ts";
 
 const GUTTER = "  ";
 const NARROW_WIDTH = 64;

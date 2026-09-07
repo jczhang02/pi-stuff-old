@@ -6,21 +6,20 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
 import * as Queue from "effect/Queue";
-import { isRuntimeNumber } from "../../../../shared/runtime-type.js";
-import type { ChildTranscriptWriter } from "../../shared/child-transcript.ts";
+import { isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
-import type { AgentContextUsage, ProtocolOutputLimit, Usage } from "../../shared/types.ts";
-import type { ChildProtocolMessage } from "../shared/child-protocol.ts";
-import type { BackgroundRunnerConfig, BackgroundTaskResult, RunnerAgentTask } from "../shared/parallel-utils.ts";
+import { deferredModule } from "../shared/deferred-module.ts";
 import { buildPiArgs, cleanupTempDir } from "../shared/pi-args.ts";
 import { getPiSpawnCommand, type PiSpawnDeps } from "../shared/pi-spawn.ts";
 import { readChildToolDiagnosticError } from "../shared/tool-availability.ts";
-import { ChildProtocolRuntime, type ChildProtocolSnapshot } from "./child-protocol-runtime.ts";
-import { steerAcksDir, steerCapabilityPath, stepSteerInboxDir } from "./control-channel.ts";
 import type {
-	BackgroundRunnerStatus as RunnerStatus,
-	BackgroundRunnerStatusStep as RunnerStatusStep,
-} from "./initial-status.ts";
+	ChildProcessEngineInput,
+	ChildProcessResult,
+	ChildRuntimeControl,
+	WriterProcess,
+} from "./child-process-contract.ts";
+import type { ChildProtocolRuntime, ChildProtocolSnapshot } from "./child-protocol-runtime.ts";
+import { steerAcksDir, steerCapabilityPath, stepSteerInboxDir } from "./control-channel.ts";
 import {
 	buildWriterProcessEnv,
 	buildWriterSpawnCommand,
@@ -32,60 +31,21 @@ import {
 } from "./writer-process-lifecycle.ts";
 import { reapOrphanWriterProcesses, type WriterRuntimeState } from "./writer-process-registry.ts";
 
-export interface ChildProcessResult {
-	exitCode: number | null;
-	signal: string | null;
-	stderr: string;
-	messages: ChildProtocolMessage[];
-	output: string;
-	error?: string | undefined;
-	protocolError?: ProtocolOutputLimit | undefined;
-	usage: Usage;
-	costReported?: boolean;
-	toolCount: number;
-	toolBudgetBlockedTool?: string | undefined;
-	durationMs: number;
-	model?: string | undefined;
-	contextUsage?: AgentContextUsage | undefined;
-	interrupted?: boolean | undefined;
-	timedOut?: boolean | undefined;
-	stopped?: boolean | undefined;
-	contextNudgeObserved?: boolean | undefined;
-	process?: WriterProcess | undefined;
-}
+const loadProtocol = deferredModule(() => import("./child-protocol-runtime.ts"));
+const loadProtocolMessages = deferredModule(() => import("../shared/child-protocol.ts"));
 
-export type WriterProcess = NonNullable<BackgroundTaskResult["writerProcesses"]>[number];
-
-export interface ChildRuntimeControl {
-	state: "running" | "paused" | "timed-out" | "stopped" | "failed";
-	interrupt(kind: "pause" | "timeout" | "stop"): void;
-	revokeFinalization(): void;
-}
+export type {
+	ChildProcessEngineInput,
+	ChildProcessResult,
+	ChildRuntimeControl,
+	WriterProcess,
+} from "./child-process-contract.ts";
 
 type ChildTerminalCause = "pause" | "timeout" | "stop" | "tool-timeout" | "protocol" | "setup";
 type WriterControlCommand = "cancel-finalize" | "finalize" | "proceed" | "terminate-sigint" | "terminate-sigterm";
 type ChildLifecycleEvent =
 	| { readonly type: "close"; readonly exitCode: number | null; readonly signal: NodeJS.Signals | null }
 	| { readonly type: "wake" };
-
-export interface ChildProcessEngineInput {
-	config: BackgroundRunnerConfig;
-	task: RunnerAgentTask;
-	index: number;
-	model?: string | undefined;
-	taskCwd: string;
-	sessionDir?: string | undefined;
-	outputFile: string;
-	transcript: ChildTranscriptWriter;
-	artifactJsonlPath?: string | undefined;
-	statusStep: RunnerStatusStep;
-	statusPath: string;
-	status: RunnerStatus;
-	activeControls: Map<number, ChildRuntimeControl>;
-	consumeScheduledStop: () => boolean;
-	preStartTerminalCause?: () => "pause" | "timeout" | "stop" | undefined;
-	onWriterProcess?: ((writer: WriterRuntimeState) => void) | undefined;
-}
 
 function buildChildLaunch(input: ChildProcessEngineInput) {
 	const built = buildPiArgs({
@@ -205,11 +165,18 @@ export class ChildProcessEngine {
 
 	run(): Effect.Effect<ChildProcessResult, unknown> {
 		return Effect.gen({ self: this }, function* () {
+			const { ChildProtocolRuntime } = yield* Effect.tryPromise({
+				try: async () => {
+					await loadProtocolMessages();
+					return loadProtocol();
+				},
+				catch: (error) => error,
+			});
 			this.lifecycleEvents = yield* Queue.unbounded<ChildLifecycleEvent>();
 			yield* Effect.try({ try: () => this.spawnWriter(), catch: (error) => error });
 			yield* this.captureWriterIdentity();
 			this.bindWriter();
-			this.installRuntime();
+			this.installRuntime(ChildProtocolRuntime);
 			yield* Effect.try({ try: () => this.releaseStartupGate(), catch: (error) => error });
 			return yield* this.awaitClose();
 		}).pipe(Effect.ensuring(Effect.sync(() => this.teardown())));
@@ -463,7 +430,7 @@ export class ChildProcessEngine {
 		return true;
 	}
 
-	private installRuntime(): void {
+	private installRuntime(ProtocolRuntime: typeof ChildProtocolRuntime): void {
 		this.runtimeControl = {
 			state: "running",
 			interrupt: (kind) => this.terminate(kind),
@@ -473,7 +440,7 @@ export class ChildProcessEngine {
 		const terminalCause = this.input.preStartTerminalCause?.();
 		if (terminalCause) this.terminate(terminalCause);
 		else if (this.input.consumeScheduledStop()) this.terminate("stop");
-		this.protocol = new ChildProtocolRuntime({
+		this.protocol = new ProtocolRuntime({
 			config: this.input.config,
 			task: this.input.task,
 			index: this.input.index,

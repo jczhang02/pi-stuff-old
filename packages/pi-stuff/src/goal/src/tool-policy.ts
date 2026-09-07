@@ -1,6 +1,6 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import type { StatusContext } from "./policy.js";
-import type { GoalSettings } from "./settings.js";
+import type { StatusContext } from "./policy.ts";
+import type { GoalSettings } from "./settings.ts";
 
 export const GOAL_COMPLETE_TOOL = "goal_complete";
 export const GOAL_BLOCKED_TOOL = "goal_blocked";

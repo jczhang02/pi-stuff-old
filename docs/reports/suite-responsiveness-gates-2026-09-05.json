@@ -1,0 +1,32 @@
+{
+  "status": "locked for subsequent fixed-Host comparisons; not Suite certification",
+  "lockedAt": "2026-09-05 00:51:32 UTC",
+  "bead": "ps-yon.3",
+  "origin": {
+    "surface": "Codex",
+    "sessionId": "01a06670-ae61-7481-8051-5b09bc8eb558"
+  },
+  "calibrationLookup": "native-calibration-PBm8Fw",
+  "suiteCommit": "386198b263bb75ba541ec9b246de7e96322dfd13",
+  "hostBinarySha256": "0cfd1bf3e9468f1052d172502fa388e8e8e53dcdeb9fa97f1ef828fdd7757072",
+  "nativeCadenceMs": 80,
+  "maximumObservationGapMs": 40,
+  "maximumActiveSpinnerAbsenceMs": 0,
+  "samples": 30,
+  "observerGapMs": 22.039627999999993,
+  "spinnerMs": 164.76752100000067,
+  "startupInputMs": 38.124123000000054,
+  "steadyInputMs": 40.46531200000072,
+  "selectionMs": 38.311641000000236,
+  "sourceSha256": {
+    "native-calibration.ts": "c00cd3de546a01fc898e4e63cf14372d548e91980e3df2f7e383c0ace608345a",
+    "native-calibration-protocol.json": "5596335d9861429a9efd2c420a20545b4b924247fb4a8409319cf47dc9283faf",
+    "cadence-observer.ts": "b79b69f1147f57a87ff5940f490ff9de5b90b465a4630c41f627d8fb1672e86c",
+    "cadence-provider.ts": "77b6af5541195fa013b4c81aacb92cdd5d9610d9411b2a81592594ef89dde1e5",
+    "continuous-observation.ts": "b77b31668c28735797e1ade815147a5d0e9e8ee32751f30016076ec02844b71c",
+    "cadence-boundaries.test.ts": "ee95ca15617ac7d011ee7b32f82d16057ce11a7497dcb7bf41d1b3378087b4d6"
+  },
+  "review": "Independent source and sample audit clean; main rechecked the exact executable hash after calibration.",
+  "rule": "One attributable breach fails. Missing observations or excessive gaps are inconclusive. Input includes autocomplete setup; startup and steady phases remain separate. Do not relax gates after optimization.",
+  "remaining": "Full Capability profiles, Agent Tool and Context/recovery workloads, resource-dimension gaps and production efficiency fixes remain open."
+}

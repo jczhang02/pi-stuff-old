@@ -3,7 +3,7 @@
 import * as fs from "node:fs";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { estimateTokens } from "@earendil-works/pi-coding-agent";
-import { isRuntimeNumber, isRuntimeObject, runtimeErrorCode } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeObject, runtimeErrorCode } from "../../../../shared/runtime-type.ts";
 import { appendJsonl, withArtifactGroupWriteClaim } from "../../shared/artifacts.ts";
 import { writePrivateAtomicText } from "../../shared/atomic-json.ts";
 import type { CostSummary, ModelAttempt, TokenUsage, Usage } from "../../shared/types.ts";

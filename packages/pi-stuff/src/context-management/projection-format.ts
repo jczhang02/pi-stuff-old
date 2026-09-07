@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import type { ContextEvent, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { sessionEntryToContextMessages } from "@earendil-works/pi-coding-agent";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 
 const BTW_PROJECTION_LIMIT = 48_000;
 const AGENT_FORK_PROJECTION_LIMIT = 64_000;

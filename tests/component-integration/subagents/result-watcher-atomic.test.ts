@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from "bun:test";
+import { afterEach, expect, spyOn, test } from "bun:test";
 import {
 	cleanupResultWatcherFixtures,
 	createRecordingResultWatcher,
@@ -173,6 +173,16 @@ test("contains a durable result-claim release failure", async () => {
 	const unhandled: unknown[] = [];
 	const onUnhandled = (cause: unknown) => unhandled.push(cause);
 	process.on("unhandledRejection", onUnhandled);
+	const renamed = Promise.withResolvers<void>();
+	const finishRename = Promise.withResolvers<void>();
+	const nativeRename = fs.promises.rename;
+	const rename = spyOn(fs.promises, "rename").mockImplementation(async (source, destination) => {
+		await nativeRename(source, destination);
+		if (source === resultPath) {
+			renamed.resolve();
+			await finishRename.promise;
+		}
+	});
 	let releases = 0;
 	const { watcher } = createRecordingResultWatcher(resultsDir, {
 		acquireClaim: () => ({
@@ -188,12 +198,20 @@ test("contains a durable result-claim release failure", async () => {
 	try {
 		watcher.startResultWatcher();
 		watcher.primeExistingResults();
-		await waitForResultWatcher(() => !fs.existsSync(resultPath));
+		await renamed.promise;
+		// Canonical removal precedes asynchronous artifact cleanup and claim release.
+		expect(fs.existsSync(resultPath)).toBeFalse();
+		expect(releases).toBe(0);
+		finishRename.resolve();
+		await waitForResultWatcher(() => releases > 0);
 		await Bun.sleep(25);
 		expect(fs.existsSync(resultPath)).toBeFalse();
 		expect(releases).toBe(1);
 		expect(unhandled).toEqual([]);
 	} finally {
+		finishRename.resolve();
+		await waitForResultWatcher(() => releases > 0);
+		rename.mockRestore();
 		watcher.stopResultWatcher();
 		process.off("unhandledRejection", onUnhandled);
 	}

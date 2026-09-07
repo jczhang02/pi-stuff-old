@@ -3,8 +3,8 @@ import { homedir } from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import stripJsonComments from "strip-json-comments";
-import { type JsonObject, type JsonValue, parseJsonObject } from "../shared/json-value.js";
-import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
+import { type JsonObject, type JsonValue, parseJsonObject } from "../shared/json-value.ts";
+import { isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
 
 const DEFAULT_HISTORIAN_MODEL = "openai-codex/gpt-5.6-terra";
 const FLAT_AGENT_EXECUTION_FIELDS = ["model", "fallback_models", "variant", "thinking_level"] as const;

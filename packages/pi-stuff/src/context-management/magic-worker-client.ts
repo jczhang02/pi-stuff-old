@@ -10,9 +10,9 @@ import * as Cause from "effect/Cause";
 import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import { Type } from "typebox";
-import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.js";
-import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.js";
-import { type JsonInputValue, type JsonObject, parseJsonObject } from "../shared/json-value.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../lifecycle-deadline.ts";
+import { type EffectFoundation, type EffectScopeOwner, installEffectFoundation } from "../shared/effect-foundation.ts";
+import { type JsonInputValue, type JsonObject, parseJsonObject } from "../shared/json-value.ts";
 import {
 	applyMagicWorkerHostCompaction,
 	applyMagicWorkerHostEffect,
@@ -22,7 +22,7 @@ import {
 	snapshotMagicWorkerContext,
 	snapshotMagicWorkerEvent,
 	writeMagicWorkerSyncResponse,
-} from "./magic-worker-host.js";
+} from "./magic-worker-host.ts";
 import type {
 	MagicWorkerCommandName,
 	MagicWorkerContextSnapshot,
@@ -36,8 +36,8 @@ import type {
 	MagicWorkerSyncEffectMessage,
 	MagicWorkerToolDescriptor,
 	MagicWorkerToolName,
-} from "./magic-worker-protocol.js";
-import { MagicWorkerTransport } from "./magic-worker-transport.js";
+} from "./magic-worker-protocol.ts";
+import { MagicWorkerTransport } from "./magic-worker-transport.ts";
 
 interface MagicModule {
 	readonly default: (pi: ExtensionAPI, onFatal?: MagicWorkerFatalHandler) => Promise<void> | void;

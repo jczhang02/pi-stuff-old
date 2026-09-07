@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 import * as Effect from "effect/Effect";
 import { type Static, Type } from "typebox";
 import { Value } from "typebox/value";
-import { PONYTAIL_CHILD_MODE_ENV } from "../../../../ponytail/types.js";
-import { parseJsonValue } from "../../../../shared/json-value.js";
-import { isRuntimeNumber, runtimeErrorCode } from "../../../../shared/runtime-type.js";
+import { PONYTAIL_CHILD_MODE_ENV } from "../../../../ponytail/types.ts";
+import { parseJsonValue } from "../../../../shared/json-value.ts";
+import { isRuntimeNumber, runtimeErrorCode } from "../../../../shared/runtime-type.ts";
 import { readBoundedOwnedFile } from "../../shared/private-directory.ts";
 import {
 	identityBoundProcessLiveness,

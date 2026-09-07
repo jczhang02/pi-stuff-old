@@ -7,14 +7,14 @@ import {
 	type JsonInputObject,
 	type JsonInputValue,
 	jsonInputKind,
-} from "../../shared/json-value.js";
+} from "../../shared/json-value.ts";
 import {
 	isRuntimeBigInt,
 	isRuntimeBoolean,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../shared/runtime-type.js";
+} from "../../shared/runtime-type.ts";
 import type { ContentBlock, McpSettings } from "./types.ts";
 
 export const DEFAULT_MCP_OUTPUT_MAX_BYTES = 50 * 1024;

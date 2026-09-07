@@ -4,8 +4,8 @@ import {
 	commandDialogPrimaryKey,
 	commandDialogSectionHeading,
 	fitCommandDialogRows,
-} from "../../conversation-ui/index.js";
-import { type McpDialogRows, mcpDialogPriority } from "../mcp-dialog-rows.js";
+} from "../../conversation-ui/index.ts";
+import { type McpDialogRows, mcpDialogPriority } from "../mcp-dialog-rows.ts";
 import type { ConfigWritePreview, KnownServerPreset, McpDiscoverySummary } from "./config.ts";
 import { redactTraceText } from "./mcp-trace.ts";
 import type { McpOnboardingState } from "./onboarding-state.ts";

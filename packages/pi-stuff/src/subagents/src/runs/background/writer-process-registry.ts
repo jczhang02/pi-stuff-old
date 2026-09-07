@@ -1,13 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.js";
+import { type JsonValue, parseJsonValue } from "../../../../shared/json-value.ts";
 import {
 	runtimeErrorCode as errorCode,
 	isRuntimeNumber,
 	isRuntimeObject,
 	isRuntimeString,
-} from "../../../../shared/runtime-type.js";
+} from "../../../../shared/runtime-type.ts";
 import { writePrivateAtomicJson } from "../../shared/atomic-json.ts";
 import {
 	assertPrivateDirectory,

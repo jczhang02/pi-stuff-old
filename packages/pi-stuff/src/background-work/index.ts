@@ -5,14 +5,14 @@ import {
 	SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import { Container, isKeyRelease, Key, matchesKey, Text } from "@earendil-works/pi-tui";
-import { getCommandDialogCoordinator } from "../conversation-ui/index.js";
-import { installEffectFoundation } from "../shared/effect-foundation.js";
-import { CachedToolRow } from "../tool-display/index.js";
-import { reportWorkDiagnostic } from "./src/diagnostics.js";
-import { BackgroundWorkEffectOwner } from "./src/effect-owner.js";
-import { type BackgroundWorkOutcome, BackgroundWorkRuntime } from "./src/runtime.js";
-import { createTasksDialogView } from "./src/tasks-dialog.js";
-import { registerWorkTools, type WorkToolRuntimeRef } from "./src/tools.js";
+import { getCommandDialogCoordinator } from "../conversation-ui/index.ts";
+import { installEffectFoundation } from "../shared/effect-foundation.ts";
+import { CachedToolRow } from "../tool-display/index.ts";
+import { reportWorkDiagnostic } from "./src/diagnostics.ts";
+import { BackgroundWorkEffectOwner } from "./src/effect-owner.ts";
+import { type BackgroundWorkOutcome, BackgroundWorkRuntime } from "./src/runtime.ts";
+import { createTasksDialogView } from "./src/tasks-dialog.ts";
+import { registerWorkTools, type WorkToolRuntimeRef } from "./src/tools.ts";
 
 export {
 	type BackgroundWorkKind,
@@ -21,8 +21,8 @@ export {
 	type BackgroundWorkSnapshot,
 	type BackgroundWorkStatus,
 	type BackgroundWorkTerminalStatus,
-} from "./src/runtime.js";
-export { type ReconciliationResult, reconcileStaleRuns, WorkRunStorage } from "./src/storage.js";
+} from "./src/runtime.ts";
+export { type ReconciliationResult, reconcileStaleRuns, WorkRunStorage } from "./src/storage.ts";
 
 const COMPLETION_MESSAGE_TYPE = "pi-stuff-background-work-result";
 

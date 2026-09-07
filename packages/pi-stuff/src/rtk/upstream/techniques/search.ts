@@ -1,5 +1,5 @@
-import { boundTerminalLine } from "../../../tool-display/index.js";
-import { compactPath } from "./path-utils.js";
+import { boundTerminalLine } from "../../../tool-display/index.ts";
+import { compactPath } from "./path-utils.ts";
 
 interface SearchResult {
 	file: string;

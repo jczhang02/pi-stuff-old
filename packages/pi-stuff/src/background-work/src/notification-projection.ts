@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import type { BackgroundWorkOutcome, BackgroundWorkTerminalStatus } from "./runtime.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import type { BackgroundWorkOutcome, BackgroundWorkTerminalStatus } from "./runtime.ts";
 
 export interface NotificationBatch {
 	readonly content: string;

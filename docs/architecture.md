@@ -49,12 +49,20 @@ Change the manifest and regenerate when composition changes. Capability implemen
 
 ## Runtime loading
 
+Relative Package imports name the shipped file directly: TypeScript imports use `.ts`, while real JavaScript modules
+retain their own extension. Generated composition follows the same rule. The repository import audit rejects missing
+targets so the Host does not repeatedly search nonexistent `.js` paths before falling back to TypeScript Source.
+
 Package import registers the extension factory. Session startup reads user configuration and initializes configured
 capabilities before the editor becomes ready. Optional external services and subprocess-backed integrations start only
 when their owning capability needs them.
 
 Initialization failures propagate to the Host. Runtime problems that can be contained are recorded in the shared
 diagnostics surface and are available through `/diagnostics`.
+
+Shared runtime type guards bind their TypeBox predicates once when the module loads. They preserve JavaScript number
+categories (including `NaN` and infinities) and object categories (including arrays and `null`); finite-number checks
+remain separate.
 
 ## Lifecycle ownership
 

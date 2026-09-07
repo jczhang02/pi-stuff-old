@@ -3,10 +3,10 @@ import * as nodeFs from "node:fs/promises";
 import * as path from "node:path";
 import { Type } from "typebox";
 import { Value } from "typebox/value";
-import { parseJsonValue } from "../../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.js";
+import { parseJsonValue } from "../../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeObject, isRuntimeString } from "../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../shared/diagnostics.ts";
-import { type DurableClaim, tryAcquireDurableClaim } from "../shared/durable-claim.ts";
+import { type AsyncDurableClaim, tryAcquireKernelClaimAsync } from "../shared/durable-claim.ts";
 import {
 	type AgentGovernorLease,
 	type AgentRecord,
@@ -206,7 +206,7 @@ export class SessionGovernorLedger {
 			return result.value;
 		} finally {
 			try {
-				lock.release();
+				await lock.release();
 			} catch (error) {
 				reportAgentDiagnostic(`Failed to release committed session governor lock '${lock.directory}':`, error);
 			}
@@ -287,11 +287,11 @@ export class SessionGovernorLedger {
 		}
 	}
 
-	private async acquireLock(): Promise<DurableClaim> {
+	private async acquireLock(): Promise<AsyncDurableClaim> {
 		const startedAt = Date.now();
 		while (Date.now() - startedAt < this.lockTimeoutMs) {
 			try {
-				const claim = tryAcquireDurableClaim(this.sessionDir, "ledger");
+				const claim = await tryAcquireKernelClaimAsync(this.sessionDir, "ledger");
 				if (claim) return claim;
 			} catch (error) {
 				throw new SessionGovernorStateError(

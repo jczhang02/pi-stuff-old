@@ -3,7 +3,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as Effect from "effect/Effect";
-import { isRuntimeNumber } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber } from "../../../../shared/runtime-type.ts";
 import { reportAgentDiagnostic } from "../../shared/diagnostics.ts";
 import { errnoCode } from "../../shared/private-directory.ts";
 import type { AsyncJobState } from "../../shared/types.ts";

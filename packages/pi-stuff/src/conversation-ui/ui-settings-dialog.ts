@@ -1,9 +1,9 @@
 import { getSettingsListTheme } from "@earendil-works/pi-coding-agent";
 import { type SettingItem, SettingsList, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
-import { reportDiagnostic } from "./diagnostics.js";
-import { commandDialogRows, fitCommandDialogRows } from "./dialog-layout.js";
-import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.js";
-import type { RegisteredUiSetting, UiSettingRegistry } from "./settings.js";
+import { reportDiagnostic } from "./diagnostics.ts";
+import { commandDialogRows, fitCommandDialogRows } from "./dialog-layout.ts";
+import type { CommandDialogComponent, CommandDialogView, CommandDialogViewContext } from "./index.ts";
+import type { RegisteredUiSetting, UiSettingRegistry } from "./settings.ts";
 
 const GUTTER = "  ";
 const MIN_RENDER_WIDTH = 24;

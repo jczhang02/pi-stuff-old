@@ -239,18 +239,28 @@ test("a timed-out Monitor does not strand a later foreground handoff result", as
 
 test("batches nearby Shell outcomes without losing a foreground handoff wake", async () => {
 	const root = temporaryRoot();
+	const release = join(root, "release-shells");
+	const foregroundReady = join(root, "foreground-ready");
+	const backgroundReady = join(root, "background-ready");
+	const command = (ready: string, output: string) =>
+		`printf ready > ${JSON.stringify(ready)}; while [ ! -f ${JSON.stringify(release)} ]; do sleep 0.01; done; printf '${output}\\n'`;
 	const messages: DeliveredMessage[] = [];
 	const active = runtime(root, messages, 50);
 	try {
-		const foreground = await active.executeBash({ command: "sleep 0.6; printf 'REQUIRED-SHELL\n'" }, context(root));
-		expect(isForegroundBashResult(foreground)).toBe(false);
-		await active.executeBash(
-			{ command: "sleep 0.53; printf 'INDEPENDENT-SHELL\n'", runInBackground: true },
+		const foreground = await active.executeBash(
+			{ command: command(foregroundReady, "REQUIRED-SHELL") },
 			context(root),
 		);
+		expect(isForegroundBashResult(foreground)).toBe(false);
+		await active.executeBash(
+			{ command: command(backgroundReady, "INDEPENDENT-SHELL"), runInBackground: true },
+			context(root),
+		);
+		await waitUntil(() => existsSync(foregroundReady) && existsSync(backgroundReady));
+		writeFileSync(release, "release\n");
 
 		await waitUntil(() => active.snapshot().length === 0);
-		await waitUntil(() => messages.length === 1);
+		await waitUntil(() => messages.length > 0);
 		await Bun.sleep(250);
 		expect(messages).toHaveLength(1);
 		expect(messages[0]?.message.details).toMatchObject({

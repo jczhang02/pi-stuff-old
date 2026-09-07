@@ -2,7 +2,7 @@ import type { ExtensionAPI, InputEvent } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 import { Guard } from "typebox/guard";
 import { Check } from "typebox/value";
-import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.js";
+import { isRuntimeFunction, isRuntimeObject } from "../shared/runtime-type.ts";
 
 const ACTIVE_AGENT_WORK_USER_EVENT = "@jczhang02/pi-stuff-ui/active-agent-work-user/v1";
 const AGENT_WORK_ORIGIN_QUERY_EVENT = "@jczhang02/pi-stuff-ui/agent-work-origin-query/v1";

@@ -27,11 +27,39 @@ function providerMessages(messages: ChildProtocolMessage[]): Message[] {
 	return messages.filter((message): message is Message => message.role !== "custom");
 }
 
-test("preserves the canonical acceptance report when ordinary output follows it", () => {
+test.each([
+	"ACCEPTANCE_REPORT: decisive evidence",
+	"```acceptance_report\ndecisive evidence\n```",
+	'```json\n{"criteriaSatisfied": true, "changedFiles": []}\n```',
+])("preserves the canonical acceptance report when ordinary output follows it: %s", (report) => {
 	const reducer = new ChildResultReducer();
-	const messages = [assistant("starting"), assistant("ACCEPTANCE_REPORT: decisive evidence"), assistant("done")];
+	const reportMessage = assistant(report);
+	reportMessage.content.unshift({ type: "text", text: "report introduction" });
+	const messages = [assistant("starting"), reportMessage, assistant("done")];
 	for (const message of messages) reducer.record(message);
 	expect(getFinalOutput(reducer.messages())).toBe(getFinalOutput(messages));
+	expect(getFinalOutput(reducer.messages())).toBe(`report introduction\n${report}`);
+});
+
+test("ordinary output scans content once without assembling discarded report text", () => {
+	let reads = 0;
+	const parts = [
+		null,
+		{ type: "thinking", thinking: "wait" },
+		{ type: "text", text: " " },
+		{ type: "text", text: "earlier" },
+		{ type: "text", text: "latest" },
+	];
+	for (const [index, part] of parts.entries()) {
+		Object.defineProperty(parts, index, {
+			get() {
+				reads++;
+				return part;
+			},
+		});
+	}
+	expect(getFinalOutput([{ role: "assistant", content: parts }])).toBe("latest");
+	expect(reads).toBe(parts.length);
 });
 
 test("reduces an unbounded child message stream to bounded final and error evidence", () => {

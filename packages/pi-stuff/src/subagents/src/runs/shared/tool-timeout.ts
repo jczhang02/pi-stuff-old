@@ -1,4 +1,4 @@
-import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.ts";
 
 export const TOOL_TIMEOUT_ENV = "PI_SUBAGENT_TOOL_TIMEOUT_MS";
 

@@ -7,8 +7,8 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "@earendil-works/pi-tui";
-import { isRuntimeNumber } from "../shared/runtime-type.js";
-import type { CommandDialogKeybindings, CommandDialogViewContext } from "./index.js";
+import { isRuntimeNumber } from "../shared/runtime-type.ts";
+import type { CommandDialogKeybindings, CommandDialogViewContext } from "./index.ts";
 
 const DEFAULT_TERMINAL_ROWS = 24;
 const DEFAULT_NORMAL_SCREEN_RESERVE_ROWS = 3;

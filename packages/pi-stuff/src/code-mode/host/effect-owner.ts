@@ -1,7 +1,7 @@
 import type * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import type * as Scope from "effect/Scope";
-import type { EffectFoundation, EffectScopeOwner } from "../../shared/effect-foundation.js";
+import type { EffectFoundation, EffectScopeOwner } from "../../shared/effect-foundation.ts";
 
 export interface CodeModeEffectTask {
 	interrupt(): void;

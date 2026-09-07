@@ -1,6 +1,6 @@
 import { execFile, spawnSync } from "node:child_process";
 import * as fs from "node:fs";
-import { runtimeErrorCode } from "../../../shared/runtime-type.js";
+import { runtimeErrorCode } from "../../../shared/runtime-type.ts";
 
 export type ProcessKillFn = (pid: number, signal?: NodeJS.Signals | 0) => boolean;
 

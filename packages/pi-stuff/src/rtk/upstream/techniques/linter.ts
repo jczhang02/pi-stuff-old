@@ -1,5 +1,5 @@
-import { matchesCommandPatterns, normalizeCommandForDetection } from "./command-detection.js";
-import { compactPath } from "./path-utils.js";
+import { matchesCommandPatterns, normalizeCommandForDetection } from "./command-detection.ts";
+import { compactPath } from "./path-utils.ts";
 
 const LINTER_COMMAND_PATTERNS = [
 	/^(?:pnpm\s+)?(?:npx\s+)?eslint\b/,

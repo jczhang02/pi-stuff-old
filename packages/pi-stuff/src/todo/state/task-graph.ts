@@ -1,4 +1,4 @@
-import type { Task } from "../tool/types.js";
+import type { Task } from "../tool/types.ts";
 
 /** Return true when any task dependency path loops back to an active node. */
 export function hasCycle(taskList: readonly Task[]): boolean {

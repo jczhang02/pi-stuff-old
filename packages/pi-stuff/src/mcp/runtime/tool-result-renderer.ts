@@ -1,9 +1,9 @@
 import type { AgentToolResult, Theme, ToolRenderResultOptions } from "@earendil-works/pi-coding-agent";
 import { type Component, Text, visibleWidth } from "@earendil-works/pi-tui";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
-import { isRuntimeString } from "../../shared/runtime-type.js";
-import { boundTerminalLine, boundTerminalText, graphemePrefix } from "../../tool-display/index.js";
-import { buildToolResultLines } from "../../tool-display/tool-text.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
+import { boundTerminalLine, boundTerminalText, graphemePrefix } from "../../tool-display/index.ts";
+import { buildToolResultLines } from "../../tool-display/tool-text.ts";
 
 type McpToolResultDetails = JsonInputObject & { error?: JsonInputValue };
 

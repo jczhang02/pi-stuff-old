@@ -1,7 +1,7 @@
 import type { AgentToolResult } from "@earendil-works/pi-coding-agent";
-import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.js";
-import type { ToolArguments } from "../tool-display/activity.js";
-import { activityKey } from "../tool-display/index.js";
+import { isRuntimeNumber, isRuntimeObject, isRuntimeString } from "../shared/runtime-type.ts";
+import type { ToolArguments } from "../tool-display/activity.ts";
+import { activityKey } from "../tool-display/index.ts";
 
 interface WebResultDetails {
 	readonly error?: unknown;

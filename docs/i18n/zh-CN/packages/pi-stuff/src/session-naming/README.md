@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/session-naming/README.md; translation-source-sha256: 9ba7f8154acf7502e3be3f61221ce2c27a491d69b24df11913ea48d5fb57bd23 -->
+<!-- translation-source: packages/pi-stuff/src/session-naming/README.md; translation-source-sha256: c668fb45b6a3c2de3cd42eab99be307a6924cb86bb6c131b455a116c42b599d5 -->
 
 # Session Naming
 
@@ -32,6 +32,10 @@ naming model。
 - 依次使用固定 model、活动 Session model 与可选 fallback。
 - 生成有界的两到四词英文名称。
 - 使用有界、脱敏的 conversation 文字，不使用 Tool。
+
+消息选择从后向前查找，找到最近六条 user/assistant 消息即停止，再恢复时间顺序。首次短对话仍要求 user
+之后有 assistant。不会保留历史缓存；[测量记录](../../../../docs/reports/history-selection-cost-2026-09-06.md)
+区分选择器成本、Host 分支构建和命名模型工作。
 
 ## 文档
 

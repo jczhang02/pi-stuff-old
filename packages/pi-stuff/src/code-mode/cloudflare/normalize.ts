@@ -1,5 +1,5 @@
 import * as acorn from "acorn";
-import { isRuntimeString } from "../../shared/runtime-type.js";
+import { isRuntimeString } from "../../shared/runtime-type.ts";
 
 /**
  * Strip markdown code fences that LLMs commonly wrap code in.

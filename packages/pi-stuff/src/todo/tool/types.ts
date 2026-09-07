@@ -1,5 +1,5 @@
 import { Type } from "typebox";
-import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.js";
+import type { JsonInputObject, JsonInputValue } from "../../shared/json-value.ts";
 
 export const TASK_CREATE_TOOL_NAME = "TaskCreate";
 export const TASK_GET_TOOL_NAME = "TaskGet";

@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.js";
+import { isRuntimeNumber, isRuntimeString } from "../../../../shared/runtime-type.ts";
 import { writeAtomicJson } from "../../shared/atomic-json.ts";
 import { assertPrivateDirectory, errnoCode, validateOwnedRegularFile } from "../../shared/private-directory.ts";
 import { type ProcessKillFn, probeProcessLiveness, readProcessStartIdentity } from "../../shared/process-identity.ts";

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { ponytailRuntimeRegistry } from "../../../packages/pi-stuff/src/ponytail/state.js";
-import { PONYTAIL_CHILD_MODE_ENV, type PonytailMode } from "../../../packages/pi-stuff/src/ponytail/types.js";
+import { ponytailRuntimeRegistry } from "../../../packages/pi-stuff/src/ponytail/state.ts";
+import { PONYTAIL_CHILD_MODE_ENV, type PonytailMode } from "../../../packages/pi-stuff/src/ponytail/types.ts";
 import {
 	buildWriterProcessEnv,
 	ponytailWriterEnvironmentOverrides,
-} from "../../../packages/pi-stuff/src/subagents/src/runs/background/subagent-runner.js";
-import { ponytailLaunchSnapshot } from "../../../packages/pi-stuff/src/subagents/src/runs/foreground/subagent-executor.js";
+} from "../../../packages/pi-stuff/src/subagents/src/runs/background/writer-process-lifecycle.ts";
+import { ponytailLaunchSnapshot } from "../../../packages/pi-stuff/src/subagents/src/runs/foreground/launch-builders.ts";
 
 const owners: object[] = [];
 

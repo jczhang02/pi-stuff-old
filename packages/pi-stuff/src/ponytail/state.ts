@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { inheritedPonytailMode, type PonytailMode } from "./types.js";
+import { inheritedPonytailMode, type PonytailMode } from "./types.ts";
 
 const PONYTAIL_RUNTIME_REGISTRY = Symbol.for("@jczhang02/pi-stuff/ponytail-runtime/v1");
 

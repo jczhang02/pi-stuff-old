@@ -1,5 +1,5 @@
-import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.js";
-import type { PonytailMode } from "../../../../ponytail/types.js";
+import type { AgentWorkOrigin } from "../../../../conversation-ui/agent-run-origin.ts";
+import type { PonytailMode } from "../../../../ponytail/types.ts";
 import type { LaunchBindingInput } from "../../shared/launch-contract.ts";
 import type {
 	ArtifactConfig,

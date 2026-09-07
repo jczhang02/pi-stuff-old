@@ -4,14 +4,14 @@ import * as Effect from "effect/Effect";
 import * as Exit from "effect/Exit";
 import * as Option from "effect/Option";
 import { Type } from "typebox";
-import { HOST_SHUTDOWN_GRACE_MS } from "../../lifecycle-deadline.js";
+import { HOST_SHUTDOWN_GRACE_MS } from "../../lifecycle-deadline.ts";
 import {
 	type EffectFoundation,
 	type EffectScopeOwner,
 	installEffectFoundation,
-} from "../../shared/effect-foundation.js";
-import { type JsonInputObject, parseJsonObject } from "../../shared/json-value.js";
-import { isRuntimeFunction, isRuntimeString } from "../../shared/runtime-type.js";
+} from "../../shared/effect-foundation.ts";
+import { type JsonInputObject, parseJsonObject } from "../../shared/json-value.ts";
+import { isRuntimeFunction, isRuntimeString } from "../../shared/runtime-type.ts";
 import type { McpCommandContext } from "./commands.ts";
 import {
 	cloneMcpConfig,

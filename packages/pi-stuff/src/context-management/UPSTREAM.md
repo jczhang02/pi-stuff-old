@@ -20,7 +20,7 @@ binary; it does not alter upstream source or persist a derived artifact.
 ## Temporary tokenizer compatibility patch
 
 - Patch: [`patches/@cortexkit%2Fpi-magic-context@0.41.1.patch`](../../../../patches/@cortexkit%252Fpi-magic-context@0.41.1.patch)
-- Patch SHA-256: `0c75ef8e484250b614d1650dfc772d3e66f3d83f9fc4478d863de9bd7d4044d2`
+- Patch SHA-256: `b391655ee46a47c0aedd21cfc857d9870ba585b6e2cdf156ee758f724a3caf40`
 - Scope:
   - add the published module's `import.meta.url` ancestry and Bun isolated-linker `node_modules` root to the existing
     `ai-tokenizer` fallback search;
@@ -129,3 +129,20 @@ The Pi Historian also records its three pre-chunk no-op exits as `noop`, matchin
 existing post-filter/budget no-op contract. Previously those returns retained the default `failed` telemetry status,
 causing the real acceptance gate to reject otherwise successful runs. This changes outcome accounting, with no new
 compression or retry behavior. The real Provider gate checks that genuine Historian failures remain absent.
+
+## Pi process identity during migration
+
+The same temporary patch uses Linux null-delimited process argv to limit package-name matching to the actual
+script entrypoint for direct Node, Bun, and Deno launches, preserving paths containing whitespace. An observer receiving a Pi installation path as an application argument is not another Pi instance.
+Otherwise the migration guard mistakes the observer for a competing Pi and refuses to initialize a fresh store.
+
+Native Pi/OMP executable names and actual Pi script entrypoints remain migration blockers. Unavailable argv,
+other platforms, and option-led or `run` interpreter launches retain upstream conservative matching; further
+narrowing requires an unambiguous entrypoint. Database migration, schema fences, RPC identity checks, and storage formats are unchanged.
+
+`tests/component-integration/context-management/magic-migration-guard.test.ts` substitutes only the OS process list
+and exercises real Worker/database initialization with real child argv, isolated storage/configuration,
+argument-only markers, whitespace paths, and genuine Pi launches. Unreadable argv must retain protection. The original
+`tests/acceptance/repository/responsiveness-pty.test.ts` verifies foreground, background, Context, and Goal work with
+the installed Host path, without renaming it to avoid the marker. Remove this patch component when an official
+artifact passes both process-identity cases and the real-Host acceptance.

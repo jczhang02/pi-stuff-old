@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: 03de2fbf2183a29244c842377b171f1778738576f253602907faabdf9712b1cc -->
+<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: 4747dce6d8e81192f0cb465add2470413a869694d39d877e3b72ef3cd22f3fd4 -->
 
 # 捆绑上下文引擎来源
 
@@ -19,7 +19,7 @@ Pi Stuff 通过本适配器集成官方 Magic Context Package，不内嵌 Magic 
 ## 临时 tokenizer 兼容补丁
 
 - 补丁：[`patches/@cortexkit%2Fpi-magic-context@0.41.1.patch`](../../../../../../../patches/@cortexkit%252Fpi-magic-context@0.41.1.patch)
-- 补丁 SHA-256：`9c8361ee3bea8f4667f5aa298a85dc55cbfc0c0ba241eddcaff3f1b4ee120a9a`
+- 补丁 SHA-256：`b391655ee46a47c0aedd21cfc857d9870ba585b6e2cdf156ee758f724a3caf40`
 - 范围：
   - 把已发布模块的 `import.meta.url` 祖先路径和 Bun isolated-linker 的 `node_modules` 根目录加入现有
     `ai-tokenizer` 回退搜索；
@@ -101,3 +101,11 @@ Pi Historian 的三个分块前 no-op 返回现记为 `noop`，与原有日志�
 ### 2026-09-06 child pressure differential
 
 `bun test test/agents/child-context-pressure-host.test.ts test/context/magic-recovery-host.test.ts` 在认证 Pi 0.85.1 上通过 14 个测试、116 个 assertions，耗时 73.21 秒（日志：`.artifacts/ps-8ew-acceptance/context-host.log`）。测试使用生产 `buildPiArgs`、真实 Magic Worker/Historian、新建及分支 child history、两次真实超限恢复、八次 Tool 调用、最新 steering，以及检查既有 findings、completed-check ID 和最终报告。首次运行发现 Magic 的 `clearOldReasoning` 在回放时删除 signed reasoning；补丁现已在两个现有 clear 路径保留签名块。随后发现压缩摘要成功后 retry 仍使用旧缓存投影；在公开 `recoverPiCompaction` hook 前清除 Pi cache 修正了顺序。该修复复用既有 cache seam，没有新增 child projector。确定性 Provider fixture 证明生产控制流和 protocol 完整性，不证明远程实时容量；background teardown/stale-result 仍是独立验收证据。
+
+## 迁移期间的 Pi 进程识别
+
+同一临时补丁读取 Linux 进程中以空字符分隔的真实 argv，将直接通过 Node、Bun、Deno 启动时的包名匹配限制在实际脚本入口，保留含空格的路径，不再扫描应用程序的后续参数。观察器仅通过参数接收 Pi 安装路径，不应被当成另一个 Pi 实例；否则迁移保护会误认为存在竞争实例，拒绝初始化新存储。
+
+原生 Pi/OMP 可执行文件名和真正的 Pi 脚本入口仍会阻止迁移。无法读取 argv、其他平台以及带解释器选项或 `run` 的启动方式保留上游的保守匹配；进一步收窄前必须明确实际入口。数据库迁移、schema 保护、RPC 身份检查和存储格式均不变。
+
+`tests/component-integration/context-management/magic-migration-guard.test.ts` 只替换操作系统进程列表，隔离存储和配置，通过真实子进程 argv、Worker 和数据库初始化验证参数中的标记、含空格的入口与真正 Pi 启动的区别；无法读取 argv 时仍须保留保护。原有 `tests/acceptance/repository/responsiveness-pty.test.ts` 使用已安装 Host 的原路径验证前台、后台、Context 和 Goal 工作，不通过重命名路径避开标记。官方制品同时通过这两类进程识别回归及真实 Host 验收后，移除此补丁部分。

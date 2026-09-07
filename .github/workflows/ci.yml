@@ -42,7 +42,7 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - name: Cache Bun downloads
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
@@ -93,7 +93,7 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - name: Cache Bun downloads
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
@@ -137,7 +137,7 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - name: Cache Bun downloads
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
@@ -148,7 +148,7 @@ jobs:
           bun install --frozen-lockfile --ignore-scripts
           bun pm untrusted
       - name: Download verification plan
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: verification-plan-${{ github.run_id }}-${{ github.run_attempt }}
           path: .artifacts
@@ -236,7 +236,7 @@ jobs:
         with:
           bun-version: ${{ env.BUN_VERSION }}
       - name: Cache Bun downloads
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
@@ -248,14 +248,14 @@ jobs:
           bun pm untrusted
       - name: Download verification plan
         continue-on-error: true
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: verification-plan-${{ github.run_id }}-${{ github.run_attempt }}
           path: .artifacts
       - name: Download Tests report
         if: ${{ needs.tests.result != 'skipped' }}
         continue-on-error: true
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: test-report-${{ github.run_id }}-${{ github.run_attempt }}-*
           merge-multiple: true

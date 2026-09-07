@@ -1,4 +1,4 @@
-<!-- translation-source: DESIGN.md; translation-source-sha256: d7b789ab71a84d3928cc39bf8334580ecc96f8a493bec3b24e94e6ac58177fd2 -->
+<!-- translation-source: DESIGN.md; translation-source-sha256: 376bbe32f4f9230a764c288a3cec2bb57952176239c5cf1c5c5d5f31f7d27312 -->
 
 ---
 version: alpha
@@ -171,6 +171,11 @@ Statusline 只使用 Nerd Font。固定语法依次为：`󱙺` model、`` Th
 设置。`·`、`…` 等分隔和截断符号只是标点，不是语义图标。Capability 的身份图标（如 Ponytail 的 `󱖿`）
 应在它自己的 Dialog 中复用，而不是另造第二个视觉身份。重做 Dialog 时，不能顺手改变 Transcript 标记或
 Tool 渲染。
+
+已接受、待实现的 Codex 账户设计将每周额度组扩展为 `󰊚 work 82%`：先显示短账户名，再显示本周剩余额度。
+`Pi login` 表示原生来源，不表示启动默认值。不新增状态行、按钮、徽章、默认邮箱展示或后台账户轮询。
+额度缺失不能隐藏账户身份。现有全宽 `/codex` Command Dialog 拥有完整名称、按需五小时/每周额度和账户
+控制。详见 [ADR 0035](docs/adr/0035-own-codex-account-selection.md)；这里不宣称 Capability 已交付。
 
 User Message 保留原生全宽 `userMessageBg` 卡片、横向内边距和上下留白。单个 `` 位于 Tool 标记列；
 在认证的 `outputPad=1` 配置下，正文和折行续行与 Tool 正文对齐。标记表示 Provider Prompt，包括自动提交的

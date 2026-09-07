@@ -1,4 +1,4 @@
-<!-- translation-source: CONTEXT.md; translation-source-sha256: 2044c728bca869fdac4d91b0514f714881b5a80b949ad4bf02336a86f5cab845 -->
+<!-- translation-source: CONTEXT.md; translation-source-sha256: fc29edb396b1c0704c2765092e3215640e078c86ca0a1d4d34c1dfd66bced690 -->
 
 # Pi Stuff
 
@@ -86,6 +86,21 @@ _避免使用_：Embedded RTK、Pi Stuff command parser
 由 Pi 拥有的 Session 元数据，为一段编码对话提供简短语义身份。Session Naming 可以在用户直接发起的工作
 settled 后提议并持久化它，但它不取代 Session、task、Goal 或 Agent 名称。
 _避免使用_：chat title、task name、autoname state
+
+**Saved Codex Account**：
+由 Codex 拥有的共享 OAuth 身份及可刷新凭据记录，通过稳定、非秘密的引用访问。显示名称和轮换凭据不等于
+记录身份。这是 ADR 0035 中已接受、待实现的设计。
+_避免使用_：provider alias、token snapshot、global current account
+
+**Codex Account Selection**：
+一个 Session 选择的账户来源：Pi 原生登录或 Saved Codex Account 引用。它独立于 provider/model 选择和
+启动默认值，tree 导航不会改变它。这是 ADR 0035 中已接受的设计。
+_避免使用_：active global account、selected provider、startup default
+
+**Codex Startup Default**：
+新 Session 快照的起始账户来源，初始为 Pi 原生登录。修改它不会改变现有 Session；fork、clone 和新子 Agent
+改为继承来源 Session 的选择。这是 ADR 0035 中已接受的设计。
+_避免使用_：current account、inherited live account、native login
 
 **Settings Layer**：
 由用户拥有、用于为一次 Host 安装选择和配置 Package 与 Runtime Resource 的声明。

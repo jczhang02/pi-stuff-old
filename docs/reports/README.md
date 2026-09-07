@@ -45,6 +45,8 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 
 ## Design and migration
 
+- [Codex account-selection TUI preview](codex-account-selection-preview.md) — mock design, 2026-09-07.
+
 - [Astra instruction and delivery review](astra-instruction-delivery-review-2026-09-05.md)
 - [Single-Package migration](single-package-migration.md)
 - [Lifecycle performance](pi-stuff-lifecycle-performance.md)

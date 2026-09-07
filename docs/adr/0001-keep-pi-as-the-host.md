@@ -26,6 +26,11 @@ they require real-Host certification and release their method ownership on Sessi
 exception, not permission to patch execution, persistence, or arbitrary Host internals. User Message trade-offs and
 failure containment are specified in [ADR 0030](0030-unify-user-message-presentation.md).
 
+A separate accepted, not-yet-implemented exception permits one Codex-owned, version-bound authentication adapter to
+access the existing Session runtime's credential-override operations. [ADR 0035](0035-own-codex-account-selection.md)
+owns its Pi 0.85.1 limit, isolation and fail-closed requirements, and real-account acceptance. It does not authorize
+general execution patching, another runtime, shared credential replacement, or private access elsewhere in the Suite.
+
 A Capability Module is an internal implementation boundary, not an independently installed or published Package. The
 current ordered set is defined by `packages/pi-stuff/suite.json`, and dependencies between Modules stay explicit.
 Shared Modules may provide narrow interfaces to Capability Modules, but shared Modules do not import the Capabilities

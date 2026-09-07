@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0001-keep-pi-as-the-host.md; translation-source-sha256: d5ea487d48bc1374d4ab3e4d239652ce06d972024f5fd83813ad5a11c0645921 -->
+<!-- translation-source: docs/adr/0001-keep-pi-as-the-host.md; translation-source-sha256: 94292159fd7e42ccebf12ac2468b0fa6e3ad4fe0cfcb7fb7901cd247547d1342 -->
 
 ---
 status: accepted
@@ -26,6 +26,10 @@ Conversation UI 在没有公开 renderer 时，可以适配已认证 Host 的 Th
 这些范围狭窄、可撤销的适配器保留规范消息和 Host 生命周期权威，必须经过真实 Host 认证，并在 Session 关闭时
 释放方法所有权。这个展示例外不授权修改执行、持久化或任意 Host 内部机制。User Message 的取舍和异常保护
 见 [ADR 0030](0030-unify-user-message-presentation.md)。
+
+另一个已接受、待实现的例外允许一个由 Codex 拥有、绑定版本的认证适配器访问现有 Session runtime 的凭据
+覆盖操作。[ADR 0035](0035-own-codex-account-selection.md) 拥有其 Pi 0.85.1 限制、隔离和失败阻断要求，
+以及真实账户验收。它不授权通用执行补丁、另一套 runtime、共享凭据覆盖或 Suite 其他位置的私有访问。
 
 ## 后果
 

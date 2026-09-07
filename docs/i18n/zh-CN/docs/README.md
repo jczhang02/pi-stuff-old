@@ -1,4 +1,4 @@
-<!-- translation-source: docs/README.md; translation-source-sha256: 1763935be1a3ceba07c127083bd775b3900d74c7cf57cb01f5b40c1f3075af52 -->
+<!-- translation-source: docs/README.md; translation-source-sha256: 7d2dbb7d24c56985e1d9f9ac34bf7c0f5e541303b9950585d7505be08c4cdec7 -->
 
 # 文档
 
@@ -97,8 +97,11 @@ Web 与 MCP runtime 另有源码就近 README：
 | [0032](adr/0032-organize-quality-assurance-by-verification-purpose.md) | 按验证目的组织质量保证 |
 | [0033](adr/0033-continue-open-work-after-background-agent-results.md) | 后台 Agent 结果返回后继续尚未完成的工作（候选实现；验收待完成） |
 | [0034](adr/0034-remove-redundant-suite-work-without-feature-cuts.md) | 消除 Suite 重复工作，不删减功能 |
+| [0035](adr/0035-own-codex-account-selection.md) | 管理 Session 独立的 Codex 账户选择（设计已接受，待实现） |
 
 ## 证据与历史
+
+- [Codex 账户选择预览](reports/codex-account-selection-preview.md) 使用模拟数据展示已接受、待实现的账户 UI。
 
 - [研究](research/)保存按日期记录的调查与产品参考。
 - [报告](reports/)保存验收、设计与性能证据。

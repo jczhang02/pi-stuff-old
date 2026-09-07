@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/README.md; translation-source-sha256: 02539c4050872a725ec10e661b92fb0824c68cd6d040d04b61ae396dabec6503 -->
+<!-- translation-source: docs/reports/README.md; translation-source-sha256: cc9e016c5e7aeb667a5cbccf66e531541a8c4ac0b32baff9e0ef3dd7fb18127b -->
 
 # 报告
 
@@ -45,6 +45,8 @@
 - [Effect v4 采用基线](effect-v4-adoption-baseline-2026-08-30.md)
 
 ## 设计与迁移
+
+- [Codex 账户选择 TUI 预览](codex-account-selection-preview.md) — 模拟设计，2026-09-07。
 
 - [Astra 指令与交付审查](astra-instruction-delivery-review-2026-09-05.md)
 - [单 Package 迁移](single-package-migration.md)

@@ -183,6 +183,12 @@ fallbacks, terminal detection, or an icon-mode setting. Separators and truncatio
 Capability identity icon, such as Ponytail's `󱖿`, in its owning Dialog instead of introducing a second visual identity.
 A Dialog redesign does not silently change transcript markers or Tool rendering.
 
+The accepted, not-yet-implemented Codex account design extends the weekly group to `󰊚 work 82%`: short account name
+followed by remaining weekly allowance. `Pi login` identifies the native source; it does not mean startup default. Do not
+add a row, button, badge, email-by-default display, or background account poller. Missing allowance must not erase the
+account identity. The existing full-width `/codex` Command Dialog owns full names, on-demand five-hour/weekly usage and
+account controls. See [ADR 0035](docs/adr/0035-own-codex-account-selection.md); this is not a shipped Capability claim.
+
 User Messages retain the native full-width `userMessageBg` card, horizontal padding, and vertical whitespace. A single
 `` occupies the Tool marker column; text and wrapped continuation lines align with Tool text at the certified
 `outputPad=1` profile. The marker denotes a Provider Prompt, including automatic user-role submissions. It does not

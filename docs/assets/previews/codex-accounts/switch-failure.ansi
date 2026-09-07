@@ -1,0 +1,33 @@
+
+[1m[38;2;138;190;183mCodex accounts · DESIGN PREVIEW[0m
+[38;2;128;128;128mMock data · no OAuth · no network requests[39m
+[38;2;102;102;102mF12 open · in dialog: F failure, U usage unavailable, 0 reset[39m
+
+
+[38;2;240;198;116m[Extensions][39m
+[38;2;102;102;102m  preview.ts[39m
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[38;2;95;135;255m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[39m  [1mCodex / Switch failed[0m
+
+  [38;2;128;128;128mCurrent: personal · New Session default: Pi login[39m
+
+  [38;2;138;190;183m→ Back to accounts                Current account remains personal[39m
+
+  [38;2;204;102;102mCould not refresh work. Not switched: personal remains selected.[39m
+
+  [38;2;102;102;102m↑↓ navigate · Enter select · R refresh · Esc back[39m

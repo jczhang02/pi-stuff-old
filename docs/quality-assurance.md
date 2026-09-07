@@ -192,7 +192,9 @@ document deletion. Mixed changes select by
 non-documentation paths only. Renames retain both paths, so moving executable input into documentation still selects
 its deleted source. Test fixtures remain execution inputs even when named README or AGENTS. Runtime Skills, Prompts, Agent definitions, and unknown Markdown fixtures remain
 execution inputs. A documentation-only range runs `check:docs`, reusing repository links, ADR structure, screenshot,
-translation/SHA, and text-safety audits without code, dependency, or runtime checks. `--list` prints the base, head, reason, selected files, and environment requirements without
+translation/SHA, and text-safety audits without code, dependency, or runtime checks, including for documentation
+example manifests and source snippets. Link targets reflect files present in the working tree, so an unstaged
+attachment deletion fails the same check as a staged deletion. `--list` prints the base, head, reason, selected files, and environment requirements without
 running Checks or Tests; `--help` and unknown options are strict. Other ranges perform read-only `check`, then the
 selected offline Tests, and writes a timestamped summary with plan, status, duration, and evidence paths.
 

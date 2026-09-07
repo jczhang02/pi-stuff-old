@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 98408d56cb54f149932ab873aaf07a13756b06c24b6b733434b908b3e70828cd -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 366c242dfa92468c9a788745f91a8209ef335b734c9ad8b292f040705a319fbf -->
 
 # 质量保障
 
@@ -82,7 +82,7 @@ TypeScript 接缝由离线测试覆盖；`check:terminal-bench` 使用 Python 3 
 
 第二批完成测试分类与精简、五层 Capability 目录迁移、稳定层级 aliases、过时 acceptance aliases 清理。Code Mode RPC/TUI 已有使用真实 Host 与 fixture Provider 的 offline Acceptance 归属；live Magic Context wrapper 仍单独存在且未运行。
 
-第三批已实现受影响测试规划与 CI 编排。本地 `verify` 默认比较 `origin/main` 与当前 `HEAD` 的 merge-base，合并已提交、暂存、未暂存和未跟踪路径，并接受 `--base <ref>`。规划器从产品源码与离线测试文件出发，通过 TypeScript AST import 遍历共享辅助代码，并将 `.js` import 解析到 `.ts` 源码。验证依赖图中的未知导入触发全量。[动态依赖声明](../../../../config/verification-dependencies.json) 用导入文件的 SHA-256 绑定已审查的外部或本地加载边界；动态导入文件变化或没有声明时回退全量。未使用的 benchmark 脚本不会使每次局部修改都变成未知影响。共享脚本、配置、Suite 组合、Host 版本、删除非文档路径及未知影响仍运行全套。工程文档按路径角色排除，包括 AGENTS、CONTEXT、DESIGN、ADR、README、上游说明、翻译、文档附件与留存报告、代码示例以及删除文档。混合变更仅根据非文档路径选择运行时测试。重命名保留两侧路径，因此将执行输入移入文档目录仍根据被删除的源码选择测试。测试夹具即使名为 README 或 AGENTS，也仍是执行输入。运行时 Skill、Prompt、Agent 定义和未知 Markdown 夹具仍是执行输入。纯文档范围运行 `check:docs`，复用仓库链接、ADR 结构、截图、镜像/SHA 和文本安全审计，不进行代码、依赖或运行时检查。`--list` 只显示 base、head、reason、选中文件和环境要求，不运行 Checks 或 Tests；`--help` 不执行工作，未知参数严格失败。其他范围只读执行 `check`，随后运行选中的 offline Tests，并写入包含 plan、状态、耗时和 evidence paths 的时间戳 summary。
+第三批已实现受影响测试规划与 CI 编排。本地 `verify` 默认比较 `origin/main` 与当前 `HEAD` 的 merge-base，合并已提交、暂存、未暂存和未跟踪路径，并接受 `--base <ref>`。规划器从产品源码与离线测试文件出发，通过 TypeScript AST import 遍历共享辅助代码，并将 `.js` import 解析到 `.ts` 源码。验证依赖图中的未知导入触发全量。[动态依赖声明](../../../../config/verification-dependencies.json) 用导入文件的 SHA-256 绑定已审查的外部或本地加载边界；动态导入文件变化或没有声明时回退全量。未使用的 benchmark 脚本不会使每次局部修改都变成未知影响。共享脚本、配置、Suite 组合、Host 版本、删除非文档路径及未知影响仍运行全套。工程文档按路径角色排除，包括 AGENTS、CONTEXT、DESIGN、ADR、README、上游说明、翻译、文档附件与留存报告、代码示例以及删除文档。混合变更仅根据非文档路径选择运行时测试。重命名保留两侧路径，因此将执行输入移入文档目录仍根据被删除的源码选择测试。测试夹具即使名为 README 或 AGENTS，也仍是执行输入。运行时 Skill、Prompt、Agent 定义和未知 Markdown 夹具仍是执行输入。纯文档范围运行 `check:docs`，复用仓库链接、ADR 结构、截图、镜像/SHA 和文本安全审计，不进行代码、依赖或运行时检查，文档中的示例 manifest 和源码片段同样如此。链接目标按工作区实际存在的文件判断，因此附件未暂存删除与已暂存删除会触发相同的链接错误。`--list` 只显示 base、head、reason、选中文件和环境要求，不运行 Checks 或 Tests；`--help` 不执行工作，未知参数严格失败。其他范围只读执行 `check`，随后运行选中的 offline Tests，并写入包含 plan、状态、耗时和 evidence paths 的时间戳 summary。
 
 CI 使用 `Plan`、`Checks`、`Tests` 分片和 `Verify`。Plan 选择 PR target range 或 main push 的 before/after range。Checks 和 Tests 均等待 Plan，再独立执行；纯文档 Checks 使用 `check:docs`，Tests 明确跳过，不准备 Host 或测试工具；每个分片在独立 runner 上串行运行其文件，保留逐文件进程隔离。矩阵遇到失败后停止其余分片。Verify 检查必要 job 结果、完整且不重复的文件覆盖、声明的矩阵及每份报告的完成状态；仅文件名并集完整不能证明成功。逐分片与汇总报告分别保留。同一 PR 的过时运行可取消，不同 main-push 范围保留；分支保护不变。
 

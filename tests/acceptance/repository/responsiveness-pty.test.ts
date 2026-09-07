@@ -2,21 +2,35 @@ import { expect, test } from "bun:test";
 import { readlinkSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
-import { Type } from "typebox";
+import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
 import { parseJsonValue } from "../../../packages/pi-stuff/src/shared/json-value.js";
 
 const SAMPLE_SCHEMA = Type.Object({
 	directory: Type.String(),
 	maximumSpinnerFrameMs: Type.Number(),
+	maximumObservationGapMs: Type.Number(),
 	purpose: Type.String(),
 	observationTimeoutMs: Type.Number(),
 });
 const EVIDENCE_SCHEMA = Type.Object({
-	actions: Type.Array(Type.Object({ phase: Type.String(), visibleMs: Type.Number() })),
+	actions: Type.Array(
+		Type.Object({ kind: Type.String(), phase: Type.String(), startedMs: Type.Number(), visibleMs: Type.Number() }),
+	),
 	providerLog: Type.String(),
 	sessions: Type.Array(Type.String(), { minItems: 1 }),
 });
+
+function rescheduleGaps(evidence: Static<typeof EVIDENCE_SCHEMA>): number[] {
+	const gaps = evidence.actions.flatMap((action, index) => {
+		const previous = evidence.actions[index - 1];
+		return previous && previous.kind !== "selection-setup"
+			? [action.startedMs - previous.startedMs - previous.visibleMs]
+			: [];
+	});
+	expect(gaps.length).toBeGreaterThan(0);
+	return gaps;
+}
 
 test.each(["--cpu-profile", "--diagnostic"])("rejects %s with acceptance gates before starting Pi", async (flag) => {
 	const child = Bun.spawn(
@@ -77,6 +91,9 @@ test.each(["startup", "pre-tool", "settlement"])(
 				.filter((action) => action.phase === observedPhase)
 				.map((action) => action.visibleMs);
 			expect(Math.max(...latencies)).toBeGreaterThan(100);
+			// A detected pause alone does not rule out blind windows at another timing alignment.
+			expect(sample.maximumObservationGapMs).toBeLessThan(100);
+			expect(Math.max(...rescheduleGaps(evidence))).toBeLessThan(100);
 			if (phase === "pre-tool") expect(sample.maximumSpinnerFrameMs).toBeGreaterThan(350);
 		} finally {
 			if (child.exitCode === null) child.kill("SIGTERM");
@@ -131,6 +148,9 @@ test.each(["foreground", "background", "context", "goal"])(
 			const sample = parseJsonValue(stdout);
 			if (!Check(SAMPLE_SCHEMA, sample)) throw new Error("Missing Suite observation summary");
 			const evidence = parseJsonValue(await readFile(join(sample.directory, "evidence.json"), "utf8"));
+			if (!Check(EVIDENCE_SCHEMA, evidence)) throw new Error("Missing Suite interaction evidence");
+			// Normal measurements keep their calibrated action cadence.
+			expect(Math.min(...rescheduleGaps(evidence))).toBeGreaterThanOrEqual(250);
 			expect(
 				Check(
 					Type.Object({

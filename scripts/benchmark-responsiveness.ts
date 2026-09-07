@@ -412,7 +412,8 @@ try {
 			} else {
 				send("C-u");
 				pending = undefined;
-				nextActionMs = capturedMs + 250;
+				// Probe injected stalls promptly without changing ordinary benchmark cadence.
+				nextActionMs = capturedMs + (blockMs > 0 ? 20 : 250);
 			}
 		}
 		if (

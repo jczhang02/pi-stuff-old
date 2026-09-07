@@ -92,6 +92,11 @@ The resource-efficiency observer (`scripts/benchmark-responsiveness.ts`) uses th
 Its optional `--gates` input must match the observed Host binary's SHA-256; the retained Pi 0.85.0 limits cannot certify
 Pi 0.85.1. Recalibration needs a new matching input and measurements. The historical limits and reports remain unchanged;
 the observer's offline Acceptance tests check its observation contract, not current-Host performance certification.
+With a nonzero `--block-ms`, negative controls schedule the next input/selection action after 20 ms; ordinary
+measurements retain their 250 ms action interval. Screen capture still waits 10 ms between iterations. The negative-control
+checks retain the 350 ms injected pause and >100 ms detection floor, and reject observation or action-rescheduling gaps
+of 100 ms or more. These checks use the retained real-Host timestamps, so a lucky detection cannot hide a coarse sampling
+window. This does not recalibrate ordinary performance limits.
 Background observation retains the initial parent-idle window, then verifies exactly-once child-result delivery and
 the main Agent's integration turn. Each settled user-work run retains the Codex usage refresh contract.
 The ephemeral Ubuntu CI runner stages its own `unshare` executable with an executable-scoped AppArmor `userns`

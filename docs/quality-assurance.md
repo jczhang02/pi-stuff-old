@@ -86,6 +86,9 @@ Pi 0.85.1. Recalibration needs a new matching input and measurements. The histor
 the observer's offline Acceptance tests check its observation contract, not current-Host performance certification.
 Background observation retains the initial parent-idle window, then verifies exactly-once child-result delivery and
 the main Agent's integration turn. Each settled user-work run retains the Codex usage refresh contract.
+The ephemeral Ubuntu CI runner stages its own `unshare` executable with an executable-scoped AppArmor `userns`
+permission and checks namespace creation before Tests. This preparation supports the observer's nested user/network/PID
+isolation without changing local machine policy or the shared disconnected test runner.
 
 Completed experiments may report poor scores or performance regressions without failing the command. Setup failures and
 incomplete experiments remain failures. Tool Activity's former 250 ms and relative 25 ms benchmark values are retained

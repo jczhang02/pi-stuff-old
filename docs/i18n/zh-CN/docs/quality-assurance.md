@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: e5ae9da654fe2c6cf038426c38b73d18d08f16fc546ef0b60775a2acc7e2f1a4 -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 5e7184ef92024f2e22f351e06b2fb311d2e3308e32cffbf9bfab29be3a5055ab -->
 
 # 质量保障
 
@@ -41,6 +41,8 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 资源效率观察器（`scripts/benchmark-responsiveness.ts`）使用当前受支持的 Pi Host。可选的 `--gates` 输入必须匹配实际观察 Host 二进制的 SHA-256；保留的 Pi 0.85.0 阈值不能认证 Pi 0.85.1。重新校准需要新的匹配输入和测量，历史阈值与报告保持不变。观察器的离线 Acceptance 测试检查观察契约，不认证当前 Host 的性能。
 
 后台观察保留首次交接后的父 Agent 空闲窗口，再验证子结果恰好交付一次，以及主 Agent 的结果整合续轮。每次用户工作运行结束后仍遵守 Codex 用量刷新契约。
+
+临时 Ubuntu CI runner 单独放置 `unshare` 可执行文件，并用仅匹配该文件的 AppArmor 配置授予 `userns` 权限，在 Tests 前检查命名空间创建。这项准备支持观察器嵌套的 user/network/PID 隔离，不修改本机策略或共享的断网测试入口。
 
 完成的实验即使结果较差也可成功；setup failure 或 incomplete experiment 仍失败。Tool Activity 过去的 250 ms 和 relative 25 ms benchmark 值仅保留为诊断报告值。显式 PTY 要求仍为首个 Tool UI/input/selection 反馈 150 ms，以及不变 Vibe Line Spinner 帧不超过 200 ms；ADR 0025 的 500 ms severe-stall 是独立 backstop。Tools PTY 验证器报告每种终端尺寸的测量值，未满足必需目标时失败。`benchmark:suite` 尚未注册。
 

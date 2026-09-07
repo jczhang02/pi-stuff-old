@@ -36,7 +36,47 @@ diff --git a/dist/index-0jgz8yja.js b/dist/index-0jgz8yja.js
    }
    return [...new Set(candidates)];
  }
-@@ -16071,7 +16076,7 @@
+@@ -9556,7 +9561,7 @@
+     return "inconclusive";
+   return commandLooksLikeOpenCode(command) ? "plausible" : "implausible";
+ }
+-function commandLooksLikePi(command) {
++function commandLooksLikePi(command, pid) {
+   const normalized = command.trim().toLowerCase().replaceAll("\\", "/");
+   const tokens = normalized.split(/\s+/).filter(Boolean);
+   const executableName2 = (token) => (token ?? "").split("/").at(-1) ?? "";
+@@ -9564,8 +9569,19 @@
+   if (["pi", "pi.cmd", "omp", "oh-my-pi"].includes(first))
+     return true;
+   if (["node", "bun", "deno"].includes(first)) {
+-    const script = executableName2(tokens[1]);
+-    return ["pi", "pi.js", "pi.mjs", "pi.cjs"].includes(script) || normalized.includes("pi-coding-agent");
++    let entry = tokens[1] ?? "";
++    let identity = normalized;
++    if (rpcIdentityPlatform === "linux" && pid !== undefined) {
++      try {
++        const script = String(rpcIdentityReadFileSync(`/proc/${pid}/cmdline`, "utf8")).split("\0")[1];
++        if (script && !script.startsWith("-") && script !== "run") {
++          entry = script.toLowerCase().replaceAll("\\", "/");
++          identity = entry;
++        }
++      } catch {}
++    }
++    // ponytail: Unavailable argv and option-led/run launches retain conservative matching until their entrypoint is known.
++    return ["pi", "pi.js", "pi.mjs", "pi.cjs"].includes(executableName2(entry)) || identity.includes("pi-coding-agent");
+   }
+   return false;
+ }
+@@ -9602,7 +9618,7 @@
+         const pid = Number(match[1]);
+         if (!Number.isInteger(pid) || pid <= 0 || pid === process.pid)
+           continue;
+-        if (commandLooksLikePi(match[2]))
++        if (commandLooksLikePi(match[2], pid))
+           pids.add(pid);
+       }
+     }
+@@ -16071,7 +16087,7 @@
  function isPendingPiCompactionMarker(value) {
    return typeof value === "object" && value !== null && typeof value.firstKeptEntryId === "string" && typeof value.endMessageId === "string" && typeof value.ordinal === "number" && typeof value.tokensBefore === "number" && typeof value.summary === "string" && typeof value.publishedAt === "number";
  }
@@ -45,7 +85,7 @@ diff --git a/dist/index-0jgz8yja.js b/dist/index-0jgz8yja.js
    const row = db.prepare("SELECT pending_pi_compaction_marker_state FROM session_meta WHERE session_id = ?").get(sessionId);
    const raw = row?.pending_pi_compaction_marker_state;
    if (raw === null || raw === undefined || raw === "")
-@@ -16082,6 +16087,7 @@
+@@ -16082,6 +16098,7 @@
        return parsed;
      }
    } catch {}

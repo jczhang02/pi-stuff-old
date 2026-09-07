@@ -24,7 +24,8 @@ quality exemptions. Machine state, caches, worktrees, build artifacts, binary as
 ## Risk-based verification
 
 - Pure documentation changes need the documentation mirror/SHA check and relevant focused checks; they do not require a
-  full code check. Code changes use focused tests plus `bun run check:fast` during development.
+  full code check. Code changes use focused Tests plus `bun run check` during development; `bun run verify` combines
+  read-only Static Checks with conservatively selected offline Tests.
 - For PR or release readiness, required CI checks on the same revision are authoritative; reuse their results rather
   than repeating the full suite locally. Run the full check when impact is unknown or CI cannot cover the affected path.
 - Public interfaces and releases require representative real-Host evidence; mocks cannot certify them. Keep acceptance

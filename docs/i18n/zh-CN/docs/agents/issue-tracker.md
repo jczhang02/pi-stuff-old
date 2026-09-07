@@ -1,4 +1,4 @@
-<!-- translation-source: docs/agents/issue-tracker.md; translation-source-sha256: d84891987b928788a8661020e861ba562ed15835bf58370af9d1191c43231c1e -->
+<!-- translation-source: docs/agents/issue-tracker.md; translation-source-sha256: 2f81be3ef0b19da60fbffbe8699f961e1a1413430a385e0ffa30e86fbb8820f3 -->
 
 # Issue 跟踪器：Beads，配合 GitHub 接收与镜像
 
@@ -67,13 +67,15 @@ bun run beads:publish -- <epic-or-bead-id>
 
 ### 已验证的 CI 证据
 
+Plan、Checks、Verify 各需要一个已完成且成功的结果。Tests 必须是一个历史单 job，或 job 名称声明的全部唯一编号分片；混合、缺失或重复分片拒绝发布。只有成功 Verify 确认 no-tests 后，普通 Tests job 才可跳过。
+
 发布器在同步前以及准备交付评论前检查代码交付。它读取本仓库 `.github/workflows/ci.yml` 中对应目标 SHA 的运行记录，按运行编号选择最新适用记录，并检查该次运行的精确 attempt。每个必需 job 必须只有一条已完成且成功的结果。缺失、失败、取消、跳过或等待中的必需证据都会拒绝发布，自由文本不能覆盖检查结果。受管理评论链接到已验证的 Actions attempt，并列出通过的检查。
 
-- PR 交付以当前 PR head 为目标，接受 pull_request 或手动运行。对完整分页的 PR 文件列表复用 CI 分类器，并包含重命名前后路径。纯文档 PR 要求 `Fast`；可执行变更或影响未知时还要求 `Acceptance`。文件列表不完整时阻止发布。
-- 仅分支交付以最后记录的提交为目标，接受 push 或手动运行。直接推送保留现有仅要求 `Fast` 的政策；手动运行要求两项检查。未测试的功能分支需要手动触发 CI。
-- 手动运行始终要求 `Fast` 和 `Acceptance`，即使只改文档。无代码和开放规划记录无需 CI 证据。历史代码交付重新发布时必须能取回证据；历史缺失不等于成功。
+- PR 交付以当前 PR head 为目标，接受 pull_request 或手动运行。发布器验证当前 workflow 的 `Plan`、`Checks`、完整 `Tests` 分片集合和 `Verify`，不再重新按路径分类；只有成功的 Plan 明确要求零测试时，`Tests` 才可跳过。workflow 不完整或已过期时阻止发布。
+- 仅分支交付以最后记录的提交为目标，接受 push 或手动运行，并要求同样的 job 职责及完整 Tests 分片集合；允许同样有效的 no-tests 例外。未测试的功能分支需要手动触发 CI。
+- 无代码和开放规划记录无需 CI 证据。历史代码交付重新发布时必须能取回证据；历史缺失不等于成功。
 
-这些检查认证已记录的 CI 结果，不认证审查质量、签名、分支保护或合并权限。工作项验收标准仍需包含这些义务及额外的真实 Host 验收。直接推送的 `Fast` 结果不能证明完整 Host 验收。发布仍需精确回读评论和 Issue；远端操作不是事务，后续检查或写入失败时应报告部分发布状态并重试。
+这些检查认证已记录的 CI 结果，不认证审查质量、签名、分支保护或合并权限。成功的 Plan/Checks/Tests/Verify aggregate 记录该 revision 的 workflow 结果，但不替代 workflow 外要求的真实 Host 证据。发布仍需精确回读评论和 Issue；远端操作不是事务，后续检查或写入失败时应报告部分发布状态并重试。
 
 历史已关闭 Bead 在重新发布时遵循相同验证：先恢复真实公开证据和引用，适用时明确记录仅分支交付或无代码结果。不要为通过旧记录发布而编造 PR、合并状态或成功验收。发布范围为所选 Bead 及其完整子树；其他依赖只建立链接，不会被隐式发布或关闭。
 

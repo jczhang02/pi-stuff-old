@@ -7,9 +7,9 @@ import { Type } from "typebox";
 import { Check } from "typebox/value";
 import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/binary.js";
 import { waitForDetachedProcess } from "./detached-process.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 
-const PI_BINARY = process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi";
 const TIMEOUT_MS = 30_000;
 const SKILL_NAME = "code-mode-real-skill";
 const SKILL_DESCRIPTION = "Verify that Code Mode preserves native Skill Discovery.";
@@ -24,7 +24,7 @@ const PROVIDER_RECORD_SCHEMA = Type.Object(
 );
 
 async function assertCertifiedPi(): Promise<void> {
-	const version = (await execFileAsync(PI_BINARY, ["--version"])).stdout.trim();
+	const version = (await execFileAsync(resolvePiBinary(), ["--version"])).stdout.trim();
 	if (version !== CERTIFIED_PI_VERSION)
 		throw new Error(`Code Mode acceptance requires Pi ${CERTIFIED_PI_VERSION}, got ${version || "unknown"}`);
 }
@@ -46,7 +46,7 @@ async function runPi(
 	mode: "resume" | "start",
 ): Promise<{ stderr: string; stdout: string }> {
 	const arguments_ = [
-		PI_BINARY,
+		resolvePiBinary(),
 		"--no-extensions",
 		"--no-prompt-templates",
 		"--no-context-files",
@@ -66,7 +66,7 @@ async function runPi(
 		"--extension",
 		join(root, "packages", "pi-stuff", "index.ts"),
 		"--extension",
-		join(root, "test", "fixtures", "code-mode-provider.ts"),
+		join(root, "tests", "fixtures", "code-mode-provider.ts"),
 		"--print",
 		mode === "start" ? "CODE_MODE_EXECUTE" : "CODE_MODE_RESUME",
 	];
@@ -75,6 +75,7 @@ async function runPi(
 		detached: true,
 		env: {
 			...process.env,
+			MAGIC_CONTEXT_TEST_DATA_DIR: join(temporary, "data"),
 			PI_CODING_AGENT_DIR: join(temporary, "agent"),
 			PI_OFFLINE: "1",
 			PI_STUFF_CODE_MODE_DEFAULT: "on",
@@ -85,7 +86,7 @@ async function runPi(
 			PI_TELEMETRY: "0",
 			XDG_CACHE_HOME: join(temporary, "cache"),
 			XDG_CONFIG_HOME: join(temporary, "config"),
-			XDG_DATA_HOME: join(temporary, "data"),
+			XDG_DATA_HOME: undefined,
 			XDG_STATE_HOME: join(temporary, "state"),
 		},
 		stderr: "pipe",

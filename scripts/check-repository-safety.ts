@@ -9,6 +9,8 @@ import { auditReadmeScreenshots } from "./check-readme-screenshots.js";
 import { SUITE_REGISTRY_SCHEMA } from "./generate-suite.js";
 import { auditEffectBoundaryInventory, auditEffectBoundarySource } from "./repository-safety/effect-boundaries.js";
 
+import { auditProviderRedirectPolicy } from "./repository-safety/provider-redirect-policy.js";
+
 const FORBIDDEN_HOST_FILES = new Set(["auth.json", "models-store.json"]);
 const FORBIDDEN_PACKAGE_FILES = new Set(["AGENTS.md", "CONTEXT.md"]);
 const LIFECYCLE_SCRIPTS = new Set([
@@ -383,7 +385,11 @@ async function auditTextFile(root: string, path: string): Promise<SafetyFinding[
 		return [];
 	}
 	const text = content.toString("utf8");
-	const findings = [...auditSourceLimits(path, text), ...auditEffectBoundarySource(path, text)];
+	const findings = [
+		...auditSourceLimits(path, text),
+		...auditEffectBoundarySource(path, text),
+		...auditProviderRedirectPolicy(path, text),
+	];
 	if (PRIVATE_PATH_PATTERNS.some((pattern) => pattern.test(text))) {
 		findings.push({ path, rule: "private-absolute-path" });
 	}

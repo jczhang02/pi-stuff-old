@@ -3,7 +3,7 @@ import { constants } from "node:fs";
 import type { FileHandle } from "node:fs/promises";
 import { chmod, mkdir, mkdtemp, open, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, isAbsolute, join, sep } from "node:path";
+import { dirname, isAbsolute, join, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import {
 	isJsonInputObject,
@@ -17,15 +17,19 @@ import {
 	isRuntimeObject,
 	isRuntimeString,
 } from "../packages/pi-stuff/src/shared/runtime-type.js";
+import { handleBenchmarkMeta } from "./benchmark-cli.js";
 import {
 	PONYTAIL_BENCHMARK_MODEL as MODEL,
 	PonytailBenchmarkRpc,
 	PONYTAIL_BENCHMARK_PROVIDER as PROVIDER,
 } from "./benchmark-ponytail-rpc.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_HOST_PROFILE } from "./pi-host-contract.js";
 import { verifyPiHostVersion } from "./verify-pi-host-provenance.js";
 
 export { buildPonytailBenchmarkEnvironment } from "./benchmark-ponytail-rpc.js";
+
+const ROOT = resolve(import.meta.dir, "..");
 
 const EXPECTED_TOOLS = ["bash", "edit", "read", "write"] as const;
 const EXPECTED_SKILLS = [
@@ -581,17 +585,27 @@ async function runCase(benchmarkRoot: string, run: BenchmarkRun, sequence: numbe
 	}
 }
 function outputPath(arguments_: readonly string[]): string | undefined {
-	if (arguments_.length === 0) return undefined;
-	if (arguments_.length === 2 && arguments_[0] === "--output" && arguments_[1]) {
-		if (!isAbsolute(arguments_[1])) fail("--output must be an absolute path");
-		return arguments_[1];
+	let output = join(ROOT, ".artifacts/ponytail-benchmark/latest.json");
+	let profile: string | undefined;
+	for (let index = 0; index < arguments_.length; index += 1) {
+		const flag = arguments_[index];
+		const value = arguments_[index + 1];
+		if (flag === "--profile" && value) {
+			profile = value;
+			index += 1;
+		} else if (flag === "--output" && value) {
+			if (!isAbsolute(value)) fail("--output must be an absolute path");
+			output = value;
+			index += 1;
+		} else fail(`unknown argument: ${String(flag)}`);
 	}
-	fail("usage: bun run benchmark:ponytail [--output <absolute-path>]");
+	if (profile !== "live") fail("--profile live is required for this benchmark");
+	return output;
 }
 export async function runPonytailBehaviorBenchmark(
 	output: string | undefined,
 ): Promise<PonytailBehaviorBenchmarkReport> {
-	const piBinary = process.env["PI_BIN"] ?? "/opt/pi-coding-agent/pi";
+	const piBinary = resolvePiBinary();
 	await verifyPiHostVersion(piBinary);
 	const benchmarkRoot = await mkdtemp(
 		join(process.env["XDG_RUNTIME_DIR"] ?? tmpdir(), "pi-stuff-ponytail-benchmark-"),
@@ -633,14 +647,26 @@ export async function runPonytailBehaviorBenchmark(
 			pairs: evaluation.pairs,
 			verdict: evaluation.verdict,
 		};
-		if (output) await writeFile(output, `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
+		if (output) {
+			await mkdir(dirname(output), { recursive: true, mode: 0o700 });
+			await writeFile(output, `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
+		}
 		return report;
 	} finally {
 		await rm(benchmarkRoot, { recursive: true, force: true });
 	}
 }
 if (import.meta.main) {
+	handleBenchmarkMeta(
+		process.argv.slice(2),
+		"usage: benchmark:capability:ponytail --profile live [--output <absolute-path>]",
+		[
+			"profile=live (Pi Host + live Provider credentials)",
+			...new Set(PONYTAIL_BENCHMARK_RUNS.map((run) => run.scenario)),
+		],
+	);
 	const report = await runPonytailBehaviorBenchmark(outputPath(process.argv.slice(2)));
 	console.log(JSON.stringify(report, null, 2));
-	if (!report.verdict.strongEffect) process.exitCode = 1;
+	if (report.cases.some((result) => result.error !== undefined))
+		fail("experiment contains incomplete cases; inspect the report");
 }

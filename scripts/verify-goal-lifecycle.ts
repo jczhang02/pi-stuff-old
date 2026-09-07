@@ -8,14 +8,14 @@ import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/
 import { DEFAULT_SESSION_NAMING_SETTINGS } from "../packages/pi-stuff/src/session-naming/settings.js";
 import type { JsonInputObject } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
-import { createAssistantMessage } from "../test/fixtures/faux-provider.js";
+import { createAssistantMessage } from "../tests/fixtures/faux-provider.js";
 import {
 	activeGoal,
 	BLOCKED_GOAL_FINAL_RESPONSE,
 	BUDGETED_GOAL_FINAL_RESPONSE,
 	CODE_MODE_GOAL_FINAL_RESPONSE,
 	GOAL_FINAL_RESPONSE,
-} from "../test/fixtures/goal-lifecycle-provider.js";
+} from "../tests/fixtures/goal-lifecycle-provider.js";
 import { terminateDetachedProcessGroup } from "./detached-process.js";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
@@ -662,7 +662,7 @@ async function runScenario(options: VerifyGoalLifecycleOptions, scenario: Scenar
 	const temporaryDirectory = await mkdtemp(join(tmpdir(), `pi-stuff-goal-${scenario}-`));
 	const agentDirectory = join(temporaryDirectory, "agent");
 	const logPath = join(temporaryDirectory, "lifecycle.jsonl");
-	const fixture = resolve(import.meta.dir, "..", "test", "fixtures", "goal-lifecycle-provider.ts");
+	const fixture = resolve(import.meta.dir, "..", "tests", "fixtures", "goal-lifecycle-provider.ts");
 	try {
 		await Promise.all([
 			mkdir(join(temporaryDirectory, "home"), { recursive: true }),

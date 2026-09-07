@@ -10,11 +10,13 @@ import {
 	parseJsonValue,
 } from "../packages/pi-stuff/src/shared/json-value.js";
 import { isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
+import { selectAcceptanceMatrix } from "./acceptance-matrix.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/btw-pty-provider.ts");
-const runner = join(root, "test/fixtures/btw-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/btw-pty-provider.ts");
+const runner = join(root, "tests/fixtures/btw-pty-runner.sh");
 
 export interface BtwPtyVerificationOptions {
 	readonly piBinary: string;
@@ -409,11 +411,14 @@ export async function verifyBtwPty(options: BtwPtyVerificationOptions): Promise<
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
-	for (const [columns, rows] of [
-		[100, 32],
-		[64, 28],
-	] as const) {
+	const PI_BIN = resolvePiBinary();
+	for (const [columns, rows] of selectAcceptanceMatrix(
+		[
+			[100, 32],
+			[64, 28],
+		] as const,
+		[[100, 32]] as const,
+	)) {
 		await verifyBtwPty({
 			piBinary: PI_BIN,
 			packagePath: join(root, "packages/pi-stuff"),
@@ -421,5 +426,5 @@ if (import.meta.main) {
 			rows,
 		});
 	}
-	console.log("Certified BTW in 100x32 and 64x28 PTYs");
+	console.log("Certified BTW in selected PTYs");
 }

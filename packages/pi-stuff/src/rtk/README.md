@@ -14,7 +14,7 @@ Optional command rewriting and model-only output projection for Bash and Grep.
 
 ## Quick start
 
-Install the certified RTK `0.45.0` Linux x64 binary on `PATH`, then open:
+Use an installed RTK `0.45.0` on `PATH`, then open:
 
 ```text
 /rtk
@@ -24,8 +24,9 @@ The dialog verifies the runtime, toggles Command rewriting and Model projection,
 
 ## Highlights
 
-- Verifies the official version and executable SHA-256 on first use.
-- Rechecks runtime identity before every rewrite and detects binary drift.
+- Checks the supported version on first use; same-version source builds and PATH shims are accepted.
+- Reuses the installed executable without downloading or reinstalling it.
+- Rechecks the selected executable identity and supported version before every rewrite.
 - Leaves the original Bash command unchanged when RTK is unavailable.
 - Projects compact successful Bash and Grep text without changing Session JSONL.
 - Keeps rewriting and projection independently configurable.

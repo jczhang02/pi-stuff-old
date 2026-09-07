@@ -92,22 +92,25 @@ Open planning Beads may publish without a delivery record; their comment states 
 
 The publisher checks code delivery before synchronization and again before preparing the delivery comment. It reads
 this repository's `.github/workflows/ci.yml` runs for the target SHA, selects the latest eligible run by run number,
-and checks jobs from that run's exact attempt. Required jobs must each have one completed successful result. Missing,
-failed, cancelled, skipped, or pending required evidence rejects publication; a free-form validation statement cannot
+and checks jobs from that run's exact attempt. Plan, Checks, and Verify must each have one completed successful result. Tests must have one legacy result or every
+uniquely numbered successful shard declared by its job names; mixed, missing, or duplicated shards reject publication.
+Only the plain Tests job may be skipped under the successful Verify no-tests decision. Missing, failed, cancelled, or
+pending required evidence rejects publication; a free-form validation statement cannot
 override it. The managed comment links the verified Actions attempt and names the checks that passed.
 
-- PR delivery targets the current PR head. Pull-request and manual runs are eligible. The complete paginated PR file
-  list uses the same classifier as CI, including both paths of a rename. Documentation-only PRs require `Fast`;
-  executable or unknown-impact changes also require `Acceptance`. An incomplete file list blocks publication.
-- Branch-only delivery targets the last recorded commit. Push and manual runs are eligible. Direct pushes preserve
-  the existing `Fast`-only policy; a manual run requires both checks. An untested feature branch needs a manual CI run.
-- Every manual run requires `Fast` and `Acceptance`, even for documentation. No-code and open planning records need no
-  CI evidence. Historical code deliveries need retrievable evidence when republished; missing history is not success.
+- PR delivery targets the current PR head. Pull-request and manual runs are eligible. The publisher verifies the current
+  workflow's `Plan`, `Checks`, complete `Tests` shard set, and `Verify` jobs rather than reclassifying paths; `Tests` may be skipped only
+  when the successful Plan explicitly requires no tests. An incomplete or stale workflow run blocks publication.
+- Branch-only delivery targets the last recorded commit. Push and manual runs are eligible and require the same job roles
+  and complete Tests shard set, with the same valid no-tests exception. An untested feature branch needs a manual CI run.
+- No-code and open planning records need no CI evidence. Historical code deliveries need retrievable evidence when
+  republished; missing history is not success.
 
 These checks certify recorded CI results, not review quality, signatures, branch protection, or permission to merge.
-Keep those obligations and any additional real-Host acceptance in the work item's criteria. A direct-push `Fast`
-result does not establish full Host acceptance. Publication still requires exact comment and Issue readback; remote
-changes are not transactional, so report partial publication and retry if a later check or write fails.
+Keep those obligations and any additional real-Host acceptance in the work item's criteria. A successful Plan/Checks/
+Tests/Verify aggregate records the workflow result for that revision; it does not replace required real-Host evidence
+outside that workflow. Publication still requires exact comment and Issue readback; remote changes are not transactional,
+so report partial publication and retry if a later check or write fails.
 
 Historical closed Beads follow the same validation when republished: recover their real public evidence and references
 first, and explicitly record branch-only or no-code outcomes where applicable. Do not invent a PR, merged state, or

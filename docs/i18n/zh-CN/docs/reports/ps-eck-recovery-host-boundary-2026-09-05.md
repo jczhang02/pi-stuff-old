@@ -1,4 +1,4 @@
-<!-- translation-source: docs/reports/ps-eck-recovery-host-boundary-2026-09-05.md; translation-source-sha256: c1df3a09c665a53f95bb44fce2f2192869efcdf5750c905347fc91b5e6e53dc7 -->
+<!-- translation-source: docs/reports/ps-eck-recovery-host-boundary-2026-09-05.md; translation-source-sha256: f2d85f84afd3d84b751b2860370c5da7d04cffa08dde79fae552d9ef87b305ff -->
 
 # ps-eck：Magic 恢复与 Host 取消边界
 
@@ -39,7 +39,7 @@
 将 `PI_BIN` 指向核验后的可执行文件，运行：
 
 ```sh
-bun test test/context/magic-recovery-host.test.ts test/context/magic-worker.test.ts test/context-pty.test.ts
+bun test test/acceptance/context-management/magic-recovery-host.test.ts test/component-integration/context-management/magic-worker.test.ts test/acceptance/context-management/context-pty.test.ts
 ```
 
 认证 Host 上 14 项 RPC/PTY 测试通过：12 项恢复场景与 2 项 Context TUI 场景。另有 8 项真实 Worker 回归在仓库

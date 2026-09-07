@@ -10,6 +10,8 @@
 		"../../packages/pi-stuff/src/goal/**/*.ts",
 		"../../packages/pi-stuff/src/tool-display/**/*.ts",
 		"../../packages/pi-stuff/src/conversation-ui/**/*.ts",
-		"../../test/goal-upstream/**/*.ts"
+		"../../tests/component-integration/goal/**/*.ts",
+		"../../tests/unit/goal/**/*.node.ts",
+		"../../tests/goal-upstream/*.ts"
 	]
 }

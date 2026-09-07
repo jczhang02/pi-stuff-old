@@ -14,6 +14,7 @@ index READMEs use smaller variants suited to their scope.
 | Package | Explain the installed Package | Name and purpose, Preview, Capabilities, Installation, Documentation |
 | Capability | Introduce one user-facing capability | Name and purpose, Preview, Quick Start, Highlights, Documentation |
 | Index | Help readers choose a destination | Name and purpose, visual index, categorized links |
+| Test directory (`tests/`) | Explain test layout and execution | Name and purpose, directory guide, commands, benchmark boundary |
 
 Omit a section when it has no useful content. Acknowledgments belongs only in the root README.
 
@@ -48,7 +49,7 @@ Do not add npm, release, or issue-count badges.
 
 ## Screenshots
 
-Every README contains at least one unique screenshot. Simplified Chinese mirrors reuse the same PNG and translate only
+READMEs under `tests/` are text-only engineering guides and do not require screenshots. Every other README contains at least one unique screenshot. Simplified Chinese mirrors reuse the same PNG and translate only
 the surrounding alt text and caption.
 
 Use this exact block for every README image:

@@ -7,8 +7,8 @@ import { armUiPtyOwnerWatchdog, disarmUiPtyOwnerWatchdog, type UiPtyOwnerWatchdo
 import type { UiPtyVerificationOptions } from "./verify-ui-pty.js";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/ui-pty-provider.ts");
-const runner = join(root, "test/fixtures/ui-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/ui-pty-provider.ts");
+const runner = join(root, "tests/fixtures/ui-pty-runner.sh");
 export const NERD_MODEL_MARKER = "\u{F167A}";
 export const POLL_INTERVAL_MS = 50;
 export const WAIT_TIMEOUT_MS = 20_000;

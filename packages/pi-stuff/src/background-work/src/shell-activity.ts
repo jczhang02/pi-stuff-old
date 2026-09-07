@@ -42,6 +42,8 @@ import type { StoredProcessTask } from "./storage.js";
 
 export type { ShellActivityDependencies, ShellLaunchInput };
 
+const SUPERVISOR_STARTUP_TIMEOUT_MS = 10_000;
+
 export interface ShellActivityOwner {
 	changed(): void;
 	disposed(): boolean;
@@ -66,6 +68,7 @@ export class ShellActivity {
 	private readonly monitorEvidence: CommandMonitorEvidence;
 	private launchAuthorized = false;
 	private readonly owner: ShellActivityOwner;
+	private readonly supervisorReady = Deferred.makeUnsafe<void>();
 	readonly startedAt = Date.now();
 	private stopPromise: Promise<BackgroundWorkOutcome> | undefined;
 	private stopReason: ShellStopReason | undefined;
@@ -175,6 +178,13 @@ export class ShellActivity {
 			// group instead of SIGKILLing the supervisor alone.
 			this.requestStop("abort", "supervisor input failure");
 		};
+		try {
+			await this.owner.effects.run(this.waitForSupervisorReadiness());
+			if (this.owner.disposed() || this.stopReason) throw new Error("Background Work session is shutting down");
+		} catch (error) {
+			await this.rollback();
+			throw error;
+		}
 		try {
 			publishCommandAuthorization(
 				this.launch.authorizationPath,
@@ -449,6 +459,21 @@ export class ShellActivity {
 		);
 	}
 
+	private waitForSupervisorReadiness(): Effect.Effect<void, unknown> {
+		const supervisorExit = Effect.tryPromise({
+			try: () => this.launch.supervisor.completion,
+			catch: (error) => error,
+		}).pipe(
+			Effect.flatMap((result) =>
+				Effect.fail(result.error ?? new Error("Background Work supervisor exited before becoming ready.")),
+			),
+		);
+		const timeout = Effect.sleep(SUPERVISOR_STARTUP_TIMEOUT_MS).pipe(
+			Effect.andThen(Effect.fail(new Error("Background Work supervisor did not become ready within 10 seconds."))),
+		);
+		return Effect.raceFirst(Deferred.await(this.supervisorReady), Effect.raceFirst(supervisorExit, timeout));
+	}
+
 	private removeLaunchArtifact(filePath: string): void {
 		try {
 			rmSync(filePath, { force: true });
@@ -477,7 +502,9 @@ export class ShellActivity {
 				this.launch.output.append(Buffer.from("Invalid supervisor control record.\n", "utf-8"));
 				continue;
 			}
-			if (
+			if (event["type"] === "ready") {
+				Deferred.doneUnsafe(this.supervisorReady, Effect.void);
+			} else if (
 				event["type"] === "started" &&
 				event["groupPid"] === this.launch.supervisorIdentity.pid &&
 				event["groupStarted"] === this.launch.supervisorIdentity.started

@@ -2,13 +2,12 @@
 
 Date: 2026-08-27
 
-The V1/V2 sections preserve their original preregistration and outcomes. The current runner advances only through the
+The V1/V2 sections preserve their original preregistration and outcomes. The retired runner advanced only through the
 separately preregistered V3 Luna study below; Git history retains the exact V1/V2 runner.
 
-This document freezes the real-model benchmark before any benchmark outcome is observed. The runner is
-[`scripts/benchmark-code-mode-image.ts`](../../scripts/benchmark-code-mode-image.ts), and the Provider-boundary
-observer is
-[`test/fixtures/code-mode-image-benchmark-observer.ts`](../../test/fixtures/code-mode-image-benchmark-observer.ts).
+This document freezes the real-model benchmark before any benchmark outcome is observed. Its retired runner was
+[`scripts/benchmark-code-mode-image.ts`](https://github.com/jczhang02/pi-stuff/blob/4e517e771b54489eee3c57d0ec696bc312d945c9/scripts/benchmark-code-mode-image.ts), and its Provider-boundary observer was
+[`test/fixtures/code-mode-image-benchmark-observer.ts`](https://github.com/jczhang02/pi-stuff/blob/4e517e771b54489eee3c57d0ec696bc312d945c9/test/fixtures/code-mode-image-benchmark-observer.ts).
 
 ## Question and immutable inputs
 

@@ -30,7 +30,7 @@ const TARGET_PROVIDER_PRESSURE_PERCENTAGE =
 	(EXPECTED_MAGIC_CONTEXT_LIMIT / MAGIC_CONTEXT_REAL_CONTRACT.contextWindow) * TARGET_PRESSURE_PERCENTAGE;
 const PRESSURE_FILE_BYTES = 48 * 1024;
 const TODO_SUBJECT = "Preserve Magic-only acceptance state";
-const AUDIT_EXTENSION = join(root, "test/fixtures/magic-context-real-audit.ts");
+const AUDIT_EXTENSION = join(root, "tests/fixtures/magic-context-real-audit.ts");
 
 const AUDIT_RESULT_SCHEMA = Type.Object(
 	{ content: Type.Array(Type.Object({ text: Type.Optional(Type.String()) }, { additionalProperties: true })) },

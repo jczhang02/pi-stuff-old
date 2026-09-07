@@ -103,7 +103,7 @@ not inherit a fault deadline. Actual overflow uses Magic's existing emergency ta
 Recovery drains successive runnable chunks with ordinal progress checks before returning to Pi. Each boundary calculation
 owns its short-lived raw-message provider binding, so Historian cleanup cannot hide remaining history.
 
-`test/context/magic-recovery-host.test.ts` compares direct patched Magic with the Suite on the certified Pi executable,
+`tests/acceptance/context-management/magic-recovery-host.test.ts` compares direct patched Magic with the Suite on the certified Pi executable,
 and injects real Worker termination before work or after publication. It also covers completed Tool reuse, transient
 Historian failure, uncertain acknowledgement, no progress, repeated overflow, and native cancellation/queue parity.
 These fixture Provider errors establish control flow, not live remote capacity. Remove this patch component only when

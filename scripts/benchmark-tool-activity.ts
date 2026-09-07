@@ -1,4 +1,6 @@
+import { resolve } from "node:path";
 import { performance } from "node:perf_hooks";
+import { parseArgs } from "node:util";
 import { isRuntimeObject, isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
 import { planRetrievalGroups } from "../packages/pi-stuff/src/tool-display/activity.js";
 import { ToolUiRuntime } from "../packages/pi-stuff/src/tool-display/contract.js";
@@ -7,13 +9,22 @@ import {
 	RETRIEVAL_GROUP_MEMBER_LIMIT,
 } from "../packages/pi-stuff/src/tool-display/retrieval-groups.js";
 import { buildToolResultLines } from "../packages/pi-stuff/src/tool-display/tool-text.js";
+import { handleBenchmarkMeta, writeBenchmarkReport } from "./benchmark-cli.js";
 
 const CALLS = 20_000;
 const CALLS_PER_ROUND = 10;
 const ITERATIONS = 15;
-const MAX_BASELINE_REGRESSION_MS = 25;
 const STREAMING_UPDATES = 200;
 const FORMATTED_RESULTS = 1_000;
+handleBenchmarkMeta(process.argv.slice(2), "usage: benchmark:capability:tool-activity [--output <path>]", [
+	"profile=offline; no Host, network, or credentials; output=.artifacts/tool-activity-benchmark/latest.json",
+	"retrieval-group-planning",
+	"streaming-projection",
+	"tool-result-formatting",
+]);
+const { values } = parseArgs({ options: { output: { type: "string" } } });
+const output = resolve(values.output ?? ".artifacts/tool-activity-benchmark/latest.json");
+console.error(`Capability Benchmark: Tool Activity; offline; report: ${output}`);
 const classify = (name: string) => (name === "read" ? ("retrieval" as const) : ("boundary" as const));
 
 interface ReadActivityArguments {
@@ -205,40 +216,19 @@ if (
 		`Bounded Activity reconstruction was incomplete: ${String(groups.length)} groups, ${String(memberIds.length)} of ${String(expectedMemberIds.length)} members`,
 	);
 }
-if (activityMs > 250) throw new Error(`Activity reconstruction exceeded 250 ms: ${activityMs.toFixed(2)} ms`);
-if (activityMs > baselineMs + MAX_BASELINE_REGRESSION_MS) {
-	throw new Error(
-		`Activity reconstruction exceeded the baseline by more than ${String(MAX_BASELINE_REGRESSION_MS)} ms: ${activityMs.toFixed(2)} ms versus ${baselineMs.toFixed(2)} ms`,
-	);
-}
-if (streamingMs > 250) {
-	throw new Error(
-		`Incremental Activity projection exceeded 250 ms for ${String(STREAMING_UPDATES)} updates after a ${String(CALLS)}-call history: ${streamingMs.toFixed(2)} ms`,
-	);
-}
-if (formattedExpansionMs > 250) {
-	throw new Error(
-		`Formatted expansion exceeded 250 ms for ${String(FORMATTED_RESULTS)} short results: ${formattedExpansionMs.toFixed(2)} ms`,
-	);
-}
 if (formattedLines.some((line) => /^(?:Call ID|Arguments|Result content|Details)$/u.test(line))) {
 	throw new Error("Formatted expansion constructed Raw protocol output");
 }
 
-console.log(
-	JSON.stringify(
-		{
-			activityMedianMs: Number(activityMs.toFixed(2)),
-			calls: CALLS,
-			formattedExpansionMedianMs: Number(formattedExpansionMs.toFixed(2)),
-			formattedResults: FORMATTED_RESULTS,
-			iterations: ITERATIONS,
-			shippedExplorationMedianMs: Number(baselineMs.toFixed(2)),
-			ratio: Number((activityMs / baselineMs).toFixed(2)),
-			streamingTailMedianMs: Number(streamingMs.toFixed(2)),
-			streamingUpdates: STREAMING_UPDATES,
-		},
-		null,
-		2,
-	),
-);
+await writeBenchmarkReport(output, {
+	activityMedianMs: Number(activityMs.toFixed(2)),
+	calls: CALLS,
+	formattedExpansionMedianMs: Number(formattedExpansionMs.toFixed(2)),
+	formattedResults: FORMATTED_RESULTS,
+	iterations: ITERATIONS,
+	thresholds: { maxBaselineRegressionMs: 25, maxProjectionMs: 250, maxFormattedExpansionMs: 250 },
+	shippedExplorationMedianMs: Number(baselineMs.toFixed(2)),
+	ratio: Number((activityMs / baselineMs).toFixed(2)),
+	streamingTailMedianMs: Number(streamingMs.toFixed(2)),
+	streamingUpdates: STREAMING_UPDATES,
+});

@@ -11,7 +11,6 @@ const VERSION_TIMEOUT_MS = 1_000;
 const REWRITE_TIMEOUT_MS = 2_500;
 
 export const CERTIFIED_RTK_VERSION = "0.45.0";
-export const CERTIFIED_RTK_LINUX_X64_SHA256 = "99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535";
 
 export type RtkRuntimeState = "drifted" | "ready" | "unavailable" | "unchecked";
 
@@ -24,9 +23,7 @@ export interface RtkRuntimeSnapshot {
 }
 
 export interface RtkRuntimeOptions {
-	readonly expectedSha256?: string;
 	readonly expectedVersion?: string;
-	readonly platform?: NodeJS.Platform;
 	readonly resolveTimeoutMs?: number;
 	readonly rewriteTimeoutMs?: number;
 	readonly versionTimeoutMs?: number;
@@ -58,7 +55,7 @@ function firstNonEmptyLine(value: string): string | undefined {
 		.find(Boolean);
 }
 
-function parseVersion(value: string): string | undefined {
+export function parseRtkVersion(value: string): string | undefined {
 	return value.match(/(?:^|\s)rtk\s+v?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)(?:\s|$)/u)?.[1];
 }
 
@@ -94,17 +91,11 @@ function resolveRealPath(path: string): Effect.Effect<string, Error> {
 	return Effect.tryPromise({ try: () => realpath(path), catch: normalizeError });
 }
 
-function defaultExpectedSha256s(platform: NodeJS.Platform): readonly string[] {
-	return platform === "linux" && process.arch === "x64" ? [CERTIFIED_RTK_LINUX_X64_SHA256] : [];
-}
-
 /** Certifies one local RTK executable and fails open whenever that identity changes. */
 export class RtkRuntime {
 	private certificate: RuntimeCertificate | undefined;
-	private readonly expectedSha256s: ReadonlySet<string>;
 	private readonly expectedVersion: string;
 	private generation = 0;
-	private readonly platform: NodeJS.Platform;
 	private readonly resolveTimeoutMs: number;
 	private readonly rewriteTimeoutMs: number;
 	private snapshotValue: RtkRuntimeSnapshot = { state: "unchecked" };
@@ -112,11 +103,7 @@ export class RtkRuntime {
 	private readonly versionTimeoutMs: number;
 
 	constructor(options: RtkRuntimeOptions = {}) {
-		this.platform = options.platform ?? process.platform;
 		this.expectedVersion = options.expectedVersion ?? CERTIFIED_RTK_VERSION;
-		this.expectedSha256s = new Set(
-			options.expectedSha256 ? [options.expectedSha256] : defaultExpectedSha256s(this.platform),
-		);
 		this.resolveTimeoutMs = options.resolveTimeoutMs ?? RESOLVE_TIMEOUT_MS;
 		this.rewriteTimeoutMs = options.rewriteTimeoutMs ?? REWRITE_TIMEOUT_MS;
 		this.versionTimeoutMs = options.versionTimeoutMs ?? VERSION_TIMEOUT_MS;
@@ -181,7 +168,9 @@ export class RtkRuntime {
 			if (!stable || !this.isCurrent(certificate, generation)) return undefined;
 
 			const result = yield* Effect.catch(
-				this.execute(pi, certificate.path, ["rewrite", command]).pipe(Effect.timeoutOption(this.rewriteTimeoutMs)),
+				this.execute(pi, certificate.selectedPath, ["rewrite", command]).pipe(
+					Effect.timeoutOption(this.rewriteTimeoutMs),
+				),
 				(error) =>
 					Effect.sync(() => {
 						this.markUnavailable(`RTK rewrite failed: ${cleanOneLine(error)}`, generation, certificate);
@@ -208,19 +197,20 @@ export class RtkRuntime {
 		return Effect.gen({ self: this }, function* () {
 			const selectedPath = yield* this.resolveSelectedPath(pi);
 			const path = yield* resolveRealPath(selectedPath);
-			const version = this.execute(pi, path, ["--version"]).pipe(
-				Effect.timeoutOption(this.versionTimeoutMs),
-				Effect.flatMap((result) =>
-					Option.isSome(result)
-						? Effect.succeed(result.value)
-						: Effect.fail(new Error("RTK returned no valid version")),
-				),
-			);
-			const [fingerprint, sha256, versionResult] = yield* Effect.all(
-				[fileFingerprint(path), sha256File(path), version] as const,
+			const [fingerprint, sha256, version] = yield* Effect.all(
+				[fileFingerprint(path), sha256File(path), this.verifyVersion(pi, selectedPath)] as const,
 				{ concurrency: "unbounded" },
 			);
-			const parsedVersion = parseVersion(`${versionResult.stdout}\n${versionResult.stderr}`);
+			return { fingerprint, path, selectedPath, sha256, version };
+		});
+	}
+
+	private verifyVersion(pi: RtkProcessHost, path: string): Effect.Effect<string, Error> {
+		return Effect.gen({ self: this }, function* () {
+			const result = yield* this.execute(pi, path, ["--version"]).pipe(Effect.timeoutOption(this.versionTimeoutMs));
+			if (Option.isNone(result)) return yield* Effect.fail(new Error("RTK version probe timed out"));
+			const versionResult = result.value;
+			const parsedVersion = parseRtkVersion(`${versionResult.stdout}\n${versionResult.stderr}`);
 			if (versionResult.code !== 0 || !parsedVersion)
 				return yield* Effect.fail(new Error("RTK returned no valid version"));
 			if (parsedVersion !== this.expectedVersion) {
@@ -228,13 +218,7 @@ export class RtkRuntime {
 					new Error(`RTK ${parsedVersion} is not the certified ${this.expectedVersion} runtime`),
 				);
 			}
-			if (this.expectedSha256s.size === 0) {
-				return yield* Effect.fail(new Error(`RTK has no certified runtime for ${this.platform}/${process.arch}`));
-			}
-			if (!this.expectedSha256s.has(sha256)) {
-				return yield* Effect.fail(new Error("RTK executable SHA-256 does not match the certified runtime"));
-			}
-			return { fingerprint, path, selectedPath, sha256, version: parsedVersion };
+			return parsedVersion;
 		});
 	}
 
@@ -245,9 +229,10 @@ export class RtkRuntime {
 			if (selectedPath !== certificate.selectedPath || path !== certificate.path) {
 				return yield* Effect.fail(new Error("resolved RTK path changed after verification"));
 			}
-			const [fingerprint, sha256] = yield* Effect.all([fileFingerprint(path), sha256File(path)] as const, {
-				concurrency: "unbounded",
-			});
+			const [fingerprint, sha256] = yield* Effect.all(
+				[fileFingerprint(path), sha256File(path), this.verifyVersion(pi, selectedPath)] as const,
+				{ concurrency: "unbounded" },
+			);
 			if (fingerprint !== certificate.fingerprint || sha256 !== certificate.sha256) {
 				return yield* Effect.fail(new Error("RTK executable changed after verification"));
 			}
@@ -255,7 +240,7 @@ export class RtkRuntime {
 	}
 
 	private resolveSelectedPath(pi: RtkProcessHost): Effect.Effect<string, Error> {
-		const resolver = this.platform === "win32" ? "where" : "which";
+		const resolver = process.platform === "win32" ? "where" : "which";
 		return this.execute(pi, resolver, ["rtk"]).pipe(
 			Effect.timeoutOption(this.resolveTimeoutMs),
 			Effect.flatMap((result) => {

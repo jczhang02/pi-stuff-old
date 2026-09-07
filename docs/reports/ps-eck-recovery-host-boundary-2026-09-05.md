@@ -46,7 +46,7 @@ binary hash and are not the certification evidence. The new recovery test checks
 Run with `PI_BIN` pointing to that verified executable:
 
 ```sh
-bun test test/context/magic-recovery-host.test.ts test/context/magic-worker.test.ts test/context-pty.test.ts
+bun test test/acceptance/context-management/magic-recovery-host.test.ts test/component-integration/context-management/magic-worker.test.ts test/acceptance/context-management/context-pty.test.ts
 ```
 
 Fourteen RPC/PTY tests passed on the certified Host: twelve recovery cases and two Context TUI cases. Eight additional

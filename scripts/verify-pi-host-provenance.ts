@@ -2,13 +2,13 @@ import { execFile } from "node:child_process";
 import { chmod, cp, mkdtemp, realpath, stat } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
 import { promisify } from "node:util";
-import { CERTIFIED_PI_SOURCE_REPOSITORY, CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
+import { CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 
 const execFileAsync = promisify(execFile);
 
 function unsupportedHostError(version: string): Error {
 	return new Error(
-		`PI_BIN reports ${version || "no version"}; supported Pi is ${CERTIFIED_PI_VERSION}. Download v${CERTIFIED_PI_VERSION} from ${CERTIFIED_PI_SOURCE_REPOSITORY}/releases.`,
+		`PI_BIN reports ${version || "no version"}; supported Pi is ${CERTIFIED_PI_VERSION}. Point PI_BIN at an installed supported Pi executable.`,
 	);
 }
 

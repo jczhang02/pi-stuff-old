@@ -208,7 +208,7 @@ export async function verifySessionNaming(options: VerifySessionNamingOptions): 
 	const agentDirectory = join(temporaryDirectory, "agent");
 	const sessionDirectory = join(temporaryDirectory, "sessions");
 	const logPath = join(temporaryDirectory, "session-naming.jsonl");
-	const fixture = resolve(import.meta.dir, "..", "test", "fixtures", "session-naming-provider.ts");
+	const fixture = resolve(import.meta.dir, "..", "tests", "fixtures", "session-naming-provider.ts");
 	const command = (sessionPath?: string): string[] => [
 		options.piBinary,
 		"--mode",

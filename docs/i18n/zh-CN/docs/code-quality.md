@@ -1,4 +1,4 @@
-<!-- translation-source: docs/code-quality.md; translation-source-sha256: 39f7479d92be7919bb3a54b143ccf4e8a5c534c649392050f66a180ec7f834f6 -->
+<!-- translation-source: docs/code-quality.md; translation-source-sha256: 5e11f47448a64dc3134beb7109cd0653638f34c19f7ecc8810edce9a0d4f8e10 -->
 
 # Repository-owned Source 质量
 
@@ -14,7 +14,7 @@
 
 ## 按风险验证
 
-- 纯文档变更需要文档镜像/SHA 检查和相关聚焦检查，不需要完整代码检查。代码变更开发期间运行聚焦测试和 `bun run check:fast`。
+- 纯文档变更需要文档镜像/SHA 检查和相关聚焦检查，不需要完整代码检查。代码变更开发期间运行聚焦 Tests 和 `bun run check`；`bun run verify` 将只读 Static Checks 与保守选择的离线 Tests 组合起来。
 - PR 或发布准备以同一 revision 的必要 CI 检查为权威；复用其结果，不在本地重复完整套件。影响未知或 CI 无法覆盖受影响路径时运行完整检查。
 - 公共接口和发布需要有代表性的真实 Host 证据；mock 不能认证它们。验收证据须与 benchmark 和聚合 Suite 评估分开。
 - 检查失败时，复用已有诊断，排查最小失败场景。区分产品、测试和环境故障；原因不明的重试通过不能解决间歇性失败。保持验收受阻状态明确，同时完成范围内不依赖该验收的工作。

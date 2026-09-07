@@ -1,4 +1,4 @@
-<!-- translation-source: docs/readme-style.md; translation-source-sha256: b7a3a04425e90466143209b2a779c560be88bd71898208e27b2b4858dbb97fa4 -->
+<!-- translation-source: docs/readme-style.md; translation-source-sha256: e871aabaee7e32a777c5526d9ad180ced21ef995b6d890570dfa1683ae4b748f -->
 
 # README 规范
 
@@ -47,9 +47,11 @@ README 是入口页。只保留安装步骤、最小可用示例、主要结果�
 徽标分别链接到 workflow、license、仓库活动、兼容性参考或相关上游项目。不要加入 npm、release 或 issue
 数量徽标。
 
+`tests/` 下的 README 是纯文字工程导览，介绍测试目录、命令及 benchmark 边界，不要求截图。
+
 ## 截图
 
-每份 README 至少包含一张独有截图。简体中文镜像复用同一个 PNG，只翻译周围的 alt text 和 caption。
+除 `tests/` 下的工程导览外，每份 README 至少包含一张独有截图。简体中文镜像复用同一个 PNG，只翻译周围的 alt text 和 caption。
 
 每张 README 图片都使用以下完全一致的代码块：
 

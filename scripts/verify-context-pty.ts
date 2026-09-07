@@ -20,11 +20,12 @@ import {
 	simpleProgram,
 	startupOnlyProgram,
 } from "./context-pty-drivers.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/context-pty-provider.ts");
-const runner = join(root, "test/fixtures/context-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/context-pty-provider.ts");
+const runner = join(root, "tests/fixtures/context-pty-runner.sh");
 const MEMORY_EVIDENCE = "真实 Context 检索证据";
 const CONTEXT_ACTIVITY_DATA_SCHEMA = Type.Object({ summary: Type.String() }, { additionalProperties: true });
 const RECORD_LINE_SCHEMA = Type.Object(
@@ -759,7 +760,7 @@ export async function verifyContextPty(options: ContextPtyVerificationOptions): 
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
+	const PI_BIN = resolvePiBinary();
 	await verifyContextPty({ piBinary: PI_BIN, packagePath: join(root, "packages/pi-stuff") });
 	console.log(
 		"Certified Magic Context in a real 64x28 Pi TUI, including project isolation, native-compaction adoption, lexical recall, resume, and unavailable",

@@ -5,10 +5,10 @@ import { homedir } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { MAGIC_CONTEXT_REAL_CONTRACT, runMagicContextRealScenario } from "./magic-context-real-scenario.js";
 
 const root = resolve(import.meta.dir, "..");
-const DEFAULT_PI_BINARY = "/opt/pi-coding-agent/pi";
 const PRESSURE_FILE_BYTES = 48 * 1024;
 const PRESSURE_FILE_COUNT = 12;
 const EXECUTE_THRESHOLD_PERCENTAGE = 65;
@@ -50,7 +50,7 @@ function parseOptions(argv: readonly string[]) {
 	const options = {
 		authPath: resolve(values.get("--auth") ?? join(homedir(), ".pi/agent/auth.json")),
 		packagePath: resolve(packagePath ?? join(root, "packages/pi-stuff")),
-		piBinary: resolve(values.get("--pi") ?? process.env["PI_BIN"] ?? DEFAULT_PI_BINARY),
+		piBinary: resolve(values.get("--pi") ?? resolvePiBinary()),
 		reportPath: resolve(values.get("--report") ?? join(root, "docs/reports/magic-context-real-acceptance.json")),
 	};
 	return { ...options, archivePath: archive ? resolve(archive) : undefined };

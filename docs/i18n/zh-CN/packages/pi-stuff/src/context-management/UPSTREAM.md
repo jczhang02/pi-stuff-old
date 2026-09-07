@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: b5b58f32b3cb5b8943a1baf3c65a01bfc8419d70bc55cabbe04efd03d4249306 -->
+<!-- translation-source: packages/pi-stuff/src/context-management/UPSTREAM.md; translation-source-sha256: 03de2fbf2183a29244c842377b171f1778738576f253602907faabdf9712b1cc -->
 
 # 捆绑上下文引擎来源
 
@@ -87,7 +87,7 @@ Pi 适配器现在每次投影都使用 Magic 已有的对象引用与唯一指�
 实际超限使用 Magic 既有紧急保留尾部策略，保留当前输入。恢复连续处理可运行分块，每步核验 ordinal 进展，之后才交回 Pi。
 每次边界计算单独绑定短期原始消息读取器，避免 Historian 清理后看不到剩余历史。
 
-`test/context/magic-recovery-host.test.ts` 在认证 Pi 可执行文件上对比直接运行的带补丁 Magic 和 Suite，
+`tests/acceptance/context-management/magic-recovery-host.test.ts` 在认证 Pi 可执行文件上对比直接运行的带补丁 Magic 和 Suite，
 并在工作开始前或发布后注入真实 Worker 终止。还覆盖工具结果复用、Historian 瞬时失败、回执不确定、无进展、
 重复超限，以及原生取消/队列语义一致性。夹具 Provider 错误证明控制流程，不证明真实远端容量。
 只有精确官方产物通过相同的持久化完成及真实 Host 差分用例，才移除此补丁部分。每次上游升级重新审计信号读取、

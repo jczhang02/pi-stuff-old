@@ -3,16 +3,17 @@ name: CI
 on:
   pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '17 18 * * *' # 02:17 Asia/Shanghai
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   BUN_VERSION: 1.4.0
@@ -21,80 +22,128 @@ env:
   RTK_VERSION: 0.45.0
 
 jobs:
-  fast:
-    name: Fast
+  plan:
+    name: Plan
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
-      acceptance_required: ${{ steps.scope.outputs.acceptance_required }}
-
+      tests_required: ${{ steps.plan.outputs.tests_required }}
+      shards: ${{ steps.shards.outputs.shards }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: ${{ env.BUN_VERSION }}
-
-      - name: Classify acceptance scope
-        id: scope
-        env:
-          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
-          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: bun run ci:acceptance-scope
-
-      - name: Verify Bun and install dependencies
-        shell: bash
+      - name: Cache Bun downloads
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
+      - name: Install dependencies
         run: |
           set -euo pipefail
           test "$(bun --version)" = "$BUN_VERSION"
           bun install --frozen-lockfile --ignore-scripts
           bun pm untrusted
+      - name: Detect unchanged scheduled full run
+        if: ${{ github.event_name == 'schedule' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bun scripts/verification-schedule.ts
+      - name: Select verification plan
+        id: plan
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CI_HEAD_SHA: ${{ github.sha }}
+        run: bun scripts/verification-plan.ts --ci --output .artifacts/verification-plan.json
+      - name: Partition measured verification shards
+        id: shards
+        run: |
+          set -euo pipefail
+          matrix="$(bun scripts/verification-shards.ts --plan .artifacts/verification-plan.json --output .artifacts/shards)"
+          echo "shards=$matrix" >> "$GITHUB_OUTPUT"
+      - name: Upload verification plan
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: verification-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .artifacts/verification-plan.json
+            .artifacts/shards
+          if-no-files-found: error
 
-      - name: Verify acceptance classifier
-        run: bun test test/ci-acceptance-scope.test.ts
-
-      - name: Run fast checks
-        run: bun run check:fast
-
-  acceptance:
-    name: Acceptance
-    needs: fast
-    if: ${{ github.event_name != 'push' && needs.fast.outputs.acceptance_required == 'true' }}
+  checks:
+    name: Checks
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - name: Cache Bun downloads
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          test "$(bun --version)" = "$BUN_VERSION"
+          bun install --frozen-lockfile --ignore-scripts
+          bun pm untrusted
+      - name: Run static checks
+        run: bun run check
+
+  tests:
+    name: ${{ matrix.shard.total && format('Tests (shard {0}/{1})', matrix.shard.index, matrix.shard.total) || 'Tests' }}
+    needs: plan
+    if: ${{ needs.plan.result == 'success' && needs.plan.outputs.tests_required == 'true' }}
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards || '[]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     env:
       PI_BIN: ${{ github.workspace }}/.artifacts/pi-release/pi/pi
       PI_STUFF_CODE_MODE_HOST: ${{ github.workspace }}/.artifacts/code-mode-host/codex-code-mode-host
       RTK_BIN: ${{ github.workspace }}/.artifacts/rtk/bin/rtk
       SYSTEM_TOOL_BIN: ${{ github.workspace }}/.artifacts/system-tools/bin
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Install Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: ${{ env.BUN_VERSION }}
-
+      - name: Cache Bun downloads
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
       - name: Install dependencies
-        shell: bash
         run: |
           set -euo pipefail
           test "$(bun --version)" = "$BUN_VERSION"
           bun install --frozen-lockfile --ignore-scripts
           bun pm untrusted
-
+      - name: Download verification plan
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: verification-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .artifacts
       - name: Install PTY verification tools
-        shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
@@ -103,76 +152,115 @@ jobs:
           ln --symbolic "$(command -v fdfind)" "$SYSTEM_TOOL_BIN/fd"
           test -x "$SYSTEM_TOOL_BIN/fd"
           command -v rg >/dev/null
-
       - name: Install certified RTK runtime
-        shell: bash
         run: |
           set -euo pipefail
           mkdir -p .artifacts/rtk/bin
           archive=".artifacts/rtk/rtk-${RTK_VERSION}-linux-x64.tar.gz"
-          curl --fail --location --silent --show-error \
-            "https://github.com/rtk-ai/rtk/releases/download/v${RTK_VERSION}/rtk-x86_64-unknown-linux-musl.tar.gz" \
-            --output "$archive"
+          curl --fail --location --silent --show-error "https://github.com/rtk-ai/rtk/releases/download/v${RTK_VERSION}/rtk-x86_64-unknown-linux-musl.tar.gz" --output "$archive"
           echo "$RTK_ARCHIVE_SHA256  $archive" | sha256sum --check --strict
           tar --extract --gzip --file "$archive" --directory .artifacts/rtk/bin rtk
           echo "$RTK_BINARY_SHA256  $RTK_BIN" | sha256sum --check --strict
           test "$("$RTK_BIN" --version)" = "rtk $RTK_VERSION"
-
       - name: Install supported Pi host release
-        shell: bash
         run: |
           set -euo pipefail
           version="$(bun scripts/pi-host-contract.ts)"
           mkdir -p .artifacts/pi-release
           archive=".artifacts/pi-release/pi-linux-x64.tar.gz"
-          curl --fail --location --silent --show-error \
-            "https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-x64.tar.gz" \
-            --output "$archive"
+          curl --fail --location --silent --show-error "https://github.com/earendil-works/pi/releases/download/v${version}/pi-linux-x64.tar.gz" --output "$archive"
           tar --extract --gzip --file "$archive" --directory .artifacts/pi-release
           bun -e 'import { verifyPiHostVersion } from "./scripts/verify-pi-host-provenance.ts"; await verifyPiHostVersion(process.env.PI_BIN);'
-
       - name: Install certified Code Mode host
-        shell: bash
         run: |
           set -euo pipefail
-          bun -e '
-            import { installCodeModeHost } from "./packages/pi-stuff/src/code-mode/host/install-host.ts";
-            const destination = process.env.PI_STUFF_CODE_MODE_HOST;
-            if (!destination) throw new Error("PI_STUFF_CODE_MODE_HOST is required");
-            await installCodeModeHost({ arch: process.arch, destination, platform: process.platform });
-          '
+          bun -e 'import { installCodeModeHost } from "./packages/pi-stuff/src/code-mode/host/install-host.ts"; const destination = process.env.PI_STUFF_CODE_MODE_HOST; if (!destination) throw new Error("PI_STUFF_CODE_MODE_HOST is required"); await installCodeModeHost({ arch: process.arch, destination, platform: process.platform });'
           test -x "$PI_STUFF_CODE_MODE_HOST"
-
-      - name: Run disconnected acceptance
-        shell: bash
+      - name: Run selected disconnected tests
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/pi-stuff-ci"
-          rtk_directory="$(dirname "$RTK_BIN")"
-          export PATH="$SYSTEM_TOOL_BIN:$rtk_directory:$PATH"
+          export PATH="$SYSTEM_TOOL_BIN:${RTK_BIN%/*}:$PATH"
           export PI_STUFF_AGENTS_PTY_ARTIFACT_DIR="$RUNNER_TEMP/pi-stuff-ci/agents"
           export PI_STUFF_UI_PTY_ARTIFACT_DIR="$RUNNER_TEMP/pi-stuff-ci/ui"
-          sudo --preserve-env=HOME,PATH,PI_BIN,PI_STUFF_AGENTS_PTY_ARTIFACT_DIR,PI_STUFF_CODE_MODE_HOST,PI_STUFF_UI_PTY_ARTIFACT_DIR,RTK_BIN,RUNNER_TEMP,CI,GITHUB_ACTIONS,GITHUB_WORKSPACE unshare --net -- \
-            bash -euo pipefail -c '
-              ip link set lo up
-              exec setpriv --reuid="$1" --regid="$2" --clear-groups \
-                bash -euo pipefail -c "$3"
-            ' _ "$(id -u)" "$(id -g)" '
-              if curl --silent --max-time 2 https://example.com >/dev/null 2>&1; then
-                echo "network namespace is not isolated" >&2
-                exit 1
-              fi
-              bun run test:ci
-              bun run benchmark:tool-activity
-              bun run pack:verify
-            ' 2>&1 | tee "$RUNNER_TEMP/pi-stuff-ci/acceptance.log"
-
-      - name: Upload failure evidence
-        if: ${{ failure() }}
+          sudo --preserve-env=HOME,PATH,PI_BIN,PI_STUFF_AGENTS_PTY_ARTIFACT_DIR,PI_STUFF_CODE_MODE_HOST,PI_STUFF_UI_PTY_ARTIFACT_DIR,RTK_BIN,RUNNER_TEMP,CI,GITHUB_ACTIONS,GITHUB_WORKSPACE unshare --net -- bash -euo pipefail -c 'ip link set lo up; exec setpriv --reuid="$1" --regid="$2" --clear-groups bash -euo pipefail -c "$3"' _ "$(id -u)" "$(id -g)" 'if curl --silent --max-time 2 https://example.com >/dev/null 2>&1; then echo "network namespace is not isolated" >&2; exit 1; fi; bun run test --plan .artifacts/shards/plan-${{ matrix.shard.index }}.json --output .artifacts/tests/ci-${{ matrix.shard.index }}.json' 2>&1 | tee "$RUNNER_TEMP/pi-stuff-ci/tests.log"
+      - name: Publish structured test report
+        if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: ci-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          name: test-report-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard.index }}
+          path: .artifacts/tests/ci-${{ matrix.shard.index }}.json
+          if-no-files-found: error
+      - name: Upload test reports and failure evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ci-tests-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.shard.index }}
           path: |
+            .artifacts/verification-plan.json
+            .artifacts/tests/ci-*.json*
             ${{ runner.temp }}/pi-stuff-ci
           if-no-files-found: warn
           retention-days: 7
+
+  verify:
+    name: Verify
+    if: ${{ always() }}
+    needs: [plan, checks, tests]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - name: Cache Bun downloads
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock') }}
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          test "$(bun --version)" = "$BUN_VERSION"
+          bun install --frozen-lockfile --ignore-scripts
+          bun pm untrusted
+      - name: Download verification plan
+        continue-on-error: true
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: verification-plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .artifacts
+      - name: Download Tests report
+        if: ${{ needs.tests.result != 'skipped' }}
+        continue-on-error: true
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          pattern: test-report-${{ github.run_id }}-${{ github.run_attempt }}-*
+          merge-multiple: true
+          path: .artifacts/tests
+      - name: Aggregate shard reports
+        if: ${{ always() && needs.tests.result != 'skipped' }}
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/tests
+          mapfile -t reports < <(find .artifacts/tests -name 'ci-*.json' -type f -print)
+          bun scripts/aggregate-test-reports.ts --plan .artifacts/verification-plan.json --output .artifacts/tests/aggregate.json "${reports[@]}"
+      - name: Aggregate required results
+        if: ${{ always() }}
+        env:
+          CI_PLAN_RESULT: ${{ needs.plan.result }}
+          CI_TESTS_REQUIRED: ${{ needs.plan.outputs.tests_required }}
+          CI_CHECKS_RESULT: ${{ needs.checks.result }}
+          CI_TESTS_RESULT: ${{ needs.tests.result }}
+          CI_PLAN_PATH: .artifacts/verification-plan.json
+          CI_TEST_REPORT_PATH: .artifacts/tests/aggregate.json
+        run: bun scripts/verify-ci-result.ts
+      - name: Retain aggregate verification evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: verification-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .artifacts/tests/aggregate.json
+          if-no-files-found: ignore

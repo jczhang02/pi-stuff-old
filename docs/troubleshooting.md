@@ -61,6 +61,10 @@ Use `/mcp on-demand <server>`. Use `/mcp auto-connect <server>` when the server 
 
 ## RTK
 
+For local test preflight failures, check the reported executable path and version. Point `RTK_BIN` at an existing
+supported executable or put it on `PATH`; same-version source builds and shims do not need an official release hash.
+Likewise, `PI_BIN` selects an installed supported Pi. Local verification does not download or reinstall either tool.
+
 ### Commands are not rewritten
 
 Run `/rtk` and check both RTK availability and `rewriteCommands`. The `rtk` executable must be available in the

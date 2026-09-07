@@ -8,14 +8,15 @@
 | Repository Bun toolchain | 1.4.0 |
 | Pi Stuff Package | 0.3.3 |
 | Repository development package | 0.0.0 |
-| System-utility baseline | Ubuntu 24.04 with Bash, curl, tar, gzip, and standard Unix utilities; no `pwsh` |
+| System-utility baseline | Ubuntu 24.04 with Bash, Python 3 (adapter syntax checks), curl, tar, gzip, and standard Unix utilities; no `pwsh` |
 | PTY verification tools | Ubuntu 24.04 packages for Expect and tmux |
 | TypeScript checker | 5.9.3 |
 | Code Mode host | OpenAI Codex `rust-v0.145.0`, Linux x64 |
 | Code Mode host release archive | SHA-256 `ac23177956c30cc1f9f180c27bd80f5bb5b76780db55fb94dcc22644d490852e` |
-| Optional RTK runtime | Official `0.45.0`, source `b34be37caf3796b69a50952a28e60e32b5daad43`, Linux x64 |
-| RTK release archive | SHA-256 `c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4` |
-| RTK release executable | SHA-256 `99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535` |
+| Code Mode host executable | SHA-256 `60bf16414be5333f09ff082540082304c7352931ef64bdeb170d4c35a82e6ef8` |
+| Optional RTK runtime | `0.45.0`, release source `b34be37caf3796b69a50952a28e60e32b5daad43`, Linux x64 |
+| RTK CI download archive | SHA-256 `c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4` |
+| RTK CI download executable | SHA-256 `99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535` |
 
 The supported Host profile is Pi `0.85.1` on Linux x64. The upstream source commit above is retained as a provenance
 reference. Acceptance exercises the complete Suite contract against the real Host and its public APIs, including public
@@ -23,21 +24,29 @@ reference. Acceptance exercises the complete Suite contract against the real Hos
 version match alone is insufficient: the Host must also pass the applicable real-Host capability acceptance. Pi Stuff
 does not rebuild or distribute Pi Host.
 
-CI exposes two stable checks. `Fast` always validates the frozen dependency graph, formatting, anti-slop lint,
-type surfaces, unused-code analysis, generated composition, and public-release safety. For PRs, the scope classifier
-starts `Acceptance` for executable or unknown-impact changes. Beads metadata, root Markdown, documentation evidence,
-Package/Module READMEs, and `.github/CONTRIBUTING.md` use `Fast` only; Runtime Skills, Prompt Templates, configuration,
-and executable examples remain outside the prose exemption. Renames include both old and new paths in classification.
-A direct push to `main` runs `Fast` only; manual dispatch runs both checks. PTY verifiers probe optional tmux server
-settings before using them; the Ubuntu baseline must work without `extended-keys-format`.
+Local verification reuses installed Pi and RTK through `PI_BIN` / `RTK_BIN` or `PATH`, without automatic downloads
+or reinstalls. Pi and RTK compatibility admission checks versions and real behavior, not fixed executable hashes.
+RTK source builds and PATH shims may satisfy that contract. CI download hashes identify the artifacts prepared on a
+clean runner; they do not constrain an already-installed local executable.
 
-`Acceptance` obtains the supported Pi Host, Code Mode host, and RTK runtime, then runs isolated tests, real TUI
-verification, the Tool Activity benchmark, and package verification in a network-isolated namespace. The job allows 40 minutes; individual scenario timeouts and
-required coverage are unchanged. Per-file process isolation prevents process- or PTY-heavy tests from contaminating later tests. Reuse required CI evidence for the same
-revision under [the verification policy](code-quality.md#risk-based-verification); a Fast-only result does not certify
-full Host acceptance. The [delivery publisher](agents/issue-tracker.md#verified-ci-evidence) verifies the applicable
-checks before reporting delivery. A separate weekly upstream watch reports when npm `latest` moves beyond the
-supported Host, without changing support automatically.
+CI uses `Plan`, `Checks`, independent `Tests (shard N/M)` jobs, and `Verify`. Plan runs for pull requests, pushes to
+`main`, manual dispatch, and nightly scheduling. PR and push ranges select affected offline tests; manual dispatch
+selects the complete inventory and full matrix. Nightly execution reuses only successful same-main-SHA full evidence,
+otherwise selecting full coverage. Plan writes the required scope and matrix as artifacts. Checks validates the frozen
+dependency graph, formatting, anti-slop lint, type surfaces, unused-code analysis, generated composition, and public-release
+safety independently of Tests. Each required Tests shard obtains the certified Pi, Code Mode, and RTK executables and
+runs its assigned files one fresh Bun or Node process at a time in a network-isolated namespace. Shards wait for Plan,
+not Checks, and stop remaining work on failure. Verify always evaluates the plan and required job results, unique and
+complete selected-file coverage, matrix identity, and complete structured reports. A skipped Tests job is allowed only
+for an explicit no-tests plan. Plan, per-shard reports, and the aggregate remain separate artifacts. Only superseded PR
+runs are cancelled; distinct main-push ranges remain available. Certification
+requires the current revision's applicable checks and real-Host evidence; workflow configuration alone is not evidence.
+PTY verifiers probe optional tmux server settings; the Ubuntu baseline works without `extended-keys-format`. Reuse
+required CI evidence for the same revision under [the verification policy](code-quality.md#risk-based-verification);
+the [delivery publisher](agents/issue-tracker.md#verified-ci-evidence) verifies those results before reporting delivery.
+A separate weekly upstream watch reports when npm `latest` moves beyond the supported Host without changing support
+automatically.
+
 The repository toolchain uses Bun 1.4.0. The Host's bundled runtime and release packaging are Host details; they are not
 Pi Stuff compatibility admission criteria.
 Bun dependency upgrades are deliberate maintainer changes because the frozen Bun lockfile, exact repository toolchain,
@@ -48,6 +57,11 @@ The supported Host profile identifies the released version, reviewed upstream so
 repository toolchain row separately identifies the Bun executable used for repository commands and CI. Pi upgrades review
 the supported version, public API seams, and real-Host capability evidence together; the repository does not claim to
 reproduce the upstream compilation process.
+
+The certified Code Mode executable is checked by its executable hash after installation; the release archive hash is
+recorded separately because archive and extracted executable identities differ. Ordinary verification uses the offline
+Code Mode RPC and TUI wrappers with a fixture Provider. The live Magic Context wrapper requires explicit selection and
+credentials.
 
 Pi core imports remain wildcard peer dependencies because the Host supplies them. Development dependencies stay pinned
 to the released `0.85.1` type surface. The published `pi-coding-agent` SDK at `0.85.1` excludes the experimental remote

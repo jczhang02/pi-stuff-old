@@ -1,4 +1,4 @@
-<!-- translation-source: docs/troubleshooting.md; translation-source-sha256: 5018966adfc674ac4e783d8da1c5a6b5b98ce04445e187165e692345e1c67b47 -->
+<!-- translation-source: docs/troubleshooting.md; translation-source-sha256: 51da6132cfc6afda3689f4c69af5e08a9a64cf50b83030826256ee9410c4a3a7 -->
 
 # 故障排查
 
@@ -58,6 +58,8 @@ Provider 认证与服务错误会显示在 Tool 结果或 `/diagnostics` 中。
 使用 `/mcp on-demand <server>`。需要自动连接时使用 `/mcp auto-connect <server>`。
 
 ## RTK
+
+本地测试预检失败时，检查报告的可执行文件路径与版本。将 `RTK_BIN` 指向已有受支持版本，或把它放到 `PATH`；同版本源码构建和 shim 不需要匹配官方发布哈希。`PI_BIN` 同样选择已安装的受支持 Pi。本地验证不下载或重装这两个工具。
 
 ### 命令没有被改写
 

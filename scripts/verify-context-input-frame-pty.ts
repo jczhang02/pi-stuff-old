@@ -16,8 +16,8 @@ import {
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/context-pty-provider.ts");
-const runner = join(root, "test/fixtures/context-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/context-pty-provider.ts");
+const runner = join(root, "tests/fixtures/context-pty-runner.sh");
 const INPUT_FRAME_LATENCY_LIMIT_MS = 150;
 const WORKING_STALL_LIMIT_MS = 500;
 const HISTORY_MARKER = "CONTEXT_INPUT_HISTORY_499";

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
-const runner = join(root, "test/fixtures/context-pty-runner.sh");
+const runner = join(root, "tests/fixtures/context-pty-runner.sh");
 const MUST_EXPECT = `
 proc must_expect {pattern} {
     expect {

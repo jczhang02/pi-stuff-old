@@ -14,7 +14,7 @@ import {
 	VIBE_LINE_LIVENESS_PTY_PROMPT,
 	VISUALIZATION_PTY_PROMPT,
 	VISUALIZATION_PTY_RESPONSE,
-} from "../test/fixtures/ui-pty-provider.js";
+} from "../tests/fixtures/ui-pty-provider.js";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 import * as pty from "./ui-pty-session.js";
 import { waitForPersistedSessionValue } from "./ui-pty-thinking-evidence.js";

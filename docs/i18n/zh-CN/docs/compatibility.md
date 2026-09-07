@@ -1,4 +1,4 @@
-<!-- translation-source: docs/compatibility.md; translation-source-sha256: bf5cbbfac3b070800c478537b6b3fc295c448462cf2ec681aa4ba1199742b311 -->
+<!-- translation-source: docs/compatibility.md; translation-source-sha256: e281772e1250a0ec73fcf910ec248b8389fba5b3c9ed9530e30afd6913f25bca -->
 
 # 兼容性
 
@@ -10,23 +10,24 @@
 | 仓库 Bun 工具链 | 1.4.0 |
 | Pi Stuff Package | 0.3.3 |
 | 仓库开发 Package | 0.0.0 |
-| 系统工具基线 | Ubuntu 24.04，包含 Bash、curl、tar、gzip 和标准 Unix 工具；不含 `pwsh` |
+| 系统工具基线 | Ubuntu 24.04，包含 Bash、Python 3（adapter 语法检查）、curl、tar、gzip 和标准 Unix 工具；不含 `pwsh` |
 | PTY 验证工具 | Ubuntu 24.04 的 Expect 与 tmux package |
 | TypeScript checker | 5.9.3 |
 | Code Mode Host | OpenAI Codex `rust-v0.145.0`，Linux x64 |
 | Code Mode Host Release archive | SHA-256 `ac23177956c30cc1f9f180c27bd80f5bb5b76780db55fb94dcc22644d490852e` |
-| 可选 RTK runtime | 官方 `0.45.0`，源码 `b34be37caf3796b69a50952a28e60e32b5daad43`，Linux x64 |
-| RTK Release archive | SHA-256 `c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4` |
-| RTK Release executable | SHA-256 `99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535` |
+| Code Mode Host executable | SHA-256 `60bf16414be5333f09ff082540082304c7352931ef64bdeb170d4c35a82e6ef8` |
+| 可选 RTK runtime | `0.45.0`，发布源码 `b34be37caf3796b69a50952a28e60e32b5daad43`，Linux x64 |
+| RTK CI 下载 archive | SHA-256 `c4c036fbf181fc55ef329786c8c17e0d427972b053b825944d968a6aafef1ba4` |
+| RTK CI 下载 executable | SHA-256 `99e0cff729d52297a23eb832f809d9773ba7c32de818dfe76b2cdd900a951535` |
 
 受支持的 Host profile 是 Linux x64 上的 Pi `0.85.1`。上述上游源码提交作为来源参考保留。验收会在真实 Host 上
 通过 Pi 的公开 API 覆盖完整 Suite 契约，包括公开的 `registerMarkdownTransformer()`、常规与 fullscreen UI 行为，
 以及保留空格的原生设置搜索。仅匹配版本还不够：Host 还必须通过适用的真实 Host 能力验收。Pi Stuff 不重建或
 分发 Pi Host。
 
-CI 提供两个稳定检查。`Fast` 始终验证冻结依赖图、格式、anti-slop lint、类型接口、未使用代码分析、生成组合和公开发布安全。PR 的范围分类器对可执行或影响未知的变更启动 `Acceptance`。Beads 元数据、根 Markdown、文档证据、Package/Module README 和 `.github/CONTRIBUTING.md` 仅需 `Fast`；Runtime Skill、Prompt Template、配置和可执行示例不属于普通文档豁免。重命名同时按旧、新路径分类。直接推送到 `main` 仅运行 `Fast`；手动触发运行两者。PTY 验证器使用可选 tmux 服务器设置前先探测支持情况；Ubuntu 基线必须在没有 `extended-keys-format` 时正常运行。
+本地验证通过 `PI_BIN` / `RTK_BIN` 或 `PATH` 复用已安装的 Pi、RTK，不自动下载或重装。兼容性准入检查版本与真实行为，不要求固定二进制哈希；RTK 源码构建和 PATH shim 可以满足该契约。CI 下载哈希标识干净 runner 准备的产物，不限制已有本地可执行文件。
 
-`Acceptance` 获取受支持的 Pi Host、Code Mode Host 和 RTK runtime，然后在网络隔离命名空间中运行隔离测试、真实 TUI 验证、Tool Activity benchmark 和 Package 验证。该作业允许运行 40 分钟；单个场景的超时与必需覆盖范围保持不变。逐文件进程隔离避免重进程或 PTY 测试污染后续测试。按[验证政策](code-quality.md#risk-based-verification)复用同一版本所需 CI 证据；仅 `Fast` 通过不认证完整 Host 验收。[交付发布器](agents/issue-tracker.md#verified-ci-evidence)在报告交付前核对适用检查。另有每周上游观察任务报告 npm `latest` 是否超过受支持 Host，但不会自动改变支持范围。
+CI 使用 `Plan`、`Checks`、独立的 `Tests (shard N/M)` 和 `Verify`。Plan 在 PR、`main` push、手动触发与夜间计划中运行：PR/push 选择受影响离线测试，手动触发选择完整清单与完整矩阵；夜间仅复用同一 main SHA 的成功全量证据，否则运行全量。Plan 把必要范围与矩阵写入 artifacts。Checks 独立验证冻结依赖、格式、anti-slop lint、类型、未使用代码、生成组合和公开 Release 安全。每个必要 Tests 分片获取认证 Pi、Code Mode、RTK，在网络隔离 namespace 中逐文件使用全新 Bun/Node 进程。分片只等待 Plan，失败后停止剩余工作。Verify 始终检查计划、必要 job 状态、完整且唯一的文件覆盖、矩阵身份和完整结构化报告；只有明确的 no-tests 计划才允许跳过 Tests。计划、逐分片及汇总报告分别保留。仅取消同一 PR 的过时运行，不同 main-push 范围继续保留。认证需要当前 revision 的适用检查及真实 Host 证据，workflow 配置本身不构成证据。
 
 仓库工具链使用 Bun 1.4.0。Host 自带的 runtime 和 Release 打包属于 Host 细节，不是 Pi Stuff 的兼容性准入标准。
 
@@ -87,3 +88,5 @@ changelog、归档验收报告、研究笔记和已捕获 prototype 中的旧版
 
 Codex Capability 只为认证 Linux x64 profile 打包保留的原生 helper。在其他目标上，命令和普通 Pi turn 仍然
 可用，不可用的 Tool 会返回有界恢复错误。
+
+PTY 验证器会探测可选 tmux 服务端设置；Ubuntu 基线不依赖 `extended-keys-format`。同一版本的必需 CI 证据按照[验证策略](../../../../docs/code-quality.md#risk-based-verification)复用；[交付发布器](../../../../docs/agents/issue-tracker.md#verified-ci-evidence)会在报告交付前验证这些结果。独立的每周上游检查会报告 npm `latest` 超过支持版本的情况，不会自动更改支持范围。

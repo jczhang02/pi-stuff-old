@@ -4,11 +4,12 @@ import { join, resolve } from "node:path";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { Check } from "typebox/value";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/tools-grouping-pty-provider.ts");
-const runner = join(root, "test/fixtures/tools-grouping-pty-runner.sh");
+const providerExtension = join(root, "tests/fixtures/tools-grouping-pty-provider.ts");
+const runner = join(root, "tests/fixtures/tools-grouping-pty-runner.sh");
 const GENERIC_FIT_TARGET = "https://example.test/a-very-long-resource-identifier-without-boundaries-that-keeps-going";
 const SESSION_RECORD_SCHEMA = Type.Object(
 	{
@@ -689,7 +690,7 @@ export async function verifyToolsGroupingPty(options: ToolsGroupingPtyOptions): 
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
+	const PI_BIN = resolvePiBinary();
 	const packagePath = join(root, "packages/pi-stuff");
 	await verifyToolsGroupingPty({
 		columns: 100,

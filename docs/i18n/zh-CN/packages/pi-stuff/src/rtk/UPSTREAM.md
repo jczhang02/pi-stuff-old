@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/rtk/UPSTREAM.md; translation-source-sha256: e74854489dc9f053aaf18bfd6602ad0fbce3b1c4255e4acce9fed7fbb7166024 -->
+<!-- translation-source: packages/pi-stuff/src/rtk/UPSTREAM.md; translation-source-sha256: bd4963bc50265ecedc87d2e22598e15933433982df722d261acbb229396d11a6 -->
 
 # 上游来源
 
@@ -38,7 +38,7 @@
 
 ## 外部 RTK 运行时验证
 
-可选可执行文件不捆绑。Linux x64 命令重写只接受官方 RTK `v0.45.0` 发布版、源码提交 `b34be37caf3796b69a50952a28e60e32b5daad43`，其不可变产物身份为：
+可选可执行文件不捆绑，也不自动安装。受支持的 Linux x64 profile 使用 RTK `v0.45.0`，包括通过版本检查与真实行为验证的本地源码构建和 PATH shim。固定可执行文件哈希不再作为兼容性准入门槛。源码提交 `b34be37caf3796b69a50952a28e60e32b5daad43` 的官方发布构建保留为 CI 下载来源证据：
 
 | 构建 | SHA-256 |
 | --- | --- |
@@ -52,7 +52,7 @@
 - 用 Pi 面向模型的 `context` 接缝替换上游 `tool_result` 修改，使对话记录和会话 JSONL 保持原始。
 - 保持 `read` 与源码投影禁用；失败结果和非文本块始终保持精确。
 - 用共享非浮动 Command Dialog 中唯一的交互式 `/rtk` control surface，替换上游配置模态框、通知、状态栏指标、启动配置创建、Shell Hook 假设和生命周期。
-- 只针对文档中的 SHA-256 验证官方 Linux x64 RTK 0.45.0 可执行文件；路径、二进制、超时或可用性漂移均开放回退。
+- 按版本和真实行为验证已安装的 RTK 0.45.0。运行期身份检查与该本地文件自身已验证的状态比较，而非官方发布哈希；路径、二进制、超时或可用性变化时保留原命令。
 - 把完整重写注册表委派给 RTK。官方 v0.45.0 仍拒绝复合 `find` 谓词和操作；Pi Stuff 记录该约束，而不是增加命令解析器或分叉。
 - 只暴露一个小型 `ContextProjectionAdapter`，用于与套件 Context 能力组合。
 - 不包含或派生自 `jczhang02/pi-agent` 实现代码；该仓库只提供行为证据。

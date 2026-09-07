@@ -121,7 +121,8 @@ async function waitForLivenessEvent(
 		if (event) return event;
 		await Bun.sleep(10);
 	}
-	fail(`timed out waiting for the ${payloadKind} ${type} event`);
+	const observed = (await readFile(requestLog, "utf8")).trim() || "<empty>";
+	fail(`timed out waiting for the ${payloadKind} ${type} event; request log: ${observed}`);
 }
 
 async function waitForFrame(
@@ -354,6 +355,14 @@ export async function runToolsPtyLiveness(options: ToolsPtyLivenessOptions): Pro
 			}),
 		);
 		return samples;
+	} catch (error) {
+		let frame = "<closed>";
+		try {
+			frame = capture(true);
+		} catch {
+			// Preserve the original failure if the terminal process has already exited.
+		}
+		throw new Error(`${String(error)}\nFinal terminal frame:\n${frame}`, { cause: error });
 	} finally {
 		Bun.spawnSync(["tmux", "-S", fixture.socket, "kill-server"], { stderr: "ignore", stdout: "ignore" });
 		await rm(fixture.temporaryDirectory, { force: true, recursive: true });

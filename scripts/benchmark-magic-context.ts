@@ -24,6 +24,7 @@ import {
 	MagicWorkerTransport,
 	startMagicWorkerFromBundle,
 } from "../packages/pi-stuff/src/context-management/magic-worker-transport.js";
+import { handleBenchmarkMeta } from "./benchmark-cli.js";
 import { percentile, summarize } from "./lifecycle-benchmark-sampling.js";
 import {
 	type MagicContextBenchmarkCase as BenchmarkCase,
@@ -34,6 +35,7 @@ import {
 
 const scriptPath = fileURLToPath(import.meta.url);
 const root = resolve(dirname(scriptPath), "..");
+const DEFAULT_OUTPUT = join(root, ".artifacts/magic-context-benchmark/latest.json");
 const PACKAGE_MANIFEST_SCHEMA = Type.Object({
 	dependencies: Type.Object({ "@cortexkit/pi-magic-context": Type.String({ minLength: 1 }) }),
 });
@@ -405,6 +407,11 @@ async function runBenchmark(samples: number, warmups: number, output: string | u
 	}
 }
 
+handleBenchmarkMeta(process.argv.slice(2), "usage: benchmark:capability:magic-context [options]", [
+	"worker-startup",
+	"projection",
+	"queue-settlement",
+]);
 const { values } = parseArgs({
 	options: {
 		output: { type: "string" },
@@ -423,6 +430,6 @@ if (sampleOutput) {
 	await runBenchmark(
 		positiveInteger(values.samples, 10, "--samples"),
 		nonNegativeInteger(values.warmups, 3, "--warmups"),
-		values.output,
+		values.output ?? DEFAULT_OUTPUT,
 	);
 }

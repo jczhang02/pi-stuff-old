@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/rtk/README.md; translation-source-sha256: 3481b1564130c9b02638c48ee85516477e1e4ad8f597a4c9a83055d594429b73 -->
+<!-- translation-source: packages/pi-stuff/src/rtk/README.md; translation-source-sha256: 7b308a699541f502c58cf2fafbaac67f008eae1d4549b3e8b409ceabee385868 -->
 
 # RTK
 
@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-把已认证 RTK `0.45.0` Linux x64 binary 安装到 `PATH`，然后打开：
+复用 `PATH` 中已安装的 RTK `0.45.0`，然后打开：
 
 ```text
 /rtk
@@ -26,8 +26,9 @@ Dialog 验证 runtime、切换 Command rewriting 与 Model projection，并显�
 
 ## 亮点
 
-- 第一次使用时验证官方版本与 executable SHA-256。
-- 每次 rewrite 前重新检查 runtime identity，并检测 binary drift。
+- 第一次使用时检查受支持版本；接受同版本源码构建与 PATH shim。
+- 复用已有可执行文件，不下载或重装。
+- 每次 rewrite 前重新检查选中可执行文件的身份与受支持版本。
 - RTK 不可用时保留原 Bash 命令。
 - 投影紧凑的成功 Bash 与 Grep 文字，不改变 Session JSONL。
 - 分别配置 rewriting 与 projection。

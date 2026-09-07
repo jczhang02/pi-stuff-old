@@ -38,12 +38,10 @@ const PULL = Type.Object({
 	state: Type.Union([Type.Literal("open"), Type.Literal("closed")]),
 	merged: Type.Boolean(),
 	draft: Type.Boolean(),
-	changed_files: Type.Integer({ minimum: 0 }),
 	body: Type.Union([Type.String(), Type.Null()]),
 	head: Type.Object({ sha: TEXT }),
 	base: Type.Object({ repo: Type.Object({ full_name: TEXT }) }),
 });
-const PR_FILE = Type.Object({ filename: TEXT, previous_filename: Type.Optional(TEXT) });
 type Bead = Static<typeof BEAD>;
 export type GithubMutation = { readonly body: string } | { readonly state: "open" | "closed"; readonly title: string };
 type Run = (command: readonly string[], input?: GithubMutation) => string;
@@ -99,18 +97,6 @@ function github(run: Run, repository: string, path: string, method = "GET", inpu
 	return run(command, input);
 }
 
-function pullPaths(repository: string, number: number, count: number, run: Run): string[] {
-	const files: unknown = JSON.parse(
-		run(["gh", "api", `repos/${repository}/pulls/${number}/files?per_page=100`, "--paginate", "--slurp"]),
-	);
-	if (!Check(Type.Array(Type.Array(PR_FILE)), files)) throw new Error(`Invalid files for PR #${number}`);
-	const records = files.flat();
-	if (records.length !== count) throw new Error(`PR #${number}: file listing is incomplete; retry publication`);
-	return records.flatMap((file) =>
-		file.previous_filename ? [file.previous_filename, file.filename] : [file.filename],
-	);
-}
-
 function deliveryLines(bead: Bead, repository: string, run: Run): string[] {
 	const delivery = bead.metadata?.github_delivery;
 	if (!delivery) return ["Delivery has not been recorded yet."];
@@ -142,7 +128,7 @@ function deliveryLines(bead: Bead, repository: string, run: Run): string[] {
 		if (!target) throw new Error(`${bead.id}: code delivery requires a final commit`);
 		lines.push(
 			`- No PR: ${delivery.no_pr_reason}`,
-			...verifyDeliveryChecks(repository, target, undefined, run).map((line) => `- CI: ${line}`),
+			...verifyDeliveryChecks(repository, target, "push", run).map((line) => `- CI: ${line}`),
 			"- Merge state: not verified by this publication.",
 		);
 		return lines;
@@ -155,8 +141,7 @@ function deliveryLines(bead: Bead, repository: string, run: Run): string[] {
 	}
 	if (!delivery.commits.includes(pull.head.sha))
 		throw new Error(`${bead.id}: delivery commits must include the current PR head`);
-	const paths = pullPaths(repository, delivery.pull_request, pull.changed_files, run);
-	for (const line of verifyDeliveryChecks(repository, pull.head.sha, paths, run)) lines.push(`- CI: ${line}`);
+	for (const line of verifyDeliveryChecks(repository, pull.head.sha, "pull_request", run)) lines.push(`- CI: ${line}`);
 	const state = pull.merged
 		? "merged"
 		: pull.state === "closed"

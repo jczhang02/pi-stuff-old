@@ -17,11 +17,10 @@ Dated acceptance, design, and performance evidence for Pi Stuff. Use the
 ## Benchmarks and acceptance
 
 - [ps-8ew reliability repair acceptance](ps-8ew-reliability-acceptance-20260906.md)
-- [Capability Contract Acceptance and Bounded Terminal-Bench Observation](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
+- [Capability Contract Acceptance](ps-ps3-capability-contract-and-terminal-bench-observation-2026-08-30.md)
 - [Magic Context under Effect optimization and recertification](magic-context-effect-optimization-2026-09-02.md)
 - [ps-qer Agent completion acceptance](ps-qer-agent-completion-acceptance-20260902.md)
 - [Effect v4 versus main decision](effect-v4-mainline-decision-2026-09-01.md)
-- [Terminal-Bench 2.1 latency comparison](terminal-bench-2.1-pi-stuff-latency-2026-08-30.md)
 - [Skill Discovery startup-bounded confirmation](skill-discovery-startup-bounded-confirmation-20260830.json) and its
   [preregistration](../research/skill-discovery-startup-bounded-confirmation-20260830.md)
 - [Skill Discovery isolated confirmation](skill-discovery-isolated-confirmation-20260830.json) and its
@@ -47,3 +46,5 @@ Raw JSON, ANSI, text, and image evidence stays beside the report that owns it. H
 remain unchanged so the recorded environment stays identifiable.
 
 - [ps-eck recovery and Host boundary (2026-09-05)](ps-eck-recovery-host-boundary-2026-09-05.md)
+
+- [Quality-assurance migration — 2026-09-06](quality-assurance-migration-20260906.md): staged command, test, and CI migration evidence.

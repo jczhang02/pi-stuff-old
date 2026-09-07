@@ -1,6 +1,5 @@
-import { Type } from "typebox";
+import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
-import { requiresFullAcceptance } from "./ci-acceptance-scope.ts";
 
 const RUN = Type.Object({
 	id: Type.Integer({ minimum: 1 }),
@@ -18,11 +17,50 @@ const JOB = Type.Object({
 	conclusion: Type.Union([Type.String(), Type.Null()]),
 });
 
-// Undefined paths mean branch-only delivery; an empty PR diff requires full acceptance.
+function verifiedTestJobs(records: Static<typeof JOB>[], sha: string): string {
+	const error = `CI verification failed for ${sha}: Tests is missing, incomplete, or unsuccessful`;
+	const legacy = records.filter((job) => job.name === "Tests");
+	const shards = records
+		.flatMap((job) => {
+			const match = /^Tests \(shard ([1-9]\d*)\/([1-9]\d*)\)$/u.exec(job.name);
+			if (!match && job.name.startsWith("Tests (shard")) throw new Error(error);
+			return match ? [{ ...job, index: Number(match[1]), total: Number(match[2]) }] : [];
+		})
+		.sort((left, right) => left.index - right.index);
+	const single = legacy[0];
+	if (single) {
+		if (
+			legacy.length !== 1 ||
+			shards.length ||
+			single.status !== "completed" ||
+			!["success", "skipped"].includes(single.conclusion ?? "")
+		)
+			throw new Error(error);
+		return single.conclusion === "skipped" ? "Tests not run (verified no-tests plan)" : "Tests passed";
+	}
+	const total = shards[0]?.total;
+	if (
+		!total ||
+		!Number.isSafeInteger(total) ||
+		shards.length !== total ||
+		shards.some(
+			(job, index) =>
+				job.index !== index + 1 ||
+				job.total !== total ||
+				job.status !== "completed" ||
+				job.conclusion !== "success",
+		)
+	)
+		throw new Error(error);
+	return `${total} Tests shard(s) passed`;
+}
+
+// The Plan job owns scope selection;
+// publication verifies the current Plan/Checks/Tests/Verify result rather than reclassifying paths.
 export function verifyDeliveryChecks(
 	repository: string,
 	sha: string,
-	paths: readonly string[] | undefined,
+	event: "push" | "pull_request",
 	run: (command: readonly string[]) => string,
 ): string[] {
 	const response: unknown = JSON.parse(
@@ -36,7 +74,6 @@ export function verifyDeliveryChecks(
 	);
 	if (!Check(Type.Array(Type.Object({ workflow_runs: Type.Array(RUN) })), response))
 		throw new Error(`Invalid CI workflow runs for ${sha}`);
-	const event = paths === undefined ? "push" : "pull_request";
 	const latest = response
 		.flatMap((page) => page.workflow_runs)
 		.filter(
@@ -60,16 +97,16 @@ export function verifyDeliveryChecks(
 	);
 	if (!Check(Type.Array(Type.Object({ jobs: Type.Array(JOB) })), jobs))
 		throw new Error(`Invalid CI jobs for run ${latest.id}`);
-	const required = ["Fast"];
-	if (latest.event === "workflow_dispatch" || (paths !== undefined && requiresFullAcceptance(paths)))
-		required.push("Acceptance");
+	const required = ["Plan", "Checks", "Verify"];
 	const records = jobs.flatMap((page) => page.jobs);
 	for (const name of required) {
 		const matches = records.filter((job) => job.name === name);
-		if (matches.length !== 1 || matches[0]?.status !== "completed" || matches[0].conclusion !== "success")
+		const job = matches[0];
+		if (matches.length !== 1 || job?.status !== "completed" || job?.conclusion !== "success")
 			throw new Error(`CI verification failed for ${sha}: ${name} is missing, incomplete, or unsuccessful`);
 	}
+	const testStatus = verifiedTestJobs(records, sha);
 	return [
-		`[Actions run](https://github.com/${repository}/actions/runs/${latest.id}/attempts/${latest.run_attempt}): ${required.join(" and ")} passed for commit ${sha}.`,
+		`[Actions run](https://github.com/${repository}/actions/runs/${latest.id}/attempts/${latest.run_attempt}): Plan, Checks, and Verify passed; ${testStatus} for commit ${sha}.`,
 	];
 }

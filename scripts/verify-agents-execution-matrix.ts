@@ -7,11 +7,12 @@ import { Check } from "typebox/value";
 import { codeModeHostBinaryPath } from "../packages/pi-stuff/src/code-mode/host/binary.js";
 import { isRuntimeNumber, isRuntimeString } from "../packages/pi-stuff/src/shared/runtime-type.js";
 import { waitForDetachedProcess } from "./detached-process.js";
+import { resolvePiBinary } from "./installed-tools.ts";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.ts";
 import { disableSessionNamingForTest } from "./session-naming-test-settings.ts";
 
 const root = resolve(import.meta.dir, "..");
-const providerExtension = join(root, "test/fixtures/agents-execution-matrix-provider.ts");
+const providerExtension = join(root, "tests/fixtures/agents-execution-matrix-provider.ts");
 const PROCESS_TIMEOUT_MS = 90_000;
 const BACKGROUND_SETTLE_TIMEOUT_MS = 60_000;
 
@@ -460,7 +461,7 @@ Return the deterministic matrix result without calling tools.
 }
 
 if (import.meta.main) {
-	const { PI_BIN = "/opt/pi-coding-agent/pi" } = process.env;
+	const PI_BIN = resolvePiBinary();
 	await verifyAgentsExecutionMatrix({ piBinary: PI_BIN, packagePath: join(root, "packages/pi-stuff") });
 	console.log("Certified Agents single/parallel, fresh/fork, foreground/background execution matrix");
 }

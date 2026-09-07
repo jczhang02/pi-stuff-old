@@ -1,4 +1,4 @@
-<!-- translation-source: packages/pi-stuff/src/background-work/README.md; translation-source-sha256: 94e4255355739d5a26401763bfb7807bf2f8cad0d629ca61a9204d51ffdd1d8a -->
+<!-- translation-source: packages/pi-stuff/src/background-work/README.md; translation-source-sha256: bff55fa38d3d7f2feb93c38349f5f2b16ff96a0da52e739ccc1f55efb00744ed -->
 
 # Background Work
 
@@ -36,6 +36,9 @@ Dialog 列出当前工作、跟随有界输出，并停止当前 Session 拥有�
 - 跨过输出保留阈值时保留带 omission count 的滚动 tail，而不停止生产性工作。
 - 根据是否发生滚动，将已完成输出路径明确标记为完整或保留。
 - Shutdown 时停止所属进程树并记录经过认证的恢复 metadata。
+
+Shell 启动时，最多等待十秒确认 supervisor 已就绪，随后才发布经过认证的命令。
+三秒的命令确认期限从就绪后开始计算。启动失败会回滚；Session 关闭后，待启动任务不能再释放命令。
 
 ## 文档
 

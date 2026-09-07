@@ -98,6 +98,25 @@ coverage from retained reports alone.
 - Benchmarks run independently and have no authority to block PRs. Performance tests within Tests may block when they
   verify explicit performance requirements. Benchmark results remain evaluation evidence rather than PR gates.
 
+### Feedback-speed refinement: 2026-09-06
+
+The follow-up design interview accepted these refinements for implementation:
+
+- For an ordinary local change with known impact, verify the regression and relevant critical public contracts,
+  including applicable success, failure, cancellation, and recovery behavior. Use representative geometry and theme
+  combinations; expand the corresponding matrix when the change affects those dimensions. Preserve the existing
+  conservative expansion policy for shared or unknown impact. Representative execution does not certify omitted variants.
+- Prioritize reducing measured end-to-end verification wait. Do not fix CI parallelism at three runners; choose bounded
+  concurrency from measurements of actual elapsed time, including setup and resource contention, while preserving
+  process isolation and trustworthy results. No five-minute target or new timeout limit is accepted.
+
+- Run the complete offline test inventory nightly when `main` has changed since the last successful full run.
+  Keep manual full verification available. Ordinary PRs retain affected-scope selection, with full applicable coverage
+  for shared or unknown impact. Scheduled full verification does not replace required pre-merge evidence.
+- Default verification stops remaining work after the first confirmed failure and returns the failure promptly.
+  Retain completed evidence and explicitly report work not run or cancelled; incomplete verification cannot pass.
+  Allow explicit complete diagnostic execution when collecting multiple failures is useful.
+
 ### Agreed test retention criteria
 
 - Preserve valid critical behavior when deleting its only test: use a simpler reliable test or reuse suitable integration
@@ -219,9 +238,10 @@ one review of the complete affected scope. Findings require fixes and review of 
 unchanged successful checks and fixed review-round quotas do not add evidence. Repository instructions specify the
 quality bar without prescribing Agent delegation roles or scheduling.
 
-The existing publisher now verifies commit-bound CI evidence rather than trusting validation prose. The shared path
-classifier adds Package/Module READMEs and contribution guidance to the existing prose exemptions. Runtime resources
-and unknown changes still require Acceptance on PRs. Direct-push and manual-run policies remain distinct and visible.
+The existing publisher now verifies commit-bound `Plan`, `Checks`, `Tests`, and `Verify` evidence rather than trusting
+validation prose or reclassifying paths. `Tests` may be skipped only when a successful Plan explicitly requires no
+tests. Direct-push and manual-run policies remain distinct and visible; source-install and real-Host evidence remain
+separate acceptance requirements.
 
 Capability-based test selection, test-directory migration, and performance-threshold classification remain later work.
 The current Tool Activity benchmark and source/extracted-Package Host checks remain in the executable check until

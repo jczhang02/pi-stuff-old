@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { visibleWidth } from "@earendil-works/pi-tui";
@@ -26,11 +26,7 @@ export async function waitForPersistedSessionValue(
 	while (Date.now() < deadline) {
 		const sessionFiles = (await readdir(sessionDirectory)).filter((entry) => entry.endsWith(".jsonl"));
 		for (const sessionFile of sessionFiles) {
-			const records = (await readFile(join(sessionDirectory, sessionFile), "utf8"))
-				.trim()
-				.split("\n")
-				.filter(Boolean)
-				.map(parseJsonValue);
+			const records = await pty.readCompletedJsonl(join(sessionDirectory, sessionFile));
 			if (records.some((record) => containsValue(record, target))) return;
 		}
 		await pty.delay(pty.POLL_INTERVAL_MS);
@@ -218,22 +214,31 @@ export async function verifyThoughtLifecycle(
 
 export async function verifyThinkingHtmlExport(sessionDirectory: string): Promise<void> {
 	const sessionFiles = (await readdir(sessionDirectory)).filter((entry) => entry.endsWith(".jsonl"));
-	let sessionFile: string | undefined;
-	for (const entry of sessionFiles) {
-		const candidate = join(sessionDirectory, entry);
-		const records = (await readFile(candidate, "utf8")).trim().split("\n").filter(Boolean).map(parseJsonValue);
-		if (records.some((record) => containsValue(record, FIXTURE_THINKING))) {
-			sessionFile = candidate;
-			break;
-		}
-	}
-	if (!sessionFile) pty.fail("Thinking Session was unavailable for HTML export");
-
-	const piEntry = fileURLToPath(import.meta.resolve("@earendil-works/pi-coding-agent"));
-	const exportModule = await import(pathToFileURL(join(dirname(piEntry), "core/export-html/index.js")).href);
-	if (!isRuntimeFunction(exportModule.exportFromFile)) pty.fail("certified Pi HTML exporter is unavailable");
+	const temporaryDirectory = await mkdtemp(join(sessionDirectory, ".thinking-export-"));
+	const sessionFile = join(temporaryDirectory, "session.jsonl");
 	const outputPath = join(sessionDirectory, "thinking-session.html");
-	await exportModule.exportFromFile(sessionFile, { outputPath });
+	try {
+		let found = false;
+		for (const entry of sessionFiles) {
+			await writeFile(sessionFile, await pty.readCompletedJsonlBytes(join(sessionDirectory, entry)), {
+				mode: 0o600,
+			});
+			const records = await pty.readCompletedJsonl(sessionFile);
+			if (records.some((record) => containsValue(record, FIXTURE_THINKING))) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) pty.fail("Thinking Session was unavailable for HTML export");
+
+		const piEntry = fileURLToPath(import.meta.resolve("@earendil-works/pi-coding-agent"));
+		const exportModule = await import(pathToFileURL(join(dirname(piEntry), "core/export-html/index.js")).href);
+		if (!isRuntimeFunction(exportModule.exportFromFile)) pty.fail("certified Pi HTML exporter is unavailable");
+		// Pi may repair a Session when opening it; never give the exporter the live writer's file.
+		await exportModule.exportFromFile(sessionFile, { outputPath });
+	} finally {
+		await rm(temporaryDirectory, { recursive: true, force: true });
+	}
 	const html = await readFile(outputPath, "utf8");
 	const encoded = /<script id="session-data" type="application\/json">([^<]+)<\/script>/u.exec(html)?.[1];
 	if (!encoded) pty.fail("Pi HTML export omitted canonical Session data");

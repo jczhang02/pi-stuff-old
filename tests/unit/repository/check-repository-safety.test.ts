@@ -269,6 +269,23 @@ test("enforces README screenshot ownership, dimensions, mirrors, and orphan clea
 	});
 });
 
+test("unstaged screenshot replacement has the same audit result as staged replacement", async () => {
+	const root = await createRepository();
+	await writeDocumentationFixture(root);
+	expect(Bun.spawnSync(["git", "add", "."], { cwd: root }).exitCode).toBe(0);
+	const oldAsset = readmeScreenshotAssetPath("docs/README.md");
+	const newAsset = "docs/assets/readme/fixtures/replacement.png";
+	const source = (await readFile(join(root, "docs/README.md"), "utf8")).replaceAll(oldAsset, newAsset);
+	await writeFixture(root, newAsset, await readFile(join(root, oldAsset)));
+	await writeFixture(root, "docs/README.md", source);
+	await writeTranslationFixture(root, "docs/README.md", source);
+	await rm(join(root, oldAsset));
+	expect(await auditRepositoryFiles(root, true)).toEqual([]);
+	expect(await auditRepositoryFiles(root)).toEqual([]);
+	expect(Bun.spawnSync(["git", "add", "."], { cwd: root }).exitCode).toBe(0);
+	expect(await auditRepositoryFiles(root, true)).toEqual([]);
+});
+
 test("rejects broken wiki structure, ADR relations, and translation drift", async () => {
 	const root = await createRepository();
 	await writeDocumentationFixture(root);

@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: e0879298b931c8939e025aefa0f105a7b9a284efd0746b5783f2898166bafad1 -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 451e5080a43c057f6c9c4bdbcd9b8dfd56acf04d454ce2510323a3971079121c -->
 
 # 质量保障
 
@@ -10,6 +10,7 @@ Static Checks 验证源码，不运行产品场景。Tests 通过声明的接缝
 
 ```bash
 bun run check
+bun run check:docs
 bun run fix
 bun run test --list
 bun run test --level acceptance --file repository/source-install.test.ts
@@ -22,7 +23,7 @@ bun run benchmark:suite:terminal-bench --help
 
 `check` 执行格式、lint、TypeScript、依赖和未使用源码、生成组合、仓库安全、Capability Contract Catalog 以及 Package/resource/license 静态验证；不会改写源码或运行 Benchmark。`fix` 才会执行格式和安全 lint 修复。
 
-`test` 当前发现五个层级下的 357 个文件（356 个离线文件、1 个显式在线文件）：Component (`unit`)、Component Integration (`component-integration`)、System (`system`)、System Integration (`system-integration`) 与 Acceptance (`acceptance`)。离线清单按上述层级分别有 144、170、2、10、30 个文件。目录按 `level/capability/scenario` 组织，每个文件独立 OS process。Goal smoke 是原生 Bun test；其余 21 个 `.node.ts` 保留 Node 兼容边界，只编译一次后运行。同一维度的重复 selector 取并集，不同维度取交集。`--name` 使用原生 test runner 的 regex candidate filter，不扫描源码名称。`--help` 和 `--list` 不执行场景。报告默认写入 `.artifacts/tests/`，记录文件状态、process duration、setup duration 和 Acceptance 矩阵；失败或空选择返回非零。
+`test` 发现五个层级下的当前测试清单：Component (`unit`)、Component Integration (`component-integration`)、System (`system`)、System Integration (`system-integration`) 与 Acceptance (`acceptance`)。通过 `test --list` 查看当前文件清单。目录按 `level/capability/scenario` 组织，每个文件独立 OS process。Goal smoke 是原生 Bun test；其余 21 个 `.node.ts` 保留 Node 兼容边界，只编译一次后运行。同一维度的重复 selector 取并集，不同维度取交集。`--name` 使用原生 test runner 的 regex candidate filter，不扫描源码名称。`--help` 和 `--list` 不执行场景。报告默认写入 `.artifacts/tests/`，记录文件状态、process duration、setup duration 和 Acceptance 矩阵；失败或空选择返回非零。
 
 Tests 在首个失败后停止剩余文件；缺少原生执行证据同样算失败。`--keep-going` 收集全部选中文件的结果，但不会把失败变成成功；`verify --keep-going` 也会在 Checks 命令失败后继续运行 Tests。每个文件开始前和结束后都持久化报告，区分已完成、尚未开始，以及执行中断时最后记录为进行中的文件。缺失、取消或未完成的证据不能通过 CI 汇总。
 
@@ -33,6 +34,8 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 ## 源码安装与保留证据
 
 `tests/acceptance/repository/source-install.test.ts` 在隔离 Settings 和 XDG 目录中运行认证 Pi 的 `install`，再从 checkout 外启动 Pi，观察已安装 Package 加载的命令，并清理临时环境。Distribution archive 不是交付要求。原 package-verification aggregate 重复的 Host/PTY 场景已移除；源码安装、Suite inspection、Host seam 和依赖互操作各自在相应层级与 Capability 下拥有主归属。
+
+主题生命周期失败时，在清理前把夹具 JSONL 快照和终端文本/ANSI 保存到指定 artifact 目录（CI 使用 `PI_STUFF_UI_PTY_ARTIFACT_DIR`）。夹具根路径会脱敏，但日志末尾记录和换行保持原样。UI 夹具和 Host Session 读取器仅发布以换行结束的完整记录；完整坏记录立即失败，所需记录一直未写完时仍受原有等待期限约束。Thinking HTML 导出使用截至最后一个完整换行的私有快照，保留原始字节，并在成功或失败后删除快照；打开导出器不会修复或改写正在使用的 Session 文件。
 
 ## Benchmarks
 
@@ -79,9 +82,9 @@ TypeScript 接缝由离线测试覆盖；`check:terminal-bench` 使用 Python 3 
 
 第二批完成测试分类与精简、五层 Capability 目录迁移、稳定层级 aliases、过时 acceptance aliases 清理。Code Mode RPC/TUI 已有使用真实 Host 与 fixture Provider 的 offline Acceptance 归属；live Magic Context wrapper 仍单独存在且未运行。
 
-第三批已实现受影响测试规划与 CI 编排。本地 `verify` 默认比较 `origin/main` 与当前 `HEAD` 的 merge-base，合并已提交、暂存、未暂存和未跟踪路径，并接受 `--base <ref>`。规划器从产品源码与离线测试文件出发，通过 TypeScript AST import 遍历共享辅助代码，并将 `.js` import 解析到 `.ts` 源码。验证依赖图中的未知导入触发全量。[动态依赖声明](../../../../config/verification-dependencies.json) 用导入文件的 SHA-256 绑定已审查的外部或本地加载边界；动态导入文件变化或没有声明时回退全量。未使用的 benchmark 脚本不会使每次局部修改都变成未知影响。共享脚本、配置、Suite 组合、Host 版本、删除路径及未知影响仍运行全套。仅当当前文件、index、`HEAD` 和 comparison base 的内容都证明 Markdown 或 Beads 元数据不含 executable fence 或脚本材料时，才可生成明确的 no-tests 计划。删除路径同样回退到完整离线套件。`--list` 只显示 base、head、reason、选中文件和环境要求，不运行 Checks 或 Tests；`--help` 不执行工作，未知参数严格失败。普通运行只读执行 `check`，随后运行选中的 offline Tests，并写入包含 plan、状态、耗时和 evidence paths 的时间戳 summary。
+第三批已实现受影响测试规划与 CI 编排。本地 `verify` 默认比较 `origin/main` 与当前 `HEAD` 的 merge-base，合并已提交、暂存、未暂存和未跟踪路径，并接受 `--base <ref>`。规划器从产品源码与离线测试文件出发，通过 TypeScript AST import 遍历共享辅助代码，并将 `.js` import 解析到 `.ts` 源码。验证依赖图中的未知导入触发全量。[动态依赖声明](../../../../config/verification-dependencies.json) 用导入文件的 SHA-256 绑定已审查的外部或本地加载边界；动态导入文件变化或没有声明时回退全量。未使用的 benchmark 脚本不会使每次局部修改都变成未知影响。共享脚本、配置、Suite 组合、Host 版本、删除非文档路径及未知影响仍运行全套。工程文档按路径角色排除，包括 AGENTS、CONTEXT、DESIGN、ADR、README、上游说明、翻译、文档附件与留存报告、代码示例以及删除文档。混合变更仅根据非文档路径选择运行时测试。重命名保留两侧路径，因此将执行输入移入文档目录仍根据被删除的源码选择测试。测试夹具即使名为 README 或 AGENTS，也仍是执行输入。运行时 Skill、Prompt、Agent 定义和未知 Markdown 夹具仍是执行输入。纯文档范围运行 `check:docs`，复用仓库链接、ADR 结构、截图、镜像/SHA 和文本安全审计，不进行代码、依赖或运行时检查，文档中的示例 manifest 和源码片段同样如此。链接目标按工作区实际存在的文件判断，因此附件未暂存删除与已暂存删除会触发相同的链接错误。`--list` 只显示 base、head、reason、选中文件和环境要求，不运行 Checks 或 Tests；`--help` 不执行工作，未知参数严格失败。其他范围只读执行 `check`，随后运行选中的 offline Tests，并写入包含 plan、状态、耗时和 evidence paths 的时间戳 summary。
 
-CI 使用 `Plan`、`Checks`、`Tests` 分片和 `Verify`。Plan 选择 PR target range 或 main push 的 before/after range。Checks 独立运行，Tests 只等待 Plan；每个分片在独立 runner 上串行运行其文件，保留逐文件进程隔离。矩阵遇到失败后停止其余分片。Verify 检查必要 job 结果、完整且不重复的文件覆盖、声明的矩阵及每份报告的完成状态；仅文件名并集完整不能证明成功。逐分片与汇总报告分别保留。同一 PR 的过时运行可取消，不同 main-push 范围保留；分支保护不变。
+CI 使用 `Plan`、`Checks`、`Tests` 分片和 `Verify`。Plan 选择 PR target range 或 main push 的 before/after range。Checks 和 Tests 均等待 Plan，再独立执行；纯文档 Checks 使用 `check:docs`，Tests 明确跳过，不准备 Host 或测试工具；每个分片在独立 runner 上串行运行其文件，保留逐文件进程隔离。矩阵遇到失败后停止其余分片。Verify 检查必要 job 结果、完整且不重复的文件覆盖、声明的矩阵及每份报告的完成状态；仅文件名并集完整不能证明成功。逐分片与汇总报告分别保留。同一 PR 的过时运行可取消，不同 main-push 范围保留；分支保护不变。
 
 分片使用保留的[逐文件耗时](../../../../config/verification-timings.json)，按预计最长任务优先分配。在 1–16 个 runner 中选择预计完成时间最短的最小数量；新文件初始估计为一秒。独立 runner 并行准备环境，因此不把准备时间乘以分片数计入墙钟耗时。历史权重仅用于调度，不构成覆盖或超时门槛；必须报告实际 hosted 排队、准备和执行时间后才能声称提速。
 

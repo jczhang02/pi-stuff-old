@@ -125,7 +125,16 @@ test("verify previews without work and reports failed checks or explicit no-test
 		const diagnostic = await Bun.file(join(root, ".artifacts/diagnostic/summary.json")).json();
 		expect([diagnostic.status, diagnostic.checks, diagnostic.tests]).toEqual(["failed", "failed", "passed"]);
 		await rm(join(root, ".artifacts"), { recursive: true });
-		await writeFile(join(root, "package.json"), JSON.stringify({ scripts: { check: 'bun -e "process.exit(0)"' } }));
+		await writeFile(
+			join(root, "package.json"),
+			JSON.stringify({
+				scripts: {
+					check: 'bun -e "process.exit(99)"',
+					"check:docs": 'bun -e "process.exit(0)"',
+					test: 'bun -e "process.exit(98)"',
+				},
+			}),
+		);
 		Bun.spawnSync(["git", "add", "."], { cwd: root });
 		Bun.spawnSync(["git", "-c", "commit.gpgsign=false", "commit", "-qm", "commands"], { cwd: root });
 		await writeFile(join(root, "README.md"), "metadata change");
@@ -136,6 +145,43 @@ test("verify previews without work and reports failed checks or explicit no-test
 		expect(none.exitCode).toBe(0);
 		const report = await Bun.file(join(root, ".artifacts/none/summary.json")).json();
 		expect([report.status, report.checks, report.tests]).toEqual(["passed", "passed", "not-run"]);
+	} finally {
+		await rm(root, { recursive: true, force: true });
+	}
+});
+
+test("CI documentation plans emit both skip flags and an empty shard matrix", async () => {
+	const { root, head } = await fixture();
+	try {
+		await writeFile(join(root, "AGENTS.md"), "Policy example\n~~~bash\nexit 1\n~~~\n");
+		expect(Bun.spawnSync(["git", "add", "AGENTS.md"], { cwd: root }).exitCode).toBe(0);
+		expect(
+			Bun.spawnSync(["git", "-c", "commit.gpgsign=false", "commit", "-qm", "documentation"], { cwd: root }).exitCode,
+		).toBe(0);
+		const current = Bun.spawnSync(["git", "rev-parse", "HEAD"], { cwd: root }).stdout.toString().trim();
+		const output = join(root, "github-output");
+		const result = Bun.spawnSync(
+			[process.execPath, resolve("scripts/verification-plan.ts"), "--ci", "--output", "plan.json"],
+			{
+				cwd: root,
+				env: {
+					...process.env,
+					GITHUB_EVENT_NAME: "push",
+					CI_BASE_SHA: head,
+					CI_HEAD_SHA: current,
+					GITHUB_OUTPUT: output,
+				},
+			},
+		);
+		expect(result.exitCode, result.stderr.toString()).toBe(0);
+		expect(await Bun.file(output).text()).toBe("tests_required=false\ndocumentation_only=true\n");
+		expect(readVerificationPlan("plan.json", root).mode).toBe("none");
+		const shards = Bun.spawnSync(
+			[process.execPath, resolve("scripts/verification-shards.ts"), "--plan", "plan.json", "--output", "shards"],
+			{ cwd: root },
+		);
+		expect(shards.exitCode, shards.stderr.toString()).toBe(0);
+		expect(await Bun.file(join(root, "shards/matrix.json")).json()).toEqual([]);
 	} finally {
 		await rm(root, { recursive: true, force: true });
 	}

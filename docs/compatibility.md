@@ -32,9 +32,11 @@ clean runner; they do not constrain an already-installed local executable.
 CI uses `Plan`, `Checks`, independent `Tests (shard N/M)` jobs, and `Verify`. Plan runs for pull requests, pushes to
 `main`, manual dispatch, and nightly scheduling. PR and push ranges select affected offline tests; manual dispatch
 selects the complete inventory and full matrix. Nightly execution reuses only successful same-main-SHA full evidence,
-otherwise selecting full coverage. Plan writes the required scope and matrix as artifacts. Checks validates the frozen
+otherwise selecting full coverage. Plan writes the required scope and matrix as artifacts. Checks and Tests both wait
+for Plan, then run independently. Engineering-documentation-only ranges run `check:docs` and explicitly skip Tests,
+without preparing Pi, RTK, Code Mode, or PTY tools. Other ranges retain full Static Checks: the frozen
 dependency graph, formatting, anti-slop lint, type surfaces, unused-code analysis, generated composition, and public-release
-safety independently of Tests. Each required Tests shard obtains the certified Pi, Code Mode, and RTK executables and
+safety. Each required Tests shard obtains the certified Pi, Code Mode, and RTK executables and
 runs its assigned files one fresh Bun or Node process at a time in a network-isolated namespace. Shards wait for Plan,
 not Checks, and stop remaining work on failure. Verify always evaluates the plan and required job results, unique and
 complete selected-file coverage, matrix identity, and complete structured reports. A skipped Tests job is allowed only

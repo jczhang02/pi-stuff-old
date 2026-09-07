@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0032-organize-quality-assurance-by-verification-purpose.md; translation-source-sha256: bfae88e1af2e0bc8162aeef6b688ff53cdd7fd6faecae954bcf7737b03b3ccde -->
+<!-- translation-source: docs/adr/0032-organize-quality-assurance-by-verification-purpose.md; translation-source-sha256: 4b681796cfc150da708288a6eb067ebad4b3930413f522eb85980e55374c4bc5 -->
 
 ---
 status: accepted
@@ -49,6 +49,7 @@ status: accepted
 - 采用开发中、PR 合并前、定期或按需三个执行计划。指定源码版本的完整安装与运行验收按需执行，当前不要求独立发布阶段流水线。
 - 反复失败先归因：修复测试缺陷；修复产品缺陷并保留有效回归保护；修复环境或报告环境阻塞。原因未知的偶发失败保留证据，不能仅靠重跑通过结案。复用适用的已有诊断，避免从头调查。
 - 无法修复的测试删除，不引入临时隔离流程。删除不表示被测行为已经通过；按下文保留标准继续保护有效关键行为。
+- 工程文档不触发运行时 Tests 或完整代码检查，包括政策文件、代码示例和删除文档。混合变更先排除文档，再选择可执行影响范围。运行时 Skill、Prompt、Agent 定义和未知夹具不属于工程文档。通过 `check:docs` 复用现有文档审计，不使用 workflow 路径排除来省略必需 CI 结果。
 - 普通 PR 可以保守地选择受影响动态测试。Capability 内部变更覆盖本模块及相关连接；共享基础设施、Suite 组合、Host 版本和测试基础设施变更扩大到完整适用测试。影响范围不明时运行全套，不能仅按目录猜测。
 - Benchmarks 独立运行，没有阻断 PR 的权利。Tests 中验证明确性能要求的性能测试可以阻断。Benchmark 结果作为评测证据，不作为 PR 门禁。
 
@@ -92,7 +93,7 @@ status: accepted
 ### 迁移批次与 CI 执行设计
 
 - 分三批独立验证：先整理命令和执行边界并消除重复调用；再完成测试归类、修复、合并和删除；最后实现范围选择、CI 编排和剩余目录迁移。每批同步文档，临时旧路径不是重复运行的理由。
-- CI 由 `Plan`、`Checks`、`Tests` 和最终 `Verify` 结果组成。Plan 决定所需测试范围；Checks 独立运行，Tests 仅等待计划，不等待静态检查完成。Checks 和 Tests 是两类实质验证，计划和汇总不重复执行它们。五个测试层级是分类边界，不要求建立五个 CI job。
+- CI 由 `Plan`、`Checks`、`Tests` 和最终 `Verify` 结果组成。Plan 决定所需测试范围；Checks 和 Tests 均等待计划，再独立执行。纯文档 Checks 运行 `check:docs` 并明确跳过 Tests，其他范围保留完整静态检查。Checks 和 Tests 是两类实质验证，计划和汇总不重复执行它们。五个测试层级是分类边界，不要求建立五个 CI job。
 - PR 与 `main` push 共用保守风险选择规则。PR 对比目标分支，push 使用 before/after 修订范围；范围缺失或不可靠时选择全部适用测试。保留手动完整验证。仅覆盖已经认证的平台，不照搬无关 Node／操作系统矩阵。
 - 对支持的事件始终触发验证 workflow，在内部决定是否需要 Tests。即使依赖失败或跳过，Verify 也检查计划和每个必要 job；只有成功计划明确不需要 Tests 时才允许跳过。必要执行失败、取消、结果缺失或意外跳过都不能生成通过汇总。未来配置必需检查时使用这个稳定结果。
 - 在证明替代方式等效之前保留逐文件 OS 进程隔离。先测量文件及环境准备成本，再引入有限测试分片；PTY 和原生资源场景保持保守并发。不为每个测试建立 CI job，也不用重试掩盖资源争用。共享本地与 CI 执行定义。

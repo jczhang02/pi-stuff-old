@@ -1,7 +1,8 @@
 import { rmSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { visibleWidth } from "@earendil-works/pi-tui";
+import { type JsonInputValue, parseJsonValue } from "../packages/pi-stuff/src/shared/json-value.js";
 import { CERTIFIED_PI_VERSION } from "./pi-host-contract.js";
 import { armUiPtyOwnerWatchdog, disarmUiPtyOwnerWatchdog, type UiPtyOwnerWatchdog } from "./ui-pty-owner-watchdog.js";
 import type { UiPtyVerificationOptions } from "./verify-ui-pty.js";
@@ -12,6 +13,16 @@ const runner = join(root, "tests/fixtures/ui-pty-runner.sh");
 export const NERD_MODEL_MARKER = "\u{F167A}";
 export const POLL_INTERVAL_MS = 50;
 export const WAIT_TIMEOUT_MS = 20_000;
+
+export async function readCompletedJsonlBytes(path: string): Promise<Buffer> {
+	const snapshot = await readFile(path);
+	// Writers commit each record with a newline; a concurrent snapshot may end mid-write.
+	return snapshot.subarray(0, snapshot.lastIndexOf(10) + 1);
+}
+
+export async function readCompletedJsonl(path: string): Promise<JsonInputValue[]> {
+	return (await readCompletedJsonlBytes(path)).toString("utf8").trim().split("\n").filter(Boolean).map(parseJsonValue);
+}
 
 export interface CasePaths {
 	readonly config: string;

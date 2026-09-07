@@ -385,23 +385,25 @@ function auditSourceLimits(path: string, source: string): SafetyFinding[] {
 	return findings;
 }
 
-async function auditTextFile(root: string, path: string): Promise<SafetyFinding[]> {
+async function auditTextFile(root: string, path: string, documentationOnly: boolean): Promise<SafetyFinding[]> {
 	const content = await readFile(join(root, path));
 	if (content.includes(0)) {
 		return [];
 	}
 	const text = content.toString("utf8");
-	const findings = [
-		...auditSourceLimits(path, text),
-		...auditEffectBoundarySource(path, text),
-		...auditProviderRedirectPolicy(path, text),
-	];
+	const findings: SafetyFinding[] = [];
 	if (PRIVATE_PATH_PATTERNS.some((pattern) => pattern.test(text))) {
 		findings.push({ path, rule: "private-absolute-path" });
 	}
 	if (CREDENTIAL_PATTERNS.some((pattern) => pattern.test(text))) {
 		findings.push({ path, rule: "credential-pattern" });
 	}
+	if (documentationOnly) return findings;
+	findings.push(
+		...auditSourceLimits(path, text),
+		...auditEffectBoundarySource(path, text),
+		...auditProviderRedirectPolicy(path, text),
+	);
 	if (
 		path.startsWith("packages/pi-stuff/src/") &&
 		!HOST_CONSOLE_ALLOWLIST.has(path) &&
@@ -568,20 +570,24 @@ function auditTranslations(
 async function auditDocumentation(root: string, paths: readonly string[]): Promise<SafetyFinding[]> {
 	const markdown = new Map<string, string>();
 	const buffers = new Map<string, Buffer>();
+	const existingPaths = new Set<string>();
 	for (const path of paths) {
-		if (!path.endsWith(".md")) continue;
 		try {
-			const content = await readFile(join(root, path));
-			buffers.set(path, content);
-			markdown.set(path, content.toString("utf8"));
+			if (path.endsWith(".md")) {
+				const content = await readFile(join(root, path));
+				buffers.set(path, content);
+				markdown.set(path, content.toString("utf8"));
+			} else {
+				await access(join(root, path));
+			}
+			existingPaths.add(path);
 		} catch {
-			// Ignore tracked Markdown deleted in the working tree.
+			// Ignore tracked files deleted in the working tree, including documentation attachments.
 		}
 	}
 	if (!markdown.has("docs/README.md")) {
 		return markdown.has("AGENTS.md") ? [{ path: "docs/README.md", rule: "documentation-index-missing" }] : [];
 	}
-	const existingPaths = new Set(paths.filter((path) => !path.endsWith(".md") || markdown.has(path)));
 	const resolvedTargets = new Map<string, ReadonlySet<string>>();
 	const findings: SafetyFinding[] = [];
 	for (const [path, content] of markdown) {
@@ -592,7 +598,7 @@ async function auditDocumentation(root: string, paths: readonly string[]): Promi
 	findings.push(...auditAdrDocuments(markdown));
 	findings.push(...auditIndexCoverage([...markdown.keys()], resolvedTargets));
 	const visibleMarkdown = new Map([...markdown].map(([path, content]) => [path, stripMarkdownFences(content)]));
-	findings.push(...(await auditReadmeScreenshots(root, paths, visibleMarkdown, resolveMarkdownTarget)));
+	findings.push(...(await auditReadmeScreenshots(root, [...existingPaths], visibleMarkdown, resolveMarkdownTarget)));
 	findings.push(...auditTranslations(markdown, buffers));
 	return findings;
 }
@@ -708,21 +714,24 @@ async function auditSuiteSchema(root: string, path: string): Promise<SafetyFindi
 	return findings;
 }
 
-export async function auditRepositoryFiles(rootDirectory: string): Promise<SafetyFinding[]> {
+export async function auditRepositoryFiles(rootDirectory: string, documentationOnly = false): Promise<SafetyFinding[]> {
 	const root = resolve(rootDirectory);
 	const paths = await listPublicFiles(root);
 	const findings: SafetyFinding[] = [];
-	findings.push(...(await auditEffectBoundaryInventory(root, paths)));
-	const suiteSchemaPath = "schemas/suite.schema.json";
-	if (paths.includes(suiteSchemaPath)) {
-		findings.push(...(await auditSuiteSchema(root, suiteSchemaPath)));
-	}
-	const suiteManifestPath = "packages/pi-stuff/suite.json";
-	if (paths.includes(suiteManifestPath)) {
-		findings.push(...(await auditSuiteManifest(root, suiteManifestPath)));
+	if (!documentationOnly) {
+		findings.push(...(await auditEffectBoundaryInventory(root, paths)));
+		const suiteSchemaPath = "schemas/suite.schema.json";
+		if (paths.includes(suiteSchemaPath)) {
+			findings.push(...(await auditSuiteSchema(root, suiteSchemaPath)));
+		}
+		const suiteManifestPath = "packages/pi-stuff/suite.json";
+		if (paths.includes(suiteManifestPath)) {
+			findings.push(...(await auditSuiteManifest(root, suiteManifestPath)));
+		}
 	}
 	findings.push(...(await auditDocumentation(root, paths)));
 	for (const path of paths) {
+		if (documentationOnly && !path.endsWith(".md") && !path.startsWith("docs/")) continue;
 		try {
 			await access(join(root, path));
 		} catch {
@@ -734,11 +743,12 @@ export async function auditRepositoryFiles(rootDirectory: string): Promise<Safet
 			findings.push({ path, rule: "forbidden-host-state" });
 			continue;
 		}
+		findings.push(...(await auditTextFile(root, path, documentationOnly)));
+		if (documentationOnly) continue;
 		if (isUnownedInternalSource(path)) {
 			findings.push({ path, rule: "unowned-internal-source-module" });
 		}
 		findings.push(...(await auditInternalModuleImports(root, path)));
-		findings.push(...(await auditTextFile(root, path)));
 		if (path.endsWith("package.json")) {
 			findings.push(...(await auditPackageManifest(root, path)));
 		}
@@ -747,7 +757,7 @@ export async function auditRepositoryFiles(rootDirectory: string): Promise<Safet
 }
 
 if (import.meta.main) {
-	const findings = await auditRepositoryFiles(resolve(import.meta.dir, ".."));
+	const findings = await auditRepositoryFiles(resolve(import.meta.dir, ".."), process.argv.includes("--docs"));
 	if (findings.length > 0) {
 		for (const finding of findings) {
 			console.error(`${finding.path}: ${finding.rule}`);

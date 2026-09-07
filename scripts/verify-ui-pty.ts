@@ -643,6 +643,18 @@ export async function verifyThemeLifecyclePty(
 				"resumed Session retained the selected theme",
 			],
 		};
+	} catch (error) {
+		const directory = options.artifactDirectory ?? process.env["PI_STUFF_UI_PTY_ARTIFACT_DIR"];
+		if (directory) {
+			try {
+				const name = `theme-lifecycle-${colorMode}-failure`;
+				await flow.writeFixtureLogEvidence(directory, name, paths.log, temporaryDirectory);
+				await flow.writePtyEvidence(directory, name, session);
+			} catch (evidenceError) {
+				throw new AggregateError([error, evidenceError], "Theme acceptance failed; evidence capture also failed");
+			}
+		}
+		throw error;
 	} finally {
 		session.stop();
 		await rm(temporaryDirectory, { force: true, recursive: true });

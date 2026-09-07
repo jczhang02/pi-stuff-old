@@ -26,11 +26,7 @@ export async function waitForPersistedSessionValue(
 	while (Date.now() < deadline) {
 		const sessionFiles = (await readdir(sessionDirectory)).filter((entry) => entry.endsWith(".jsonl"));
 		for (const sessionFile of sessionFiles) {
-			const records = (await readFile(join(sessionDirectory, sessionFile), "utf8"))
-				.trim()
-				.split("\n")
-				.filter(Boolean)
-				.map(parseJsonValue);
+			const records = await pty.readCompletedJsonl(join(sessionDirectory, sessionFile));
 			if (records.some((record) => containsValue(record, target))) return;
 		}
 		await pty.delay(pty.POLL_INTERVAL_MS);
@@ -221,7 +217,7 @@ export async function verifyThinkingHtmlExport(sessionDirectory: string): Promis
 	let sessionFile: string | undefined;
 	for (const entry of sessionFiles) {
 		const candidate = join(sessionDirectory, entry);
-		const records = (await readFile(candidate, "utf8")).trim().split("\n").filter(Boolean).map(parseJsonValue);
+		const records = await pty.readCompletedJsonl(candidate);
 		if (records.some((record) => containsValue(record, FIXTURE_THINKING))) {
 			sessionFile = candidate;
 			break;

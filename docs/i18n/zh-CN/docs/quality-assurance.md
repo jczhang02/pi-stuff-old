@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 90668d94176d45041135d21687eb95a601cedae72d94764d32107550b1974f30 -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 58e59516c6ddddb44007a2018b1e556f5e08f8c317a21a15be64ee3b8c260743 -->
 
 # 质量保障
 
@@ -34,6 +34,8 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 ## 源码安装与保留证据
 
 `tests/acceptance/repository/source-install.test.ts` 在隔离 Settings 和 XDG 目录中运行认证 Pi 的 `install`，再从 checkout 外启动 Pi，观察已安装 Package 加载的命令，并清理临时环境。Distribution archive 不是交付要求。原 package-verification aggregate 重复的 Host/PTY 场景已移除；源码安装、Suite inspection、Host seam 和依赖互操作各自在相应层级与 Capability 下拥有主归属。
+
+主题生命周期失败时，在清理前把夹具 JSONL 快照和终端文本/ANSI 保存到指定 artifact 目录（CI 使用 `PI_STUFF_UI_PTY_ARTIFACT_DIR`）。夹具根路径会脱敏，但日志末尾记录和换行保持原样。UI 夹具和 Host Session 读取器仅发布以换行结束的完整记录；完整坏记录立即失败，所需记录一直未写完时仍受原有等待期限约束。
 
 ## Benchmarks
 

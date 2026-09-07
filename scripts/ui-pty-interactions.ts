@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { type Static, Type } from "typebox";
 import { Check } from "typebox/value";
@@ -128,9 +129,32 @@ export async function writePtyEvidence(
 	]);
 }
 
+export async function writeFixtureLogEvidence(
+	directory: string,
+	name: string,
+	path: string,
+	fixtureRoot: string,
+): Promise<void> {
+	// Latin-1 maps bytes reversibly; UTF-8 decoding would replace an incomplete multibyte tail.
+	const snapshot = await readFile(path);
+	await mkdir(directory, { recursive: true, mode: 0o700 });
+	await writeFile(
+		join(directory, `${name}.jsonl`),
+		Buffer.from(
+			snapshot
+				.toString("latin1")
+				.replaceAll(Buffer.from(fixtureRoot).toString("latin1"), "[fixture]")
+				.replaceAll(Buffer.from(resolve(import.meta.dir, "..")).toString("latin1"), "[repository]"),
+			"latin1",
+		),
+		{ mode: 0o600 },
+	);
+}
+
 export function sanitizePtyEvidence(value: string): string {
 	return value
-		.replace(/\/(?:var\/)?tmp\/(?:agent\/)?pi-stuff-ui-pty-[^/\s]+/gu, "[fixture]")
+		.replace(/\/(?:var\/)?tmp\/(?:agent\/)?pi-stuff-(?:ui|theme)-pty-[^/\s]+/gu, "[fixture]")
+		.replaceAll(tmpdir(), "[temporary]")
 		.split("\n")
 		.map((line) => line.trimEnd())
 		.join("\n")
@@ -683,14 +707,8 @@ export async function verifyDiagnosticsUi(
 }
 
 export async function readFixtureRecords(path: string): Promise<readonly FixtureRecord[]> {
-	const text = await readFile(path, "utf8");
-	return text
-		.trim()
-		.split("\n")
-		.filter(Boolean)
-		.map((line) => {
-			const record = JSON.parse(line);
-			if (!Check(FIXTURE_RECORD_SCHEMA, record)) pty.fail(`fixture log ${path} contains a malformed record`);
-			return record;
-		});
+	return (await pty.readCompletedJsonl(path)).map((record) => {
+		if (!Check(FIXTURE_RECORD_SCHEMA, record)) pty.fail(`fixture log ${path} contains a malformed record`);
+		return record;
+	});
 }

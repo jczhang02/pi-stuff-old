@@ -70,6 +70,11 @@ are removed. Distinct source-install, Suite inspection, Host seams, and dependen
 homes under the applicable level and Capability directory. Existing RPC and PTY tests remain where they observe
 different contracts.
 
+Theme lifecycle failures preserve the fixture JSONL snapshot and terminal text/ANSI in the requested artifact
+directory (`PI_STUFF_UI_PTY_ARTIFACT_DIR` in CI) before cleanup. Fixture roots are redacted, but the log's trailing
+record and newline remain unchanged. UI fixture and Host Session readers publish only newline-completed records; malformed completed
+records fail immediately, and an unfinished required record remains subject to the existing wait deadline.
+
 ## Benchmarks
 
 Existing experiments are named `benchmark:capability:<name>`. Ponytail behavioral effectiveness, Markdown, lifecycle,

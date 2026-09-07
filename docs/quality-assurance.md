@@ -97,6 +97,10 @@ UI/input/selection feedback and no unchanged Vibe Line Spinner frame beyond 200 
 assertion is a separate backstop. The Tools PTY verifier reports the measured values for each terminal geometry and
 fails when a required target is unmet.
 
+The Context input-frame verifier retains its 150 ms first-frame limit. It samples every 10 ms until the submitted
+prompt appears, then every 50 ms for Working animation. Deterministic clock tests guard against coarse-polling false
+failures while retaining rejection of slow frames; failures include the last absent capture and capture overhead.
+
 The Suite Outcome Evaluation branch evaluates the complete Suite on public tasks. The concrete entry is
 `benchmark:suite:terminal-bench`; the generic `benchmark:suite` alias remains unregistered.
 

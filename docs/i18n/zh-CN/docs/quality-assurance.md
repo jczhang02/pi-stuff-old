@@ -1,4 +1,4 @@
-<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: 5e7184ef92024f2e22f351e06b2fb311d2e3308e32cffbf9bfab29be3a5055ab -->
+<!-- translation-source: docs/quality-assurance.md; translation-source-sha256: e0879298b931c8939e025aefa0f105a7b9a284efd0746b5783f2898166bafad1 -->
 
 # 质量保障
 
@@ -45,6 +45,9 @@ Pi、RTK 优先使用显式 `PI_BIN` / `RTK_BIN`，再查找 `PATH`（Pi 会排�
 临时 Ubuntu CI runner 单独放置 `unshare` 可执行文件，并用仅匹配该文件的 AppArmor 配置授予 `userns` 权限，在 Tests 前检查命名空间创建。这项准备支持观察器嵌套的 user/network/PID 隔离，不修改本机策略或共享的断网测试入口。
 
 完成的实验即使结果较差也可成功；setup failure 或 incomplete experiment 仍失败。Tool Activity 过去的 250 ms 和 relative 25 ms benchmark 值仅保留为诊断报告值。显式 PTY 要求仍为首个 Tool UI/input/selection 反馈 150 ms，以及不变 Vibe Line Spinner 帧不超过 200 ms；ADR 0025 的 500 ms severe-stall 是独立 backstop。Tools PTY 验证器报告每种终端尺寸的测量值，未满足必需目标时失败。`benchmark:suite` 尚未注册。
+
+Context 输入首帧验证器保留 150 ms 上限。在提交的 prompt 出现之前每 10 ms 采样，随后每 50 ms 观察 Working 动画。
+确定性时钟测试防止粗粒度轮询造成误报，同时保留对慢帧的拒绝；失败信息包含最后一次未显示首帧的采样时间和捕获开销。
 
 Suite Outcome Evaluation 使用公开任务评测完整 Suite。具体入口是 `benchmark:suite:terminal-bench`；通用别名 `benchmark:suite` 仍未注册。
 

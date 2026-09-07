@@ -8,6 +8,8 @@ material, never Pi Runtime Resources or files for a user's global Pi Agent direc
 - Code changes and engineering-rule changes: read the relevant sections of `CONTEXT.md`, `docs/compatibility.md`, and
   the owning accepted ADR or Module README before editing. Read only enough for read-only location or status work.
 - Code changes, reviews, or verification work: read the relevant sections of `docs/code-quality.md`.
+- Effect implementation or dependency decisions: follow the accepted v4 policy in
+  [ADR 0024](docs/adr/0024-adopt-effect-as-the-internal-effect-model.md#decision).
 - Visible surfaces: read `DESIGN.md` and the owning Module README or ADR.
 - Beads, delivery, or closure: read `docs/agents/issue-tracker.md`.
 

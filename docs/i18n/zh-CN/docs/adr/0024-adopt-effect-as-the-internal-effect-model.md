@@ -1,4 +1,4 @@
-<!-- translation-source: docs/adr/0024-adopt-effect-as-the-internal-effect-model.md; translation-source-sha256: c424e5800811bbbca3b8dd9cbfd0ce56cd956e2cc0523c022f46e6a7d6c40032 -->
+<!-- translation-source: docs/adr/0024-adopt-effect-as-the-internal-effect-model.md; translation-source-sha256: 7ba799485e27c7d2b0ab2920c981b22291e616f42553cc7a04be3b70af557a00 -->
 
 ---
 status: accepted
@@ -16,6 +16,12 @@ Code Mode、MCP、Web 及其他包含副作用的模块中反复出现。
 接受：最终实现还必须完成仓库审查、认证和一次明确的 go/no-go 决策。
 
 ## 决策
+
+Effect v4 是已批准的实现基线，可以直接用于生产实现，不是等待采纳的候选方案。这包括适用的公开
+`effect/unstable/*` API 和官方 v4 平台适配器。根据功能适配程度及已验证的受支持 Host 兼容性选择它们；
+RC、预发布或 `unstable` 标签本身不能成为推迟采用、要求 Effect v3 回退或等待稳定版本的理由。
+相互兼容的依赖版本仍须精确固定，并遵循常规风险验证政策。本政策不承诺上游 API 稳定性，也不豁免
+具体的兼容性失败。
 
 在 Pi Stuff 软件包内部，将 Effect 用作每个包含副作用的生产函数的默认模型。I/O、失败、取消、并发、
 时间、重试、资源、可变共享状态及有副作用的依赖提供均归入 Effect。确定性的纯计算、领域状态、
@@ -61,8 +67,7 @@ bug 仍是 defect，interruption 与二者保持区分。最外层适配器把�
 生产与测试适配器的依赖。纯 helper 与局部值继续使用普通参数。
 
 当 Effect 生态模块能够在保持行为的同时完整替换一个现有机制时，采用该模块。仅在未变机制外再包
-一层 Effect 并不充分。不稳定的 Effect 模块可以在 worktree 中评估，但必须留在能力接口之后，不能
-成为面向宿主的合同。
+一层 Effect 并不充分。这些模块留在能力接口之后，不替代面向宿主的合同；该边界与其发布标签无关。
 
 第一实施阶段保留所有用户和宿主可观察行为，包括工具和命令表面、设置与会话格式、诊断、取消、
 超时、重试、恢复和终止结果。产品重新设计须在行为等价通过认证后另行决策。
@@ -71,9 +76,9 @@ bug 仍是 defect，interruption 与二者保持区分。最外层适配器把�
 `fetchCodexUsage` 验证简单异步网络工作；用既有宿主共享资源与 Tool UI 清理路径验证长期存活的 scoped
 资源，同时让同步资源发现继续使用普通 TypeScript；用 `MagicWorkerClient` 验证 Worker 取消与关闭。
 只有三者都保留既有合同、通过聚焦检查、删除对应旧机制并避免仅加 wrapper 后，才把同一模型扩展到
-每条包含副作用的生产路径。验证失败时，必须先修改 foundation，再继续迁移。worktree 将 `effect`
-精确固定为 `4.0.0-rc.112`；迁移期间不追逐新的 RC，最终 go/no-go 审查把任何版本更新和重新认证作为
-独立检查点。
+每条包含副作用的生产路径。验证失败时，必须先修改 foundation，再继续迁移。已完成的迁移将 `effect`
+精确固定为 `4.0.0-rc.112`，版本更新置于测量窗口之外。这一历史证据冻结要求不是持续的采纳门槛；
+后续版本变更遵循上文已批准的 v4 政策。
 
 后续扩展以完整的纵向能力切片推进。每个切片在同一个连贯检查点中替换并删除原 Promise、abort、timer
 或资源生命周期实现，只保留操作外部系统所需的窄原生适配器。迁移不建立长期双执行轨道。

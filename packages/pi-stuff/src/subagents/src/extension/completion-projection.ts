@@ -99,7 +99,7 @@ function formatDuration(durationMs: number | undefined): string | undefined {
 }
 
 export function completionOutcomeText(data: CompletionOutcomeEntry): string {
-	const subject = data.count === 1 ? "Agent" : `${String(data.count)} Agents`;
+	const subject = data.count === 1 ? "Agent" : `Agent group (${String(data.count)})`;
 	const verb = data.status === "completed" ? "finished" : data.status;
 	return [`${subject} ${verb}`, formatDuration(data.durationMs), "inspect with /agents"].filter(Boolean).join(" · ");
 }

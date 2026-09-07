@@ -84,12 +84,21 @@ a child by `index`. `agent` names an Agent definition only when launching, while
 Target; the Todo field `taskId` is not an Agent identifier. `acknowledgeCost` is valid only for a direct user-started
 resume after the cost guard requests attention. Use `/agents` for regular inspection and control.
 
+For a terminal Agent, `status` with `id` returns the exact retained output path before its bounded progress excerpt.
+Read that path to retrieve the complete report. If no output path is retained, it returns the transcript or Session
+path instead, or explicitly reports that no reference remains. Prose remains bounded and compacts embedded paths;
+the retrieval reference preserves the exact path.
+
 ## Background and foreground
 
 Background launches return after admission and start. A terminal success, failure, or partial outcome creates a compact
 durable TUI result and is also delivered to the originating main Agent while its task remains open. Idle delivery resumes
 integration; busy delivery queues until the current turn settles. Full reports remain available in `/agents`. Diagnostic
 event logs retain a bounded suffix; rolling that log does not redeliver already observed control events.
+
+Grouped TUI results describe the group's aggregate outcome and member count. For example, `Agent group (2) failed`
+means at least one member failed; inspect the individual Agents for their outcomes. Retained Session entries use the
+same wording when reopened.
 
 Delivery is bound to the originating Session and run and is deduplicated. User cancellation or explicit task ending
 suppresses a late continuation while retaining the outcome and canonical reference for inspection. A Goal-owned active

@@ -149,6 +149,110 @@ test("returns one compact Agent when id and index identify a child", () => {
 	expect(resultText(exact)).toContain("id=parallel · index=0 · scout · running · 4s");
 });
 
+test("exposes retained terminal output or an explicit fallback reference", () => {
+	const state = createState();
+	state.recentAgentJobs?.set(
+		"completed-report",
+		asyncJob("completed-report", "complete", {
+			steps: [
+				{
+					index: 0,
+					agent: "writer",
+					status: "completed",
+					label: "Write the report",
+					savedOutputPath: "/tmp/agent-output/report.md",
+					transcriptPath: "/tmp/agent-output/transcript.md",
+				},
+			],
+		}),
+	);
+	state.recentAgentJobs?.set(
+		"completed-with-transcript",
+		asyncJob("completed-with-transcript", "complete", {
+			steps: [{ index: 0, agent: "writer", status: "completed", transcriptPath: "/tmp/transcript.jsonl" }],
+		}),
+	);
+	state.recentAgentJobs?.set(
+		"completed-with-session",
+		asyncJob("completed-with-session", "complete", {
+			sessionFile: "/tmp/agent-session.jsonl",
+			steps: [{ index: 0, agent: "writer", status: "completed" }],
+		}),
+	);
+	state.recentAgentJobs?.set(
+		"completed-without-reference",
+		asyncJob("completed-without-reference", "complete", {
+			steps: [{ index: 0, agent: "writer", status: "completed" }],
+		}),
+	);
+
+	const output = resultText(inspectSubagentStatus({ id: "completed-report" }, { state }));
+	const transcript = resultText(inspectSubagentStatus({ id: "completed-with-transcript" }, { state }));
+	const session = resultText(inspectSubagentStatus({ id: "completed-with-session" }, { state }));
+	const missing = resultText(inspectSubagentStatus({ id: "completed-without-reference" }, { state }));
+
+	expect(output).toContain("Output: /tmp/agent-output/report.md");
+	expect(output).not.toContain("Progress:");
+	expect(transcript).toContain("Transcript: /tmp/transcript.jsonl");
+	expect(session).toContain("Session: /tmp/agent-session.jsonl");
+	expect(missing).toContain("Reference: none retained.");
+});
+
+test("bounds terminal final output while identifying it as an excerpt", () => {
+	const state = createState();
+	state.recentAgentJobs?.set(
+		"long-report",
+		asyncJob("long-report", "complete", {
+			steps: [
+				{
+					index: 0,
+					agent: "writer",
+					status: "completed",
+					finalOutput: "report ".repeat(300),
+					savedOutputPath: "/tmp/long-report.md",
+				},
+			],
+		}),
+	);
+
+	const text = resultText(inspectSubagentStatus({ id: "long-report" }, { state }));
+
+	expect(text).toContain("Progress (excerpt):");
+	expect(text).toContain("Output: /tmp/long-report.md");
+	expect(text.length).toBeLessThan(1_500);
+	expect(text).not.toContain("report ".repeat(300));
+});
+
+test("retrieves foreground terminal output from the retained artifact locator", () => {
+	const state = createState();
+	state.foregroundRuns?.set("foreground-report", {
+		runId: "foreground-report",
+		mode: "single",
+		cwd: "/tmp",
+		sessionId: "root-session",
+		updatedAt: 4_000,
+		children: [
+			{
+				agent: "writer",
+				index: 0,
+				status: "completed",
+				finalOutput: "report complete",
+				artifactPaths: {
+					inputPath: "/tmp/foreground-report.input",
+					outputPath: "/tmp/foreground-report.md",
+					jsonlPath: "/tmp/foreground-report.jsonl",
+					transcriptPath: "/tmp/foreground-report.transcript",
+					metadataPath: "/tmp/foreground-report.metadata.json",
+				},
+			},
+		],
+	});
+
+	const text = resultText(inspectSubagentStatus({ id: "foreground-report" }, { state }));
+
+	expect(text).toContain("Output: /tmp/foreground-report.md");
+});
+
 test("shows bounded path-safe terminal failure without stale progress", () => {
 	const state = createState();
 	state.recentAgentJobs?.set(

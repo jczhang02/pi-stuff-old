@@ -84,6 +84,7 @@ export type AgentProjectionRecord = RawProjectionFields & {
 	readonly attentionKind?: JsonValue;
 	readonly cancelledBy?: JsonValue;
 	readonly execution?: JsonValue;
+	readonly outputPath?: JsonValue;
 	readonly output?: JsonValue;
 	readonly resuming?: JsonValue;
 	readonly stoppedBy?: JsonValue;

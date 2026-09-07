@@ -1,4 +1,4 @@
-<!-- translation-source: docs/capabilities/subagents.md; translation-source-sha256: 37cfbef220ce2aa61970d6eed2d34004810b583b088cf595b9c80442eda2d322 -->
+<!-- translation-source: docs/capabilities/subagents.md; translation-source-sha256: 012885b9d43e496258b322d5f3f4c3650e9d3b7f044219d43d28ce223c949481 -->
 
 # Agents
 
@@ -82,9 +82,16 @@ Grouped task 会在当前容量内并发运行。同一条 Assistant response �
 `taskId` 不是 Agent 标识符。只有成本 guard 请求关注后，由用户直接发起的 resume 才能使用
 `acknowledgeCost`。日常检查和控制请使用 `/agents`。
 
+对终态 Agent 使用带 `id` 的 `status` 查询时，会在有界进展摘录之前返回保留输出的精确路径。
+读取该路径即可取回完整报告。如果未保留输出路径，则返回 transcript 或 Session 路径；若均不存在，会明确说明没有保留引用。
+正文仍保持有界并压缩其中的路径，取回引用则保留精确路径。
+
 ## 后台与前台
 
 后台 launch 在 admission 和启动后返回。成功、失败或 partial 结果会生成紧凑、持久的 TUI result，并在原任务仍开放时送达来源 main Agent；空闲时继续整合，忙碌时等当前 turn 结束后排队处理。完整报告保留在 `/agents` 中。诊断事件日志仅保留有界尾部；滚动日志不会重复发送已观测的控制事件。
+
+分组 TUI 结果描述整组的汇总状态和成员数。例如，`Agent group (2) failed` 表示至少一个成员失败；各成员的结果需要分别检查。
+重新打开保留的 Session 条目时也使用相同文案。
 
 delivery 绑定来源 Session/run 并去重。用户取消或显式结束任务会抑制迟到结果继续运行，但保留结果和规范引用供检查。活跃 Goal 使用其规范查询协调继续，避免同一结果产生竞争 continuation。
 

@@ -1,5 +1,6 @@
 import type { AgentToolResult } from "@earendil-works/pi-agent-core";
 import { type AgentRow, CurrentAgents } from "../../session/current-agents.ts";
+import { isTerminalAgentStatus } from "../../session/current-agents-projection.ts";
 import { compactAbsolutePaths } from "../../shared/display-description.ts";
 import type { Details, SubagentState } from "../../shared/types.ts";
 import { classifyAgentFailure } from "../shared/terminal-outcome.ts";
@@ -74,6 +75,13 @@ function rowSummary(row: AgentRow): string {
 	return task ? `- ${heading}\n  ${task}` : `- ${heading}`;
 }
 
+function terminalReference(row: AgentRow): string {
+	if (row.savedOutputPath) return `Output: ${row.savedOutputPath}`;
+	if (row.transcriptPath) return `Transcript: ${row.transcriptPath}`;
+	if (row.sessionFile) return `Session: ${row.sessionFile}`;
+	return "Reference: none retained.";
+}
+
 function rowsSummary(rows: readonly AgentRow[], heading: string): string {
 	return [heading, ...rows.map(rowSummary)].join("\n");
 }
@@ -102,7 +110,11 @@ function rowDetail(row: AgentRow): string {
 			`Recovery: id=${continuation.target.id} · index=${String(continuation.target.index)} · ${continuation.resumeSupported ? "resumable" : "not resumable"}${continuation.acknowledgementRequired ? " · acknowledgement required" : ""}`,
 		);
 	}
-	if (row.partialResult) lines.push(`Progress: ${compactChildText(row.partialResult, MAX_PROGRESS_CHARS)}`);
+	if (isTerminalAgentStatus(row.status)) lines.push(terminalReference(row));
+	if (row.partialResult) {
+		const label = isTerminalAgentStatus(row.status) ? "Progress (excerpt)" : "Progress";
+		lines.push(`${label}: ${compactChildText(row.partialResult, MAX_PROGRESS_CHARS)}`);
+	}
 	return lines.join("\n");
 }
 

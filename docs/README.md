@@ -95,10 +95,12 @@ The Web and MCP runtimes also have source-local READMEs:
 | [0032](adr/0032-organize-quality-assurance-by-verification-purpose.md) | Organize quality assurance by verification purpose |
 | [0033](adr/0033-continue-open-work-after-background-agent-results.md) | Continue open work after background Agent results (candidate implementation; acceptance pending) |
 | [0034](adr/0034-remove-redundant-suite-work-without-feature-cuts.md) | Remove redundant Suite work without reducing functionality |
+| [0035](adr/0035-own-codex-account-selection.md) | Own Session-local Codex account selection (accepted design; implementation pending) |
 
 ## Evidence and history
 
 - [Research](research/) collects dated investigations and product references.
+- [Codex account-selection preview](reports/codex-account-selection-preview.md) shows the accepted, unimplemented account UI with mock data.
 - [Reports](reports/) collects acceptance, design, and performance evidence.
 - [Release notes](releases/) record shipped changes.
 

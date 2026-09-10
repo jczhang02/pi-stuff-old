@@ -17,6 +17,13 @@ an explicit go/no-go decision.
 
 ## Decision
 
+Effect v4 is the approved implementation baseline, available for direct production adoption rather than a pending
+candidate. This includes applicable public `effect/unstable/*` APIs and official v4 platform adapters. Select them
+by functional fit and verified compatibility with the supported Host; RC, prerelease, or `unstable` labels alone are
+not reasons to defer adoption, require an Effect v3 fallback, or wait for a stable release. Pin mutually compatible
+dependency versions exactly and apply the normal risk-based verification policy. This policy does not assert an
+upstream API-stability guarantee or waive concrete compatibility failures.
+
 Use Effect as the default model for every effectful production function inside the Pi Stuff Package. I/O, failure,
 cancellation, concurrency, time, retries, resources, mutable shared state, and effectful dependency provision belong
 in Effect. Deterministic pure computation, domain state, codecs, formatting, and projections remain ordinary
@@ -69,8 +76,8 @@ shared across operations, or for dependencies with real production and test adap
 continue to use ordinary parameters.
 
 Adopt Effect ecosystem Modules when they completely replace an existing mechanism while preserving behavior. An
-Effect wrapper around an otherwise unchanged mechanism is insufficient. Unstable Effect Modules may be evaluated in
-the worktree, but remain behind a Capability interface and cannot become a Host-facing contract.
+Effect wrapper around an otherwise unchanged mechanism is insufficient. These Modules remain behind Capability
+interfaces and do not replace Host-facing contracts, regardless of their release labels.
 
 The first implementation phase preserves every user- and Host-observable behavior, including Tool and command
 surfaces, settings and Session formats, diagnostics, cancellation, timeout, retry, recovery, and terminal outcomes.
@@ -82,8 +89,9 @@ and Tool UI cleanup path for a long-lived scoped resource, while leaving synchro
 TypeScript; and `MagicWorkerClient` for Worker cancellation and shutdown. Only after all three preserve their existing
 contracts, pass focused checks, remove the corresponding former mechanism, and avoid a wrapper-only implementation
 does the same model expand to every effectful production path. A failed proof changes the foundation before migration
-continues. The worktree pins `effect` exactly to `4.0.0-rc.112`; release-candidate upgrades do not occur during the
-migration, and the final go/no-go review performs any version update and recertification as a separate checkpoint.
+continues. The completed migration pinned `effect` exactly to `4.0.0-rc.112` and kept version updates outside its
+measurement window. That historical evidence freeze is not an ongoing adoption gate; subsequent version changes
+follow the approved v4 policy above.
 
 Expansion proceeds in complete vertical Capability slices. Each slice replaces and deletes its old Promise, abort,
 timer, or resource-lifecycle implementation in the same coherent checkpoint while retaining the narrow native adapter

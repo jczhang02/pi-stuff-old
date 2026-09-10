@@ -1,4 +1,4 @@
-<!-- translation-source: AGENTS.md; translation-source-sha256: 7b0f5189c4f95bae46a61e129303529171cfef1a41bc8e9f78ce5fa49c3f2e17 -->
+<!-- translation-source: AGENTS.md; translation-source-sha256: 51f797c410bbb1eeddc9387d2a686164b7f53086f162e2412f58083cf23aaa2f -->
 
 # Pi Stuff 仓库指令
 
@@ -8,6 +8,7 @@
 
 - 修改代码或工程规则前，读取 `CONTEXT.md`、`docs/compatibility.md` 及所属已接受 ADR 或 Module README 的相关章节。只读定位或状态查询只需读取必要内容。
 - 修改代码、审查或执行验证时，读取 `docs/code-quality.md` 的相关章节。
+- 实现 Effect 或选择相关依赖时，遵循 [ADR 0024](docs/adr/0024-adopt-effect-as-the-internal-effect-model.md#决策) 中已接受的 v4 政策。
 - 修改可见界面时，读取 `DESIGN.md` 和所属 Module README 或 ADR。
 - 操作 Beads、交付或关闭工作时，读取 `docs/agents/issue-tracker.md`。
 
